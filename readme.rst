@@ -28,4 +28,6 @@ _____
     - [ ] Only re-download if dropbox revision ID has changed.
 
 - [ ] Implement UI (or borrow from `taskweb <https://github.com/campbellr/taskweb>`_).
+- [ ] Implement Twilio integration
+    - [ ] via SMS, run arbitrary ``tasks`` commands.
 
