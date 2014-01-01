@@ -12,8 +12,11 @@ Proposition 1
 
 * Create a django-based web interface for managing tasks.
 * Leverage DropBox integration for:
+
   * Using DropBox as the system of record for ones' tasks.
+
 * Leverage Twilio integration for:
+
   * Allowing one to perform task-related commands via SMS.
 
 Tasks
@@ -22,12 +25,12 @@ _____
 - [ ] Implement solution for finding ones task file(s) in a dropbox account.
 
   - [ ] Dropbox OAuth Dance
-  - [ ] Using Access token, find all directories containing task files.
-  - [ ] Implement caching and storage managment:
+  - [X] Using Access token, find all directories containing task files.
+  - [X] Implement caching and storage managment:
 
-    - [ ] Only re-download if dropbox revision ID has changed.
+    - [X] Only re-download if dropbox revision ID has changed.
 
-- [ ] Implement UI (or borrow from `taskweb <https://github.com/campbellr/taskweb>`_).
+- [ ] Implement UI (or borrow from `taskweb <https://github.com/campbellr/taskweb>`__).
 - [ ] Implement Twilio integration
     - [ ] via SMS, run arbitrary ``tasks`` commands.
 
