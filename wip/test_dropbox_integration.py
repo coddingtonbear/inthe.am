@@ -1,8 +1,9 @@
 import os
-
 import unittest
 
-from . import dropbox
+import dropbox
+
+from . import dropbox_integration
 
 
 class TestDropbox(unittest.TestCase):
@@ -10,9 +11,12 @@ class TestDropbox(unittest.TestCase):
         self.access_token = os.environ['DROPBOX_ACCESS_TOKEN']
 
     def test_find_tasks_in_dropbox(self):
-        expected_task_folders = ['/Task']
+        expected_task_folders = ['/Tasks']
 
-        actual_task_folders = dropbox.find_tasks_in_dropbox(self.access_token)
+        client = dropbox.client.DropboxClient(self.access_token)
+        actual_task_folders = dropbox_integration.find_tasks_in_dropbox(
+            client
+        )
 
         self.assertEqual(
             expected_task_folders,
