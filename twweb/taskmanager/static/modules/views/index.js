@@ -1,0 +1,2 @@
+
+App.NavigationView = require("./navigation");

@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'social.apps.django_app.default',
     'twweb.taskmanager',
+    'south',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -92,6 +93,8 @@ STATIC_URL = '/static/'
 ENVIRONMENT_SETTING_PREFIX = 'TWWEB_'
 
 LOGIN_REDIRECT_URL = '/'
+
+TASK_STORAGE_PATH = os.path.join(BASE_DIR, 'task_data')
 
 # Sourced from environment:
 #  SOCIAL_AUTH_DROPBOX_KEY

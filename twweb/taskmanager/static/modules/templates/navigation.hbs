@@ -1,0 +1,25 @@
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class='brand' href="">
+                <!--<img id="logo" width="30" height="30" src="task/img/logo.png" alt=""/>-->
+                task web
+            </a>
+            <div class="nav-collapse">
+                <p class="navbar-text pull-right">
+                    {{#if controllers.application.user.name}}
+                        Welcome, <b>{{controllers.application.user.name}}</b> -
+                        <a href="{{unbound controllers.application.urls.logout}}">Log out</a>
+                    {{else}}
+                        <a href="{{unbound controllers.application.urls.login}}">Log-in with DropBox</a>
+                    {{/if}}
+                </p>
+            </div> <!--/nav-collapse-->
+        </div> <!--/container-fluid -->
+    </div> <!--/navbar-inner-->
+</div> <!--/navbar-->
