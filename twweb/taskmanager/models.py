@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import json
 import logging
@@ -5,6 +6,7 @@ import os
 import uuid
 
 import dropbox
+from taskw import TaskWarriorExperimental
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -42,15 +44,28 @@ class TaskStore(models.Model):
 
     @property
     def client(self):
-        if not getattr(self, '_client'):
-            db_info = self.user.social_auth.get(provider='dropbox').extra_data
-            self._client = dropbox.client.DropboxClient(
-                dropbox.session.DropboxSession(
-                    db_info['access_token']['oauth_token'],
-                    db_info['access_token']['oauth_secret'],
-                )
+        if not getattr(self, '_client', None):
+            self._client = TaskWarriorExperimental(
+                self.metadata['taskrc']
             )
         return self._client
+
+    @property
+    def dropbox(self):
+        if not getattr(self, '_dropbox', None):
+            db_info = self.user.social_auth.get(provider='dropbox').extra_data
+            session = dropbox.session.DropboxSession(
+                settings.SOCIAL_AUTH_DROPBOX_KEY,
+                settings.SOCIAL_AUTH_DROPBOX_SECRET,
+            )
+            session.set_token(
+                db_info['access_token']['oauth_token'],
+                db_info['access_token']['oauth_token_secret'],
+            )
+            self._dropbox = dropbox.client.DropboxClient(
+                session
+            )
+        return self._dropbox
 
     @property
     def metadata_registry(self):
@@ -67,7 +82,11 @@ class TaskStore(models.Model):
         else:
             return {
                 'files': {
-                }
+                },
+                'taskrc': os.path.join(
+                    self.local_path,
+                    '.taskrc',
+                )
             }
 
     @metadata.setter
@@ -79,7 +98,7 @@ class TaskStore(models.Model):
 
     def find_dropbox_folders(self):
         match_path = []
-        matched_files = self.client.search('/', 'pending.data')
+        matched_files = self.dropbox.search('/', 'pending.data')
         for match in matched_files:
             if os.path.basename(match['path']) == 'pending.data':
                 dir_name = os.path.dirname(match['path'])
@@ -106,9 +125,15 @@ class TaskStore(models.Model):
             os.mkdir(user_tasks)
         self.local_path = os.path.join(
             user_tasks,
-            uuid.uuid4()
+            str(uuid.uuid4())
         )
         os.mkdir(self.local_path)
+
+        with open(self.metadata['taskrc'], 'w') as task_rc:
+            task_rc.write(
+                '# generated an %s UTC\n' % datetime.datetime.utcnow()
+            )
+            task_rc.write('data.location=%s\n' % self.local_path)
 
         self.save()
 
@@ -123,17 +148,29 @@ class TaskStore(models.Model):
             'completed.data',
         ]
         for filename in task_files:
-            file_metadata = self.client.metadata(
+            file_metadata = self.dropbox.metadata(
                 os.path.join(self.dropbox_path, filename)
             )
             local_version = self.metadata['files'].get(filename, {}).get('revision', -1)
             remote_version = file_metadata['revision']
 
             if local_version != remote_version:
-                logger.info(
-                    "%s has changed in DropBox"
-                )
-                needs_update.append(local_version)
+                needs_update.append(filename)
+
+        return needs_update
+
+    def find_changed_files_locally(self):
+        needs_update = []
+        metadata = self.metadata
+
+        for filename, file_meta in metadata['files'].items():
+            local_path = os.path.join(self.local_path, filename)
+
+            with open(local_path, 'r') as input_file:
+                local_hash = hashlib.md5(input_file.read()).hexdigest()
+
+                if local_hash != metadata['files'][filename]['md5']:
+                    needs_update.append(filename)
 
         return needs_update
 
@@ -143,8 +180,11 @@ class TaskStore(models.Model):
         changed = []
 
         for filename in files_changed:
-            dropbox_file, file_meta = self.client.get_file_and_metadata(
-                os.path.join(self.local_path, filename)
+            dropbox_file, file_meta = self.dropbox.get_file_and_metadata(
+                os.path.join(self.dropbox_path, filename)
+            )
+            logger.info(
+                'Dropbox-->%s' % filename
             )
             with dropbox_file:
                 with open(os.path.join(self.local_path, filename), 'w') as out:
@@ -161,25 +201,24 @@ class TaskStore(models.Model):
     def upload_files_to_dropbox(self):
         metadata = self.metadata
 
-        for filename, file_meta in metadata['files'].items():
+        files_changed = self.find_changed_files_locally()
+
+        for filename in files_changed:
             local_path = os.path.join(self.local_path, filename)
             remote_path = os.path.join(self.dropbox_path, filename)
 
             with open(local_path, 'r') as input_file:
                 local_hash = hashlib.md5(input_file.read()).hexdigest()
-
-                if local_hash != metadata['files']['md5']:
-                    logger.info(
-                        '%s has changed locally'
-                    )
-                    input_file.seek(0)
-                    new_meta = self.client.put_file(
-                        remote_path,
-                        input_file,
-                        overwrite=True,
-                    )
-                    new_meta['md5'] = local_hash
-                    metadata['files'][filename] = new_meta
+                logger.info(
+                    '%s-->Dropbox'
+                )
+                new_meta = self.dropbox.put_file(
+                    remote_path,
+                    input_file,
+                    overwrite=True,
+                )
+                new_meta['md5'] = local_hash
+                metadata['files'][filename] = new_meta
 
         self.metadata = metadata
 
