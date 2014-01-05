@@ -1,6 +1,6 @@
 import json
 
-from tastypie import fields, resources, authorization
+from tastypie import authentication, authorization, bundle, resources
 
 from django.conf.urls import url
 from django.contrib.auth.models import User
@@ -54,5 +54,28 @@ class UserResource(resources.ModelResource):
     class Meta:
         queryset = User.objects.all()
         authorization = UserAuthorization()
+        list_allowed_methods = ['get']
+        detail_allowed_methods = ['get']
+
+
+class TaskResource(resources.Resource):
+    def _get_config_for_user(self, user):
+        user.task_stores.get()
+
+    def detail_uri_kwargs(self, bundle_or_obj):
+        kwargs = {}
+
+        if isinstance(bundle_or_obj, bundle.Bundle):
+            kwargs['pk'] = bundle_or_obj.obj['uuid']
+        else:
+            kwargs['pk'] = bundle_or_obj['uuid']
+
+        return kwargs
+
+    def get_object_list(self, request):
+        pass
+
+    class Meta:
+        authentication = authentication.SessionAuthentication()
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get']

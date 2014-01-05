@@ -16,7 +16,10 @@ module.exports = function(grunt){
       compile: {
         options: {
           processName: function(name) {
-            return name.substr(name.lastIndexOf('/') + 1, name.lastIndexOf('.') - name.lastIndexOf('/') - 1);
+            return name.substr(
+              name.lastIndexOf('/') + 1,
+              name.lastIndexOf('.') - name.lastIndexOf('/') - 1
+            ).replace('__', '/');
           }
         },
         files: {
