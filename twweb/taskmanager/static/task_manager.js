@@ -12,6 +12,7 @@ module.exports = App;
 },{}],2:[function(require,module,exports){
 var controller = Ember.Controller.extend({
   user: null,
+  pending_count: null,
   urls: {
     logout: '/logout/',
     login: '/login/dropbox/'
@@ -35,11 +36,32 @@ var controller = Ember.Controller.extend({
 module.exports = controller;
 
 },{}],3:[function(require,module,exports){
+var controller = Ember.ArrayController.extend({
+  sortProperties: ['-modified'],
+  sortAscending: false,
+
+  actions: {
+    view_task: function(task){
+      this.transitionToRoute('completedTask', task);
+    }
+  },
+});
+
+module.exports = controller;
+
+},{}],4:[function(require,module,exports){
+var controller = Ember.ObjectController.extend();
+
+module.exports = controller;
+
+},{}],5:[function(require,module,exports){
 
 App.ApplicationController = require("./application");
 App.NavigationController = require("./navigation");
 App.TaskController = require("./task");
 App.TasksController = require("./tasks");
+App.CompletedController = require("./completed");
+App.CompletedTaskController = require("./completedTask");
 
 App.IndexController = Ember.Controller.extend({
   needs: ["application"],
@@ -75,7 +97,7 @@ App.IndexController = Ember.Controller.extend({
   }
 });
 
-},{"./application":2,"./navigation":4,"./task":5,"./tasks":6}],4:[function(require,module,exports){
+},{"./application":2,"./completed":3,"./completedTask":4,"./navigation":6,"./task":7,"./tasks":8}],6:[function(require,module,exports){
 var controller = Ember.Controller.extend({
   needs: ["application", "tasks"],
 
@@ -91,32 +113,29 @@ var controller = Ember.Controller.extend({
 
 module.exports = controller;
 
-},{}],5:[function(require,module,exports){
-var controller = Ember.ObjectController.extend();
-
-module.exports = controller;
-
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
+module.exports=require(4)
+},{}],8:[function(require,module,exports){
 var controller = Ember.ArrayController.extend({
   sortProperties: ['urgency'],
   sortAscending: false,
-
-  taskCount: function(){
-    return this.get('model.length');
-  }.property('@each'),
 
   actions: {
     view_task: function(task){
       this.transitionToRoute('task', task);
     }
-  }
+  },
 });
 
 module.exports = controller;
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 
-},{}],8:[function(require,module,exports){
+Ember.Handlebars.registerHelper('comma_to_list', function(item, options){
+  return item.split(',')
+});
+
+},{}],10:[function(require,module,exports){
 window.App = require('./app');
 
 require("./controllers");
@@ -125,12 +144,12 @@ require("./routes");
 require("./views");
 require("./helpers");
 
-},{"./app":1,"./controllers":3,"./helpers":7,"./models":9,"./routes":13,"./views":16}],9:[function(require,module,exports){
+},{"./app":1,"./controllers":5,"./helpers":9,"./models":11,"./routes":17,"./views":22}],11:[function(require,module,exports){
 
 App.User = require("./user.js");
 App.Task = require("./task.js");
 
-},{"./task.js":10,"./user.js":11}],10:[function(require,module,exports){
+},{"./task.js":12,"./user.js":13}],12:[function(require,module,exports){
 var model = DS.Model.extend({
   description: DS.attr('string'),
   due: DS.attr('date'),
@@ -141,12 +160,27 @@ var model = DS.Model.extend({
   start: DS.attr('date'),
   'status': DS.attr('string'),
   urgency: DS.attr('number'),
-  uuid: DS.attr('string')
+  uuid: DS.attr('string'),
+  depends: DS.attr('string'),
+
+  dependent_tickets: function(){
+    var value = this.get('depends');
+    var values = [];
+    if (value) {
+      var ticket_ids = value.split(',');
+      for(var i = 0; i < ticket_ids.length; i++) {
+        values[values.length] = this.store.find('task', ticket_ids[i]);
+      }
+      return values;
+    } else {
+      return [];
+    }
+  }.property('depends')
 });
 
 module.exports = model;
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var model = DS.Model.extend({
   logged_in: DS.attr('boolean'),
   uid: DS.attr('string'),
@@ -156,12 +190,15 @@ var model = DS.Model.extend({
 
 module.exports = model;
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 App.Router.map(function(){
   this.route("login", {path: "/login"});
   this.route("about", {path: "/about"});
   this.resource("tasks", function(){
     this.resource("task", {path: "/:uuid"});
+  });
+  this.resource("completed", function(){
+    this.resource("completedTask", {path: "/:uuid"});
   });
   this.route("unconfigurable", {path: "/no-tasks"});
   this.route("configure", {path: "/configure"});
@@ -171,7 +208,25 @@ App.Router.reopen({
   location: 'history'
 });
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
+var route = Ember.Route.extend({
+  model: function(){
+    return this.store.findQuery('task', {completed: 1, order_by: '-modified'});
+  }
+});
+
+module.exports = route;
+
+},{}],16:[function(require,module,exports){
+var route = Ember.Route.extend({
+  model: function(params) {
+    return this.store.find('task', params.uuid);
+  }
+});
+
+module.exports = route;
+
+},{}],17:[function(require,module,exports){
 
 App.IndexRoute = Ember.Route.extend({
   renderTemplate: function() {
@@ -181,32 +236,45 @@ App.IndexRoute = Ember.Route.extend({
 });
 App.TasksRoute = require("./tasks");
 App.TaskRoute = require("./task");
+App.CompletedRoute = require("./completed");
+App.CompletedTaskRoute = require("./completedTask");
 
-},{"./task":14,"./tasks":15}],14:[function(require,module,exports){
-var route = Ember.Route.extend({
-  model: function(params) {
-    return this.store.find('task', params.uuid);
-  }
-});
-
-module.exports = route;
-
-},{}],15:[function(require,module,exports){
+},{"./completed":15,"./completedTask":16,"./task":18,"./tasks":19}],18:[function(require,module,exports){
+module.exports=require(16)
+},{}],19:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(){
-    return this.store.find('task');
+    return this.store.findQuery('task', {completed: 0});
   }
 });
 
 module.exports = route;
 
-},{}],16:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
+var view = Ember.View.extend({
+  templateName: 'tasks',
+  name: 'completed'
+});
+
+module.exports = view;
+
+},{}],21:[function(require,module,exports){
+var view = Ember.View.extend({
+  templateName: 'task',
+  name: 'completedTask'
+});
+
+module.exports = view;
+
+},{}],22:[function(require,module,exports){
 
 App.NavigationView = require("./navigation");
+App.CompletedView = require("./completed");
+App.CompletedTaskView = require("./completedTask");
 
-},{"./navigation":17}],17:[function(require,module,exports){
+},{"./completed":20,"./completedTask":21,"./navigation":23}],23:[function(require,module,exports){
 var view = Ember.View.extend();
 
 module.exports = view;
 
-},{}]},{},[1,7,8,12])
+},{}]},{},[1,9,10,14])

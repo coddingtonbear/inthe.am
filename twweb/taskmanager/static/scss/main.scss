@@ -101,6 +101,13 @@ a {
   .task-content-header {
     border-bottom: 1px solid #ddd;
   }
+  .depends_tickets {
+    li.pending {
+    }
+    li.completed {
+      text-decoration: line-through;
+    }
+  }
   .controls {
     margin-top: 2em;
     text-align: right;

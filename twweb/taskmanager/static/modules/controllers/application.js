@@ -1,5 +1,6 @@
 var controller = Ember.Controller.extend({
   user: null,
+  pending_count: null,
   urls: {
     logout: '/logout/',
     login: '/login/dropbox/'

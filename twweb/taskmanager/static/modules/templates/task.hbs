@@ -17,6 +17,20 @@
 <div class="task-content-body">
     <table class="pure-table pure-table-horizontal">
         <tbody>
+            {{#if dependent_tickets}}
+                <tr>
+                    <th>Depends Upon</th>
+                    <td>
+                        <ul class="depends_tickets">
+                            {{#each dependent_tickets}}
+                                <li {{bind-attr class="this.status"}}>
+                                    {{#link-to 'task' this}}{{this.description}}{{/link-to}}
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </td>
+                </tr>
+            {{/if}}
             <tr>
                 <th>Description</th>
                 <td>{{description}}</td>

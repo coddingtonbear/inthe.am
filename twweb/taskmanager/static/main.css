@@ -87,6 +87,8 @@ a {
   padding: 1em 2em; }
 .task-content .task-content-header {
   border-bottom: 1px solid #dddddd; }
+.task-content .depends_tickets li.completed {
+  text-decoration: line-through; }
 .task-content .controls {
   margin-top: 2em;
   text-align: right; }

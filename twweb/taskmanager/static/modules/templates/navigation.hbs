@@ -11,7 +11,12 @@
                 <div class="pure-menu pure-menu-open">
                     <ul>
                         <li>
-                            {{#link-to "tasks"}}Pending <span class='task-count'>({{ controllers.tasks.taskCount}})</span>{{/link-to}}
+                            {{#link-to "tasks"}}Pending{{/link-to}}
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            {{#link-to "completed"}}Completed{{/link-to}}
                         </li>
                     </ul>
                 </div>

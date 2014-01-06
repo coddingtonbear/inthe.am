@@ -1,10 +1,10 @@
 var controller = Ember.ArrayController.extend({
-  sortProperties: ['urgency'],
+  sortProperties: ['-modified'],
   sortAscending: false,
 
   actions: {
     view_task: function(task){
-      this.transitionToRoute('task', task);
+      this.transitionToRoute('completedTask', task);
     }
   },
 });
