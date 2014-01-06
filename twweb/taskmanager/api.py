@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import operator
 import pytz
 
@@ -10,6 +11,9 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 from . import models
+
+
+logger = logging.getLogger(__name__)
 
 
 class UserAuthorization(authorization.Authorization):
@@ -104,6 +108,7 @@ class TaskResource(resources.Resource):
     start = fields.DateTimeField(attribute='start', null=True)
     status = fields.CharField(attribute='status')
     urgency = fields.FloatField(attribute='urgency')
+    depends = fields.CharField(attribute='depends', null=True)
 
     def prepend_urls(self):
         return [
@@ -119,7 +124,36 @@ class TaskResource(resources.Resource):
                 ),
                 self.wrap_view('configure')
             ),
+            url(
+                r"^(?P<resource_name>%s)/(?P<uuid>[\w\d_.-]+)/complete/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('complete')
+            ),
+            url(
+                r"^(?P<resource_name>%s)/(?P<uuid>[\w\d_.-]+)/delete/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('delete')
+            )
         ]
+
+    def complete(self, request, uuid, **kwargs):
+        store = models.TaskStore.get_for_user(request.user)
+        print 'Fetching files from dropbox'
+        store.fetch_files_from_dropbox()
+        print 'Marking task as complete'
+        store.client.task_done(uuid=uuid)
+        print 'Uploading changes to dropbpox'
+        store.upload_files_to_dropbox()
+        return HttpResponse(
+            status=200
+        )
+
+    def delete(self, request, uuid, **kwargs):
+        return HttpResponse(
+            status=501
+        )
 
     def autoconfigure(self, request, **kwargs):
         store = models.TaskStore.get_for_user(request.user)
@@ -249,7 +283,7 @@ class TaskResource(resources.Resource):
         filters.update(kwargs)
 
         key = 'pending'
-        if bundle.request.GET.get('completed'):
+        if int(bundle.request.GET.get('completed', 0)):
             key = 'completed'
 
         objects = []
@@ -268,3 +302,5 @@ class TaskResource(resources.Resource):
         authentication = authentication.SessionAuthentication()
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get']
+        limit = 1000
+        max_limit = 1000

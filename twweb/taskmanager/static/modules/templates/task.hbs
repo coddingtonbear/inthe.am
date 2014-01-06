@@ -10,8 +10,10 @@
         {{/if}}
     </div>
     <div class="pure-u-1-2 controls">
-        <button class="pure-button secondary-button">Mark Completed</button>
-        <button class="pure-button secondary-button">Delete</button>
+        {{#if editable}}
+            <button class="pure-button secondary-button" {{action "complete"}}>Mark Completed</button>
+            <button class="pure-button secondary-button" {{action "delete"}}>Delete</button>
+        {{/if}}
     </div>
 </div>
 <div class="task-content-body">

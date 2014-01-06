@@ -1,12 +1,6 @@
 <div class="navbar">
     <div class="pure-u" id="nav">
         {{#if controllers.application.user.name}}
-            <button class="pure-button primary-button" {{action "logout"}}>Log Out</button>
-        {{else}}
-            <button class="pure-button primary-button" {{action "login"}}>Log In with<br/> Dropbox</button>
-        {{/if}}
-
-        {{#if controllers.application.user.name}}
             <div class="nav-inner">
                 <div class="pure-menu pure-menu-open">
                     <ul>
@@ -21,6 +15,9 @@
                     </ul>
                 </div>
             </div>
+            <button class="pure-button primary-button" {{action "logout"}}>Log Out</button>
+        {{else}}
+            <button class="pure-button primary-button" {{action "login"}}>Log In with<br/> Dropbox</button>
         {{/if}}
     </div>
 </div>

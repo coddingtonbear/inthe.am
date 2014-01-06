@@ -107,14 +107,50 @@ var controller = Ember.Controller.extend({
     },
     'login': function(){
       window.location.href=this.get('controllers.application').urls.login;
-    }
+    },
   }
 });
 
 module.exports = controller;
 
 },{}],7:[function(require,module,exports){
-module.exports=require(4)
+var controller = Ember.ObjectController.extend({
+  actions: {
+    'complete': function(){
+      var url = this.store.adapterFor('task').buildURL('task', this.get('uuid')) + 'complete/';
+      var self = this;
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        statusCode: {
+          200: function(){
+            self.get('model').unloadRecord();
+            self.transitionToRoute('tasks');
+          },
+        }
+      });
+    },
+    'delete': function(){
+      var url = this.store.adapterFor('task').buildURL('task', this.get('uuid')) + 'delete/';
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        statusCode: {
+          200: function(){
+            self.get('model').unloadRecord();
+            self.transitionToRoute('tasks');
+          },
+          501: function(){
+            alert("Deleting tasks is currently unimplemented");
+          }
+        }
+      });
+    }
+  }
+});
+
+module.exports = controller;
+
 },{}],8:[function(require,module,exports){
 var controller = Ember.ArrayController.extend({
   sortProperties: ['urgency'],
@@ -162,6 +198,21 @@ var model = DS.Model.extend({
   urgency: DS.attr('number'),
   uuid: DS.attr('string'),
   depends: DS.attr('string'),
+
+  editable: function(){
+    if (this.get('status') == 'pending') {
+      return true;
+    }
+    return false;
+  }.property('status'),
+
+  icon: function(){
+    if (this.get('status') == 'completed') {
+      return 'fa-check-square-o';
+    } else {
+      return 'fa-square-o';
+    }
+  }.property('status', 'urgency'),
 
   dependent_tickets: function(){
     var value = this.get('depends');

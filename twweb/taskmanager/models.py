@@ -207,21 +207,24 @@ class TaskStore(models.Model):
         metadata = self.metadata
 
         files_changed = self.find_changed_files_locally()
+        print files_changed
 
         for filename in files_changed:
             local_path = os.path.join(self.local_path, filename)
             remote_path = os.path.join(self.dropbox_path, filename)
 
-            with open(local_path, 'r') as input_file:
+            with open(local_path, 'rb') as input_file:
                 local_hash = hashlib.md5(input_file.read()).hexdigest()
+                print '%s --> Dropbox' % local_path
                 logger.info(
-                    '%s-->Dropbox'
+                    '%s-->Dropbox' % local_path
                 )
                 new_meta = self.dropbox.put_file(
                     remote_path,
                     input_file,
                     overwrite=True,
                 )
+                print new_meta
                 new_meta['md5'] = local_hash
                 metadata['files'][filename] = new_meta
 

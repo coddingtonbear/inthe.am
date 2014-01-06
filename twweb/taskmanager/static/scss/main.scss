@@ -85,9 +85,17 @@ a {
   border-bottom: 1px solid #ddd;
   border-left: 6px solid transparent;
 
+  i.task-icon {
+    font-size: 60px;
+    width: 55px;
+    margin-right: 5px;
+  }
+  .completed .task-icon {
+  }
   .status {
     text-transform: uppercase;
     color: 999;
+    margin: 0;
   }
   .description {
     margin: 0;

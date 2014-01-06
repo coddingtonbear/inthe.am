@@ -1,6 +1,9 @@
 <div class="pure-u-1" id="list">
     {{#each task in controller}}
-        <div class="task task-selected pure-g" {{action "view_task" task }}>
+        <div class="task pure-g" {{action "view_task" task }}>
+            <div {{bind-attr class=":pure-u task.status"}}>
+                <i {{bind-attr class=":task-icon :fa task.icon"}}></i>
+            </div>
             <div class="pure-u-3-4">
                 <h5 class="status">{{task.status}}</h5>
                 <p class="description">{{task.description}}</p>

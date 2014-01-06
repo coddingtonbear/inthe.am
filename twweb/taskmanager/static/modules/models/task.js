@@ -11,6 +11,21 @@ var model = DS.Model.extend({
   uuid: DS.attr('string'),
   depends: DS.attr('string'),
 
+  editable: function(){
+    if (this.get('status') == 'pending') {
+      return true;
+    }
+    return false;
+  }.property('status'),
+
+  icon: function(){
+    if (this.get('status') == 'completed') {
+      return 'fa-check-square-o';
+    } else {
+      return 'fa-square-o';
+    }
+  }.property('status', 'urgency'),
+
   dependent_tickets: function(){
     var value = this.get('depends');
     var values = [];

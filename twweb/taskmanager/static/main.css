@@ -77,9 +77,14 @@ a {
   padding: 0.9em 1em;
   border-bottom: 1px solid #dddddd;
   border-left: 6px solid transparent; }
+  .task i.task-icon {
+    font-size: 60px;
+    width: 55px;
+    margin-right: 5px; }
   .task .status {
     text-transform: uppercase;
-    color: 999; }
+    color: 999;
+    margin: 0; }
   .task .description {
     margin: 0; }
 
