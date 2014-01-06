@@ -1,0 +1,164 @@
+body {
+  color: #333;
+}
+a {
+  text-decoration: none;
+  color: #1b98f8;
+}
+/* LAYOUT CSS */
+#layout {
+  padding-left:500px; /* "left col (nav + list)" width */
+  position: relative;
+}
+
+#nav, #list {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  overflow: auto;
+}
+#nav {
+  margin-left:-500px; /* "left col (nav + list)" width */
+  width:150px;
+  background: rgb(37, 42, 58);
+  text-align: center;
+  padding: 2em 0;
+}
+
+#list {
+  margin-left: -350px;
+  width:350px;
+  border-right: 1px solid #ddd;
+}
+
+/* HELPER CLASSES */
+.primary-button,
+.secondary-button {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.primary-button {
+  color: #fff;
+  background: #1b98f8;
+  margin: 1em 0;
+}
+.secondary-button {
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #666;
+  padding: 0.5em 2em;
+  font-size: 80%;
+}
+
+.task-count {
+  color: rgb(75, 113, 151);
+}
+
+/* Vertical Navigation Styles */
+#nav .pure-menu {
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+#nav .pure-menu a:hover,
+#nav .pure-menu a:focus {
+  background: rgb(55, 60, 90);
+}
+#nav .pure-menu a {
+  color: #fff;
+  margin-left: 0.5em;
+}
+#nav .pure-menu-heading {
+  border-bottom: none;
+  font-size:110%;
+  color: rgb(75, 113, 151);
+}
+
+#nav .nav-menu-button {
+  display: none;
+}
+
+.task {
+  cursor: pointer;
+  padding: 0.9em 1em;
+  border-bottom: 1px solid #ddd;
+  border-left: 6px solid transparent;
+
+  .status {
+    text-transform: uppercase;
+    color: 999;
+  }
+  .description {
+    margin: 0;
+  }
+}
+
+.task-content {
+  .task-content-body, .task-content-header, .task-content-footer {
+    padding: 1em 2em;
+  }
+  .task-content-header {
+    border-bottom: 1px solid #ddd;
+  }
+  .controls {
+    margin-top: 2em;
+    text-align: right;
+    
+    .secondary-button {
+      margin-bottom: 0.3em;
+    }
+  }
+}
+
+@media (max-width: 867px) {
+  #list,
+  #main {
+    width: 100%;
+  }
+  #layout {
+    padding-left: -150px;
+  }
+  #list {
+    height: 33%;
+    border-right: 0;
+    border-bottom: 1px solid #ddd;
+  }
+  #main {
+    position: fixed;
+    top: 33%;
+    right: 0;
+    bottom: 0;
+    left: 150px;
+    overflow: auto;
+    width: auto; /* so that it's not 100% */
+  }
+}
+
+@media (max-width: 480px) {
+  #layout, #nav, #list, #main {
+    position: static;
+    margin: 0;
+    padding: 0;
+  }
+  #nav {
+    width: 100%;
+    height: 40px;
+    position: relative;
+  }
+  #nav .nav-menu-button {
+    display: block;
+    top: 0.5em;
+    right: 0.5em;
+    position: absolute;
+  }
+  #nav.active {
+    height: 80%;
+  }
+  .nav-inner {
+    display: none;
+  }
+  #nav.active .nav-inner {
+    display: block;
+  }
+}

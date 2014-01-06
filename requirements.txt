@@ -4,3 +4,4 @@ django==1.6.1
 python-social-auth=0.1.17
 south==0.8.4
 django-tastypie==0.11.0
+pytz>=2013.9

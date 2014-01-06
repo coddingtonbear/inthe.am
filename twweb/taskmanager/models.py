@@ -30,17 +30,21 @@ class TaskStore(models.Model):
         path=settings.TASK_STORAGE_PATH,
         allow_files=False,
         allow_folders=True,
+        blank=True,
     )
     dropbox_path = models.CharField(
         max_length=255,
+        blank=True,
     )
+    configured = models.BooleanField(default=False)
     dirty = models.BooleanField(default=False)
 
-    @property
-    def is_configured(self):
-        if self.local_path:
-            return True
-        return False
+    @classmethod
+    def get_for_user(self, user):
+        store, created = TaskStore.objects.get_or_create(
+            user=user,
+        )
+        return store
 
     @property
     def client(self):
@@ -117,6 +121,7 @@ class TaskStore(models.Model):
 
     def configure_dropbox(self, path):
         self.dropbox_path = path
+        self.configured = True
         user_tasks = os.path.join(
             settings.TASK_STORAGE_PATH,
             self.user.username

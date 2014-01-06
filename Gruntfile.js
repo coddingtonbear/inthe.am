@@ -29,7 +29,22 @@ module.exports = function(grunt){
         }
       }
     },
+    sass: {
+      dist: {
+        files: {
+          'twweb/taskmanager/static/main.css': 'twweb/taskmanager/static/scss/main.scss'
+        }
+      }
+    },
     watch: {
+      sass: {
+        files: [
+          'twweb/taskmanager/static/scss/*.scss',
+        ],
+        tasks: [
+          'sass'
+        ]
+      },
       jscript: {
         files: [
           'twweb/taskmanager/static/modules/**/*.js',
@@ -51,7 +66,7 @@ module.exports = function(grunt){
 
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-browserify');
-  //grunt.loadNpmTasks('grunt-ember-templates');
   grunt.loadNpmTasks('grunt-ember-handlebars');
+  grunt.loadNpmTasks('grunt-sass');
 
 };

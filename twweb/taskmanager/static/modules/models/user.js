@@ -5,4 +5,4 @@ var model = DS.Model.extend({
   dropbox_configured: DS.attr('boolean'),
 });
 
-module.Exports = model;
+module.exports = model;

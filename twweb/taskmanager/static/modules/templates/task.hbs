@@ -1,0 +1,58 @@
+<div class="task-content-header pure-g">
+    <div class="pure-u-1-2">
+        <h1 class="title">
+            {{description}}
+        </h1>
+        {{#if due}}
+            <p class="subtitle">
+                Due {{due}}
+            </p>
+        {{/if}}
+    </div>
+    <div class="pure-u-1-2 controls">
+        <button class="pure-button secondary-button">Mark Completed</button>
+        <button class="pure-button secondary-button">Delete</button>
+    </div>
+</div>
+<div class="task-content-body">
+    <table class="pure-table pure-table-horizontal">
+        <tbody>
+            <tr>
+                <th>Description</th>
+                <td>{{description}}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{status}}</td>
+            </tr>
+            <tr>
+                <th>Urgency</th>
+                <td>{{urgency}}</td>
+            </tr>
+            <tr>
+                <th>Due</th>
+                <td>{{due}}</td>
+            </tr>
+            <tr>
+                <th>Priority</th>
+                <td>{{priority}}</td>
+            </tr>
+            <tr>
+                <th>Entered</th>
+                <td>{{entry}}</td>
+            </tr>
+            <tr>
+                <th>Started</th>
+                <td>{{start}}</td>
+            </tr>
+            <tr>
+                <th>Modified</th>
+                <td>{{modified}}</td>
+            </tr>
+            <tr>
+                <th>UUID</th>
+                <td>{{uuid}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

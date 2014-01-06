@@ -5,3 +5,5 @@ App.IndexRoute = Ember.Route.extend({
     this.render('navigation', {outlet: 'navigation'});
   }
 });
+App.TasksRoute = require("./tasks");
+App.TaskRoute = require("./task");
