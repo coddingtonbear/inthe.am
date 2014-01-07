@@ -5,17 +5,12 @@ env.hosts = [
     'acodding@eugene.adamcoddington.net:22424',
 ]
 
-def update_bookmarks_and_tag():
-    with settings(warn_only=True):
-        local('git checkout prod')
-        local('git checkout master')
-
 def virtualenv(command):
     run('source /var/www/envs/twweb/bin/activate && ' + command)
 
 @task
 def deploy():
-    update_bookmarks_and_tag()
+    local('git push origin master')
     with cd('/var/www/twweb'):
         with settings(warn_only=True):
             sudo('mkdir logs')
@@ -24,7 +19,6 @@ def deploy():
             sudo('mkdir email')
             sudo('chmod -R 777 email')
         run('git pull')
-        run('git checkout prod')
         virtualenv('pip install -r /var/www/twweb/requirements.txt')
         virtualenv('python manage.py collectstatic --noinput')
         virtualenv('python manage.py migrate')
