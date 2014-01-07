@@ -127,7 +127,7 @@ LOGGING = {
         'exception_log': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(ROOT_DIR, '../logs/twweb.error.log'),
+            'filename': os.path.join(BASE_DIR, '../logs/twweb.error.log'),
             'maxBytes': 1048576,
             'backupCount': 5,
             'formatter': 'verbose',
@@ -135,7 +135,7 @@ LOGGING = {
         'store': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(ROOT_DIR, '../logs/twweb.log'),
+            'filename': os.path.join(BASE_DIR, '../logs/twweb.log'),
             'maxBytes': 1048576,
             'backupCount': 5,
             'formatter': 'verbose',
