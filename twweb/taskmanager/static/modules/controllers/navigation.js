@@ -7,7 +7,7 @@ var controller = Ember.Controller.extend({
     },
     'login': function(){
       window.location.href=this.get('controllers.application').urls.login;
-    },
+    }
   }
 });
 
