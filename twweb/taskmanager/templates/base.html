@@ -1,9 +1,9 @@
 <!DOCTYPE html>{% load staticfiles %}
 <html>
   <head>
-    <link href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css" rel="stylesheet" media="screen">
+    <link href="{% static "pure-min.css" %}" rel="stylesheet" media="screen">
     <link href="{% static "main.css" %}" rel="stylesheet" media="screen" />
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="{% static "font-awesome.css" %}" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block head_scripts %}{% endblock %}
   </head>
