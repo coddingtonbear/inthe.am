@@ -96,6 +96,8 @@ LOGIN_REDIRECT_URL = '/'
 
 TASK_STORAGE_PATH = os.path.join(BASE_DIR, 'task_data')
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 # Sourced from environment:
 #  SOCIAL_AUTH_DROPBOX_OAUTH2_KEY
 #  SOCIAL_AUTH_DROPBOX_OAUTH2_SECRET
