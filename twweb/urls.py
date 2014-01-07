@@ -12,7 +12,8 @@ def is_secure(request):
     return HttpResponse(
         json.dumps(
             {
-                'is_secure': request.is_secure()
+                'is_secure': request.is_secure(),
+                'meta': request.META,
             }
         ),
         content_type='application/x-json'
