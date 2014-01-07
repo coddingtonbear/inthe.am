@@ -22,15 +22,15 @@ Proposition 1
 Tasks
 _____
 
-- [ ] Implement solution for finding ones task file(s) in a dropbox account.
+- [X] Implement solution for finding ones task file(s) in a dropbox account.
 
-  - [ ] Dropbox OAuth Dance
+  - [X] Dropbox OAuth Dance
   - [X] Using Access token, find all directories containing task files.
   - [X] Implement caching and storage managment:
 
     - [X] Only re-download if dropbox revision ID has changed.
 
-- [ ] Implement UI (or borrow from `taskweb <https://github.com/campbellr/taskweb>`__).
+- [X] Implement UI (or borrow from `taskweb <https://github.com/campbellr/taskweb>`__).
 - [ ] Implement Twilio integration
     - [ ] via SMS, run arbitrary ``tasks`` commands.
 
