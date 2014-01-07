@@ -2,3 +2,5 @@
 db.sqlite3
 node_modules/
 task_data/
+logs/
+static/
