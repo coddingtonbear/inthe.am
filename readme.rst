@@ -30,6 +30,9 @@ _____
 
     - [X] Only re-download if dropbox revision ID has changed.
 
+  - [ ] Adding new tasks.
+  - [X] Marking tasks as completed.
+
 - [X] Implement UI (or borrow from `taskweb <https://github.com/campbellr/taskweb>`__).
 - [ ] Implement Twilio integration
     - [ ] via SMS, run arbitrary ``tasks`` commands.
