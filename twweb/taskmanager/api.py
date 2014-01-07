@@ -1,4 +1,5 @@
 import datetime
+from functools import wraps
 import json
 import logging
 import operator
@@ -8,12 +9,45 @@ from tastypie import authentication, authorization, bundle, fields, resources
 
 from django.conf.urls import url
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 
 from . import models
 
 
 logger = logging.getLogger(__name__)
+
+
+def dropbox_reader(f):
+    @wraps(f)
+    def wrapper(self, *args, **kwargs):
+        try:
+            # Normal Views
+            user = args[0].user
+        except IndexError:
+            # Tastypie Views
+            user = kwargs['bundle'].request.user
+        store = models.TaskStore.get_for_user(user)
+        store.download_files_from_dropbox()
+        kwargs['store'] = store
+        return f(self, *args, **kwargs)
+    return wrapper
+
+
+def dropbox_writer(f):
+    def wrapper(self, *args, **kwargs):
+        try:
+            # Normal Views
+            user = args[0].user
+        except IndexError:
+            # Tastypie Views
+            user = kwargs['bundle'].request.user
+        store = models.TaskStore.get_for_user(user)
+        store.download_files_from_dropbox()
+        kwargs['store'] = store
+        result = f(self, *args, **kwargs)
+        store.upload_files_to_dropbox()
+        return result
+    return wrapper
 
 
 class UserAuthorization(authorization.Authorization):
@@ -138,11 +172,9 @@ class TaskResource(resources.Resource):
             )
         ]
 
-    def complete(self, request, uuid, **kwargs):
-        store = models.TaskStore.get_for_user(request.user)
-        store.download_files_from_dropbox()
+    @dropbox_writer
+    def complete(self, request, uuid, store, **kwargs):
         store.client.task_done(uuid=uuid)
-        store.upload_files_to_dropbox()
         return HttpResponse(
             status=200
         )
@@ -270,11 +302,8 @@ class TaskResource(resources.Resource):
 
         return obj_list
 
-    def obj_get_list(self, bundle, **kwargs):
-        store = self._get_store(bundle.request.user)
-        # Make sure we're up-to-date
-        store.download_files_from_dropbox()
-
+    @dropbox_reader
+    def obj_get_list(self, bundle, store, **kwargs):
         if hasattr(bundle.request, 'GET'):
             filters = bundle.request.GET.copy()
         filters.update(kwargs)
@@ -291,8 +320,8 @@ class TaskResource(resources.Resource):
 
         return objects
 
-    def obj_get(self, bundle, **kwargs):
-        store = self._get_store(bundle.request.user)
+    @dropbox_reader
+    def obj_get(self, bundle, store, **kwargs):
         return Task(store.client.get_task(uuid=kwargs['pk'])[1])
 
     class Meta:
