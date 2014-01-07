@@ -52,7 +52,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'social.backends.dropbox.DropboxOAuth',
+    'social.backends.dropbox.DropboxOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -97,8 +97,8 @@ LOGIN_REDIRECT_URL = '/'
 TASK_STORAGE_PATH = os.path.join(BASE_DIR, 'task_data')
 
 # Sourced from environment:
-#  SOCIAL_AUTH_DROPBOX_KEY
-#  SOCIAL_AUTH_DROPBOX_SECRET
+#  SOCIAL_AUTH_DROPBOX_OAUTH2_KEY
+#  SOCIAL_AUTH_DROPBOX_OAUTH2_SECRET
 this_module = sys.modules[__name__]
 for key, value in os.environ.items():
     if key.startswith(ENVIRONMENT_SETTING_PREFIX):

@@ -140,11 +140,8 @@ class TaskResource(resources.Resource):
 
     def complete(self, request, uuid, **kwargs):
         store = models.TaskStore.get_for_user(request.user)
-        print 'Fetching files from dropbox'
-        store.fetch_files_from_dropbox()
-        print 'Marking task as complete'
+        store.download_files_from_dropbox()
         store.client.task_done(uuid=uuid)
-        print 'Uploading changes to dropbpox'
         store.upload_files_to_dropbox()
         return HttpResponse(
             status=200
@@ -276,7 +273,7 @@ class TaskResource(resources.Resource):
     def obj_get_list(self, bundle, **kwargs):
         store = self._get_store(bundle.request.user)
         # Make sure we're up-to-date
-        store.fetch_files_from_dropbox()
+        store.download_files_from_dropbox()
 
         if hasattr(bundle.request, 'GET'):
             filters = bundle.request.GET.copy()

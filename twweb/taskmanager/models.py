@@ -57,18 +57,11 @@ class TaskStore(models.Model):
     @property
     def dropbox(self):
         if not getattr(self, '_dropbox', None):
-            db_info = self.user.social_auth.get(provider='dropbox').extra_data
-            session = dropbox.session.DropboxSession(
-                settings.SOCIAL_AUTH_DROPBOX_KEY,
-                settings.SOCIAL_AUTH_DROPBOX_SECRET,
-            )
-            session.set_token(
-                db_info['access_token']['oauth_token'],
-                db_info['access_token']['oauth_token_secret'],
-            )
+            usa = self.user.social_auth.get(provider='dropbox-oauth2')
             self._dropbox = dropbox.client.DropboxClient(
-                session
+                usa.extra_data['access_token']
             )
+            self._dropbox.session.root = 'dropbox'
         return self._dropbox
 
     @property
@@ -142,7 +135,7 @@ class TaskStore(models.Model):
 
         self.save()
 
-        self.fetch_files_from_dropbox()
+        self.download_files_from_dropbox()
 
     def find_changed_files_in_dropbox(self):
         needs_update = []
@@ -179,7 +172,7 @@ class TaskStore(models.Model):
 
         return needs_update
 
-    def fetch_files_from_dropbox(self):
+    def download_files_from_dropbox(self):
         files_changed = self.find_changed_files_in_dropbox()
         metadata = self.metadata
         changed = []
@@ -191,14 +184,13 @@ class TaskStore(models.Model):
             logger.info(
                 'Dropbox-->%s' % filename
             )
-            with dropbox_file:
-                with open(os.path.join(self.local_path, filename), 'w') as out:
-                    contents = dropbox_file.read()
-                    out.write(contents)
-                    file_meta['md5'] = hashlib.md5(contents).hexdigest()
-                    changed.append(
-                        filename
-                    )
+            with open(os.path.join(self.local_path, filename), 'w') as out:
+                contents = dropbox_file.read()
+                out.write(contents)
+                file_meta['md5'] = hashlib.md5(contents).hexdigest()
+                changed.append(
+                    filename
+                )
             metadata['files'][filename] = file_meta
         self.metadata = metadata
         return changed
@@ -207,24 +199,26 @@ class TaskStore(models.Model):
         metadata = self.metadata
 
         files_changed = self.find_changed_files_locally()
-        print files_changed
 
         for filename in files_changed:
             local_path = os.path.join(self.local_path, filename)
-            remote_path = os.path.join(self.dropbox_path, filename)
+            remote_path = os.path.join(
+                '/dropbox',
+                self.dropbox_path,
+                filename
+            )
 
             with open(local_path, 'rb') as input_file:
                 local_hash = hashlib.md5(input_file.read()).hexdigest()
-                print '%s --> Dropbox' % local_path
                 logger.info(
                     '%s-->Dropbox' % local_path
                 )
+                input_file.seek(0)
                 new_meta = self.dropbox.put_file(
                     remote_path,
                     input_file,
                     overwrite=True,
                 )
-                print new_meta
                 new_meta['md5'] = local_hash
                 metadata['files'][filename] = new_meta
 

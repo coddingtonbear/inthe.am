@@ -3,7 +3,7 @@ var controller = Ember.Controller.extend({
   pending_count: null,
   urls: {
     logout: '/logout/',
-    login: '/login/dropbox/'
+    login: '/login/dropbox-oauth2/'
   },
   init: function(){
     this.set(
