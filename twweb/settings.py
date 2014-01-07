@@ -99,6 +99,72 @@ TASK_STORAGE_PATH = os.path.join(BASE_DIR, 'task_data')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'null': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler',
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        },
+        'exception_log': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(ROOT_DIR, '../logs/twweb.error.log'),
+            'maxBytes': 1048576,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'store': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(ROOT_DIR, '../logs/twweb.log'),
+            'maxBytes': 1048576,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        }
+    },
+    'loggers': {
+        'root': {
+            'handlers': ['exception_log'],
+            'propagate': True,
+            'level': 'ERROR',
+        },
+        'django': {
+            'handlers':['null'],
+            'propagate': True,
+            'level':'INFO',
+        },
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'gunicorn': {
+            'handlers': ['null'],
+            'level': 'INFO',
+            'propagate': True,
+        }
+    }
+}
+
 # Sourced from environment:
 #  SOCIAL_AUTH_DROPBOX_OAUTH2_KEY
 #  SOCIAL_AUTH_DROPBOX_OAUTH2_SECRET
