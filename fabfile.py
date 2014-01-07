@@ -12,12 +12,6 @@ def virtualenv(command):
 def deploy():
     local('git push origin master')
     with cd('/var/www/twweb'):
-        with settings(warn_only=True):
-            sudo('mkdir logs')
-            sudo('chmod -R 777 logs')
-        with settings(warn_only=True):
-            sudo('mkdir email')
-            sudo('chmod -R 777 email')
         run('git pull')
         virtualenv('pip install -r /var/www/twweb/requirements.txt')
         virtualenv('python manage.py collectstatic --noinput')
