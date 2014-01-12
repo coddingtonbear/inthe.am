@@ -4,8 +4,8 @@ module.exports = function(grunt){
     browserify: {
       dist: {
         files: {
-          'twweb/taskmanager/static/task_manager.js': [
-              'twweb/taskmanager/static/modules/*.js'
+          'inthe_am/taskmanager/static/task_manager.js': [
+              'inthe_am/taskmanager/static/modules/*.js'
           ]
         },
         options: {
@@ -23,8 +23,8 @@ module.exports = function(grunt){
           }
         },
         files: {
-          'twweb/taskmanager/static/templates.js': [
-            'twweb/taskmanager/static/modules/templates/*.hbs'
+          'inthe_am/taskmanager/static/templates.js': [
+            'inthe_am/taskmanager/static/modules/templates/*.hbs'
           ]
         }
       }
@@ -32,14 +32,14 @@ module.exports = function(grunt){
     sass: {
       dist: {
         files: {
-          'twweb/taskmanager/static/main.css': 'twweb/taskmanager/static/scss/main.scss'
+          'inthe_am/taskmanager/static/main.css': 'inthe_am/taskmanager/static/scss/main.scss'
         }
       }
     },
     watch: {
       sass: {
         files: [
-          'twweb/taskmanager/static/scss/*.scss',
+          'inthe_am/taskmanager/static/scss/*.scss',
         ],
         tasks: [
           'sass'
@@ -47,7 +47,7 @@ module.exports = function(grunt){
       },
       jscript: {
         files: [
-          'twweb/taskmanager/static/modules/**/*.js',
+          'inthe_am/taskmanager/static/modules/**/*.js',
         ],
         tasks: [
           'browserify'
@@ -55,7 +55,7 @@ module.exports = function(grunt){
       },
       handlebars: {
         files: [
-          'twweb/taskmanager/static/modules/**/*.hbs'
+          'inthe_am/taskmanager/static/modules/**/*.hbs'
         ],
         tasks: [
           'ember_handlebars',

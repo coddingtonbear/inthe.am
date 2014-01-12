@@ -17,5 +17,5 @@ urlpatterns = patterns('',
     #url(r'^accounts/', include('django.contrib.auth.urls')),
     url('^logout/', logout_and_redirect, name='logout'),
     url('', include('social.apps.django_app.urls', namespace='social')),
-    url('', include('twweb.taskmanager.urls')),
+    url('', include('inthe_am.taskmanager.urls')),
 ) + staticfiles_urlpatterns()

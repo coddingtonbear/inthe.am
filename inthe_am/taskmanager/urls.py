@@ -9,7 +9,7 @@ api.register(UserResource())
 api.register(TaskResource())
 
 
-urlpatterns = patterns('twweb.taskmanager.views',
+urlpatterns = patterns('inthe_am.taskmanager.views',
     url('^api/', include(api.urls)),
     url('^', 'home', name='home'),
 )

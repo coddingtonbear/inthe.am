@@ -1,5 +1,5 @@
 """
-Django settings for twweb project.
+Django settings for inthe.am project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -39,7 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'social.apps.django_app.default',
     'gunicorn',
-    'twweb.taskmanager',
+    'inthe_am.taskmanager',
     'south',
 )
 
@@ -57,9 +57,9 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-ROOT_URLCONF = 'twweb.urls'
+ROOT_URLCONF = 'inthe_am.urls'
 
-WSGI_APPLICATION = 'twweb.wsgi.application'
+WSGI_APPLICATION = 'inthe_am.wsgi.application'
 
 
 # Database
