@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
     'gunicorn',
     'inthe_am.taskmanager',
+    'django_mailbox',
     'south',
 )
 
