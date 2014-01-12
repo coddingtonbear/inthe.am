@@ -171,6 +171,12 @@ SECURE_PROXY_SSL_HEADER=('HTTP_X_FORWARDED_PROTOCOL', 'https')
 # Sourced from environment:
 #  SOCIAL_AUTH_DROPBOX_OAUTH2_KEY
 #  SOCIAL_AUTH_DROPBOX_OAUTH2_SECRET
+#  TASKD_BINARY
+#  TASKD_HOST
+#  TASKD_PORT
+#  TASKD_PRIVATE_KEY
+#  TASKD_CERTIFICATE
+#  TASK_BINARY
 this_module = sys.modules[__name__]
 for key, value in os.environ.items():
     if key.startswith(ENVIRONMENT_SETTING_PREFIX):

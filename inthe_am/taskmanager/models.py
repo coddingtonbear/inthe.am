@@ -3,6 +3,7 @@ import hashlib
 import json
 import logging
 import os
+import subprocess
 import uuid
 
 import dropbox
@@ -32,6 +33,18 @@ class TaskStore(models.Model):
         allow_folders=True,
         blank=True,
     )
+    certificate_path = models.FilePathField(
+        path=settings.TASK_STORAGE_PATH,
+        allow_files=False,
+        allow_folders=True,
+        blank=True,
+    )
+    key_path = models.FilePathField(
+        path=settings.TASK_STORAGE_PATH,
+        allow_files=False,
+        allow_folders=True,
+        blank=True,
+    )
     dropbox_path = models.CharField(
         max_length=255,
         blank=True,
@@ -53,6 +66,55 @@ class TaskStore(models.Model):
                 self.metadata['taskrc']
             )
         return self._client
+
+    def __unicode__(self):
+        return 'Tasks for %s' % self.user
+
+    #  Taskd-related methods
+
+    def sync(self):
+        self.client.sync()
+
+    def autoconfigure_taskd(self):
+        private_key_proc = subprocess.Popen(
+            [
+                'certtool',
+                '--generate-privkey',
+            ],
+            stdout=subprocess.PIPE
+        )
+        private_key = private_key_proc.communicate()[0]
+        private_key_filename = os.path.join(
+            self.local_path,
+            'private.key.pem',
+        )
+        with open(private_key_filename, 'w') as out:
+            out.write(private_key)
+        self.key_path = private_key_filename
+
+        cert_proc = subprocess.Popen(
+            [
+                'certtool',
+                '--generate-certificate',
+                '--load-privkey',
+                self.key_path,
+                '--load-ca-privkey',
+                settings.TASKD_PRIVATE_KEY,
+                '--load-ca-certificate',
+                settings.TASKD_CERTIFICATE,
+            ],
+            stdout=subprocess.PIPE
+        )
+        cert = cert_proc.communicate()[0]
+        cert_filename = os.path.join(
+            self.local_path,
+            'private.crt.pem',
+        )
+        with open(cert_filename, 'w') as out:
+            out.write(cert)
+        self.key_path = cert_filename
+
+    #  Dropbox-related methods
 
     @property
     def dropbox(self):
@@ -223,6 +285,3 @@ class TaskStore(models.Model):
                 metadata['files'][filename] = new_meta
 
         self.metadata = metadata
-
-    def __unicode__(self):
-        return 'Tasks for %s' % self.user
