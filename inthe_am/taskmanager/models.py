@@ -110,6 +110,14 @@ class TaskStore(models.Model):
 
     def autoconfigure_taskd(self):
         self.configured = True
+
+        server_config = TaskRc(
+            os.path.join(
+                settings.TASKD_DATA,
+                'config'
+            )
+        )
+
         user_tasks = os.path.join(
             settings.TASK_STORAGE_PATH,
             self.user.username
@@ -160,9 +168,9 @@ class TaskStore(models.Model):
                 '--load-privkey',
                 self.key_path,
                 '--load-ca-privkey',
-                settings.TASKD_PRIVATE_KEY,
+                server_config['ca.key'],
                 '--load-ca-certificate',
-                settings.TASKD_CERTIFICATE,
+                server_config['ca.cert'],
                 '--template',
                 settings.TASKD_SIGNING_TEMPLATE,
             ],
