@@ -263,7 +263,9 @@ class TaskStore(models.Model):
             file_metadata = self.dropbox.metadata(
                 os.path.join(self.dropbox_path, filename)
             )
-            local_version = self.metadata['files'].get(filename, {}).get('revision', -1)
+            local_version = (
+                self.metadata['files'].get(filename, {}).get('revision', -1)
+            )
             remote_version = file_metadata['revision']
 
             if local_version != remote_version:
@@ -342,7 +344,10 @@ class TaskStore(models.Model):
 class TaskRc(object):
     def __init__(self, path):
         self.path = path
-        self.config = self._read(self.path)
+        if not os.path.isfile(self.path):
+            self.config = {}
+        else:
+            self.config = self._read(self.path)
 
     def _read(self, path):
         out = {}
