@@ -111,6 +111,12 @@ class TaskStore(models.Model):
     def autoconfigure_taskd(self):
         self.configured = True
 
+        for attr in ('_taskrc', '_client', ):
+            try:
+                delattr(self, attr)
+            except AttributeError:
+                pass
+
         server_config = TaskRc(
             os.path.join(
                 settings.TASKD_DATA,
