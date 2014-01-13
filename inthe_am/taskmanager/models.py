@@ -169,6 +169,8 @@ class TaskStore(models.Model):
                 settings.TASKD_PRIVATE_KEY,
                 '--load-ca-certificate',
                 settings.TASKD_CERTIFICATE,
+                '--template',
+                settings.TASKD_SIGNING_TEMPLATE,
             ],
             stdout=subprocess.PIPE
         )
@@ -194,6 +196,8 @@ class TaskStore(models.Model):
                 )
             )
         })
+
+        self.save()
 
     #  Dropbox-related methods
 

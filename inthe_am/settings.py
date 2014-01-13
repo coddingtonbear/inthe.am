@@ -177,6 +177,7 @@ SECURE_PROXY_SSL_HEADER=('HTTP_X_FORWARDED_PROTOCOL', 'https')
 #  TASKD_DATA
 #  TASKD_PRIVATE_KEY
 #  TASKD_CERTIFICATE
+#  TASKD_SIGNING_TEMPLATE
 #  TASK_BINARY
 this_module = sys.modules[__name__]
 for key, value in os.environ.items():
