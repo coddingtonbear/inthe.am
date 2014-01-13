@@ -370,7 +370,7 @@ class TaskRc(object):
             )
             for key, value in data.items():
                 config.write(
-                    "%k=%v\n" % (
+                    "%s=%s\n" % (
                         key,
                         value
                     )
