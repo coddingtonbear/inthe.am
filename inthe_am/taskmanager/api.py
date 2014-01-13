@@ -9,7 +9,7 @@ from tastypie import authentication, authorization, bundle, fields, resources
 
 from django.conf.urls import url
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse
 
 from . import models
 
@@ -17,7 +17,7 @@ from . import models
 logger = logging.getLogger(__name__)
 
 
-def dropbox_reader(f):
+def requires_taskd_sync(f):
     @wraps(f)
     def wrapper(self, *args, **kwargs):
         try:
@@ -27,26 +27,10 @@ def dropbox_reader(f):
             # Tastypie Views
             user = kwargs['bundle'].request.user
         store = models.TaskStore.get_for_user(user)
-        store.download_files_from_dropbox()
+        store.sync()
         kwargs['store'] = store
+        store.sync()
         return f(self, *args, **kwargs)
-    return wrapper
-
-
-def dropbox_writer(f):
-    def wrapper(self, *args, **kwargs):
-        try:
-            # Normal Views
-            user = args[0].user
-        except IndexError:
-            # Tastypie Views
-            user = kwargs['bundle'].request.user
-        store = models.TaskStore.get_for_user(user)
-        store.download_files_from_dropbox()
-        kwargs['store'] = store
-        result = f(self, *args, **kwargs)
-        store.upload_files_to_dropbox()
-        return result
     return wrapper
 
 
@@ -84,7 +68,7 @@ class UserResource(resources.ModelResource):
                     else request.user.username
                 ),
                 'email': request.user.email,
-                'dropbox_configured': store.filter(configured=True).exists()
+                'configured': store.filter(configured=True).exists()
             }
         else:
             user_data = {
@@ -166,7 +150,7 @@ class TaskResource(resources.Resource):
             )
         ]
 
-    @dropbox_writer
+    @requires_taskd_sync
     def complete(self, request, uuid, store, **kwargs):
         store.client.task_done(uuid=uuid)
         return HttpResponse(
@@ -253,7 +237,7 @@ class TaskResource(resources.Resource):
 
         return obj_list
 
-    @dropbox_reader
+    @requires_taskd_sync
     def obj_get_list(self, bundle, store, **kwargs):
         if hasattr(bundle.request, 'GET'):
             filters = bundle.request.GET.copy()
@@ -271,7 +255,7 @@ class TaskResource(resources.Resource):
 
         return objects
 
-    @dropbox_reader
+    @requires_taskd_sync
     def obj_get(self, bundle, store, **kwargs):
         return Task(store.client.get_task(uuid=kwargs['pk'])[1])
 

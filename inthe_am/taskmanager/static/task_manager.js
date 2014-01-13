@@ -67,7 +67,7 @@ App.IndexController = Ember.Controller.extend({
   needs: ["application"],
   init: function(){
     var user = this.get('controllers.application').user;
-    var configured = user.dropbox_configured;
+    var configured = user.configured;
     var self = this;
     if (! user.logged_in) {
       self.transitionToRoute('about');
@@ -236,7 +236,7 @@ var model = DS.Model.extend({
   logged_in: DS.attr('boolean'),
   uid: DS.attr('string'),
   email: DS.attr('string'),
-  dropbox_configured: DS.attr('boolean'),
+  configured: DS.attr('boolean'),
 });
 
 module.exports = model;
