@@ -153,12 +153,6 @@ class TaskResource(resources.Resource):
                 self.wrap_view('autoconfigure')
             ),
             url(
-                r"^(?P<resource_name>%s)/configure/?$" % (
-                    self._meta.resource_name
-                ),
-                self.wrap_view('configure')
-            ),
-            url(
                 r"^(?P<resource_name>%s)/(?P<uuid>[\w\d_.-]+)/complete/?$" % (
                     self._meta.resource_name
                 ),
@@ -187,58 +181,15 @@ class TaskResource(resources.Resource):
     def autoconfigure(self, request, **kwargs):
         store = models.TaskStore.get_for_user(request.user)
         try:
-            store.autoconfigure_dropbox()
-        except models.NoTaskFoldersFound:
+            store.autoconfigure_taskd()
+        except Exception as e:
             return HttpResponse(
                 json.dumps({
-                    'error': 'No task folder found',
+                    'error': str(e)
                 }),
-                status=404,
+                status=500,
                 content_type='application/json',
             )
-        except models.MultipleTaskFoldersFound:
-            return HttpResponse(
-                json.dumps({
-                    'error': 'Multiple task folders found',
-                    'options': store.find_dropbox_folders()
-                }),
-                status=409,
-                content_type='application/json',
-            )
-        return HttpResponse(
-            json.dumps({
-                'status': 'Successfully configured'
-            }),
-            status=200,
-            content_type='application/json',
-        )
-
-    def configure(self, request, **kwargs):
-        store = models.TaskStore.get_for_user(request.user)
-        options = store.find_dropbox_folders()
-        try:
-            path = request.GET['path']
-        except KeyError:
-            return HttpResponse(
-                json.dumps({
-                    'error': 'No task folder selected',
-                    'options': options
-                }),
-                status=400,
-                content_type='application/json',
-            )
-        if path not in options:
-            return HttpResponse(
-                json.dumps({
-                    'error': '%s is not a valid task folder' % (
-                        path
-                    ),
-                    'options': options
-                }),
-                status=422,
-                content_type='application/json',
-            )
-        store.configure_dropbox(path)
         return HttpResponse(
             json.dumps({
                 'status': 'Successfully configured'

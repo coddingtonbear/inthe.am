@@ -33,6 +33,10 @@ class TaskStore(models.Model):
         allow_folders=True,
         blank=True,
     )
+    taskd_user_key = models.CharField(
+        max_length=36,
+        blank=True,
+    )
     certificate_path = models.FilePathField(
         path=settings.TASK_STORAGE_PATH,
         allow_files=False,
@@ -52,6 +56,41 @@ class TaskStore(models.Model):
     configured = models.BooleanField(default=False)
     dirty = models.BooleanField(default=False)
 
+    @property
+    def metadata_registry(self):
+        return os.path.join(
+            self.local_path,
+            '.meta'
+        )
+
+    @property
+    def metadata(self):
+        if os.path.exists(self.metadata_registry):
+            with open(self.metadata_registry, 'r') as m:
+                return json.loads(m.read())
+        else:
+            return {
+                'files': {
+                },
+                'taskrc': os.path.join(
+                    self.local_path,
+                    '.taskrc',
+                )
+            }
+
+    @metadata.setter
+    def metadata(self, data):
+        with open(self.metadata_registry, 'w') as m:
+            m.write(
+                json.dumps(data)
+            )
+
+    @property
+    def taskrc(self):
+        if not getattr(self, '_taskrc', None):
+            self._taskrc = TaskRc(self.metadata['taskrc'])
+        return self._taskrc
+
     @classmethod
     def get_for_user(self, user):
         store, created = TaskStore.objects.get_or_create(
@@ -63,7 +102,7 @@ class TaskStore(models.Model):
     def client(self):
         if not getattr(self, '_client', None):
             self._client = TaskWarriorExperimental(
-                self.metadata['taskrc']
+                self.taskrc.path
             )
         return self._client
 
@@ -76,6 +115,32 @@ class TaskStore(models.Model):
         self.client.sync()
 
     def autoconfigure_taskd(self):
+        self.configured = True
+        user_tasks = os.path.join(
+            settings.TASK_STORAGE_PATH,
+            self.user.username
+        )
+        if not os.path.isdir(user_tasks):
+            os.mkdir(user_tasks)
+        self.local_path = os.path.join(
+            user_tasks,
+            str(uuid.uuid4())
+        )
+        os.mkdir(self.local_path)
+
+        key_proc = subprocess.Popen(
+            [
+                settings.TASKD_BINARY,
+                'add',
+                'user',
+                settings.TASKD_ORG,
+                self.user.username,
+            ],
+            stdout=subprocess.PIPE
+        )
+        key_proc_output = key_proc.communicate()[0].split('\n')
+        self.taskd_user_key = key_proc_output[1].split(':')[1].strip()
+
         private_key_proc = subprocess.Popen(
             [
                 'certtool',
@@ -112,7 +177,21 @@ class TaskStore(models.Model):
         )
         with open(cert_filename, 'w') as out:
             out.write(cert)
-        self.key_path = cert_filename
+        self.certificate_path = cert_filename
+
+        self.taskrc.update({
+            'data.location': self.local_path,
+            'taskd.certificate': self.certificate_path,
+            'taskd.key': self.key_path,
+            'taskd.server': settings.TASKD_SERVER,
+            'taskd.credentials': (
+                '%s/%s/%s' % (
+                    settings.TASKD_ORG,
+                    self.user.username,
+                    self.taskd_user_key,
+                )
+            )
+        })
 
     #  Dropbox-related methods
 
@@ -125,35 +204,6 @@ class TaskStore(models.Model):
             )
             self._dropbox.session.root = 'dropbox'
         return self._dropbox
-
-    @property
-    def metadata_registry(self):
-        return os.path.join(
-            self.local_path,
-            '.meta'
-        )
-
-    @property
-    def metadata(self):
-        if os.path.exists(self.metadata_registry):
-            with open(self.metadata_registry, 'r') as m:
-                return json.loads(m.read())
-        else:
-            return {
-                'files': {
-                },
-                'taskrc': os.path.join(
-                    self.local_path,
-                    '.taskrc',
-                )
-            }
-
-    @metadata.setter
-    def metadata(self, data):
-        with open(self.metadata_registry, 'w') as m:
-            m.write(
-                json.dumps(data)
-            )
 
     def find_dropbox_folders(self):
         match_path = []
@@ -189,11 +239,7 @@ class TaskStore(models.Model):
         )
         os.mkdir(self.local_path)
 
-        with open(self.metadata['taskrc'], 'w') as task_rc:
-            task_rc.write(
-                '# generated an %s UTC\n' % datetime.datetime.utcnow()
-            )
-            task_rc.write('data.location=%s\n' % self.local_path)
+        self.taskrc['data.location'] = self.local_path
 
         self.save()
 
@@ -285,3 +331,56 @@ class TaskStore(models.Model):
                 metadata['files'][filename] = new_meta
 
         self.metadata = metadata
+
+
+class TaskRc(object):
+    def __init__(self, path):
+        self.path = path
+        self.config = self._read(self.path)
+
+    def _read(self, path):
+        out = {}
+        with open(path, 'r') as config:
+            for line in config.readlines():
+                if line.startswith('#'):
+                    continue
+                left, right = line.split('=')
+                key = left.strip()
+                value = right.strip()
+                out[key] = value
+        return out
+
+    def _write(self, path):
+        with open(path, 'w') as config:
+            config.write(
+                '# Generated by taskmanager at %s UTC\n' % (
+                    datetime.datetime.utcnow()
+                )
+            )
+            for key, value in config.items():
+                config.write(
+                    "%k=%v\n" % (
+                        key,
+                        value
+                    )
+                )
+
+    def keys(self):
+        return self.config.keys()
+
+    def __getitem__(self, item):
+        return self.config[item]
+
+    def __setitem__(self, item, value):
+        self.config[item] = str(value)
+        self._write(self.path)
+
+    def update(self, value):
+        self.config.update(value)
+        self._write(self.path)
+
+    def __unicode__(self):
+        return u'.taskrc at %s' % self.path
+
+    def __str__(self):
+        return self.__unicode__().encode('utf-8', 'REPLACE')
