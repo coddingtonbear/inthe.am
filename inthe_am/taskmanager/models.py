@@ -131,7 +131,9 @@ class TaskStore(models.Model):
         key_proc = subprocess.Popen(
             [
                 settings.TASKD_BINARY,
-                'add',
+                'add'
+                '--data',
+                settings.TASKD_DATA,
                 'user',
                 settings.TASKD_ORG,
                 self.user.username,
@@ -139,7 +141,7 @@ class TaskStore(models.Model):
             stdout=subprocess.PIPE
         )
         key_proc_output = key_proc.communicate()[0].split('\n')
-        self.taskd_user_key = key_proc_output[1].split(':')[1].strip()
+        self.taskd_user_key = key_proc_output[0].split(':')[1].strip()
 
         private_key_proc = subprocess.Popen(
             [
