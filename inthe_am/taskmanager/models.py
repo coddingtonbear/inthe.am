@@ -195,6 +195,7 @@ class TaskStore(models.Model):
             'data.location': self.local_path,
             'taskd.certificate': self.certificate_path,
             'taskd.key': self.key_path,
+            'taskd.ca': server_config['ca.cert'],
             'taskd.server': settings.TASKD_SERVER,
             'taskd.credentials': (
                 '%s/%s/%s' % (
