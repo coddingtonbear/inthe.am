@@ -131,7 +131,7 @@ class TaskStore(models.Model):
         key_proc = subprocess.Popen(
             [
                 settings.TASKD_BINARY,
-                'add'
+                'add',
                 '--data',
                 settings.TASKD_DATA,
                 'user',
