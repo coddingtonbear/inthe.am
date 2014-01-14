@@ -5,6 +5,7 @@ App.TaskController = require("./task");
 App.TasksController = require("./tasks");
 App.CompletedController = require("./completed");
 App.CompletedTaskController = require("./completedTask");
+App.ConfigureController = require("./configure");
 
 App.IndexController = Ember.Controller.extend({
   needs: ["application"],

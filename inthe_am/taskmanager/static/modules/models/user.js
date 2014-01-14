@@ -3,6 +3,8 @@ var model = DS.Model.extend({
   uid: DS.attr('string'),
   email: DS.attr('string'),
   configured: DS.attr('boolean'),
+  taskd_credentials: DS.attr('string'),
+  taskd_server: DS.attr('string')
 });
 
 module.exports = model;

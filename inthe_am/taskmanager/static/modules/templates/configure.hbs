@@ -1,3 +1,10 @@
-<div class="pure-u-1">
-    Unimplemented.
+<div class="pure-u-1 standalone">
+    <h2>Add the following settings to your taskwarrior config file</h2>
+    <code>
+        taskd.certificate=/path/to/<a href="{{ unbound controllers.application.urls.my_certificate }}">private.crt.pem</a><br />
+        taskd.key=/path/to/<a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a><br />
+        taskd.ca=/path/to/<a href="{{ unbound controllers.application.urls.ca_certificate }}">ca.cert.pem</a><br />
+        taskd.server={{ controllers.application.user.taskd_server }}<br />
+        taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
+    </code>
 </div>

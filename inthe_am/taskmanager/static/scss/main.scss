@@ -11,6 +11,11 @@ a {
   position: relative;
 }
 
+.standalone {
+  margin-left: -310px;
+  padding-top: 20px;
+}
+
 #nav, #list {
   position: fixed;
   top: 0;

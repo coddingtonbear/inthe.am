@@ -3,13 +3,14 @@ from functools import wraps
 import json
 import logging
 import operator
-import pytz
+import os
 
+import pytz
 from tastypie import authentication, authorization, bundle, fields, resources
 
 from django.conf.urls import url
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 
 from . import models
 
@@ -53,11 +54,66 @@ class UserResource(resources.ModelResource):
                 ),
                 self.wrap_view('account_status')
             ),
+            url(
+                r"^(?P<resource_name>%s)/my-certificate/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('my_certificate')
+            ),
+            url(
+                r"^(?P<resource_name>%s)/my-key/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('my_key')
+            ),
+            url(
+                r"^(?P<resource_name>%s)/ca-certificate/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('ca_certificate')
+            ),
         ]
+
+    def _send_file(self, out, content_type=None, **kwargs):
+        if content_type is None:
+            content_type = 'application/octet-stream'
+        if not os.path.isfile(out):
+            return HttpResponseNotFound()
+
+        with open(out, 'r') as outfile:
+            response = HttpResponse(
+                outfile.read(),
+                content_type=content_type,
+            )
+            response['Content-Disposition'] = 'attachment; filename="%s"' % (
+                os.path.basename(out)
+            )
+            return response
+
+    def my_certificate(self, request, **kwargs):
+        ts = models.TaskStore.get_for_user(request.user)
+        return self._send_file(
+            ts.certificate_path,
+            content_type='application/x-pem-file',
+        )
+
+    def my_key(self, request, **kwargs):
+        ts = models.TaskStore.get_for_user(request.user)
+        return self._send_file(
+            ts.key_path,
+            content_type='application/x-pem-file',
+        )
+
+    def ca_certificate(self, request, **kwargs):
+        ts = models.TaskStore.get_for_user(request.user)
+        return self._send_file(
+            ts.server_config['ca.cert'],
+            content_type='application/x-pem-file',
+        )
 
     def account_status(self, request, **kwargs):
         if request.user.is_authenticated():
-            store = request.user.task_stores
+            store = request.user.task_stores.get()
             user_data = {
                 'logged_in': True,
                 'uid': request.user.pk,
@@ -68,7 +124,9 @@ class UserResource(resources.ModelResource):
                     else request.user.username
                 ),
                 'email': request.user.email,
-                'configured': store.filter(configured=True).exists()
+                'configured': store.configured,
+                'taskd_credentials': store.taskrc['taskd.credentials'],
+                'taskd_server': store.taskrc['taskd.server'],
             }
         else:
             user_data = {
@@ -147,7 +205,7 @@ class TaskResource(resources.Resource):
                     self._meta.resource_name
                 ),
                 self.wrap_view('delete')
-            )
+            ),
         ]
 
     @requires_taskd_sync

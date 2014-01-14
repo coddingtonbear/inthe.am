@@ -4,3 +4,4 @@ node_modules/
 task_data/
 logs/
 static/
+taskd/
