@@ -7,7 +7,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   
 
 
-  data.buffer.push("<div class=\"pure-u-1 standalone\">\n    <h1>TaskWarrior Web</h1>\n    <p>\n        Access, create, and modify your taskwarrior tasks\n        saved to your dropbox account!\n    </p>\n</div>\n");
+  data.buffer.push("<div class=\"pure-u-1 standalone\">\n    <h1>inthe.am</h1>\n    <p>\n        Access, create, and modify your taskwarrior tasks\n        saved to your dropbox account!\n    </p>\n</div>\n");
   
 });
 
