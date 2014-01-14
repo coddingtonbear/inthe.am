@@ -9,6 +9,7 @@ App.Router.map(function(){
   });
   this.route("unconfigurable", {path: "/no-tasks"});
   this.route("configure", {path: "/configure"});
+  this.route("getting_started", {path: "/getting-started"});
 });
 
 App.Router.reopen({

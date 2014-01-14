@@ -171,7 +171,7 @@ var controller = Ember.ArrayController.extend({
     view_task: function(task){
       this.transitionToRoute('task', task);
     }
-  },
+  }
 });
 
 module.exports = controller;
@@ -266,6 +266,7 @@ App.Router.map(function(){
   });
   this.route("unconfigurable", {path: "/no-tasks"});
   this.route("configure", {path: "/configure"});
+  this.route("getting_started", {path: "/getting-started"});
 });
 
 App.Router.reopen({
@@ -309,6 +310,11 @@ module.exports=require(17)
 var route = Ember.Route.extend({
   model: function(){
     return this.store.findQuery('task', {completed: 0});
+  },
+  afterModel: function(tasks, transition) {
+    if (tasks.get('length') === 0) {
+      this.transitionTo('getting_started');
+    }
   }
 });
 
