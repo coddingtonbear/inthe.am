@@ -18,7 +18,7 @@ var controller = Ember.Controller.extend({
     login: '/login/dropbox-oauth2/',
     ca_certificate: '/api/v1/user/ca-certificate/',
     my_certificate: '/api/v1/user/my-certificate/',
-    my_key: '/api/v1/user/my-certificate/',
+    my_key: '/api/v1/user/my-key/',
   },
   init: function(){
     this.set(
