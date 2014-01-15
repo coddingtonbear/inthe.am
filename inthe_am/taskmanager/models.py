@@ -255,6 +255,12 @@ class TaskRc(object):
     def keys(self):
         return self.config.keys()
 
+    def get(self, item, default=None):
+        try:
+            return self[item]
+        except KeyError:
+            return default
+
     def __getitem__(self, item):
         return self.config[item]
 

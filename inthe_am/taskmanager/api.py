@@ -77,7 +77,7 @@ class UserResource(resources.ModelResource):
     def _send_file(self, out, content_type=None, **kwargs):
         if content_type is None:
             content_type = 'application/octet-stream'
-        if not os.path.isfile(out):
+        if out is None or not os.path.isfile(out):
             return HttpResponseNotFound()
 
         with open(out, 'r') as outfile:
@@ -107,7 +107,7 @@ class UserResource(resources.ModelResource):
     def ca_certificate(self, request, **kwargs):
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
-            ts.server_config['ca.cert'],
+            ts.server_config.get('ca.cert'),
             content_type='application/x-pem-file',
         )
 
@@ -125,8 +125,8 @@ class UserResource(resources.ModelResource):
                 ),
                 'email': request.user.email,
                 'configured': store.configured,
-                'taskd_credentials': store.taskrc['taskd.credentials'],
-                'taskd_server': store.taskrc['taskd.server'],
+                'taskd_credentials': store.taskrc.get('taskd.credentials'),
+                'taskd_server': store.taskrc.get('taskd.server'),
                 'api_key': request.user.api_key.key,
             }
         else:
