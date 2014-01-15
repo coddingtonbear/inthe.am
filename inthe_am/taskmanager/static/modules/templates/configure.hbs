@@ -32,11 +32,13 @@
     </p>
 
     <code>
-        taskd.certificate=/path/to/<a href="{{ unbound controllers.application.urls.my_certificate }}">private.cert.pem</a><br />
-        taskd.key=/path/to/<a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a><br />
-        taskd.ca=/path/to/<a href="{{ unbound controllers.application.urls.ca_certificate }}">ca.cert.pem</a><br />
-        taskd.server={{ controllers.application.user.taskd_server }}<br />
-        taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
+    <pre>
+        taskd.certificate=/path/to/<a href="{{ unbound controllers.application.urls.my_certificate }}">private.cert.pem</a>
+        taskd.key=/path/to/<a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a>
+        taskd.ca=/path/to/<a href="{{ unbound controllers.application.urls.ca_certificate }}">ca.cert.pem</a>
+        taskd.server={{ controllers.application.user.taskd_server }}
+        taskd.credentials={{ controllers.application.user.taskd_credentials }}
+    </pre>
     </code>
 
     <h2>Api Access</h2>
@@ -66,11 +68,11 @@
     Using your API key and username, use the header "<code>Authorization</code>";
     for an example:
 
+    <code>
     <pre>
-        <code>
-            Authorization: ApiKey {{ unbound controllers.application.user.username }}:{{ unbound controllers.application.user.api_key }}
-        </code>
+        Authorization: ApiKey {{ unbound controllers.application.user.username }}:{{ unbound controllers.application.user.api_key }}
     </pre>
+    </code>
 
 
     <h3>Endpoints</h3>
