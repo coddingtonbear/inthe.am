@@ -85,7 +85,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.unbound.call(depth0, "controllers.application.user.api_key", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n        </code>\n    </pre>\n\n\n    <h3>Endpoints</h3>\n\n    <p>\n        The Tasks REST API supports only <strong>GET</strong> requests.\n    </p>\n\n    <table class=\"pure-table pure-table-horizontal\">\n        <tr>\n            <th>\n                Task List\n            </th>\n            <td>\n                <code>https://inthe.am/api/v1/tasks/</code>\n            </td>\n        </tr>\n        <tr>\n            <th>\n                Task Detail\n            </th>\n            <td>\n                <code>https://inthe.am/api/v1/tasks/<b>&lt;TASK ID&gt;</b></code>\n            </td>\n        </tr>\n    </table>\n</div>\n");
+  data.buffer.push("\n        </code>\n    </pre>\n\n\n    <h3>Endpoints</h3>\n\n    <p>\n        The Tasks REST API supports only <strong>GET</strong> requests.\n    </p>\n\n    <table class=\"pure-table pure-table-horizontal\">\n        <tr>\n            <th>\n                Task List\n            </th>\n            <td>\n                <code>https://inthe.am/api/v1/task/</code>\n            </td>\n        </tr>\n        <tr>\n            <th>\n                Task Detail\n            </th>\n            <td>\n                <code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/</code>\n            </td>\n        </tr>\n    </table>\n</div>\n");
   return buffer;
   
 });
