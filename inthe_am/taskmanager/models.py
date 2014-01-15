@@ -5,11 +5,11 @@ import os
 import subprocess
 import uuid
 
-from taskw import TaskWarriorExperimental
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from taskw import TaskWarriorExperimental
+from tastypie.models import create_api_key
 
 
 logger = logging.getLogger(__name__)
@@ -271,3 +271,6 @@ class TaskRc(object):
 
     def __str__(self):
         return self.__unicode__().encode('utf-8', 'REPLACE')
+
+
+models.signals.post_save.connect(create_api_key, sender=User)

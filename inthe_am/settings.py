@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'inthe_am.taskmanager',
     'django_mailbox',
     'south',
+    'tastypie',
 )
 
 MIDDLEWARE_CLASSES = (
