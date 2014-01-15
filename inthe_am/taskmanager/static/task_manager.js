@@ -196,8 +196,18 @@ require("./helpers");
 App.User = require("./user.js");
 App.Task = require("./task.js");
 
+App.DirectTransform = DS.Transform.extend({
+  serialize: function(value) {
+    return value;
+  },
+  deserialize: function(value) {
+    return value;
+  }
+});
+
 },{"./task.js":13,"./user.js":14}],13:[function(require,module,exports){
 var model = DS.Model.extend({
+  annotations: DS.attr('direct'),
   description: DS.attr('string'),
   due: DS.attr('date'),
   entry: DS.attr('date'),
@@ -308,7 +318,14 @@ App.CompletedRoute = require("./completed");
 App.CompletedTaskRoute = require("./completedTask");
 
 },{"./completed":16,"./completedTask":17,"./task":19,"./tasks":20}],19:[function(require,module,exports){
-module.exports=require(17)
+var route = Ember.Route.extend({
+  model: function(params) {
+     this.store.find('task', params.uuid);
+  },
+});
+
+module.exports = route;
+
 },{}],20:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(){

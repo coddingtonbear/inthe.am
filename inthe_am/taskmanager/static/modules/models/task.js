@@ -1,4 +1,5 @@
 var model = DS.Model.extend({
+  annotations: DS.attr('direct'),
   description: DS.attr('string'),
   due: DS.attr('date'),
   entry: DS.attr('date'),

@@ -15,6 +15,9 @@
         {{/if}}
     </div>
 </div>
+{{#each annotations}}
+    - {{ this.entry }} // {{ this.description }}<br />
+{{/each}}
 <div class="task-content-body">
     <table class="pure-table pure-table-horizontal">
         <tbody>

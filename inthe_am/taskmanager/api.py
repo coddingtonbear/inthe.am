@@ -154,15 +154,29 @@ class Task(object):
     def __init__(self, json):
         self.json = json
 
+    def _date_from_taskw(self, value):
+        value = datetime.datetime.strptime(
+            value,
+            '%Y%m%dT%H%M%SZ',
+        )
+        return value.replace(tzinfo=pytz.UTC)
+
+    def _date_to_taskw(self, value):
+        raise NotImplementedError()
+
     def __getattr__(self, name):
         try:
             value = self.json[name]
             if name in ['due', 'entry', 'modified', 'start']:
-                value = datetime.datetime.strptime(
-                    value,
-                    '%Y%m%dT%H%M%SZ',
-                )
-                value = value.replace(tzinfo=pytz.UTC)
+                value = self._date_from_taskw(value)
+            elif name == 'annotations':
+                new_value = []
+                for annotation in value:
+                    annotation['entry'] = self._date_from_taskw(
+                        annotation['entry']
+                    )
+                    new_value.append(annotation)
+                value = new_value
             return value
         except KeyError:
             raise AttributeError()
@@ -191,6 +205,7 @@ class TaskResource(resources.Resource):
     status = fields.CharField(attribute='status')
     urgency = fields.FloatField(attribute='urgency')
     depends = fields.CharField(attribute='depends', null=True)
+    annotations = fields.ListField(attribute='annotations', null=True)
 
     def prepend_urls(self):
         return [
