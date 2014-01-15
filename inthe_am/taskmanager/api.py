@@ -28,10 +28,11 @@ def requires_taskd_sync(f):
             # Tastypie Views
             user = kwargs['bundle'].request.user
         store = models.TaskStore.get_for_user(user)
-        store.sync()
         kwargs['store'] = store
         store.sync()
-        return f(self, *args, **kwargs)
+        result = f(self, *args, **kwargs)
+        store.sync()
+        return result
     return wrapper
 
 
