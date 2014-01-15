@@ -142,6 +142,10 @@ class UserResource(resources.ModelResource):
         authorization = UserAuthorization()
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get']
+        authentication = authentication.MultiAuthentication(
+            authentication.ApiKeyAuthentication(),
+            authentication.SessionAuthentication(),
+        )
 
 
 class Task(object):
@@ -318,7 +322,10 @@ class TaskResource(resources.Resource):
         return Task(store.client.get_task(uuid=kwargs['pk'])[1])
 
     class Meta:
-        authentication = authentication.SessionAuthentication()
+        authentication = authentication.MultiAuthentication(
+            authentication.ApiKeyAuthentication(),
+            authentication.SessionAuthentication(),
+        )
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get']
         limit = 1000
