@@ -113,7 +113,7 @@ class UserResource(resources.ModelResource):
 
     def account_status(self, request, **kwargs):
         if request.user.is_authenticated():
-            store = request.user.task_stores.get()
+            store = models.TaskStore.get_for_user(request.user)
             user_data = {
                 'logged_in': True,
                 'uid': request.user.pk,
