@@ -188,7 +188,7 @@ class TaskStore(models.Model):
         cert = cert_proc.communicate()[0]
         cert_filename = os.path.join(
             self.local_path,
-            'private.crt.pem',
+            'private.cert.pem',
         )
         with open(cert_filename, 'w') as out:
             out.write(cert)

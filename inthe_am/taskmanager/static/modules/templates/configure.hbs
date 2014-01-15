@@ -1,10 +1,100 @@
 <div class="pure-u-1 standalone">
-    <h2>Add the following settings to your taskwarrior config file</h2>
+    <h2>Synchronization Configuration</h2>
+    <table class="pure-table pure-table-horizontal">
+        <tr>
+            <th>
+                Your Certificate
+            </th>
+            <td>
+                <a href="{{ unbound controllers.application.urls.my_certificate }}">private.cert.pem</a>
+            </td>
+        </tr>
+        <tr>
+            <th>
+               Your Key 
+            </th>
+            <td>
+                <a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Authority Certificate
+            </th>
+            <td>
+                <a href="{{ unbound controllers.application.urls.ca_certificate }}">ca.cert.pem</a>
+            </td>
+        </tr>
+    </table>
+    
+    <p>
+        Add the following settings to your Taskwarrior configuration file (<code>~/.taskrc</code>).
+    </p>
+
     <code>
-        taskd.certificate=/path/to/<a href="{{ unbound controllers.application.urls.my_certificate }}">private.crt.pem</a><br />
+        taskd.certificate=/path/to/<a href="{{ unbound controllers.application.urls.my_certificate }}">private.cert.pem</a><br />
         taskd.key=/path/to/<a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a><br />
         taskd.ca=/path/to/<a href="{{ unbound controllers.application.urls.ca_certificate }}">ca.cert.pem</a><br />
         taskd.server={{ controllers.application.user.taskd_server }}<br />
         taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
     </code>
+
+    <h2>Api Access</h2>
+
+    <table class="pure-table pure-table-horizontal">
+        <tr>
+            <th>
+                Username
+            </th>
+            <td>
+                {{ unbound controllers.application.user.username }}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Api Key
+            </th>
+            <td>
+                {{ unbound controllers.application.user.api_key }}
+            </td>
+        </tr>
+    </table>
+
+
+    <h3>Authentication</h3>
+
+    Using your API key and username, use the header "<code>Authorization</code>";
+    for an example:
+
+    <pre>
+        <code>
+            Authorization: ApiKey {{ unbound controllers.application.user.username }}:{{ unbound controllers.application.user.api_key }}
+        </code>
+    </pre>
+
+
+    <h3>Endpoints</h3>
+
+    <p>
+        The Tasks REST API supports only <strong>GET</strong> requests.
+    </p>
+
+    <table class="pure-table pure-table-horizontal">
+        <tr>
+            <th>
+                Task List
+            </th>
+            <td>
+                <code>https://inthe.am/api/v1/tasks/</code>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Task Detail
+            </th>
+            <td>
+                <code>https://inthe.am/api/v1/tasks/<b>&lt;TASK ID&gt;</b></code>
+            </td>
+        </tr>
+    </table>
 </div>

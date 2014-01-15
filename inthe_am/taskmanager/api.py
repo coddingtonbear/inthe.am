@@ -127,6 +127,7 @@ class UserResource(resources.ModelResource):
                 'configured': store.configured,
                 'taskd_credentials': store.taskrc['taskd.credentials'],
                 'taskd_server': store.taskrc['taskd.server'],
+                'api_key': request.user.api_key.key,
             }
         else:
             user_data = {
