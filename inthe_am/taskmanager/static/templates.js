@@ -168,7 +168,7 @@ function program6(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "login", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">Log In with<br/> Dropbox</button>\n        ");
+  data.buffer.push(">Log In with<br/>Google</button>\n        ");
   return buffer;
   }
 
