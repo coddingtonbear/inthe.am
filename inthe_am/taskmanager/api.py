@@ -127,7 +127,7 @@ class UserResource(resources.ModelResource):
                 'email': request.user.email,
                 'configured': store.configured,
                 'taskd_credentials': store.taskrc.get('taskd.credentials'),
-                'taskd_server': store.taskrc.get('taskd.server'),
+                'taskd_server': 'taskwarrior.inthe.am:53589',
                 'api_key': request.user.api_key.key,
             }
         else:
