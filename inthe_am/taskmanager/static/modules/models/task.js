@@ -1,5 +1,5 @@
 var model = DS.Model.extend({
-  annotations: DS.hasMany(App.Annotation),
+  annotations: DS.attr(),
   description: DS.attr('string'),
   due: DS.attr('date'),
   entry: DS.attr('date'),
@@ -26,6 +26,21 @@ var model = DS.Model.extend({
       return 'fa-square-o';
     }
   }.property('status', 'urgency'),
+
+  processed_annotations: function() {
+    var value = this.get('annotations');
+    if (value) {
+      for (var i = 0; i < value.length; i++) {
+        value[i] = {
+          entry: new Date(Ember.Date.parse(value[i].entry)),
+          description: value[i].description
+        };
+      }
+    } else {
+      return [];
+    }
+    return value;
+  }.property('annotations'),
 
   dependent_tickets: function(){
     var value = this.get('depends');
