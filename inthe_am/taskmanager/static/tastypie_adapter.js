@@ -1,142 +1,138 @@
-// ==========================================================================
-// Project:   Tastypie Adapter
-// Copyright: Copyright 2013 Diego Muñoz Escalante, Pedro Kiefer
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
+var get = Ember.get, set = Ember.set;
+
+DS.DjangoTastypieSerializer = DS.RESTSerializer.extend({
+
+  getItemUrl: function(meta, id){
+    var url;
+
+    url = get(this, 'adapter').rootForType(meta.type);
+    return ["", get(this, 'namespace'), url, id, ""].join('/');
+  },
 
 
+  keyForBelongsTo: function(type, name) {
+    return this.keyForAttributeName(type, name) + "_id";
+  },
 
- // Version: 0.1.0
+  /**
+    ASSOCIATIONS: SERIALIZATION
+    Transforms the association fields to Resource URI django-tastypie format
+  */
+  addBelongsTo: function(hash, record, key, relationship) {
+    var id,
+        related = get(record, relationship.key),
+        embedded = this.embeddedType(record.constructor, key);
 
-(function() {
-var define, requireModule;
+    if (embedded === 'always') {
+      hash[key] = related.serialize();
 
-(function() {
-  var registry = {}, seen = {};
+    } else {
+      id = get(related, this.primaryKey(related));
 
-  define = function(name, deps, callback) {
-    registry[name] = { deps: deps, callback: callback };
-  };
-
-  requireModule = function(name) {
-    if (seen[name]) { return seen[name]; }
-    seen[name] = {};
-
-    var mod, deps, callback, reified , exports;
-
-    mod = registry[name];
-
-    if (!mod) {
-      throw new Error("Module '" + name + "' not found.");
+      if (!Ember.isNone(id)) { hash[key] = this.getItemUrl(relationship, id); }
     }
+  },
 
-    deps = mod.deps;
-    callback = mod.callback;
-    reified = [];
-    exports;
+  addHasMany: function(hash, record, key, relationship) {
+    var self = this,
+        serializedValues = [],
+        id = null,
+        embedded = this.embeddedType(record.constructor, key);
 
-    for (var i=0, l=deps.length; i<l; i++) {
-      if (deps[i] === 'exports') {
-        reified.push(exports = {});
+    key = this.keyForHasMany(relationship.type, key);
+
+    value = record.get(key) || [];
+
+    value.forEach(function(item) {
+      if (embedded === 'always') {
+        serializedValues.push(item.serialize());
       } else {
-        reified.push(requireModule(deps[i]));
-      }
-    }
-
-    var value = callback.apply(this, reified);
-    return seen[name] = exports || value;
-  };
-})();
-(function() {
-var get = Ember.get, set = Ember.set, isNone = Ember.isNone, merge = Ember.merge;
-
-var map = Ember.EnumerableUtils.map;
-var forEach = Ember.EnumerableUtils.forEach;
-
-DS.DjangoTastypieSerializer = DS.JSONSerializer.extend({
-
-  init: function() {
-    this._super.apply(this, arguments);
-  },
-
-  keyForAttribute: function (attr) {
-    return Ember.String.decamelize(attr);
-  },
-  
-  keyForRelationship: function (key, kind) {
-    return Ember.String.decamelize(key);
-  },
-
-  normalizePayload: function (type, payload) {
-    return payload;
-  },
-
-  normalize: function (type, hash, prop) {
-    this.normalizeId(hash);
-    this.normalizeUsingDeclaredMapping(type, hash);
-    this.normalizeAttributes(type, hash);
-    this.normalizeRelationships(type, hash);
-
-    return this._super(type, hash, prop);
-  },
-
-  normalizeId: function (hash) {
-    hash.id = this.resourceUriToId(hash['resource_uri']);
-    delete hash['resource_uri'];
-  },
-  
-  normalizeUsingDeclaredMapping: function(type, hash) {
-    var attrs = get(this, 'attrs'), payloadKey, key;
-
-    if (attrs) {
-      for (key in attrs) {
-        if (typeof attrs[key] === 'object') {
-          payloadKey = attrs[key].key ? attrs[key].key : key;
-        } else {
-          payloadKey = attrs[key];
+        id = get(item, self.primaryKey(item));
+        if (!Ember.isNone(id)) {
+          serializedValues.push(self.getItemUrl(relationship, id));
         }
-        
-        if (key === payloadKey) { return; }
-
-        hash[key] = hash[payloadKey];
-        delete hash[payloadKey];
       }
+    });
+
+    hash[key] = serializedValues;
+
+  },
+
+  /**
+    Tastypie adapter does not support the sideloading feature
+    */
+  extract: function(store, type, payload, id, requestType) {
+    this.extractMeta(store, type, payload);
+
+    var specificExtract = "extract" + requestType.charAt(0).toUpperCase() + requestType.substr(1);
+    return this[specificExtract](store, type, payload, id, requestType);
+  },
+
+  extractMany: function(loader, json, type, records) {
+    this.sideload(loader, type, json);
+    this.extractMeta(loader, type, json);
+
+    if (json.objects) {
+      var objects = json.objects, references = [];
+      if (records) { records = records.toArray(); }
+
+      for (var i = 0; i < objects.length; i++) {
+        if (records) { loader.updateId(records[i], objects[i]); }
+        var reference = this.extractRecordRepresentation(loader, type, objects[i]);
+        references.push(reference);
+      }
+
+      loader.populateArray(references);
     }
   },
 
-  normalizeAttributes: function (type, hash) {
-    var payloadKey, key;
-    if (this.keyForAttribute) {
-      type.eachAttribute(function (key) {
-        payloadKey = this.keyForAttribute(key);
-        if (key === payloadKey) {
-          return;
-        }
+  /**
+   Tastypie default does not support sideloading
+   */
+  sideload: function(loader, type, json, root) {
 
-        hash[key] = hash[payloadKey];
-        delete hash[payloadKey];
-      }, this);
+  },
+
+  /**
+    ASSOCIATIONS: DESERIALIZATION
+    Transforms the association fields from Resource URI django-tastypie format
+  */
+  _deurlify: function(value) {
+    if (typeof value === "string") {
+      return value.split('/').reverse()[1];
+    } else {
+      return value;
     }
+  },
+
+  extractHasMany: function(type, hash, key) {
+    var value,
+      self = this;
+
+    value = hash[key];
+
+    if (!!value) {
+      value.forEach(function(item, i, collection) {
+        collection[i] = self._deurlify(item);
+      });
+    }
+
+    return value;
+  },
+
+  extractBelongsTo: function(type, hash, key) {
+    var value = hash[key];
+
+    if (!!value) {
+      value = this._deurlify(value);
+    }
+    return value;
   },
 
   resourceUriToId: function (resourceUri){
     return resourceUri.split('/').reverse()[1];
   },
 
-  relationshipToResourceUri: function (relationship, value){
-    if (!value) 
-      return value;
-
-    var store = relationship.type.store, 
-        typeKey = relationship.type.typeKey;
-    
-    return store.adapterFor(typeKey).buildURL(typeKey, get(value, 'id'));
-  },
-
-  /**
-  @method normalizeRelationships
-  @private
-  */
   normalizeRelationships: function (type, hash) {
     var payloadKey, key, self = this;
 
@@ -162,48 +158,96 @@ DS.DjangoTastypieSerializer = DS.JSONSerializer.extend({
     }, this);
   },
 
-  extractSingle: function (store, primaryType, payload, recordId, requestType) {
-    extractEmbeddedFromPayload.call(this, store, primaryType, payload);
-    payload = this.normalizePayload(primaryType, payload);
-    return this.normalize(primaryType, payload, primaryType.typeKey);
+  extractArray: function(store, primaryType, payload) {
+    payload[primaryType.typeKey] = payload.objects;
+    delete payload.objects;
+
+    return this._super(store, primaryType, payload);
   },
 
-  extractArray: function (store, primaryType, payload) {
-    var records = [];
+  extractSingle: function(store, primaryType, payload, recordId, requestType) {
+    var newPayload = {};
+    this.extractEmbeddedFromPayload(store, primaryType, payload);
+    newPayload[primaryType.typeKey] = payload;
+
+    return this._super(store, primaryType, newPayload, recordId, requestType);
+  },
+
+  isEmbedded: function(relOptions) {
+    return !!relOptions && (relOptions.embedded === 'load' || relOptions.embedded === 'always');
+  },
+
+  extractEmbeddedFromPayload: function(store, type, payload) {
     var self = this;
-    payload.objects.forEach(function (hash) {
-      extractEmbeddedFromPayload.call(self, store, primaryType, hash);
-      records.push(self.normalize(primaryType, hash, primaryType.typeKey));
-    });
-    return records;
-  },
+    type.eachRelationship(function(key, relationship) {
+      var relOptions = relationship.options;
 
-  pushPayload: function (store, payload) {
-    payload = this.normalizePayload(null, payload);
-
-    return payload;
-  },
-
-  serialize: function (record, options) {
-    var json = {};
-
-    record.eachAttribute(function (key, attribute) {
-      this.serializeAttribute(record, json, key, attribute);
-    }, this);
-
-    record.eachRelationship(function (key, relationship) {
-      if (relationship.kind === 'belongsTo') {
-        this.serializeBelongsTo(record, json, relationship);
-      } else if (relationship.kind === 'hasMany') {
-        this.serializeHasMany(record, json, relationship);
+      if (self.isEmbedded(relOptions)) {
+        if (relationship.kind === 'hasMany') {
+          self.extractEmbeddedFromHasMany(store, key, relationship, payload, relOptions);
+        } else if (relationship.kind === 'belongsTo') {
+          self.extractEmbeddedFromBelongsTo(store, key, relationship, payload, relOptions);
+        }
       }
-    }, this);
+    });
+  },
 
-    return json;
+  extractEmbeddedFromHasMany: function(store, key, relationship, payload, config) {
+    var self = this;
+    var serializer = store.serializerFor(relationship.type.typeKey),
+    primaryKey = get(this, 'primaryKey');
+
+    var ids = [];
+
+    if (!payload[key]) {
+      return;
+    }
+
+    Ember.EnumerableUtils.forEach(payload[key], function(data) {
+      var embeddedType = store.modelFor(relationship.type.typeKey);
+
+      self.extractEmbeddedFromPayload.call(serializer, store, embeddedType, data);
+
+      data = serializer.normalize(embeddedType, data, embeddedType.typeKey);
+
+      ids.push(serializer.relationshipToResourceUri(relationship, data));
+      store.push(embeddedType, data);
+    });
+
+    payload[key] = ids;
+  },
+
+  extractEmbeddedFromBelongsTo: function(store, key, relationship, payload, config) {
+    var serializer = store.serializerFor(relationship.type.typeKey),
+      primaryKey = get(this, 'primaryKey');
+
+    if (!payload[key]) {
+      return;
+    }
+
+    var data = payload[key];
+    var embeddedType = store.modelFor(relationship.type.typeKey);
+
+    extractEmbeddedFromPayload.call(serializer, store, embeddedType, data);
+
+    data = serializer.normalize(embeddedType, data, embeddedType.typeKey);
+    payload[key] = serializer.relationshipToResourceUri(relationship, data);
+
+    store.push(embeddedType, data);
+  },
+
+  relationshipToResourceUri: function (relationship, value){
+    if (!value)
+      return value;
+
+    var store = relationship.type.store,
+        typeKey = relationship.type.typeKey;
+
+    return store.adapterFor(typeKey).buildURL(typeKey, get(value, 'id'));
   },
 
   serializeIntoHash: function (data, type, record, options) {
-    merge(data, this.serialize(record, options));
+    Ember.merge(data, this.serialize(record, options));
   },
 
   serializeBelongsTo: function (record, json, relationship) {
@@ -216,114 +260,41 @@ DS.DjangoTastypieSerializer = DS.JSONSerializer.extend({
 
   serializeHasMany: function(record, json, relationship) {
     var key = relationship.key,
-        attrs = get(this, 'attrs'),
-        config = attrs && attrs[key] ? attrs[key] : false;
+    attrs = get(this, 'attrs'),
+    config = attrs && attrs[key] ? attrs[key] : false;
     key = this.keyForRelationship ? this.keyForRelationship(key, "belongsTo") : key;
 
     var relationshipType = DS.RelationshipChange.determineRelationshipType(record.constructor, relationship);
 
     if (relationshipType === 'manyToNone' || relationshipType === 'manyToMany' || relationshipType === 'manyToOne') {
-      if (isEmbedded(config)) {
+      if (this.isEmbedded(config)) {
         json[key] = get(record, key).map(function (relation) {
           var data = relation.serialize();
           return data;
         });
       } else {
         json[key] = get(record, relationship.key).map(function (next){
-            return this.relationshipToResourceUri(relationship, next);
+          return this.relationshipToResourceUri(relationship, next);
         }, this);
       }
     }
-  },
-
-  serializePolymorphicType: function (record, json, relationship) {
-    var key = relationship.key,
-        belongsTo = get(record, key);
-    key = this.keyForAttribute ? this.keyForAttribute(key) : key;
-    json[key + "Type"] = belongsTo.constructor.typeKey;
   }
 });
 
-function isEmbedded(config) {
-  return config && (config.embedded === 'always' || config.embedded === 'load');
-}
 
-function extractEmbeddedFromPayload(store, type, payload) {
-  var attrs = get(this, 'attrs');
-
-  if (!attrs) {
-    return;
-  }
-  
-  type.eachRelationship(function(key, relationship) {
-    var config = attrs[key];
-
-    if (isEmbedded(config)) {
-      if (relationship.kind === "hasMany") {
-        extractEmbeddedFromPayloadHasMany.call(this, store, key, relationship, payload, config);
-      }
-      if (relationship.kind === "belongsTo") {
-        extractEmbeddedFromPayloadBelongsTo.call(this, store, key, relationship, payload, config);
-      }
-    }
-  }, this);
-}
-
-function extractEmbeddedFromPayloadHasMany(store, primaryType, relationship, payload, config) {
-  var serializer = store.serializerFor(relationship.type.typeKey),
-      primaryKey = get(this, 'primaryKey');
-
-  var attribute = config.key ? config.key : this.keyForAttribute(primaryType);
-  var ids = [];
-
-  if (!payload[attribute]) {
-    return;
-  }
-
-  forEach(payload[attribute], function(data) {
-    var embeddedType = store.modelFor(relationship.type.typeKey);
-    
-    extractEmbeddedFromPayload.call(serializer, store, embeddedType, data);
-    
-    data = serializer.normalize(embeddedType, data, embeddedType.typeKey);
-    
-    ids.push(serializer.relationshipToResourceUri(relationship, data));
-    store.push(embeddedType, data);
-  });
-
-  payload[attribute] = ids;
-}
-
-function extractEmbeddedFromPayloadBelongsTo(store, primaryType, relationship, payload, config) {
-  var serializer = store.serializerFor(relationship.type.typeKey),
-      primaryKey = get(this, 'primaryKey');
-
-  var attribute = config.key ? config.key : this.keyForAttribute(primaryType);
-
-  if (!payload[attribute]) {
-    return;
-  }
-
-  var data = payload[attribute];
-  var embeddedType = store.modelFor(relationship.type.typeKey);
-    
-  extractEmbeddedFromPayload.call(serializer, store, embeddedType, data);
-  
-  data = serializer.normalize(embeddedType, data, embeddedType.typeKey); 
-  payload[attribute] = serializer.relationshipToResourceUri(relationship, data);
-  
-  store.push(embeddedType, data);
-}
-
-
-})();
-
-
-
-(function() {
 var get = Ember.get, set = Ember.set;
 
+function rejectionHandler(reason) {
+  Ember.Logger.error(reason, reason.message);
+  throw reason;
+}
+
 DS.DjangoTastypieAdapter = DS.RESTAdapter.extend({
+  /**
+    Set this parameter if you are planning to do cross-site
+    requests to the destination domain. Remember trailing slash
+  */
+  serverDomain: null,
 
   /**
     This is the default Tastypie namespace found in the documentation.
@@ -332,69 +303,75 @@ DS.DjangoTastypieAdapter = DS.RESTAdapter.extend({
   namespace: "api/v1",
 
   /**
+    Bulk commits are not supported at this time by the adapter.
+    Changing this setting will not work
+  */
+  bulkCommit: false,
+
+  /**
+    Tastypie returns the next URL when all the elements of a type
+    cannot be fetched inside a single request. Unless you override this
+    feature in Tastypie, you don't need to change this value. Pagination
+    will work out of the box for findAll requests
+  */
+  since: 'next',
+
+  /**
     Serializer object to manage JSON transformations
   */
   defaultSerializer: '_djangoTastypie',
-  
+
+  buildURL: function(record, suffix) {
+    var url = this._super(record, suffix);
+
+    // Add the trailing slash to avoid setting requirement in Django.settings
+    if (url.charAt(url.length -1) !== '/') {
+      url += '/';
+    }
+
+    // Add the server domain if any
+    if (!!this.serverDomain) {
+      url = this.removeTrailingSlash(this.serverDomain) + url;
+    }
+
+    return url;
+  },
+
+  /**
+     The actual nextUrl is being stored. The offset must be extracted from
+     the string to do a new call.
+     When there are remaining objects to be returned, Tastypie returns a
+     `next` URL that in the meta header. Whenever there are no
+     more objects to be returned, the `next` paramater value will be null.
+     Instead of calculating the next `offset` each time, we store the nextUrl
+     from which the offset will be extrated for the next request
+  */
+  sinceQuery: function(since) {
+    var offsetParam,
+        query;
+
+    query = {};
+
+    if (!!since) {
+      offsetParam = since.match(/offset=(\d+)/);
+      offsetParam = (!!offsetParam && !!offsetParam[1]) ? offsetParam[1] : null;
+      query.offset = offsetParam;
+    }
+
+    return offsetParam ? query : null;
+  },
+
+  removeTrailingSlash: function(url) {
+    if (url.charAt(url.length -1) === '/') {
+      return url.slice(0, -1);
+    }
+    return url;
+  },
+
   /**
     django-tastypie does not pluralize names for lists
   */
   pathForType: function(type) {
     return type;
-  },
-  
-  buildURL: function(type, id) {
-    var url = this._super(type, id);
-    // Add the trailing slash to avoid setting requirement in Django.settings
-    if (url.charAt(url.length -1) !== '/') {
-      url += '/';
-    }
-    return url;
-  },
-
-  findMany: function(store, type, ids, owner) {
-    var url;
-
-    // FindMany array through subset of resources
-    if (ids instanceof Array) {
-      ids = "set/" + ids.join(";") + '/';
-    }
-
-    url = this.buildURL(type.typeKey);
-    url += ids;
-
-    return this.ajax(url, "GET", { data: {} });
   }
 });
-
-})();
-
-
-
-(function() {
-
-})();
-
-
-
-(function() {
-Ember.onLoad('Ember.Application', function(Application) {
-  Application.initializer({
-    name: "tastypieModelAdapter",
-
-    initialize: function(container, application) {
-      application.register('serializer:_djangoTastypie', DS.DjangoTastypieSerializer);
-      application.register('adapter:_djangoTastypie', DS.DjangoTastypieAdapter);
-    }
-  });
-});
-})();
-
-
-
-(function() {
-
-})();
-
-
-})();
