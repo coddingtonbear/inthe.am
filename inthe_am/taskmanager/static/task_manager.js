@@ -6,6 +6,7 @@ var App = Ember.Application.create({
 App.ApplicationAdapter = DS.DjangoTastypieAdapter.extend({
   namespace: 'api/v1'
 });
+App.ApplicationSerializer = DS.DjangoTastypieSerializer.extend();
 
 module.exports = App;
 
@@ -346,10 +347,7 @@ module.exports = route;
 },{}],21:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(){
-    return this.store.findQuery('task', {completed: 0});
-  },
-  beforeModel: function() {
-    this.store.unloadAll(App.Task);
+    return this.store.find('task');
   },
   afterModel: function(tasks, transition) {
     if (tasks.get('length') === 0) {

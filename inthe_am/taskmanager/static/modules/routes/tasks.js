@@ -1,9 +1,6 @@
 var route = Ember.Route.extend({
   model: function(){
-    return this.store.findQuery('task', {completed: 0});
-  },
-  beforeModel: function() {
-    this.store.unloadAll(App.Task);
+    return this.store.find('task');
   },
   afterModel: function(tasks, transition) {
     if (tasks.get('length') === 0) {
