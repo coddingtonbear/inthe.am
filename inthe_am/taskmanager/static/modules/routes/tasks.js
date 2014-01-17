@@ -1,5 +1,6 @@
 var route = Ember.Route.extend({
   model: function(){
+    this.store.unloadAll('task');
     return this.store.find('task');
   },
   afterModel: function(tasks, transition) {
