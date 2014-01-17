@@ -6,7 +6,9 @@ import operator
 import os
 
 import pytz
-from tastypie import authentication, authorization, bundle, fields, resources
+from tastypie import (
+    authentication, authorization, bundle, exceptions, fields, resources
+)
 
 from django.conf.urls import url
 from django.contrib.auth.models import User
@@ -152,6 +154,8 @@ class UserResource(resources.ModelResource):
 
 class Task(object):
     def __init__(self, json):
+        if not json:
+            raise ValueError()
         self.json = json
 
     def _date_from_taskw(self, value):
@@ -336,7 +340,10 @@ class TaskResource(resources.Resource):
 
     @requires_taskd_sync
     def obj_get(self, bundle, store, **kwargs):
-        return Task(store.client.get_task(uuid=kwargs['pk'])[1])
+        try:
+            Task(store.client.get_task(uuid=kwargs['pk'])[1])
+        except ValueError:
+            raise exceptions.NotFound()
 
     class Meta:
         authentication = authentication.MultiAuthentication(
