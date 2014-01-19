@@ -198,7 +198,9 @@ Ember.Handlebars.registerHelper('calendar', function(string, options) {
   }catch(e) {
     date = options.contexts[0][string];
   }
-  return new Handlebars.SafeString('<span class="calendar date" title="' + moment(date).format('LLLL') + '">' + moment(date).calendar() + "</span>");
+  if (date) {
+    return new Handlebars.SafeString('<span class="calendar date" title="' + moment(date).format('LLLL') + '">' + moment(date).calendar() + "</span>");
+  }
 });
 
 },{}],11:[function(require,module,exports){
