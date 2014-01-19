@@ -21,9 +21,13 @@ var model = DS.Model.extend({
 
   icon: function(){
     if (this.get('status') == 'completed') {
-      return 'fa-check-square-o';
+      return 'fa-check-circle-o';
+    } else if (this.get('start')) {
+      return 'fa-asterisk';
+    } else if (this.get('due')) {
+      return 'fa-clock-o';
     } else {
-      return 'fa-square-o';
+      return 'fa-circle-o';
     }
   }.property('status', 'urgency'),
 
@@ -47,8 +51,11 @@ var model = DS.Model.extend({
     var values = [];
     if (value) {
       var ticket_ids = value.split(',');
-      for(var i = 0; i < ticket_ids.length; i++) {
-        values[values.length] = this.store.find('task', ticket_ids[i]);
+      var add_value_to_values = function(value) {
+        values[values.length] = value;
+      };
+      for (var i = 0; i < ticket_ids.length; i++) {
+        this.store.find('task', ticket_ids[i]).then(add_value_to_values);
       }
       return values;
     } else {
