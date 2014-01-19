@@ -13,10 +13,10 @@ Ember.Handlebars.registerHelper('propercase', function(string, options) {
 
 Ember.Handlebars.registerHelper('calendar', function(string, options) {
   var date;
-  try{
-    date = options.contexts[0].get(string);
-  }catch(e) {
-    date = options.contexts[0][string];
+  try {
+    date = this.get(string);
+  } catch(e) {
+    date = this[string];
   }
   if (date) {
     return new Handlebars.SafeString('<span class="calendar date" title="' + moment(date).format('LLLL') + '">' + moment(date).calendar() + "</span>");
