@@ -5,3 +5,4 @@ task_data/
 logs/
 /static/
 taskd/
+.DS_Store

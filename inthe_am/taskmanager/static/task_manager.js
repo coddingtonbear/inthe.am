@@ -396,7 +396,7 @@ var route = Ember.Route.extend({
   afterModel: function(tasks, transition) {
     if (tasks.get('length') === 0) {
       this.transitionTo('getting_started');
-    } else {
+    } else if (transition.targetName == "task.index") {
       this.transitionTo('task', tasks.get('firstObject'));
     }
   }
