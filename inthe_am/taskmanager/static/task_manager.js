@@ -308,7 +308,11 @@ var model = DS.Model.extend({
     } else {
       return [];
     }
-  }.property('depends')
+  }.property('depends'),
+
+  as_json: function() {
+    return JSON.stringify(this.store.serialize(this));
+  }.property()
 });
 
 module.exports = model;
