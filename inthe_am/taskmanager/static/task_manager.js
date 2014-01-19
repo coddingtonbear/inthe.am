@@ -180,7 +180,25 @@ module.exports = controller;
 },{}],10:[function(require,module,exports){
 
 Ember.Handlebars.registerHelper('comma_to_list', function(item, options){
-  return item.split(',')
+  return item.split(',');
+});
+
+Ember.Handlebars.registerHelper('propercase', function(string, options) {
+  var project_name = options.contexts[0].get(string);
+  var properCase = function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  };
+  return project_name.replace('_', ' ').replace(/\w\S*/g, properCase);
+});
+
+Ember.Handlebars.registerHelper('calendar', function(string, options) {
+  var date;
+  try{
+    date = options.contexts[0].get(string);
+  }catch(e) {
+    date = options.contexts[0][string];
+  }
+  return new Handlebars.SafeString('<span class="calendar date" title="' + moment(date).format('LLLL') + '">' + moment(date).calendar() + "</span>");
 });
 
 },{}],11:[function(require,module,exports){
@@ -209,6 +227,7 @@ App.DirectTransform = DS.Transform.extend({
 },{"./task.js":13,"./user.js":14}],13:[function(require,module,exports){
 var model = DS.Model.extend({
   annotations: DS.attr(),
+  tags: DS.attr(),
   description: DS.attr('string'),
   due: DS.attr('date'),
   entry: DS.attr('date'),
@@ -220,6 +239,7 @@ var model = DS.Model.extend({
   urgency: DS.attr('number'),
   uuid: DS.attr('string'),
   depends: DS.attr('string'),
+  project: DS.attr('string'),
 
   editable: function(){
     if (this.get('status') == 'pending') {
@@ -228,7 +248,7 @@ var model = DS.Model.extend({
     return false;
   }.property('status'),
 
-  icon: function(){
+  icon: function() {
     if (this.get('status') == 'completed') {
       return 'fa-check-circle-o';
     } else if (this.get('start')) {
@@ -238,7 +258,23 @@ var model = DS.Model.extend({
     } else {
       return 'fa-circle-o';
     }
-  }.property('status', 'urgency'),
+  }.property('status', 'start', 'due'),
+
+  taskwarrior_class: function() {
+    if (this.get('start')) {
+      return 'active';
+    } else if (moment(this.get('due')).isBefore(moment())) {
+      return 'overdue';
+    } else if (moment().startOf('day').isBefore(this.get('due')) && moment().endOf('day').isAfter(this.get('due'))) {
+      return 'due__today';
+    } else if (this.get('priority') == 'H') {
+      return 'pri__h';
+    } else if (this.get('priority') == 'M') {
+      return 'pri__m';
+    } else if (this.get('priority') == 'L') {
+      return 'pri__l';
+    }
+  }.property('status', 'urgency', 'start', 'due'),
 
   processed_annotations: function() {
     var value = this.get('annotations');

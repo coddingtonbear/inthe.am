@@ -1,6 +1,6 @@
 <div class="pure-u-1" id="list">
     {{#each task in controller}}
-        <div class="task pure-g" {{action "view_task" task }}>
+        <div {{bind-attr class=":task :pure-g task.taskwarrior_class"}} {{action "view_task" task }}>
             <div {{bind-attr class=":pure-u task.status"}}>
                 <i {{bind-attr class=":task-icon :fa task.icon"}}></i>
             </div>

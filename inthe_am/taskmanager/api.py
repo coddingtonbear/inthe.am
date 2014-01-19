@@ -201,6 +201,7 @@ class TaskResource(resources.Resource):
     id = fields.IntegerField(attribute='id', null=True)
     uuid = fields.CharField(attribute='uuid')
     description = fields.CharField(attribute='description')
+    project = fields.CharField(attribute='project', null=True)
     due = fields.DateTimeField(attribute='due', null=True)
     entry = fields.DateTimeField(attribute='entry', null=True)
     modified = fields.DateTimeField(attribute='modified', null=True)
@@ -210,6 +211,7 @@ class TaskResource(resources.Resource):
     urgency = fields.FloatField(attribute='urgency')
     depends = fields.CharField(attribute='depends', null=True)
     annotations = fields.ListField(attribute='annotations', null=True)
+    tags = fields.ListField(attribute='tags', null=True)
 
     def prepend_urls(self):
         return [

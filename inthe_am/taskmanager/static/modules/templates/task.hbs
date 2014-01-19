@@ -3,9 +3,9 @@
         <h1 class="title">
             {{description}}
         </h1>
-        {{#if due}}
-            <p class="subtitle">
-                Due {{due}}
+        {{#if project}}
+            <p class="subtitle" {{bind-attr title="project"}}>
+                {{propercase project}}
             </p>
         {{/if}}
     </div>
@@ -36,6 +36,10 @@
                 <th>Description</th>
                 <td>{{description}}</td>
             </tr>
+            <tr>    
+                <th>Project</th>
+                <td>{{project}}</td>
+            </tr>
             <tr>
                 <th>Status</th>
                 <td>{{status}}</td>
@@ -45,24 +49,24 @@
                 <td>{{urgency}}</td>
             </tr>
             <tr>
-                <th>Due</th>
-                <td>{{due}}</td>
-            </tr>
-            <tr>
                 <th>Priority</th>
                 <td>{{priority}}</td>
             </tr>
             <tr>
+                <th>Due</th>
+                <td>{{calendar due}}</td>
+            </tr>
+            <tr>
                 <th>Entered</th>
-                <td>{{entry}}</td>
+                <td>{{calendar entry}}</td>
             </tr>
             <tr>
                 <th>Started</th>
-                <td>{{start}}</td>
+                <td>{{calendar start}}</td>
             </tr>
             <tr>
                 <th>Modified</th>
-                <td>{{modified}}</td>
+                <td>{{calendar modified}}</td>
             </tr>
             <tr>
                 <th>UUID</th>
@@ -73,7 +77,7 @@
     <ul class='annotation_list'>
         {{#each processed_annotations}}
             <li>
-                <span class='date'>{{ this.entry }}</span>
+                {{calendar this.entry}}:
                 {{ this.description }}
             </li>
         {{/each}}
