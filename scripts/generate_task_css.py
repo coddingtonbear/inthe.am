@@ -36,7 +36,7 @@ def hex_rgb(r, g, b):
 def get_color(color):
     if color.startswith('rgb'):
         r_, g_, b_ = color[3:]
-        r, g, b = int(r_) * 51, int(g_) * 51, int(b_) * 51
+        r, g, b = int(r_) * 40 + 55, int(g_) * 40 + 55, int(b_) * 40 + 55
         return hex_rgb(r, g, b)
     if color.startswith('gray'):
         level = int(color[4:])
