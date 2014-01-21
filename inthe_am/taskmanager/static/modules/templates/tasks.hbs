@@ -5,8 +5,11 @@
                 <i {{bind-attr class=":task-icon :fa task.icon"}}></i>
             </div>
             <div class="pure-u-3-4">
-                <h5 class="status">{{task.status}}</h5>
+                <h5 class="status" {{bind-attr title="task.project"}}>{{propercase task.project}}</h5>
                 <p class="description">{{task.description}}</p>
+                {{#each task.tags}}
+                    <i class="fa fa-tag">{{this}}</i>
+                {{/each}}
             </div>
         </div>
     {{else}}

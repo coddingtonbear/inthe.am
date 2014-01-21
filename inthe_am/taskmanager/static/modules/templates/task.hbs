@@ -8,6 +8,11 @@
                 {{propercase project}}
             </p>
         {{/if}}
+        <div class="tags">
+            {{#each tags}}
+                <i class="fa fa-tag">{{this}}</i>
+            {{/each}}
+        </div>
     </div>
     <div class="pure-u-1-2 controls">
         {{#if editable}}
@@ -43,7 +48,15 @@
             </tr>
             <tr>
                 <th>Status</th>
-                <td>{{status}}</td>
+                <td>{{propercase status}}</td>
+            </tr>
+            <tr>
+                <th>Tags</th>
+                <td>
+                    {{#each tags}}
+                        <i class="fa fa-tag">{{this}}</i>
+                    {{/each}}
+                </td>
             </tr>
             <tr>
                 <th>Urgency</th>
