@@ -48,6 +48,8 @@ var model = DS.Model.extend({
       return 'pri__M';
     } else if (this.get('priority') == 'L') {
       return 'pri__L';
+    } else if (this.get('tags')) {
+      return 'tagged';
     }
   }.property('status', 'urgency', 'start', 'due'),
 
