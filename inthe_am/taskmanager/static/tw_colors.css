@@ -1,0 +1,118 @@
+.task.calendar__today {
+	background-color: #333300;
+}
+.task.tagged {
+	color: #99cc66;
+}
+.task.footnote {
+	color: #009933;
+}
+.task.history__delete {
+	background-color: #00ff00;
+}
+.task.sync__rejected {
+	color: #333300;
+}
+.task.summary__background {
+	color: #ffffff;
+}
+.task.blocked {
+	color: #ffffff;
+	background-color: #333300;
+}
+.task.due__today {
+	color: #cc3300;
+}
+.task.project__none {
+}
+.task.calendar__weeknumber {
+	color: #333300;
+}
+.task.sync__added {
+	color: #d2d2d2;
+}
+.task.summary__bar {
+	color: #ffffff;
+	background-color: #009900;
+}
+.task.sync__changed {
+	color: #cc9900;
+}
+.task.alternate {
+	background-color: #ffffff;
+}
+.task.due {
+	color: #cc6600;
+}
+.task.burndown__started {
+	background-color: #cc9900;
+}
+.task.calendar__overdue {
+	background-color: #cc0000;
+}
+.task.calendar__weekend {
+}
+.task.history__done {
+	background-color: #009900;
+}
+.task.recurring {
+	color: #99cc99;
+}
+.task.tag__none {
+}
+.task.undo__after {
+	color: #00ff99;
+}
+.task.calendar__holiday {
+	color: #33ff33;
+	background-color: #006600;
+}
+.task.burndown__done {
+	background-color: #d2d2d2;
+}
+.task.pri__M {
+	color: #009900;
+}
+.task.pri__L {
+	color: #003300;
+}
+.task.pri__H {
+	color: #ccff00;
+}
+.task.pri__none {
+}
+.task.active {
+	color: #ccff33;
+	background-color: #993300;
+}
+.task.undo__before {
+	color: #009933;
+}
+.task.blocking {
+	color: #ffffff;
+	background-color: #666600;
+}
+.task.burndown__pending {
+	background-color: #333300;
+}
+.task.header {
+	color: #009933;
+}
+.task.calendar__due__today {
+	background-color: #cc3300;
+}
+.task.calendar__due {
+	background-color: #cc9900;
+}
+.task.history__add {
+	background-color: #003300;
+}
+.task.error {
+	color: #009933;
+}
+.task.debug {
+	color: #009933;
+}
+.task.overdue {
+	color: #cc0000;
+}
