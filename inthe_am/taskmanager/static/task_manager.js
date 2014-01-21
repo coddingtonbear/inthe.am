@@ -267,11 +267,11 @@ var model = DS.Model.extend({
     } else if (this.get('due')) {
       return 'due';
     } else if (this.get('priority') == 'H') {
-      return 'pri__h';
+      return 'pri__H';
     } else if (this.get('priority') == 'M') {
-      return 'pri__m';
+      return 'pri__M';
     } else if (this.get('priority') == 'L') {
-      return 'pri__l';
+      return 'pri__L';
     }
   }.property('status', 'urgency', 'start', 'due'),
 
