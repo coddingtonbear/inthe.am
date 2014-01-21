@@ -22,6 +22,8 @@ SECRET_KEY = 'nou@d*dme8l60^9mzyk@#ikeobd0ws#p*mj#e*i*g33d#blsc9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+if os.uname()[1] == "norman":
+    DEBUG = False
 
 TEMPLATE_DEBUG = True
 
@@ -167,14 +169,15 @@ LOGGING = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211'
+if not DEBUG:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': '127.0.0.1:11211'
+        }
     }
-}
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 SECURE_PROXY_SSL_HEADER=('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
