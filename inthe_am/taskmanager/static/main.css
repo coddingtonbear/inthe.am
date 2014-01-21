@@ -25,14 +25,16 @@ a {
   margin-left: -500px;
   /* "left col (nav + list)" width */
   width: 150px;
-  background: #252a3a;
+  background: black;
   text-align: center;
   padding: 2em 0; }
 
 #list {
   margin-left: -350px;
   width: 350px;
-  border-right: 1px solid #dddddd; }
+  border-right: 1px solid #dddddd;
+  color: #bbbbbb;
+  background-color: #202020; }
 
 /* HELPER CLASSES */
 .primary-button, .secondary-button {
