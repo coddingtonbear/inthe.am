@@ -384,7 +384,7 @@ App.CompletedTaskRoute = require("./completedTask");
 },{"./completed":16,"./completedTask":17,"./task":19,"./tasks":20}],19:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(params) {
-     this.store.find('task', params.uuid);
+     return this.store.find('task', params.uuid);
   },
 });
 
