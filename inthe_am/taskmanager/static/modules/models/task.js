@@ -40,6 +40,8 @@ var model = DS.Model.extend({
       return 'overdue';
     } else if (moment().startOf('day').isBefore(this.get('due')) && moment().endOf('day').isAfter(this.get('due'))) {
       return 'due__today';
+    } else if (this.get('due')) {
+      return 'due';
     } else if (this.get('priority') == 'H') {
       return 'pri__h';
     } else if (this.get('priority') == 'M') {
