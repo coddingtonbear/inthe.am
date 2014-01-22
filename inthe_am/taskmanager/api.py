@@ -31,8 +31,11 @@ def requires_taskd_sync(f):
             user = kwargs['bundle'].request.user
         store = models.TaskStore.get_for_user(user)
         kwargs['store'] = store
+        logger.info('Pre-sync')
         store.sync()
+        logger.info('Calling method')
         result = f(self, *args, **kwargs)
+        logger.info('Post-sync')
         store.sync()
         return result
     return wrapper
