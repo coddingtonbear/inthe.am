@@ -1,5 +1,5 @@
 body {
-  background-color: #bbbbbb;
+  background-color: #f0f0f0;
   color: #202020; }
 
 a {
@@ -44,7 +44,7 @@ a {
   box-shadow: none; }
 
 .primary-button {
-  color: white;
+  color: #202020;
   background: #1b98f8;
   margin: 1em 0; }
 
@@ -68,7 +68,7 @@ a {
   background: #373c5a; }
 
 #nav .pure-menu a {
-  color: white;
+  color: #f0f0f0;
   margin-left: 0.5em; }
 
 #nav .pure-menu-heading {

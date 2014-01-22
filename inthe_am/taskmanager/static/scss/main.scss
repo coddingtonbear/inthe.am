@@ -1,6 +1,9 @@
+$FG_MAIN: #202020;
+$BG_MAIN: #F0F0F0;
+
 body {
-  background-color: #bbbbbb;
-  color: #202020;
+  background-color: $BG_MAIN;
+  color: $FG_MAIN;
 }
 a {
   text-decoration: none;
@@ -36,7 +39,7 @@ a {
   width:350px;
   border-right: 1px solid #ddd;
   color: #BBBBBB;
-  background-color: #202020;
+  background-color: $FG_MAIN;
 }
 
 /* HELPER CLASSES */
@@ -47,7 +50,7 @@ a {
   box-shadow: none;
 }
 .primary-button {
-  color: #fff;
+  color: $FG_MAIN;
   background: #1b98f8;
   margin: 1em 0;
 }
@@ -74,7 +77,7 @@ a {
   background: rgb(55, 60, 90);
 }
 #nav .pure-menu a {
-  color: #fff;
+  color: $BG_MAIN;
   margin-left: 0.5em;
 }
 #nav .pure-menu-heading {
