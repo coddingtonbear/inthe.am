@@ -146,7 +146,7 @@ LOGGING = {
         }
     },
     'loggers': {
-        'root': {
+        '': {
             'handlers': ['exception_log', 'store'],
             'propagate': True,
             'level': 'INFO',
