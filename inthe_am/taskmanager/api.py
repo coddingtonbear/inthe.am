@@ -4,6 +4,7 @@ import json
 import logging
 import operator
 import os
+import time
 
 import pytz
 from tastypie import (
@@ -31,11 +32,12 @@ def requires_taskd_sync(f):
             user = kwargs['bundle'].request.user
         store = models.TaskStore.get_for_user(user)
         kwargs['store'] = store
-        logger.info('Pre-sync')
         store.sync()
-        logger.info('Calling method')
+        # Whoa -- I'm as uncomfortable about this as you are -- but
+        # for some reason, the changes aren't available immediately
+        # (perhaps not fsynced?) and we need to display up-to-date data.
+        time.sleep(1)
         result = f(self, *args, **kwargs)
-        logger.info('Post-sync')
         store.sync()
         return result
     return wrapper
