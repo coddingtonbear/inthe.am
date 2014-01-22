@@ -147,9 +147,9 @@ LOGGING = {
     },
     'loggers': {
         'root': {
-            'handlers': ['exception_log'],
+            'handlers': ['exception_log', 'store'],
             'propagate': True,
-            'level': 'ERROR',
+            'level': 'INFO',
         },
         'django': {
             'handlers':['null'],
