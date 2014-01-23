@@ -13,6 +13,7 @@ var model = DS.Model.extend({
   uuid: DS.attr('string'),
   depends: DS.attr('string'),
   project: DS.attr('string'),
+  imask: DS.attr('number'),
 
   editable: function(){
     if (this.get('status') == 'pending') {
@@ -40,6 +41,8 @@ var model = DS.Model.extend({
       return 'overdue';
     } else if (moment().startOf('day').isBefore(this.get('due')) && moment().endOf('day').isAfter(this.get('due'))) {
       return 'due__today';
+    } else if (this.get('imask')) {
+      return 'recurring';
     } else if (this.get('due')) {
       return 'due';
     } else if (this.get('priority') == 'H') {

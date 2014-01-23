@@ -221,6 +221,7 @@ class TaskResource(resources.Resource):
     depends = fields.CharField(attribute='depends', null=True)
     annotations = fields.ListField(attribute='annotations', null=True)
     tags = fields.ListField(attribute='tags', null=True)
+    imask = fields.IntegerField(attribute='imask', null=True)
 
     def prepend_urls(self):
         return [
