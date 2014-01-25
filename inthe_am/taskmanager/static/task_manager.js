@@ -263,7 +263,7 @@ var model = DS.Model.extend({
       return 'active';
     } else if (moment(this.get('due')).isBefore(moment())) {
       return 'overdue';
-    } else if (moment().startOf('day').isBefore(this.get('due')) && moment().endOf('day').isAfter(this.get('due'))) {
+    } else if (moment().startOf('day').isBefore(this.get('due')) && moment().endOf('day').add('s', 2).isAfter(this.get('due'))) {
       return 'due__today';
     } else if (this.get('imask')) {
       return 'recurring';
