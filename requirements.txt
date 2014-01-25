@@ -1,7 +1,7 @@
 dropbox==1.6.0
 django==1.6.1
 -e git+https://github.com/latestrevision/python-social-auth.git@add_dropbox_oauth2#egg=python-social-auth
--e git+https://github.com/ralphbean/taskw@3a5ac5bee54c9d3d0cc3d0b42d425b9e264fd877#egg=taskw
+-e git+https://github.com/latestrevision/taskw@inthe_am#egg=taskw
 south==0.8.4
 django-tastypie==0.11.0
 pytz>=2013.9
