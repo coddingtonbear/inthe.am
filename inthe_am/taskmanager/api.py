@@ -329,6 +329,13 @@ class TaskResource(resources.Resource):
 
         return obj_list
 
+    def passes_filters(self, task, filters):
+        for key, value in filters.items():
+            task_value = getattr(task, key, None)
+            if task_value == value:
+                return True
+        return False
+
     @requires_taskd_sync
     def obj_get_list(self, bundle, store, **kwargs):
         if hasattr(bundle.request, 'GET'):
@@ -341,9 +348,9 @@ class TaskResource(resources.Resource):
 
         objects = []
         for task_json in store.client.load_tasks()[key]:
-            objects.append(
-                Task(task_json)
-            )
+            task = Task(task_json)
+            if self.passes_filters(task, filters):
+                objects.append(task)
 
         return objects
 
