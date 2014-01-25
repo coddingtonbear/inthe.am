@@ -31,24 +31,7 @@ class TaskStore(models.Model):
         allow_folders=True,
         blank=True,
     )
-    taskd_user_key = models.CharField(
-        max_length=36,
-        blank=True,
-    )
-    certificate_path = models.FilePathField(
-        path=settings.TASK_STORAGE_PATH,
-        allow_files=False,
-        allow_folders=True,
-        blank=True,
-    )
-    key_path = models.FilePathField(
-        path=settings.TASK_STORAGE_PATH,
-        allow_files=False,
-        allow_folders=True,
-        blank=True,
-    )
     configured = models.BooleanField(default=False)
-    dirty = models.BooleanField(default=False)
 
     @property
     def metadata_registry(self):
@@ -152,7 +135,7 @@ class TaskStore(models.Model):
             stdout=subprocess.PIPE
         )
         key_proc_output = key_proc.communicate()[0].split('\n')
-        self.taskd_user_key = key_proc_output[0].split(':')[1].strip()
+        taskd_user_key = key_proc_output[0].split(':')[1].strip()
 
         private_key_proc = subprocess.Popen(
             [
@@ -168,14 +151,13 @@ class TaskStore(models.Model):
         )
         with open(private_key_filename, 'w') as out:
             out.write(private_key)
-        self.key_path = private_key_filename
 
         cert_proc = subprocess.Popen(
             [
                 'certtool',
                 '--generate-certificate',
                 '--load-privkey',
-                self.key_path,
+                private_key_filename,
                 '--load-ca-privkey',
                 self.server_config['ca.key'],
                 '--load-ca-certificate',
@@ -192,19 +174,18 @@ class TaskStore(models.Model):
         )
         with open(cert_filename, 'w') as out:
             out.write(cert)
-        self.certificate_path = cert_filename
 
         self.taskrc.update({
             'data.location': self.local_path,
-            'taskd.certificate': self.certificate_path,
-            'taskd.key': self.key_path,
+            'taskd.certificate': cert_filename,
+            'taskd.key': private_key_filename,
             'taskd.ca': self.server_config['ca.cert'],
             'taskd.server': settings.TASKD_SERVER,
             'taskd.credentials': (
                 '%s/%s/%s' % (
                     settings.TASKD_ORG,
                     self.user.username,
-                    self.taskd_user_key,
+                    taskd_user_key,
                 )
             )
         })
