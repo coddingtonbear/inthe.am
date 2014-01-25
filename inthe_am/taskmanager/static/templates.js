@@ -69,12 +69,12 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   hashTypes = {'name': "STRING",'value': "ID",'cols': "STRING",'rows': "STRING"};
   options = {hash:{
     'name': ("custom_taskrc"),
-    'value': ("taskrc_extras"),
+    'value': ("controllers.application.user.taskrc_extras"),
     'cols': ("80"),
     'rows': ("10")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.textarea || depth0.textarea),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "textarea", options))));
-  data.buffer.push("\n    <p class=\"help\">\n        Only configuration values relating to urgency can be applied,\n        but entering your entire local <span class=\"code\">.taskrc</span>\n        is both safe and encouraged.\n    </p>\n    <input type=\"submit\" value=\"Save\" ");
+  data.buffer.push("\n    <p class=\"help\">\n        Only configuration values relating to urgency will have an effect,\n        but entering your entire local <span class=\"code\">.taskrc</span>\n        is both safe and encouraged.\n    </p>\n    <input type=\"submit\" value=\"Save\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save_taskrc", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -133,7 +133,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
-  data.buffer.push("\n            <div class=\"nav-inner\">\n                <div class=\"pure-menu pure-menu-open\">\n                    <ul>\n                        <li>\n                            ");
+  data.buffer.push("\n            <div class=\"nav-inner\">\n                <div class=\"pure-menu pure-menu-open\">\n                    <ul>\n                        <li class=\"pure-menu-heading\">Tasks</li>\n                        <li>\n                            ");
   hashTypes = {};
   hashContexts = {};
   options = {hash:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
