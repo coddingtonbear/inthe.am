@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import subprocess
+import tempfile
 import uuid
 
 from django.conf import settings
@@ -31,6 +32,7 @@ class TaskStore(models.Model):
         allow_folders=True,
         blank=True,
     )
+    taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)
 
     @property
@@ -52,7 +54,7 @@ class TaskStore(models.Model):
                 'taskrc': os.path.join(
                     self.local_path,
                     '.taskrc',
-                )
+                ),
             }
 
     @metadata.setter
@@ -92,6 +94,71 @@ class TaskStore(models.Model):
                 self.taskrc.path
             )
         return self._client
+
+    def _is_numeric(self, val):
+        try:
+            float(val)
+            return True
+        except (ValueError, TypeError):
+            return False
+
+    def _get_extra_safety(self, key, val):
+        valid_numeric_starts = [
+            'urgency.next.coefficient',
+            'urgency.blocking.coefficient',
+            'urgency.blocked.coefficient',
+            'urgency.priority.coefficient',
+            'urgency.waiting.coefficient',
+            'urgency.active.coefficient',
+            'urgency.project.coefficient',
+            'urgency.tags.coefficient',
+            'urgency.annotations.coefficient',
+            'urgency.user.tag',
+            'urgency.user.project',
+            'urgency.age.coefficient',
+            'urgency.age.max',
+        ]
+        for start in valid_numeric_starts:
+            if key.startswith(start) and self._is_numeric(val):
+                return True, None
+            elif key.startswith(start):
+                return False, "Setting '%s' requires a numeric value." % key
+        return False, "Setting '%s' could not be applied." % key
+
+    def apply_extras(self):
+        default_extras_path = os.path.join(
+            self.local_path,
+            '.taskrc_extras',
+        )
+        extras_path = self.metadata.get('taskrc_extras', default_extras_path)
+        self.metadata['taskrc_extras'] = default_extras_path
+
+        applied = {}
+        errored = {}
+        self.taskrc.add_include(extras_path)
+        with tempfile.NamedTemporaryFile() as temp_extras:
+            temp_extras.write(self.taskrc_extras)
+            temp_extras.flush()
+            extras = TaskRc(temp_extras.name, read_only=True)
+
+            with open(extras_path, 'w') as applied_extras:
+                for key, value in extras.items():
+                    safe, message = self._get_extra_safety(key, value)
+                    if safe:
+                        applied[key] = value
+                        applied_extras.write(
+                            "%s=%s\n" % (
+                                key,
+                                value,
+                            )
+                        )
+                    else:
+                        errored[key] = (value, message)
+        return applied, errored
+
+    def save(self):
+        self.apply_extras()
+        super(TaskStore, self).save()
 
     def __unicode__(self):
         return 'Tasks for %s' % self.user
@@ -198,23 +265,34 @@ class TaskRc(object):
         self.path = path
         self.read_only = read_only
         if not os.path.isfile(self.path):
-            self.config = {}
+            self.config, self.includes = {}, []
         else:
-            self.config = self._read(self.path)
+            self.config, self.includes = self._read(self.path)
 
     def _read(self, path):
-        out = {}
+        config = {}
+        includes = []
         with open(path, 'r') as config:
             for line in config.readlines():
                 if line.startswith('#'):
                     continue
-                left, right = line.split('=')
-                key = left.strip()
-                value = right.strip()
-                out[key] = value
-        return out
+                if line.startswith('include '):
+                    left, right = line.split(' ')
+                    includes.append(right)
+                else:
+                    left, right = line.split('=')
+                    key = left.strip()
+                    value = right.strip()
+                    config[key] = value
+        return config, includes
 
-    def _write(self, path, data):
+    def _write(self, path=None, data=None, includes=None):
+        if path is None:
+            path = self.path
+        if data is None:
+            data = self.config
+        if includes is None:
+            includes = self.includes
         if self.read_only:
             raise AttributeError(
                 "This instance is read-only."
@@ -225,6 +303,12 @@ class TaskRc(object):
                     datetime.datetime.utcnow()
                 )
             )
+            for include in includes:
+                config.write(
+                    "include %s\n" % (
+                        include
+                    )
+                )
             for key, value in data.items():
                 config.write(
                     "%s=%s\n" % (
@@ -232,6 +316,9 @@ class TaskRc(object):
                         value
                     )
                 )
+
+    def items(self):
+        return self.config.items()
 
     def keys(self):
         return self.config.keys()
@@ -247,11 +334,16 @@ class TaskRc(object):
 
     def __setitem__(self, item, value):
         self.config[item] = str(value)
-        self._write(self.path, self.config)
+        self._write()
 
     def update(self, value):
         self.config.update(value)
-        self._write(self.path, self.config)
+        self._write()
+
+    def add_include(self, item):
+        if item not in self.includes:
+            self.includes.append(item)
+        self._write()
 
     def __unicode__(self):
         return u'.taskrc at %s' % self.path

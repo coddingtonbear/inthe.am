@@ -130,6 +130,7 @@ class UserResource(resources.ModelResource):
                 'configured': store.configured,
                 'taskd_credentials': store.taskrc.get('taskd.credentials'),
                 'taskd_server': 'taskwarrior.inthe.am:53589',
+                'taskd_extra': store.taskd_extras,
                 'api_key': request.user.api_key.key,
             }
         else:
