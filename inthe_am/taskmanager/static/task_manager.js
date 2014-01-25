@@ -347,6 +347,8 @@ App.Router.map(function(){
     this.resource("completedTask", {path: "/:uuid"});
   });
   this.route("unconfigurable", {path: "/no-tasks"});
+  this.route("api_access", {path: "/api-access"});
+  this.route("synchronization", {path: "/synchronization"});
   this.route("configure", {path: "/configure"});
   this.route("getting_started", {path: "/getting-started"});
 });

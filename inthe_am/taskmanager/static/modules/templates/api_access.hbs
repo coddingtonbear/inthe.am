@@ -1,0 +1,60 @@
+<div class="pure-u-1 standalone">
+    <h2>Api Access</h2>
+
+    <table class="pure-table pure-table-horizontal">
+        <tr>
+            <th>
+                Username
+            </th>
+            <td>
+                {{ unbound controllers.application.user.username }}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Api Key
+            </th>
+            <td>
+                {{ unbound controllers.application.user.api_key }}
+            </td>
+        </tr>
+    </table>
+
+
+    <h3>Authentication</h3>
+
+    Using your API key and username, use the header "<code>Authorization</code>";
+    for an example:
+
+    <code>
+    <pre>
+        Authorization: ApiKey {{ unbound controllers.application.user.username }}:{{ unbound controllers.application.user.api_key }}
+    </pre>
+    </code>
+
+
+    <h3>Endpoints</h3>
+
+    <p>
+        The Tasks REST API supports only <strong>GET</strong> requests.
+    </p>
+
+    <table class="pure-table pure-table-horizontal">
+        <tr>
+            <th>
+                Task List
+            </th>
+            <td>
+                <code>https://inthe.am/api/v1/task/</code>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Task Detail
+            </th>
+            <td>
+                <code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/</code>
+            </td>
+        </tr>
+    </table>
+</div>

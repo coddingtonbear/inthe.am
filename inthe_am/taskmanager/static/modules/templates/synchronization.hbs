@@ -1,0 +1,43 @@
+<div class="pure-u-1 standalone">
+    <h2>Synchronization Configuration</h2>
+    <table class="pure-table pure-table-horizontal">
+        <tr>
+            <th>
+                Your Certificate
+            </th>
+            <td>
+                <a href="{{ unbound controllers.application.urls.my_certificate }}">private.cert.pem</a>
+            </td>
+        </tr>
+        <tr>
+            <th>
+               Your Key 
+            </th>
+            <td>
+                <a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Authority Certificate
+            </th>
+            <td>
+                <a href="{{ unbound controllers.application.urls.ca_certificate }}">ca.cert.pem</a>
+            </td>
+        </tr>
+    </table>
+    
+    <p>
+        Add the following settings to your Taskwarrior configuration file (<code>~/.taskrc</code>).
+    </p>
+
+    <code>
+    <pre>
+        taskd.certificate=/path/to/<a href="{{ unbound controllers.application.urls.my_certificate }}">private.cert.pem</a>
+        taskd.key=/path/to/<a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a>
+        taskd.ca=/path/to/<a href="{{ unbound controllers.application.urls.ca_certificate }}">ca.cert.pem</a>
+        taskd.server={{ controllers.application.user.taskd_server }}
+        taskd.credentials={{ controllers.application.user.taskd_credentials }}
+    </pre>
+    </code>
+</div>
