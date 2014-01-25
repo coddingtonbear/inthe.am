@@ -124,19 +124,19 @@ function program1(depth0,data) {
   options = {hash:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['link-to'] || depth0['link-to']),stack1 ? stack1.call(depth0, "tasks", options) : helperMissing.call(depth0, "link-to", "tasks", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n                        </li>\n                    </ul>\n                    <ul>\n                        <li>\n                            ");
+  data.buffer.push("\n                        </li>\n                        <li class=\"pure-menu-heading\">Tools</li>\n                        <li>\n                            ");
   hashTypes = {};
   hashContexts = {};
   options = {hash:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['link-to'] || depth0['link-to']),stack1 ? stack1.call(depth0, "synchronization", options) : helperMissing.call(depth0, "link-to", "synchronization", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n                        </li>\n                    </ul>\n                    <ul>\n                        <li>\n                            ");
+  data.buffer.push("\n                        </li>\n                        <li>\n                            ");
   hashTypes = {};
   hashContexts = {};
   options = {hash:{},inverse:self.noop,fn:self.program(6, program6, data),contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['link-to'] || depth0['link-to']),stack1 ? stack1.call(depth0, "api_access", options) : helperMissing.call(depth0, "link-to", "api_access", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n                        </li>\n                    </ul>\n                    <ul>\n                        <li>\n                            ");
+  data.buffer.push("\n                        </li>\n                        <li>\n                            ");
   hashTypes = {};
   hashContexts = {};
   options = {hash:{},inverse:self.noop,fn:self.program(8, program8, data),contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
@@ -158,19 +158,19 @@ function program2(depth0,data) {
 function program4(depth0,data) {
   
   
-  data.buffer.push("Synchronization");
+  data.buffer.push("<i class=\"fa fa-cloud-upload\">Sync</i>");
   }
 
 function program6(depth0,data) {
   
   
-  data.buffer.push("API Access");
+  data.buffer.push("<i class=\"fa fa-gears\">API</i>");
   }
 
 function program8(depth0,data) {
   
   
-  data.buffer.push("<i class=\"fa fa-gears\">Configuration</i>");
+  data.buffer.push("<i class=\"fa fa-wrench\">Settings</i>");
   }
 
 function program10(depth0,data) {

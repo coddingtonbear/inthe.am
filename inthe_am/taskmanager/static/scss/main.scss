@@ -11,6 +11,9 @@ a {
   text-decoration: none;
   color: #1b98f8;
 }
+i.fa:before {
+  padding-right: 2px;
+}
 /* LAYOUT CSS */
 #layout {
   padding-left:500px; /* "left col (nav + list)" width */
@@ -21,6 +24,7 @@ a {
   margin-left: -310px;
   padding-top: 20px;
 }
+
 
 #nav, #list {
   position: fixed;
@@ -190,3 +194,4 @@ a {
     display: block;
   }
 }
+
