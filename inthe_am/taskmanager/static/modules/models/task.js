@@ -9,7 +9,7 @@ var model = DS.Model.extend({
   resource_uri: DS.attr('string'),
   start: DS.attr('date'),
   wait: DS.attr('date'),
-  scheduled: DS.attr('scheduled'),
+  scheduled: DS.attr('date'),
   'status': DS.attr('string'),
   urgency: DS.attr('number'),
   uuid: DS.attr('string'),
