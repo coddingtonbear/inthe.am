@@ -232,6 +232,8 @@ var model = DS.Model.extend({
   priority: DS.attr('string'),
   resource_uri: DS.attr('string'),
   start: DS.attr('date'),
+  wait: DS.attr('date'),
+  scheduled: DS.attr('scheduled'),
   'status': DS.attr('string'),
   urgency: DS.attr('number'),
   uuid: DS.attr('string'),
