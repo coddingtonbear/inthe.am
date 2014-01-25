@@ -4,7 +4,6 @@ import json
 import logging
 import operator
 import os
-import time
 
 import pytz
 from tastypie import (
@@ -33,14 +32,6 @@ def requires_taskd_sync(f):
         store = models.TaskStore.get_for_user(user)
         kwargs['store'] = store
         store.sync()
-        # Whoa -- I'm as uncomfortable about this as you are -- but
-        # for some reason, the changes aren't available immediately
-        # (perhaps not fsynced?) and we need to display up-to-date data.
-        # -- Oh, nevermind, this is because the version of `taskw` I'm
-        # using does not wait for the sync process to complete before
-        # proceeding; this will become a non-issue once the next version
-        # of taskw is released, and I can remove this line.
-        time.sleep(1)
         result = f(self, *args, **kwargs)
         store.sync()
         return result
