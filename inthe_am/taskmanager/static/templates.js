@@ -61,10 +61,25 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 this["Ember"]["TEMPLATES"]["configure"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  
+  var buffer = '', stack1, hashContexts, hashTypes, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<div class=\"pure-u-1 standalone\">\n</div>\n");
+  data.buffer.push("<div class=\"pure-u-1 standalone\">\n    <h2>Custom <span class=\"code\">.taskrc</span></h2>\n    ");
+  hashContexts = {'name': depth0,'value': depth0,'cols': depth0,'rows': depth0};
+  hashTypes = {'name': "STRING",'value': "ID",'cols': "STRING",'rows': "STRING"};
+  options = {hash:{
+    'name': ("custom_taskrc"),
+    'value': ("taskrc_extras"),
+    'cols': ("80"),
+    'rows': ("10")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.textarea || depth0.textarea),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "textarea", options))));
+  data.buffer.push("\n    <p class=\"help\">\n        Only configuration values relating to urgency can be applied,\n        but entering your entire local <span class=\"code\">.taskrc</span>\n        is both safe and encouraged.\n    </p>\n    <input type=\"submit\" value=\"Save\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "save_taskrc", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(" />\n</div>\n");
+  return buffer;
   
 });
 

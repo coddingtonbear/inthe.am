@@ -1,2 +1,10 @@
 <div class="pure-u-1 standalone">
+    <h2>Custom <span class="code">.taskrc</span></h2>
+    {{textarea name="custom_taskrc" value=this.taskrc_extras cols="80" rows="10" }}
+    <p class="help">
+        Only configuration values relating to urgency can be applied,
+        but entering your entire local <span class="code">.taskrc</span>
+        is both safe and encouraged.
+    </p>
+    <input type="submit" value="Save" {{action "save_taskrc" }} />
 </div>

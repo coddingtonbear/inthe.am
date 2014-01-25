@@ -75,6 +75,12 @@ class UserResource(resources.ModelResource):
                 ),
                 self.wrap_view('ca_certificate')
             ),
+            url(
+                r"^(?P<resource_name>%s)/taskrc/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('taskrc_extras')
+            )
         ]
 
     def _send_file(self, out, content_type=None, **kwargs):
@@ -114,6 +120,33 @@ class UserResource(resources.ModelResource):
             content_type='application/x-pem-file',
         )
 
+    def taskrc_extras(self, request, **kwargs):
+        if request.method == 'GET':
+            ts = models.TaskStore.get_for_user(request.user)
+            return HttpResponse(
+                ts.taskrc_extras,
+                content_type='text/plain'
+            )
+        elif request.method == 'PUT':
+            ts = models.TaskStore.get_for_user(request.user)
+            ts.taskrc_extras = request.body.decode(request.encoding)
+            results = ts.apply_extras()
+            ts.save()
+            return HttpResponse(
+                json.dumps(
+                    {
+                        'success': results[0],
+                        'failed': results[1]
+                    }
+                ),
+                content_type='application/json',
+            )
+        else:
+            return HttpResponse(
+                '',
+                status=405,
+            )
+
     def account_status(self, request, **kwargs):
         if request.user.is_authenticated():
             store = models.TaskStore.get_for_user(request.user)
@@ -130,7 +163,7 @@ class UserResource(resources.ModelResource):
                 'configured': store.configured,
                 'taskd_credentials': store.taskrc.get('taskd.credentials'),
                 'taskd_server': 'taskwarrior.inthe.am:53589',
-                'taskd_extra': store.taskd_extras,
+                'taskd_extra': store.taskrc_extras,
                 'api_key': request.user.api_key.key,
             }
         else:

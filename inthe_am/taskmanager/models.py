@@ -272,18 +272,25 @@ class TaskRc(object):
     def _read(self, path):
         config = {}
         includes = []
-        with open(path, 'r') as config:
-            for line in config.readlines():
+        with open(path, 'r') as config_file:
+            for line in config_file.readlines():
                 if line.startswith('#'):
                     continue
                 if line.startswith('include '):
-                    left, right = line.split(' ')
-                    includes.append(right)
+                    try:
+                        left, right = line.split(' ')
+                        if right.strip() not in includes:
+                            includes.append(right.strip())
+                    except ValueError:
+                        pass
                 else:
-                    left, right = line.split('=')
-                    key = left.strip()
-                    value = right.strip()
-                    config[key] = value
+                    try:
+                        left, right = line.split('=')
+                        key = left.strip()
+                        value = right.strip()
+                        config[key] = value
+                    except ValueError:
+                        pass
         return config, includes
 
     def _write(self, path=None, data=None, includes=None):
