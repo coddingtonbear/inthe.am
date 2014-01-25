@@ -12,6 +12,13 @@ module.exports = App;
 
 },{}],2:[function(require,module,exports){
 var controller = Ember.Controller.extend({
+  needs: ['application']
+});
+
+module.exports = controller;
+
+},{}],3:[function(require,module,exports){
+var controller = Ember.Controller.extend({
   user: null,
   pending_count: null,
   urls: {
@@ -39,7 +46,7 @@ var controller = Ember.Controller.extend({
 
 module.exports = controller;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var controller = Ember.ArrayController.extend({
   sortProperties: ['-modified'],
   sortAscending: false,
@@ -53,15 +60,8 @@ var controller = Ember.ArrayController.extend({
 
 module.exports = controller;
 
-},{}],4:[function(require,module,exports){
-var controller = Ember.ObjectController.extend();
-
-module.exports = controller;
-
 },{}],5:[function(require,module,exports){
-var controller = Ember.Controller.extend({
-  needs: ['application']
-});
+var controller = Ember.ObjectController.extend();
 
 module.exports = controller;
 
@@ -73,7 +73,8 @@ App.TaskController = require("./task");
 App.TasksController = require("./tasks");
 App.CompletedController = require("./completed");
 App.CompletedTaskController = require("./completedTask");
-App.ConfigureController = require("./configure");
+App.ApiAccessController = require("./api_access");
+App.SynchronizationController = require("./synchronization");
 
 App.IndexController = Ember.Controller.extend({
   needs: ["application"],
@@ -109,7 +110,7 @@ App.IndexController = Ember.Controller.extend({
   }
 });
 
-},{"./application":2,"./completed":3,"./completedTask":4,"./configure":5,"./navigation":7,"./task":8,"./tasks":9}],7:[function(require,module,exports){
+},{"./api_access":2,"./application":3,"./completed":4,"./completedTask":5,"./navigation":7,"./synchronization":8,"./task":9,"./tasks":10}],7:[function(require,module,exports){
 var controller = Ember.Controller.extend({
   needs: ["application", "tasks"],
 
@@ -126,6 +127,8 @@ var controller = Ember.Controller.extend({
 module.exports = controller;
 
 },{}],8:[function(require,module,exports){
+module.exports=require(2)
+},{}],9:[function(require,module,exports){
 var controller = Ember.ObjectController.extend({
   actions: {
     'complete': function(){
@@ -163,7 +166,7 @@ var controller = Ember.ObjectController.extend({
 
 module.exports = controller;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var controller = Ember.ArrayController.extend({
   sortProperties: ['urgency'],
   sortAscending: false,
@@ -177,7 +180,7 @@ var controller = Ember.ArrayController.extend({
 
 module.exports = controller;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 Ember.Handlebars.helper('comma_to_list', function(item, options){
   return item.split(',');
@@ -198,7 +201,7 @@ Ember.Handlebars.helper('calendar', function(date, options) {
   }
 });
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 window.App = require('./app');
 
 require("./controllers");
@@ -207,7 +210,7 @@ require("./routes");
 require("./views");
 require("./helpers");
 
-},{"./app":1,"./controllers":6,"./helpers":10,"./models":12,"./routes":18,"./views":23}],12:[function(require,module,exports){
+},{"./app":1,"./controllers":6,"./helpers":11,"./models":13,"./routes":19,"./views":24}],13:[function(require,module,exports){
 
 App.User = require("./user.js");
 App.Task = require("./task.js");
@@ -221,7 +224,7 @@ App.DirectTransform = DS.Transform.extend({
   }
 });
 
-},{"./task.js":13,"./user.js":14}],13:[function(require,module,exports){
+},{"./task.js":14,"./user.js":15}],14:[function(require,module,exports){
 var model = DS.Model.extend({
   annotations: DS.attr(),
   tags: DS.attr(),
@@ -321,7 +324,7 @@ var model = DS.Model.extend({
 
 module.exports = model;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var model = DS.Model.extend({
   logged_in: DS.attr('boolean'),
   uid: DS.attr('string'),
@@ -336,7 +339,7 @@ var model = DS.Model.extend({
 
 module.exports = model;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 App.Router.map(function(){
   this.route("login", {path: "/login"});
   this.route("about", {path: "/about"});
@@ -357,7 +360,7 @@ App.Router.reopen({
   location: 'history'
 });
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(){
     return this.store.findQuery('task', {completed: 1, order_by: '-modified'});
@@ -366,7 +369,7 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(params) {
     return this.store.find('task', params.uuid);
@@ -375,7 +378,7 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 
 App.IndexRoute = Ember.Route.extend({
   renderTemplate: function() {
@@ -388,7 +391,7 @@ App.TaskRoute = require("./task");
 App.CompletedRoute = require("./completed");
 App.CompletedTaskRoute = require("./completedTask");
 
-},{"./completed":16,"./completedTask":17,"./task":19,"./tasks":20}],19:[function(require,module,exports){
+},{"./completed":17,"./completedTask":18,"./task":20,"./tasks":21}],20:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(params) {
      return this.store.find('task', params.uuid);
@@ -397,7 +400,7 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(){
     this.store.unloadAll('task');
@@ -414,7 +417,7 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var view = Ember.View.extend({
   templateName: 'tasks',
   name: 'completed'
@@ -422,7 +425,7 @@ var view = Ember.View.extend({
 
 module.exports = view;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var view = Ember.View.extend({
   templateName: 'task',
   name: 'completedTask'
@@ -430,15 +433,15 @@ var view = Ember.View.extend({
 
 module.exports = view;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 
 App.NavigationView = require("./navigation");
 App.CompletedView = require("./completed");
 App.CompletedTaskView = require("./completedTask");
 
-},{"./completed":21,"./completedTask":22,"./navigation":24}],24:[function(require,module,exports){
+},{"./completed":22,"./completedTask":23,"./navigation":25}],25:[function(require,module,exports){
 var view = Ember.View.extend();
 
 module.exports = view;
 
-},{}]},{},[1,10,11,15])
+},{}]},{},[1,11,12,16])
