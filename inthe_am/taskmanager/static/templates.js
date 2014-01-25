@@ -252,12 +252,12 @@ function program1(depth0,data) {
     'title': ("project")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || depth0['bind-attr']),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
-  data.buffer.push(">\n                ");
+  data.buffer.push(">\n                <span class=\"project\">");
   hashTypes = {};
   hashContexts = {};
   options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.propercase || depth0.propercase),stack1 ? stack1.call(depth0, "project", options) : helperMissing.call(depth0, "propercase", "project", options))));
-  data.buffer.push("\n            </p>\n        ");
+  data.buffer.push("</span>\n            </p>\n        ");
   return buffer;
   }
 
@@ -376,11 +376,11 @@ function program13(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "description", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</td>\n            </tr>\n            <tr>    \n                <th>Project</th>\n                <td>");
+  data.buffer.push("</td>\n            </tr>\n            <tr>    \n                <th>Project</th>\n                <td><span class=\"project\">");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "project", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</td>\n            </tr>\n            <tr>\n                <th>Status</th>\n                <td>");
+  data.buffer.push("</span></td>\n            </tr>\n            <tr>\n                <th>Status</th>\n                <td>");
   hashTypes = {};
   hashContexts = {};
   options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
@@ -428,11 +428,11 @@ function program13(depth0,data) {
   hashContexts = {};
   options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.calendar || depth0.calendar),stack1 ? stack1.call(depth0, "modified", options) : helperMissing.call(depth0, "calendar", "modified", options))));
-  data.buffer.push("</td>\n            </tr>\n            <tr>\n                <th>UUID</th>\n                <td>");
+  data.buffer.push("</td>\n            </tr>\n            <tr>\n                <th>UUID</th>\n                <td><span class=\"uuid\">");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "uuid", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</td>\n            </tr>\n        </tbody>\n    </table>\n    <ul class='annotation_list'>\n        ");
+  data.buffer.push("</span></td>\n            </tr>\n        </tbody>\n    </table>\n    <ul class='annotation_list'>\n        ");
   hashTypes = {};
   hashContexts = {};
   stack2 = helpers.each.call(depth0, "processed_annotations", {hash:{},inverse:self.noop,fn:self.program(13, program13, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});

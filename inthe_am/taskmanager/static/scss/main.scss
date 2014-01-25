@@ -14,6 +14,15 @@ a {
 i.fa:before {
   padding-right: 2px;
 }
+span.uuid {
+  text-transform: uppercase;
+  font-size: 80%;
+}
+span.project {
+  text-transform: uppercase;
+  font-size: .83em;
+  font-weight: 700;
+}
 /* LAYOUT CSS */
 #layout {
   padding-left:500px; /* "left col (nav + list)" width */

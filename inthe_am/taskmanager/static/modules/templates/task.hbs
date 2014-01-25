@@ -5,7 +5,7 @@
         </h1>
         {{#if project}}
             <p class="subtitle" {{bind-attr title="project"}}>
-                {{propercase project}}
+                <span class="project">{{propercase project}}</span>
             </p>
         {{/if}}
         <div class="tags">
@@ -43,7 +43,7 @@
             </tr>
             <tr>    
                 <th>Project</th>
-                <td>{{project}}</td>
+                <td><span class="project">{{project}}</span></td>
             </tr>
             <tr>
                 <th>Status</th>
@@ -91,7 +91,7 @@
             </tr>
             <tr>
                 <th>UUID</th>
-                <td>{{uuid}}</td>
+                <td><span class="uuid">{{uuid}}</span></td>
             </tr>
         </tbody>
     </table>
