@@ -153,6 +153,10 @@ class UserResource(resources.ModelResource):
 
 
 class Task(object):
+    DATE_FIELDS = [
+        'due', 'entry', 'modified', 'start', 'wait', 'scheduled',
+    ]
+
     def __init__(self, json):
         if not json:
             raise ValueError()
@@ -171,7 +175,7 @@ class Task(object):
     def __getattr__(self, name):
         try:
             value = self.json[name]
-            if name in ['due', 'entry', 'modified', 'start']:
+            if name in self.DATE_FIELDS:
                 value = self._date_from_taskw(value)
             elif name == 'annotations':
                 new_value = []
