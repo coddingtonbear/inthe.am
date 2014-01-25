@@ -357,7 +357,7 @@ class TaskResource(resources.Resource):
     @requires_taskd_sync
     def obj_get(self, bundle, store, **kwargs):
         try:
-            Task(store.client.get_task(uuid=kwargs['pk'])[1])
+            return Task(store.client.get_task(uuid=kwargs['pk'])[1])
         except ValueError:
             raise exceptions.NotFound()
 
