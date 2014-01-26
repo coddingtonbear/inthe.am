@@ -1,6 +1,6 @@
 body {
-  background-color: #f0f0f0;
-  color: #202020; }
+  background-color: #f7fafc;
+  color: #04080b; }
 
 a {
   text-decoration: none;
@@ -38,16 +38,17 @@ span.project {
   margin-left: -500px;
   /* "left col (nav + list)" width */
   width: 150px;
-  background: #000010;
+  background: #112331;
   text-align: center;
   padding: 2em 0; }
 
 #list {
   margin-left: -350px;
   width: 350px;
-  border-right: 1px solid #dddddd;
+  border-right: 1px solid #173044;
+  border-left: 1px solid #173044;
   color: #bbbbbb;
-  background-color: #202020; }
+  background-color: #04080b; }
 
 /* HELPER CLASSES */
 .primary-button, .secondary-button {
@@ -56,13 +57,13 @@ span.project {
   box-shadow: none; }
 
 .primary-button {
-  color: #f0f0f0;
+  color: white;
   background: #1b98f8;
   margin: 1em 0; }
 
 .secondary-button {
   background: white;
-  border: 1px solid #dddddd;
+  border: 1px solid #173044;
   color: #666666;
   padding: 0.5em 2em;
   font-size: 80%; }
@@ -76,14 +77,15 @@ span.project {
   border: none;
   text-align: left; }
 
-#nav .pure-menu a:hover, #nav .pure-menu a:focus {
-  background: #373c5a; }
-
 #nav .pure-menu a {
-  color: #f0f0f0;
+  color: white;
   margin-left: 0.5em; }
   #nav .pure-menu a.active {
-    background-color: #373c5a; }
+    background-color: #1e3d57;
+    color: white; }
+  #nav .pure-menu a:hover {
+    background-color: #1e3d57;
+    color: white; }
 
 #nav .pure-menu a.post-icon {
   margin-left: 5px;
@@ -108,12 +110,12 @@ span.project {
   margin-bottom: 5px; }
 
 .task.active {
-  background-color: #303030; }
+  background-color: #0c1921; }
 
 .task {
   cursor: pointer;
   padding: 0.9em 1em;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #173044;
   border-left: 6px solid transparent; }
   .task i.task-icon {
     font-size: 60px;
@@ -125,11 +127,13 @@ span.project {
     margin: 0; }
   .task .description {
     margin: 0; }
+  .task:hover {
+    background-color: #081016; }
 
 .task-content .task-content-body, .task-content .task-content-header, .task-content .task-content-footer {
   padding: 1em 2em; }
 .task-content .task-content-header {
-  border-bottom: 1px solid #dddddd; }
+  border-bottom: 1px solid #173044; }
 .task-content .depends_tickets li.completed {
   text-decoration: line-through; }
 .task-content .controls {
@@ -146,7 +150,7 @@ span.project {
   #list {
     height: 33%;
     border-right: 0;
-    border-bottom: 1px solid #dddddd; }
+    border-bottom: 1px solid #173044; }
   #main {
     position: fixed;
     top: 33%;

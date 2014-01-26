@@ -1,11 +1,24 @@
-$FG_MAIN: #202020;
-$BG_MAIN: #F0F0F0;
-$BG_LEFT: $FG_MAIN;
-$FG_LEFT: $BG_MAIN;
+$MAIN: #72A5CF;
+
+$BLACK: darken($MAIN, 60%);
+$WHITE: lighten($MAIN, 35%);
+
+$LEFT_BACKGROUND: darken($MAIN, 50%);
+$LEFT_FOREGROUND: lighten($MAIN, 40%);
+$LEFT_BACKGROUND_ACTIVE: darken($MAIN, 40%);
+$LEFT_FOREGROUND_ACTIVE: $LEFT_FOREGROUND;
+$CENTER_FOREGROUND: lighten($MAIN, 80%);
+$CENTER_BACKGROUND: $BLACK; 
+$CENTER_HOVER: lighten($CENTER_BACKGROUND, 3%);
+$CENTER_ACTIVE: lighten($CENTER_BACKGROUND, 6%);
+$RIGHT_BACKGROUND: $WHITE;
+$RIGHT_FOREGROUND: $BLACK;
+
+$BORDER_COLOR: darken($MAIN, 45%);
 
 body {
-  background-color: $BG_MAIN;
-  color: $FG_MAIN;
+  background-color: $RIGHT_BACKGROUND;
+  color: $RIGHT_FOREGROUND;
 }
 a {
   text-decoration: none;
@@ -44,7 +57,7 @@ span.project {
 #nav {
   margin-left:-500px; /* "left col (nav + list)" width */
   width:150px;
-  background: #000010;
+  background: $LEFT_BACKGROUND;
   text-align: center;
   padding: 2em 0;
 }
@@ -52,9 +65,10 @@ span.project {
 #list {
   margin-left: -350px;
   width:350px;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid $BORDER_COLOR;
+  border-left: 1px solid $BORDER_COLOR;
   color: #BBBBBB;
-  background-color: $BG_LEFT;
+  background-color: $CENTER_BACKGROUND;
 }
 
 /* HELPER CLASSES */
@@ -65,13 +79,13 @@ span.project {
   box-shadow: none;
 }
 .primary-button {
-  color: $FG_LEFT;
+  color: $LEFT_FOREGROUND;
   background: #1b98f8;
   margin: 1em 0;
 }
 .secondary-button {
   background: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid $BORDER_COLOR;
   color: #666;
   padding: 0.5em 2em;
   font-size: 80%;
@@ -87,17 +101,18 @@ span.project {
   border: none;
   text-align: left;
 }
-#nav .pure-menu a:hover,
-#nav .pure-menu a:focus {
-  background: rgb(55, 60, 90);
-}
 #nav .pure-menu {
   a {
-    color: $FG_LEFT;
+    color: $LEFT_FOREGROUND;
     margin-left: 0.5em;
 
     &.active {
-      background-color: rgb(55, 60, 90);
+      background-color: $LEFT_BACKGROUND_ACTIVE;
+      color: $LEFT_FOREGROUND_ACTIVE;
+    }
+    &:hover {
+      background-color: $LEFT_BACKGROUND_ACTIVE;
+      color: $LEFT_FOREGROUND_ACTIVE;
     }
   }
 }
@@ -127,13 +142,13 @@ span.project {
 }
 
 .task.active {
-  background-color: #303030;
+  background-color: $CENTER_ACTIVE;
 }
 
 .task {
   cursor: pointer;
   padding: 0.9em 1em;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid $BORDER_COLOR;
   border-left: 6px solid transparent;
 
   i.task-icon {
@@ -151,6 +166,9 @@ span.project {
   .description {
     margin: 0;
   }
+  &:hover {
+    background-color: $CENTER_HOVER;
+  }
 }
 
 .task-content {
@@ -158,7 +176,7 @@ span.project {
     padding: 1em 2em;
   }
   .task-content-header {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid $BORDER_COLOR;
   }
   .depends_tickets {
     li.pending {
@@ -188,7 +206,7 @@ span.project {
   #list {
     height: 33%;
     border-right: 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid $BORDER_COLOR;
   }
   #main {
     position: fixed;
