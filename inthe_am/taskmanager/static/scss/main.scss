@@ -26,6 +26,8 @@ a {
 }
 i.fa:before {
   padding-right: 2px;
+  display: inline-block;
+  width: 18px;
 }
 span.uuid {
   text-transform: uppercase;

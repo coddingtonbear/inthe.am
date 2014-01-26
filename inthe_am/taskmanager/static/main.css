@@ -7,7 +7,9 @@ a {
   color: #1b98f8; }
 
 i.fa:before {
-  padding-right: 2px; }
+  padding-right: 2px;
+  display: inline-block;
+  width: 18px; }
 
 span.uuid {
   text-transform: uppercase;
