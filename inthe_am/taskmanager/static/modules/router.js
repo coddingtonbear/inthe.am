@@ -1,6 +1,7 @@
 App.Router.map(function(){
   this.route("login", {path: "/login"});
   this.route("about", {path: "/about"});
+  this.route("refresh", {path: "/refresh"});
   this.resource("tasks", function(){
     this.resource("task", {path: "/:uuid"});
   });

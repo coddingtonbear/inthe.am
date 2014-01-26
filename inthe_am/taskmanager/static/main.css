@@ -83,6 +83,16 @@ span.project {
   color: #f0f0f0;
   margin-left: 0.5em; }
 
+#nav .pure-menu a.post-icon {
+  margin-left: 5px;
+  margin-right: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  display: inline; }
+
+#nav .pure-menu a.post-icon:hover {
+  background-color: inherit; }
+
 #nav .pure-menu-heading {
   border-bottom: none;
   font-size: 110%;
