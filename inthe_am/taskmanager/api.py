@@ -306,17 +306,19 @@ class TaskResource(resources.Resource):
             status=501
         )
 
-    @twilio_view
     def incoming_sms(self, request, username, **kwargs):
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return HttpResponse(status=404)
-        store = models.TaskStore.get_for_user(user)
-        store.sync()
-        r = Response()
-        r.sms("OK")
-        return r
+        @twilio_view
+        def _incoming_sms(request, username, **kwargs):
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                return HttpResponse(status=404)
+            store = models.TaskStore.get_for_user(user)
+            store.sync()
+            r = Response()
+            r.sms("OK")
+            return r
+        return _incoming_sms(request, username, **kwargs)
 
     def autoconfigure(self, request, **kwargs):
         store = models.TaskStore.get_for_user(request.user)
