@@ -163,7 +163,7 @@ LOGGING = {
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['store', 'exception_log', 'mail_admins'],
+            'handlers': ['mail_admins'],
             'level': 'DEBUG',
             'propagate': True,
         },
