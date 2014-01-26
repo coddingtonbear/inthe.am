@@ -339,7 +339,7 @@ class TaskResource(resources.Resource):
         else:
             store.sync()
             task_args = ['add'] + shlex.split(task_info)
-            result = store._execute(task_args)[0]
+            result = store.client._execute(task_args)[0]
             if len(result > 135):
                 r.sms(result[0:135] + '...')
             else:
