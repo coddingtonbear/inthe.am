@@ -339,6 +339,7 @@ class TaskResource(resources.Resource):
         else:
             store.sync()
             task_args = ['add'] + shlex.split(task_info)
+            logger.info("task args: %s" % task_args)
             result = store.client._execute(*task_args)
             stdout, stderr = result
             logger.info("stdout: %s" % stdout)
