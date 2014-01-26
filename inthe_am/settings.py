@@ -31,7 +31,9 @@ if os.uname()[1] == "eugene.adamcoddington.net":
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'inthe.am'
+]
 
 
 # Application definition
