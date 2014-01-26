@@ -521,7 +521,7 @@ function program1(depth0,data) {
     'class': (":task-icon :fa task.icon")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['bind-attr'] || depth0['bind-attr']),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "bind-attr", options))));
-  data.buffer.push("></i>\n            </div>\n            <div class=\"pure-u-3-4\">\n                <h5 class=\"status\" ");
+  data.buffer.push("></i>\n            </div>\n            <div class=\"pure-u-3-4 task-list-item\">\n                <h5 class=\"status\" ");
   hashContexts = {'title': depth0};
   hashTypes = {'title': "STRING"};
   options = {hash:{

@@ -4,7 +4,7 @@
             <div {{bind-attr class=":pure-u task.status"}}>
                 <i {{bind-attr class=":task-icon :fa task.icon"}}></i>
             </div>
-            <div class="pure-u-3-4">
+            <div class="pure-u-3-4 task-list-item">
                 <h5 class="status" {{bind-attr title="task.project"}}>{{propercase task.project}}</h5>
                 <p class="description">{{task.description}}</p>
                 {{#each task.tags}}
