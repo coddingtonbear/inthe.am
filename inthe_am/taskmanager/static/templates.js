@@ -325,7 +325,7 @@ function program5(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "complete", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">Mark Completed</button>\n        ");
+  data.buffer.push(">\n                <i class=\"fa fa-check-circle-o\">Mark Completed</i>\n            </button>\n        ");
   return buffer;
   }
 
