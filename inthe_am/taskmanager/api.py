@@ -315,28 +315,45 @@ class TaskResource(resources.Resource):
 
         r = Response()
         store = models.TaskStore.get_for_user(user)
-        store.sync()
 
-        #from_ = request.POST['From']
+        from_ = request.POST['From']
         body = request.POST['Body']
+        task_info = body[4:]
 
         if not body.lower().startswith('add'):
             r.sms("Bad Request: Unknown command.")
-            return r
-
-        task_info = body[4:]
-        if not task_info:
+            logger.warning(
+                "Incoming SMS from %s had no recognized command: '%s'" % (
+                    from_,
+                    body,
+                )
+            )
+        elif not task_info:
+            logger.warning(
+                "Incoming SMS from %s had no content." % (
+                    from_,
+                    body,
+                )
+            )
             r.sms("Bad Request: Empty task.")
-            return r
-
-        task_args = ['add'] + shlex.split(task_info)
-        result = store._execute(task_args)[0]
-        if len(result > 135):
-            r.sms(result[0:135] + '...')
         else:
-            r.sms(result)
+            store.sync()
+            task_args = ['add'] + shlex.split(task_info)
+            result = store._execute(task_args)[0]
+            if len(result > 135):
+                r.sms(result[0:135] + '...')
+            else:
+                r.sms(result)
 
-        store.sync()
+            logger.info(
+                "Added task from %s; message '%s'; response: '%s'" % (
+                    from_,
+                    body,
+                    result,
+                )
+            )
+
+            store.sync()
         return HttpResponse(str(r), content_type='application/xml')
 
     def autoconfigure(self, request, **kwargs):
