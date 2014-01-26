@@ -26,7 +26,7 @@ SECRET_KEY = 'nou@d*dme8l60^9mzyk@#ikeobd0ws#p*mj#e*i*g33d#blsc9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-if os.uname()[1] == "norman":
+if os.uname()[1] == "eugene.adamcoddington.net":
     DEBUG = False
 
 TEMPLATE_DEBUG = True
