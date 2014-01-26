@@ -190,7 +190,7 @@ var controller = Ember.ObjectController.extend({
         statusCode: {
           200: function(){
             self.get('model').unloadRecord();
-            self.transitionToRoute('tasks');
+            self.transitionToRoute('refresh');
           },
         }
       });
@@ -203,7 +203,7 @@ var controller = Ember.ObjectController.extend({
         statusCode: {
           200: function(){
             self.get('model').unloadRecord();
-            self.transitionToRoute('tasks');
+            self.transitionToRoute('refresh');
           },
           501: function(){
             alert("Deleting tasks is currently unimplemented");
@@ -260,7 +260,7 @@ require("./routes");
 require("./views");
 require("./helpers");
 
-},{"./app":1,"./controllers":7,"./helpers":13,"./models":15,"./routes":21,"./views":26}],15:[function(require,module,exports){
+},{"./app":1,"./controllers":7,"./helpers":13,"./models":15,"./routes":21,"./views":27}],15:[function(require,module,exports){
 
 App.User = require("./user.js");
 App.Task = require("./task.js");
@@ -442,19 +442,11 @@ App.TasksRoute = require("./tasks");
 App.TaskRoute = require("./task");
 App.CompletedRoute = require("./completed");
 App.CompletedTaskRoute = require("./completedTask");
+App.RefreshRoute = require("./refresh");
 
-},{"./completed":19,"./completedTask":20,"./task":22,"./tasks":23}],22:[function(require,module,exports){
+},{"./completed":19,"./completedTask":20,"./refresh":22,"./task":23,"./tasks":24}],22:[function(require,module,exports){
 var route = Ember.Route.extend({
-  model: function(params) {
-     return this.store.find('task', params.uuid);
-  },
-});
-
-module.exports = route;
-
-},{}],23:[function(require,module,exports){
-var route = Ember.Route.extend({
-  model: function(){
+  beforeModel: function(transition) {
     // Manually enumerate over loaded records; only try to
     // unload records that are marked as loaded -- otherwise, may
     // throw "attempted to handle event 'unloadRecord' while in state
@@ -466,6 +458,23 @@ var route = Ember.Route.extend({
         this.store.unloadRecord(record);
       }
     }
+  }
+});
+
+module.exports = route;
+
+},{}],23:[function(require,module,exports){
+var route = Ember.Route.extend({
+  model: function(params) {
+     return this.store.find('task', params.uuid);
+  },
+});
+
+module.exports = route;
+
+},{}],24:[function(require,module,exports){
+var route = Ember.Route.extend({
+  model: function(){
     return this.store.findQuery('task', {'status': 'pending'});
   },
   afterModel: function(tasks, transition) {
@@ -479,7 +488,7 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var view = Ember.View.extend({
   templateName: 'tasks',
   name: 'completed'
@@ -487,7 +496,7 @@ var view = Ember.View.extend({
 
 module.exports = view;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var view = Ember.View.extend({
   templateName: 'task',
   name: 'completedTask'
@@ -495,14 +504,24 @@ var view = Ember.View.extend({
 
 module.exports = view;
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 
 App.NavigationView = require("./navigation");
 App.CompletedView = require("./completed");
 App.CompletedTaskView = require("./completedTask");
+App.RefreshView = require("./refresh");
 
-},{"./completed":24,"./completedTask":25,"./navigation":27}],27:[function(require,module,exports){
+},{"./completed":25,"./completedTask":26,"./navigation":28,"./refresh":29}],28:[function(require,module,exports){
 var view = Ember.View.extend();
+
+module.exports = view;
+
+},{}],29:[function(require,module,exports){
+var view = Ember.View.extend({
+  didInsertElement: function(){
+    this.controller.transitionTo('tasks');
+  }
+});
 
 module.exports = view;
 

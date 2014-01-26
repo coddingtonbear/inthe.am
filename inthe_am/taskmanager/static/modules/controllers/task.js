@@ -9,7 +9,7 @@ var controller = Ember.ObjectController.extend({
         statusCode: {
           200: function(){
             self.get('model').unloadRecord();
-            self.transitionToRoute('tasks');
+            self.transitionToRoute('refresh');
           },
         }
       });
@@ -22,7 +22,7 @@ var controller = Ember.ObjectController.extend({
         statusCode: {
           200: function(){
             self.get('model').unloadRecord();
-            self.transitionToRoute('tasks');
+            self.transitionToRoute('refresh');
           },
           501: function(){
             alert("Deleting tasks is currently unimplemented");

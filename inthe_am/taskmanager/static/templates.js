@@ -235,6 +235,16 @@ function program14(depth0,data) {
   
 });
 
+this["Ember"]["TEMPLATES"]["refresh"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  
+
+
+  data.buffer.push("<div class=\"pure-u-1 standalone\">\n    <div>\n        Loading...\n    </div>\n</div>\n");
+  
+});
+
 this["Ember"]["TEMPLATES"]["sms"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
