@@ -339,17 +339,20 @@ class TaskResource(resources.Resource):
         else:
             store.sync()
             task_args = ['add'] + shlex.split(task_info)
-            result = store.client._execute(*task_args)[0]
-            if len(result > 135):
-                r.sms(result[0:135] + '...')
+            result = store.client._execute(*task_args)
+            stdout, stderr = result
+            logger.info("stdout: %s" % stdout)
+            logger.info("stderr: %s" % stderr)
+            if len(stdout > 135):
+                r.sms(stdout[0:135] + '...')
             else:
-                r.sms(result)
+                r.sms(stdout)
 
             logger.info(
                 "Added task from %s; message '%s'; response: '%s'" % (
                     from_,
                     body,
-                    result,
+                    stdout,
                 )
             )
 
