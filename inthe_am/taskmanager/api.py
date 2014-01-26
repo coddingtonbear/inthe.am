@@ -4,6 +4,7 @@ import json
 import logging
 import operator
 import os
+import shlex
 
 from django_twilio.decorators import twilio_view
 import pytz
@@ -307,16 +308,35 @@ class TaskResource(resources.Resource):
         )
 
     def incoming_sms(self, request, username, **kwargs):
-        logger.warning("Incoming SMS received")
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             return HttpResponse(status=404)
+
+        r = Response()
         store = models.TaskStore.get_for_user(user)
         store.sync()
-        logger.info("responding...")
-        r = Response()
-        r.sms("OK")
+
+        #from_ = request.POST['From']
+        body = request.POST['Body']
+
+        if not body.lower().startswith('add'):
+            r.sms("Bad Request: Unknown command.")
+            return r
+
+        task_info = body[4:]
+        if not task_info:
+            r.sms("Bad Request: Empty task.")
+            return r
+
+        task_args = ['add'] + shlex.split(task_info)
+        result = store._execute(task_args)[0]
+        if len(result > 135):
+            r.sms(result[0:135] + '...')
+        else:
+            r.sms(result)
+
+        store.sync()
         return HttpResponse(str(r), content_type='application/xml')
 
     def autoconfigure(self, request, **kwargs):
