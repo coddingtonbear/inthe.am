@@ -94,7 +94,7 @@ def process_directives(directives):
 
 def get_stylesheet(directives):
     for selector, attributes in directives.items():
-        print '.task.%s {' % selector
+        print '.task .%s {' % selector
         for key, value in attributes.items():
             print '\t%s: %s;' % (
                 key,

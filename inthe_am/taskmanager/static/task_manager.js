@@ -220,12 +220,6 @@ module.exports = controller;
 var controller = Ember.ArrayController.extend({
   sortProperties: ['urgency'],
   sortAscending: false,
-
-  actions: {
-    view_task: function(task){
-      this.transitionToRoute('task', task);
-    }
-  }
 });
 
 module.exports = controller;
@@ -467,7 +461,7 @@ module.exports = route;
 var route = Ember.Route.extend({
   model: function(params) {
      return this.store.find('task', params.uuid);
-  },
+  }
 });
 
 module.exports = route;

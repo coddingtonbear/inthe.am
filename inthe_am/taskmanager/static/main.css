@@ -105,6 +105,9 @@ span.project {
   margin-top: 5px;
   margin-bottom: 5px; }
 
+.task.active {
+  background-color: #404040; }
+
 .task {
   cursor: pointer;
   padding: 0.9em 1em;
