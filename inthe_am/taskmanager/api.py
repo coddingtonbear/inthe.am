@@ -308,20 +308,16 @@ class TaskResource(resources.Resource):
 
     def incoming_sms(self, request, username, **kwargs):
         logger.warning("Incoming SMS received")
-        @twilio_view
-        def _incoming_sms(request, username, **kwargs):
-            logger.info(request)
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                return HttpResponse(status=404)
-            store = models.TaskStore.get_for_user(user)
-            store.sync()
-            logger.info("responding...")
-            r = Response()
-            r.sms("OK")
-            return r
-        return _incoming_sms(request, username, **kwargs)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return HttpResponse(status=404)
+        store = models.TaskStore.get_for_user(user)
+        store.sync()
+        logger.info("responding...")
+        r = Response()
+        r.sms("OK")
+        return HttpResponse(str(r), content_type='application/xml')
 
     def autoconfigure(self, request, **kwargs):
         store = models.TaskStore.get_for_user(request.user)
