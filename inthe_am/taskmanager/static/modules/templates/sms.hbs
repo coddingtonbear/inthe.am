@@ -11,4 +11,40 @@
             </td>
         </tr>
     </table>
+
+    <h3>Setup Instructions</h3>
+
+    <p>
+        Inthe.am can receive and add items to your task list via SMS, but
+        it requires a little bit of configuration on your part.
+    </p>
+    <ol>
+        <li>Sign up for a <a href="https://www.twilio.com/try-twilio">Twilio account</a>.</li>
+        <li>
+            Add funds to your twilio account.  Twilio charges around $0.01 for each
+            incoming or outgoing SMS message (incoming messages are slightly cheaper).
+        </li>
+        <li>
+            <a href="https://www.twilio.com/user/account/phone-numbers/available/local">Buy a phone number</a>.
+            As of the time of this writing, each phone number costs only $1.00/month.
+        </li>
+        <li>
+            From your phone number's configuration screen, set the field "Messaging Request URL" to
+            your personal incoming SMS URL: <span class="code">https://inthe.am{{ controllers.application.urls.sms_url }}</span>.
+        </li>
+        <li>
+            Press save.
+        </li>
+    </ol>
+    <p>
+        After you have configured the above, you can send SMS messages to your
+        Twilio phone number.  Currently, the only command implemented is 'add',
+        but in the future additional commands may be added.
+    </p>
+    <p>
+        As an example, you could add a task to the project "birthday" with a due
+        date of tomorrow and high priority by sending an SMS message with the following
+        contents:
+        <pre>add project:birthday due:tomorrow priority:h It's my birthday</pre>.
+    </p>
 </div>
