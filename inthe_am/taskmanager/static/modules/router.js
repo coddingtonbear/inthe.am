@@ -12,6 +12,7 @@ App.Router.map(function(){
   this.route("synchronization", {path: "/synchronization"});
   this.route("configure", {path: "/configure"});
   this.route("getting_started", {path: "/getting-started"});
+  this.route("sms", {path: "/sms"});
 });
 
 App.Router.reopen({

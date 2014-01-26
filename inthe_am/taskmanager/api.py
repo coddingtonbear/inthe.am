@@ -5,13 +5,16 @@ import logging
 import operator
 import os
 
+from django_twilio.decorators import twilio_view
 import pytz
 from tastypie import (
     authentication, authorization, bundle, exceptions, fields, resources
 )
+from twilio.twiml import Response
 
 from django.conf.urls import url
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseNotFound
 
 from . import models
@@ -165,6 +168,14 @@ class UserResource(resources.ModelResource):
                 'taskd_server': 'taskwarrior.inthe.am:53589',
                 'taskrc_extras': store.taskrc_extras,
                 'api_key': request.user.api_key.key,
+                'sms_url': reverse(
+                    'incoming_sms',
+                    kwargs={
+                        'api_name': 'v1',
+                        'resource_name': 'task',
+                        'username': request.user.username,
+                    }
+                )
             }
         else:
             user_data = {
@@ -263,6 +274,13 @@ class TaskResource(resources.Resource):
                 self.wrap_view('autoconfigure')
             ),
             url(
+                r"^(?P<resource_name>%s)/(?P<username>[\w\d_.-]+)/sms/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('incoming_sms'),
+                name="incoming_sms"
+            ),
+            url(
                 r"^(?P<resource_name>%s)/(?P<uuid>[\w\d_.-]+)/complete/?$" % (
                     self._meta.resource_name
                 ),
@@ -287,6 +305,18 @@ class TaskResource(resources.Resource):
         return HttpResponse(
             status=501
         )
+
+    @twilio_view
+    def incoming_sms(self, request, username, **kwargs):
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return HttpResponse(status=404)
+        store = models.TaskStore.get_for_user(user)
+        store.sync()
+        r = Response()
+        r.sms("OK")
+        return r
 
     def autoconfigure(self, request, **kwargs):
         store = models.TaskStore.get_for_user(request.user)

@@ -9,6 +9,7 @@ var controller = Ember.Controller.extend({
     my_certificate: '/api/v1/user/my-certificate/',
     my_key: '/api/v1/user/my-key/',
     taskrc_extras: '/api/v1/user/taskrc/',
+    sms_url: null,
   },
   init: function(){
     this.set(
@@ -23,6 +24,7 @@ var controller = Ember.Controller.extend({
         ).responseText
       )
     );
+    this.set('urls.sms_url', this.get('user').sms_url);
   },
   getCookie: function(name) {
     var cookieValue = null;

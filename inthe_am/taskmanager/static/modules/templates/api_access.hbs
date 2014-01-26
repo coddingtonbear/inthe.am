@@ -7,7 +7,7 @@
                 Username
             </th>
             <td>
-                {{ unbound controllers.application.user.username }}
+                {{ controllers.application.user.username }}
             </td>
         </tr>
         <tr>
@@ -15,7 +15,7 @@
                 Api Key
             </th>
             <td>
-                {{ unbound controllers.application.user.api_key }}
+                {{ controllers.application.user.api_key }}
             </td>
         </tr>
     </table>
@@ -28,7 +28,7 @@
 
     <code>
     <pre>
-        Authorization: ApiKey {{ unbound controllers.application.user.username }}:{{ unbound controllers.application.user.api_key }}
+        Authorization: ApiKey {{ controllers.application.user.username }}:{{ controllers.application.user.api_key }}
     </pre>
     </code>
 

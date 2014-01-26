@@ -9,3 +9,4 @@ gunicorn>=18.0.
 django-mailbox>=django-mailbox
 python-memcached==1.53
 webcolors==1.4
+django-twilio==0.4
