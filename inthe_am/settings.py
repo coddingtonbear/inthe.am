@@ -163,8 +163,8 @@ LOGGING = {
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['exception_log', 'mail_admins'],
-            'level': 'WARNING',
+            'handlers': ['store', 'exception_log', 'mail_admins'],
+            'level': 'DEBUG',
             'propagate': True,
         },
         'gunicorn': {
