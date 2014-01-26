@@ -14,6 +14,10 @@ import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+ADMINS = (
+    ('Adam Coddington', 'admin@inthe.am'),
+)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
@@ -157,8 +161,8 @@ LOGGING = {
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'handlers': ['exception_log', 'mail_admins'],
+            'level': 'WARNING',
             'propagate': True,
         },
         'gunicorn': {
