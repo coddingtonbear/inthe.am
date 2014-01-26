@@ -38,7 +38,7 @@ span.project {
   margin-left: -500px;
   /* "left col (nav + list)" width */
   width: 150px;
-  background: black;
+  background: #000010;
   text-align: center;
   padding: 2em 0; }
 
@@ -82,6 +82,8 @@ span.project {
 #nav .pure-menu a {
   color: #f0f0f0;
   margin-left: 0.5em; }
+  #nav .pure-menu a.active {
+    background-color: #373c5a; }
 
 #nav .pure-menu a.post-icon {
   margin-left: 5px;

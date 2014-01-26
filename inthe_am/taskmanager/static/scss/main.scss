@@ -44,7 +44,7 @@ span.project {
 #nav {
   margin-left:-500px; /* "left col (nav + list)" width */
   width:150px;
-  background: #000000;
+  background: #000010;
   text-align: center;
   padding: 2em 0;
 }
@@ -91,9 +91,15 @@ span.project {
 #nav .pure-menu a:focus {
   background: rgb(55, 60, 90);
 }
-#nav .pure-menu a {
-  color: $FG_LEFT;
-  margin-left: 0.5em;
+#nav .pure-menu {
+  a {
+    color: $FG_LEFT;
+    margin-left: 0.5em;
+
+    &.active {
+      background-color: rgb(55, 60, 90);
+    }
+  }
 }
 #nav .pure-menu a.post-icon {
   margin-left: 5px;
