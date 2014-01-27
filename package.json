@@ -12,6 +12,8 @@
     "grunt-contrib-watch": "~0.5.3",
     "grunt-ember-templates": "~0.4.18",
     "grunt-ember-handlebars": "~0.7.0",
-    "grunt-sass": "~0.9.0"
+    "grunt-sass": "~0.9.0",
+    "grunt-contrib-compass": "~0.7.1",
+    "bower": "~1.2.8"
   }
 }
