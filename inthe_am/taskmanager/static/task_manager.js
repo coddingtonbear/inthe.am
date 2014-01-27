@@ -23,8 +23,6 @@ var controller = Ember.Controller.extend({
   pending_count: null,
   csrftoken: null,
   urls: {
-    logout: '/logout/',
-    login: '/login/google-oauth2/',
     ca_certificate: '/api/v1/user/ca-certificate/',
     my_certificate: '/api/v1/user/my-certificate/',
     my_key: '/api/v1/user/my-key/',
@@ -254,7 +252,7 @@ require("./routes");
 require("./views");
 require("./helpers");
 
-},{"./app":1,"./controllers":7,"./helpers":13,"./models":15,"./routes":21,"./views":27}],15:[function(require,module,exports){
+},{"./app":1,"./controllers":7,"./helpers":13,"./models":15,"./routes":21,"./views":28}],15:[function(require,module,exports){
 
 App.User = require("./user.js");
 App.Task = require("./task.js");
@@ -484,13 +482,22 @@ module.exports = route;
 
 },{}],25:[function(require,module,exports){
 var view = Ember.View.extend({
+  didInsertElement: function(){
+    $(document).foundation();
+  }
+});
+
+module.exports = view;
+
+},{}],26:[function(require,module,exports){
+var view = Ember.View.extend({
   templateName: 'tasks',
   name: 'completed'
 });
 
 module.exports = view;
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var view = Ember.View.extend({
   templateName: 'task',
   name: 'completedTask'
@@ -498,19 +505,20 @@ var view = Ember.View.extend({
 
 module.exports = view;
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 
 App.NavigationView = require("./navigation");
 App.CompletedView = require("./completed");
 App.CompletedTaskView = require("./completedTask");
 App.RefreshView = require("./refresh");
+App.ApplicationView = require("./application");
 
-},{"./completed":25,"./completedTask":26,"./navigation":28,"./refresh":29}],28:[function(require,module,exports){
+},{"./application":25,"./completed":26,"./completedTask":27,"./navigation":29,"./refresh":30}],29:[function(require,module,exports){
 var view = Ember.View.extend();
 
 module.exports = view;
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var view = Ember.View.extend({
   didInsertElement: function(){
     this.controller.transitionTo('tasks');

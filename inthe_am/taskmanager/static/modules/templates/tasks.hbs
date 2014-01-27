@@ -1,12 +1,14 @@
-<div class="pure-u-1" id="list">
+<div id="list">
     {{#each task in controller}}
         {{#link-to "task" task tagName="div" class="task"}}
             <div {{bind-attr class="task.taskwarrior_class"}}>
-                <div {{bind-attr class=":pure-u task.status"}}>
+                <div {{bind-attr class=":task-list-icon task.status"}}>
                     <i {{bind-attr class=":task-icon :fa task.icon"}}></i>
                 </div>
-                <div class="pure-u-3-4 task-list-item">
-                    <h5 class="status" {{bind-attr title="task.project"}}>{{propercase task.project}}</h5>
+                <div class="task-list-item">
+                    {{#if task.project}}
+                        <h5 class="status" {{bind-attr title="task.project"}}>{{propercase task.project}}</h5>
+                    {{/if}}
                     <p class="description">{{task.description}}</p>
                     {{#each task.tags}}
                         <i class="fa fa-tag">{{this}}</i>
@@ -20,8 +22,6 @@
         </div>
     {{/each}}
 </div>
-<div class="pure-u-1" id="main">
-    <div class="task-content">
-        {{outlet}}
-    </div>
+<div id="task-details">
+    {{outlet}}
 </div>

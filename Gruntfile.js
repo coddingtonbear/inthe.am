@@ -29,6 +29,15 @@ module.exports = function(grunt){
         }
       }
     },
+    compass: {
+      dist: {
+        options: {
+          require: 'zurb-foundation',
+          config: 'inthe_am/taskmanager/static/foundation/config.rb',
+          basePath: 'inthe_am/taskmanager/static/foundation/'
+        }
+      }
+    },
     sass: {
       dist: {
         files: {
@@ -43,6 +52,14 @@ module.exports = function(grunt){
         ],
         tasks: [
           'sass'
+        ]
+      },
+      compass: {
+        files: [
+          'inthe_am/taskmanager/static/foundation/scss/*.scss',
+        ],
+        tasks: [
+          'compass',
         ]
       },
       jscript: {
@@ -65,6 +82,7 @@ module.exports = function(grunt){
   });
 
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-ember-handlebars');
   grunt.loadNpmTasks('grunt-sass');

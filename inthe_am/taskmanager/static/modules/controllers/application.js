@@ -3,8 +3,6 @@ var controller = Ember.Controller.extend({
   pending_count: null,
   csrftoken: null,
   urls: {
-    logout: '/logout/',
-    login: '/login/google-oauth2/',
     ca_certificate: '/api/v1/user/ca-certificate/',
     my_certificate: '/api/v1/user/my-certificate/',
     my_key: '/api/v1/user/my-key/',

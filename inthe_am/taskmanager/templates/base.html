@@ -1,25 +1,24 @@
 <!DOCTYPE html>{% load staticfiles %}
 <html>
   <head>
-    <link href="{% static "pure-min.css" %}" rel="stylesheet" media="screen">
-    <link href="{% static "main.css" %}" rel="stylesheet" media="screen" />
+    <link href="{% static "app.css" %}" rel="stylesheet" media="screen" />
     <link href="{% static "tw_colors.css" %}" rel="stylesheet" media="screen" />
     <link href="{% static "font-awesome.css" %}" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{% static "modernizr.js" %}"></script>
     {% block head_scripts %}{% endblock %}
   </head>
   <body>
     {% block content %}{% endblock %}
     {% block scripts %}{% endblock %}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
-    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="{% static "moment.min.js" %}"></script>
-    <script src="{% static "require.js" %}"></script>
     <script src="{% static "handlebars-v1.3.0.js" %}"></script>
     <script src="{% static "ember.js" %}"></script>
     <script src="{% static "ember-data.js" %}"></script>
     <script src="{% static "tastypie_adapter.js" %}"></script>
     <script src="{% static "templates.js" %}"></script>
     <script src="{% static "task_manager.js" %}"></script>
+    <script src="{% static "foundation.min.js" %}"></script>
   </body>
 </html>
