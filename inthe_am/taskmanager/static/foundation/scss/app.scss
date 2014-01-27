@@ -1,0 +1,95 @@
+@import "settings";
+@import "foundation";
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+
+  >.ember-view {
+    height: 100%;
+  }
+}
+
+i.fa:before {
+  display: inline-block;
+  width: 18px;
+}
+
+nav {
+  button {
+    margin-bottom: 0px;
+  }
+}
+
+div.row {
+
+  &.full-width {
+    width: 100%;
+    max-width: inherit;
+    height: 100%;
+    overflow: hidden;
+  }
+  &.standalone {
+    overflow: scroll;
+    height: 100%;
+    padding-bottom: 100px;
+
+    ul, ol {
+      margin-left: 50px;
+    }
+  }
+}
+
+#list {
+  background-color: #202020;
+  color: #bbbbbb;
+  width: 25%;
+  min-width: 350px;
+  letter-spacing: normal;
+  word-spacing: normal;
+  vertical-align: top;
+  height: 100%;
+  overflow: scroll;
+  float: left;
+  padding-bottom: 45px;
+
+  .task {
+    padding: 0.9em 1.0em;
+
+    &.active {
+      background-color: #303030;
+    }
+
+    h5 {
+      color: inherit;
+      text-transform: uppercase;
+      font-size: 0.75em;
+    }
+
+    p {
+      margin-bottom: 0px;
+    }
+
+    .task-list-icon {
+      display: inline-block;
+      width: 60px;
+      vertical-align: top;
+
+      i.task-icon {
+        font-size: 60px;
+        width: 55px;
+        margin-right: 5px;
+      }
+    }
+    .task-list-item {
+      display: inline-block;
+      width: 250px;
+    }
+  }
+}
+#task-details {
+  overflow: scroll;
+  height: 100%;
+  padding-left: 40px;
+  padding-bottom: 45px;
+}
