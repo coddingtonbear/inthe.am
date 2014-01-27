@@ -47,8 +47,8 @@ span.project {
 #list {
   margin-left: -350px;
   width: 350px;
-  border-right: 1px solid #173044;
-  border-left: 1px solid #173044;
+  border-right: 1px solid #152b3d;
+  border-left: 1px solid #152b3d;
   color: #bbbbbb;
   background-color: #04080b; }
 
@@ -65,7 +65,7 @@ span.project {
 
 .secondary-button {
   background: white;
-  border: 1px solid #173044;
+  border: 1px solid #152b3d;
   color: #666666;
   padding: 0.5em 2em;
   font-size: 80%; }
@@ -117,7 +117,7 @@ span.project {
 .task {
   cursor: pointer;
   padding: 0.9em 1em;
-  border-bottom: 1px solid #173044;
+  border-bottom: 1px solid #152b3d;
   border-left: 6px solid transparent; }
   .task i.task-icon {
     font-size: 60px;
@@ -135,7 +135,7 @@ span.project {
 .task-content .task-content-body, .task-content .task-content-header, .task-content .task-content-footer {
   padding: 1em 2em; }
 .task-content .task-content-header {
-  border-bottom: 1px solid #173044; }
+  border-bottom: 1px solid #152b3d; }
 .task-content .depends_tickets li.completed {
   text-decoration: line-through; }
 .task-content .controls {
@@ -152,7 +152,7 @@ span.project {
   #list {
     height: 33%;
     border-right: 0;
-    border-bottom: 1px solid #173044; }
+    border-bottom: 1px solid #152b3d; }
   #main {
     position: fixed;
     top: 33%;
