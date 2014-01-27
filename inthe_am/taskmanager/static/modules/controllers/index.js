@@ -1,6 +1,5 @@
 
 App.ApplicationController = require("./application");
-App.NavigationController = require("./navigation");
 App.TaskController = require("./task");
 App.TasksController = require("./tasks");
 App.CompletedController = require("./completed");

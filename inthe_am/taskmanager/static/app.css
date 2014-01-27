@@ -6903,15 +6903,20 @@ nav button {
   margin-bottom: 0px;
 }
 
-/* line 24, foundation/scss/app.scss */
+/* line 26, foundation/scss/app.scss */
 div.row.full-width {
   width: 100%;
   max-width: inherit;
   height: 100%;
   overflow: hidden;
 }
+/* line 32, foundation/scss/app.scss */
+div.row.standalone {
+  overflow: scroll;
+  height: 100%;
+}
 
-/* line 31, foundation/scss/app.scss */
+/* line 38, foundation/scss/app.scss */
 #list {
   background-color: #202020;
   color: #bbbbbb;
@@ -6923,46 +6928,48 @@ div.row.full-width {
   height: 100%;
   overflow: scroll;
   float: left;
+  padding-bottom: 45px;
 }
-/* line 43, foundation/scss/app.scss */
+/* line 51, foundation/scss/app.scss */
 #list .task {
   padding: 0.9em 1.0em;
 }
-/* line 46, foundation/scss/app.scss */
+/* line 54, foundation/scss/app.scss */
 #list .task.active {
   background-color: #303030;
 }
-/* line 50, foundation/scss/app.scss */
+/* line 58, foundation/scss/app.scss */
 #list .task h5 {
   color: inherit;
   text-transform: uppercase;
   font-size: 0.75em;
 }
-/* line 56, foundation/scss/app.scss */
+/* line 64, foundation/scss/app.scss */
 #list .task p {
   margin-bottom: 0px;
 }
-/* line 60, foundation/scss/app.scss */
+/* line 68, foundation/scss/app.scss */
 #list .task .task-list-icon {
   display: inline-block;
   width: 60px;
   vertical-align: top;
 }
-/* line 65, foundation/scss/app.scss */
+/* line 73, foundation/scss/app.scss */
 #list .task .task-list-icon i.task-icon {
   font-size: 60px;
   width: 55px;
   margin-right: 5px;
 }
-/* line 71, foundation/scss/app.scss */
+/* line 79, foundation/scss/app.scss */
 #list .task .task-list-item {
   display: inline-block;
   width: 250px;
 }
 
-/* line 77, foundation/scss/app.scss */
+/* line 85, foundation/scss/app.scss */
 #task-details {
   overflow: scroll;
   height: 100%;
   padding-left: 40px;
+  padding-bottom: 45px;
 }
