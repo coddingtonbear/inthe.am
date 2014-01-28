@@ -243,7 +243,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', hashTypes, hashContexts, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<div class=\"row standalone\">\n    <h2>Synchronization Configuration</h2>\n    <table class=\"pure-table pure-table-horizontal\">\n        <tr>\n            <th>\n                Your Certificate\n            </th>\n            <td>\n                <a href=\"");
+  data.buffer.push("<div class=\"row standalone\">\n    <h2>Synchronizing with Taskwarrior</h2>\n    <table class=\"pure-table pure-table-horizontal\">\n        <tr>\n            <th>\n                Your Certificate\n            </th>\n            <td>\n                <a href=\"");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.unbound.call(depth0, "controllers.application.urls.my_certificate", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
