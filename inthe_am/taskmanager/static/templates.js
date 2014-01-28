@@ -147,7 +147,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', stack1, hashContexts, hashTypes, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<div class=\"row standalone\">\n    <h2>Custom <span class=\"code\">.taskrc</span></h2>\n    ");
+  data.buffer.push("<div class=\"row standalone\">\n    <h2>Settings</h2>\n\n    <h3>Custom <span class=\"code\">.taskrc</span></h3>\n    ");
   hashContexts = {'name': depth0,'value': depth0,'cols': depth0,'rows': depth0};
   hashTypes = {'name': "STRING",'value': "ID",'cols': "STRING",'rows': "STRING"};
   options = {hash:{
