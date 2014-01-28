@@ -49,13 +49,12 @@ div.row {
   word-spacing: normal;
   vertical-align: top;
   height: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   float: left;
   padding-bottom: 45px;
 
   .task {
-    padding: 0.9em 1.0em;
-
     &.active {
       background-color: #303030;
     }
@@ -70,20 +69,24 @@ div.row {
       margin-bottom: 0px;
     }
 
-    .task-list-icon {
-      display: inline-block;
-      width: 60px;
-      vertical-align: top;
+    .task-item {
+      padding: 0.9em 1.0em;
 
-      i.task-icon {
-        font-size: 60px;
-        width: 55px;
-        margin-right: 5px;
+      .task-list-icon {
+        display: inline-block;
+        width: 60px;
+        vertical-align: top;
+
+        i.task-icon {
+          font-size: 60px;
+          width: 55px;
+          margin-right: 5px;
+        }
       }
-    }
-    .task-list-item {
-      display: inline-block;
-      width: 250px;
+      .task-list-item {
+        display: inline-block;
+        width: 250px;
+      }
     }
   }
 }

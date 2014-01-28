@@ -2,7 +2,7 @@
     <div id="list">
         {{#each task in controller}}
             {{#link-to "task" task tagName="div" class="task"}}
-                <div {{bind-attr class="task.taskwarrior_class"}}>
+                <div {{bind-attr class=":task-item task.taskwarrior_class"}}>
                     <div {{bind-attr class=":task-list-icon task.status"}}>
                         <i {{bind-attr class=":task-icon :fa task.icon"}}></i>
                     </div>

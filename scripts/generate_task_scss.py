@@ -101,6 +101,12 @@ def get_stylesheet(directives):
                 value,
             )
         print '}'
+        if 'background-color' in attributes:
+            print '.task.active .%s {' % selector
+            print '\tbackground-color: darken(%s, 10%%)' % (
+                attributes['background-color']
+            )
+            print '}'
 
 
 def get_styles(filename):

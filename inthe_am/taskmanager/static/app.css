@@ -6931,47 +6931,48 @@ div.row.standalone ul, div.row.standalone ol {
   word-spacing: normal;
   vertical-align: top;
   height: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   float: left;
   padding-bottom: 45px;
 }
-/* line 56, foundation/scss/app.scss */
-#list .task {
-  padding: 0.9em 1.0em;
-}
-/* line 59, foundation/scss/app.scss */
+/* line 58, foundation/scss/app.scss */
 #list .task.active {
   background-color: #303030;
 }
-/* line 63, foundation/scss/app.scss */
+/* line 62, foundation/scss/app.scss */
 #list .task h5 {
   color: inherit;
   text-transform: uppercase;
   font-size: 0.75em;
 }
-/* line 69, foundation/scss/app.scss */
+/* line 68, foundation/scss/app.scss */
 #list .task p {
   margin-bottom: 0px;
 }
-/* line 73, foundation/scss/app.scss */
-#list .task .task-list-icon {
+/* line 72, foundation/scss/app.scss */
+#list .task .task-item {
+  padding: 0.9em 1.0em;
+}
+/* line 75, foundation/scss/app.scss */
+#list .task .task-item .task-list-icon {
   display: inline-block;
   width: 60px;
   vertical-align: top;
 }
-/* line 78, foundation/scss/app.scss */
-#list .task .task-list-icon i.task-icon {
+/* line 80, foundation/scss/app.scss */
+#list .task .task-item .task-list-icon i.task-icon {
   font-size: 60px;
   width: 55px;
   margin-right: 5px;
 }
-/* line 84, foundation/scss/app.scss */
-#list .task .task-list-item {
+/* line 86, foundation/scss/app.scss */
+#list .task .task-item .task-list-item {
   display: inline-block;
   width: 250px;
 }
 
-/* line 90, foundation/scss/app.scss */
+/* line 93, foundation/scss/app.scss */
 #task-details {
   overflow: scroll;
   height: 100%;

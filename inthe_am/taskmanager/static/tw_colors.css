@@ -1,118 +1,259 @@
+/* line 1, foundation/scss/tw_colors.scss */
 .task .calendar__today {
-	background-color: #5f5f37;
+  background-color: #5f5f37;
 }
+
+/* line 4, foundation/scss/tw_colors.scss */
+.task.active .calendar__today {
+  background-color: #3f3f24;
+}
+
+/* line 7, foundation/scss/tw_colors.scss */
 .task .tagged {
-	color: #afd787;
+  color: #afd787;
 }
+
+/* line 10, foundation/scss/tw_colors.scss */
 .task .footnote {
-	color: #37af5f;
+  color: #37af5f;
 }
+
+/* line 13, foundation/scss/tw_colors.scss */
 .task .history__delete {
-	background-color: #37ff37;
+  background-color: #37ff37;
 }
+
+/* line 16, foundation/scss/tw_colors.scss */
+.task.active .history__delete {
+  background-color: #04ff04;
+}
+
+/* line 19, foundation/scss/tw_colors.scss */
 .task .sync__rejected {
-	color: #5f5f37;
+  color: #5f5f37;
 }
+
+/* line 22, foundation/scss/tw_colors.scss */
 .task .summary__background {
-	color: #ffffff;
+  color: #ffffff;
 }
+
+/* line 25, foundation/scss/tw_colors.scss */
 .task .blocked {
-	color: #ffffff;
-	background-color: #5f5f37;
+  color: #ffffff;
+  background-color: #5f5f37;
 }
+
+/* line 29, foundation/scss/tw_colors.scss */
+.task.active .blocked {
+  background-color: #3f3f24;
+}
+
+/* line 32, foundation/scss/tw_colors.scss */
 .task .due__today {
-	color: #d75f37;
+  color: #d75f37;
 }
-.task .project__none {
-}
+
+/* line 37, foundation/scss/tw_colors.scss */
 .task .calendar__weeknumber {
-	color: #5f5f37;
+  color: #5f5f37;
 }
+
+/* line 40, foundation/scss/tw_colors.scss */
 .task .sync__added {
-	color: #d2d2d2;
+  color: #d2d2d2;
 }
+
+/* line 43, foundation/scss/tw_colors.scss */
 .task .summary__bar {
-	color: #ffffff;
-	background-color: #37af37;
+  color: #ffffff;
+  background-color: #37af37;
 }
+
+/* line 47, foundation/scss/tw_colors.scss */
+.task.active .summary__bar {
+  background-color: #2b882b;
+}
+
+/* line 50, foundation/scss/tw_colors.scss */
 .task .sync__changed {
-	color: #d7af37;
+  color: #d7af37;
 }
+
+/* line 53, foundation/scss/tw_colors.scss */
 .task .alternate {
-	background-color: #ffffff;
+  background-color: #ffffff;
 }
+
+/* line 56, foundation/scss/tw_colors.scss */
+.task.active .alternate {
+  background-color: #e6e6e6;
+}
+
+/* line 59, foundation/scss/tw_colors.scss */
 .task .due {
-	color: #d78737;
+  color: #d78737;
 }
+
+/* line 62, foundation/scss/tw_colors.scss */
 .task .burndown__started {
-	background-color: #d7af37;
+  background-color: #d7af37;
 }
+
+/* line 65, foundation/scss/tw_colors.scss */
+.task.active .burndown__started {
+  background-color: #b79225;
+}
+
+/* line 68, foundation/scss/tw_colors.scss */
 .task .calendar__overdue {
-	background-color: #d73737;
+  background-color: #d73737;
 }
-.task .calendar__weekend {
+
+/* line 71, foundation/scss/tw_colors.scss */
+.task.active .calendar__overdue {
+  background-color: #b72525;
 }
+
+/* line 76, foundation/scss/tw_colors.scss */
 .task .history__done {
-	background-color: #37af37;
+  background-color: #37af37;
 }
+
+/* line 79, foundation/scss/tw_colors.scss */
+.task.active .history__done {
+  background-color: #2b882b;
+}
+
+/* line 82, foundation/scss/tw_colors.scss */
 .task .recurring {
-	color: #afd7af;
+  color: #afd7af;
 }
-.task .tag__none {
-}
+
+/* line 87, foundation/scss/tw_colors.scss */
 .task .undo__after {
-	color: #37ffaf;
+  color: #37ffaf;
 }
+
+/* line 90, foundation/scss/tw_colors.scss */
 .task .calendar__holiday {
-	color: #5fff5f;
-	background-color: #378737;
+  color: #5fff5f;
+  background-color: #378737;
 }
+
+/* line 94, foundation/scss/tw_colors.scss */
+.task.active .calendar__holiday {
+  background-color: #286328;
+}
+
+/* line 97, foundation/scss/tw_colors.scss */
 .task .burndown__done {
-	background-color: #d2d2d2;
+  background-color: #d2d2d2;
 }
+
+/* line 100, foundation/scss/tw_colors.scss */
+.task.active .burndown__done {
+  background-color: #b8b8b8;
+}
+
+/* line 103, foundation/scss/tw_colors.scss */
 .task .pri__M {
-	color: #37af37;
+  color: #37af37;
 }
+
+/* line 106, foundation/scss/tw_colors.scss */
 .task .pri__L {
-	color: #375f37;
+  color: #375f37;
 }
+
+/* line 109, foundation/scss/tw_colors.scss */
 .task .pri__H {
-	color: #d7ff37;
+  color: #d7ff37;
 }
-.task .pri__none {
-}
+
+/* line 114, foundation/scss/tw_colors.scss */
 .task .active {
-	color: #d7ff5f;
-	background-color: #af5f37;
+  color: #d7ff5f;
+  background-color: #af5f37;
 }
+
+/* line 118, foundation/scss/tw_colors.scss */
+.task.active .active {
+  background-color: #884a2b;
+}
+
+/* line 121, foundation/scss/tw_colors.scss */
 .task .undo__before {
-	color: #37af5f;
+  color: #37af5f;
 }
+
+/* line 124, foundation/scss/tw_colors.scss */
 .task .blocking {
-	color: #ffffff;
-	background-color: #878737;
+  color: #ffffff;
+  background-color: #878737;
 }
+
+/* line 128, foundation/scss/tw_colors.scss */
+.task.active .blocking {
+  background-color: #636328;
+}
+
+/* line 131, foundation/scss/tw_colors.scss */
 .task .burndown__pending {
-	background-color: #5f5f37;
+  background-color: #5f5f37;
 }
+
+/* line 134, foundation/scss/tw_colors.scss */
+.task.active .burndown__pending {
+  background-color: #3f3f24;
+}
+
+/* line 137, foundation/scss/tw_colors.scss */
 .task .header {
-	color: #37af5f;
+  color: #37af5f;
 }
+
+/* line 140, foundation/scss/tw_colors.scss */
 .task .calendar__due__today {
-	background-color: #d75f37;
+  background-color: #d75f37;
 }
+
+/* line 143, foundation/scss/tw_colors.scss */
+.task.active .calendar__due__today {
+  background-color: #b74925;
+}
+
+/* line 146, foundation/scss/tw_colors.scss */
 .task .calendar__due {
-	background-color: #d7af37;
+  background-color: #d7af37;
 }
+
+/* line 149, foundation/scss/tw_colors.scss */
+.task.active .calendar__due {
+  background-color: #b79225;
+}
+
+/* line 152, foundation/scss/tw_colors.scss */
 .task .history__add {
-	background-color: #375f37;
+  background-color: #375f37;
 }
+
+/* line 155, foundation/scss/tw_colors.scss */
+.task.active .history__add {
+  background-color: #243f24;
+}
+
+/* line 158, foundation/scss/tw_colors.scss */
 .task .error {
-	color: #37af5f;
+  color: #37af5f;
 }
+
+/* line 161, foundation/scss/tw_colors.scss */
 .task .debug {
-	color: #37af5f;
+  color: #37af5f;
 }
+
+/* line 164, foundation/scss/tw_colors.scss */
 .task .overdue {
-	color: #d73737;
+  color: #d73737;
 }
