@@ -17,7 +17,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseNotFound
 
 from . import models
-from .decorators import requires_taskd_sync
+from .decorators import requires_taskd_sync, git_checkpoint
 
 
 logger = logging.getLogger(__name__)
@@ -105,6 +105,7 @@ class UserResource(resources.ModelResource):
             content_type='application/x-pem-file',
         )
 
+    @git_checkpoint("Updating custom taskrc configuration")
     def taskrc_extras(self, request, **kwargs):
         if request.method == 'GET':
             ts = models.TaskStore.get_for_user(request.user)
@@ -276,6 +277,7 @@ class TaskResource(resources.Resource):
             ),
         ]
 
+    @git_checkpoint("Mark task completed")
     @requires_taskd_sync
     def complete(self, request, uuid, store, **kwargs):
         store.client.task_done(uuid=uuid)
@@ -283,11 +285,13 @@ class TaskResource(resources.Resource):
             status=200
         )
 
+    @git_checkpoint("Delete task")
     def delete(self, request, uuid, **kwargs):
         return HttpResponse(
             status=501
         )
 
+    @git_checkpoint("Process incoming SMS")
     def incoming_sms(self, request, username, **kwargs):
         try:
             user = User.objects.get(username=username)

@@ -9,6 +9,7 @@ import uuid
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.template.loader import render_to_string
 from taskw import TaskWarriorExperimental
 from tastypie.models import create_api_key
 
@@ -165,16 +166,55 @@ class TaskStore(models.Model):
 
     #  Git-related methods
 
+    def _create_git_repo(self):
+        result = self._git_command('status')
+        if result != 0:
+            self._git_command('init')
+            return True
+        return False
+
+    def _git_command(self, *args):
+        command = [
+            'git',
+            '--work-tree=%s' % self.local_path,
+            '--git-dir=%s' % os.path.join(
+                self.local_path,
+                '.git'
+            )
+        ] + list(args)
+        return subprocess.call(command)
+
     def create_git_checkpoint(
         self, message, function=None,
         args=None, kwargs=None, pre_operation=False
     ):
-        pass
+        self._create_git_repo()
+        self._git_command('add', '-A')
+        self._git_command(
+            'commit',
+            '-m',
+            render_to_string(
+                'git_checkpoint.txt',
+                {
+                    'message': message,
+                    'function': function,
+                    'args': args,
+                    'kwargs': kwargs,
+                    'preop': pre_operation,
+                }
+            )
+        )
 
     #  Taskd-related methods
 
     def sync(self):
+        self.create_git_checkpoint(
+            "Pre-synchronization"
+        )
         self.client.sync()
+        self.create_git_checkpoint(
+            "Post-synchronization"
+        )
 
     def autoconfigure_taskd(self):
         self.configured = True
@@ -266,6 +306,7 @@ class TaskStore(models.Model):
         })
 
         self.save()
+        self.create_git_checkpoint("Local store created")
 
 
 class TaskRc(object):

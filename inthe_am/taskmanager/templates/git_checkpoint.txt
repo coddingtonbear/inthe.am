@@ -1,0 +1,7 @@
+{% if preop %}[PRE-OPERATION] {% endif %}{{ message }}
+
+* [message]: {{ message }}
+* [function]: {{ function }}
+* [args]: {{ args }}
+* [kwargs]: {{ kwargs }}
+* [pre_operation]: {% if preop %}True{% else %}False{% endif %}

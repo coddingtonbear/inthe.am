@@ -21,7 +21,7 @@ def requires_taskd_sync(f):
     return wrapper
 
 
-def git_sync(message):
+def git_checkpoint(message):
     def git_sync(f):
         @wraps(f)
         def wrapper(self, *args, **kwargs):
