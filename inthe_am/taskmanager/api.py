@@ -6,7 +6,6 @@ import operator
 import os
 import shlex
 
-from django_twilio.decorators import twilio_view
 import pytz
 from tastypie import (
     authentication, authorization, bundle, exceptions, fields, resources
