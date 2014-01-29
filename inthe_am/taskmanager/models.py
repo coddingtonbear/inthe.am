@@ -163,6 +163,14 @@ class TaskStore(models.Model):
     def __unicode__(self):
         return 'Tasks for %s' % self.user
 
+    #  Git-related methods
+
+    def create_git_checkpoint(
+        self, message, function=None,
+        args=None, kwargs=None, pre_operation=False
+    ):
+        pass
+
     #  Taskd-related methods
 
     def sync(self):

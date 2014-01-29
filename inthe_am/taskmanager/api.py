@@ -1,5 +1,4 @@
 import datetime
-from functools import wraps
 import json
 import logging
 import operator
@@ -18,27 +17,10 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseNotFound
 
 from . import models
+from .decorators import requires_taskd_sync
 
 
 logger = logging.getLogger(__name__)
-
-
-def requires_taskd_sync(f):
-    @wraps(f)
-    def wrapper(self, *args, **kwargs):
-        try:
-            # Normal Views
-            user = args[0].user
-        except IndexError:
-            # Tastypie Views
-            user = kwargs['bundle'].request.user
-        store = models.TaskStore.get_for_user(user)
-        kwargs['store'] = store
-        store.sync()
-        result = f(self, *args, **kwargs)
-        store.sync()
-        return result
-    return wrapper
 
 
 class UserAuthorization(authorization.Authorization):
