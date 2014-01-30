@@ -293,12 +293,12 @@ var model = DS.Model.extend({
       return 'active';
     } else if (moment(this.get('due')).isBefore(moment())) {
       return 'overdue';
-    } else if (moment().startOf('day').isBefore(this.get('due')) && moment().endOf('day').add('s', 2).isAfter(this.get('due'))) {
+    } else if (moment().add('hours', 24).isAfter(this.get('due'))) {
       return 'due__today';
+    } else if (moment().add('days', 7).isAfter(this.get('due'))) {
+      return 'due';
     } else if (this.get('imask')) {
       return 'recurring';
-    } else if (this.get('due')) {
-      return 'due';
     } else if (this.get('priority') == 'H') {
       return 'pri__H';
     } else if (this.get('priority') == 'M') {
