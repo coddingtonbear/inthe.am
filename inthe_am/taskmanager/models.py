@@ -157,9 +157,9 @@ class TaskStore(models.Model):
                         errored[key] = (value, message)
         return applied, errored
 
-    def save(self):
+    def save(self, *args, **kwargs):
         self.apply_extras()
-        super(TaskStore, self).save()
+        super(TaskStore, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return 'Tasks for %s' % self.user
