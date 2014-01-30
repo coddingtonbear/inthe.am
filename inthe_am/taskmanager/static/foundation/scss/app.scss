@@ -90,9 +90,18 @@ div.row {
     }
   }
 }
+
 #task-details {
   overflow: scroll;
   height: 100%;
   padding-left: 40px;
   padding-bottom: 45px;
+}
+
+span {
+  &.project {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.8em;
+  }
 }

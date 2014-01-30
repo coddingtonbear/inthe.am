@@ -6972,10 +6972,17 @@ div.row.standalone ul, div.row.standalone ol {
   width: 250px;
 }
 
-/* line 93, foundation/scss/app.scss */
+/* line 94, foundation/scss/app.scss */
 #task-details {
   overflow: scroll;
   height: 100%;
   padding-left: 40px;
   padding-bottom: 45px;
+}
+
+/* line 102, foundation/scss/app.scss */
+span.project {
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.8em;
 }
