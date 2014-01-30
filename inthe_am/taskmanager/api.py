@@ -291,7 +291,6 @@ class TaskResource(resources.Resource):
             status=501
         )
 
-    @git_checkpoint("Process incoming SMS")
     def incoming_sms(self, request, username, **kwargs):
         try:
             user = User.objects.get(username=username)
@@ -327,6 +326,11 @@ class TaskResource(resources.Resource):
             result = store.client._execute(*task_args)
             stdout, stderr = result
             r.sms("Added.")
+            store.create_git_checkpoint(
+                "Added task via SMS",
+                args=(request, username),
+                kwargs=kwargs,
+            )
 
             logger.info(
                 "Added task from %s; message '%s'; response: '%s'" % (
