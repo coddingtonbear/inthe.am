@@ -67,6 +67,7 @@ div.row {
 
     p {
       margin-bottom: 0px;
+      word-wrap: break-word;
     }
 
     .task-item {
@@ -85,7 +86,7 @@ div.row {
       }
       .task-list-item {
         display: inline-block;
-        width: 250px;
+        width: 220px;
       }
     }
   }

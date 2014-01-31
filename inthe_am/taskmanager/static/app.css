@@ -6949,30 +6949,31 @@ div.row.standalone ul, div.row.standalone ol {
 /* line 68, foundation/scss/app.scss */
 #list .task p {
   margin-bottom: 0px;
+  word-wrap: break-word;
 }
-/* line 72, foundation/scss/app.scss */
+/* line 73, foundation/scss/app.scss */
 #list .task .task-item {
   padding: 0.9em 1.0em;
 }
-/* line 75, foundation/scss/app.scss */
+/* line 76, foundation/scss/app.scss */
 #list .task .task-item .task-list-icon {
   display: inline-block;
   width: 60px;
   vertical-align: top;
 }
-/* line 80, foundation/scss/app.scss */
+/* line 81, foundation/scss/app.scss */
 #list .task .task-item .task-list-icon i.task-icon {
   font-size: 60px;
   width: 55px;
   margin-right: 5px;
 }
-/* line 86, foundation/scss/app.scss */
+/* line 87, foundation/scss/app.scss */
 #list .task .task-item .task-list-item {
   display: inline-block;
-  width: 250px;
+  width: 220px;
 }
 
-/* line 94, foundation/scss/app.scss */
+/* line 95, foundation/scss/app.scss */
 #task-details {
   overflow: scroll;
   height: 100%;
@@ -6980,7 +6981,7 @@ div.row.standalone ul, div.row.standalone ol {
   padding-bottom: 45px;
 }
 
-/* line 102, foundation/scss/app.scss */
+/* line 103, foundation/scss/app.scss */
 span.project {
   text-transform: uppercase;
   font-weight: 700;

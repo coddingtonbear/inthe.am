@@ -103,7 +103,7 @@ def get_stylesheet(directives):
         print '}'
         if 'background-color' in attributes:
             print '.task.active .%s {' % selector
-            print '\tbackground-color: darken(%s, 10%%)' % (
+            print '\tbackground-color: lighten(%s, 10%%)' % (
                 attributes['background-color']
             )
             print '}'

@@ -5,7 +5,7 @@
 
 /* line 4, foundation/scss/tw_colors.scss */
 .task.active .calendar__today {
-  background-color: #3f3f24;
+  background-color: #7f7f4a;
 }
 
 /* line 7, foundation/scss/tw_colors.scss */
@@ -25,7 +25,7 @@
 
 /* line 16, foundation/scss/tw_colors.scss */
 .task.active .history__delete {
-  background-color: #04ff04;
+  background-color: #6aff6a;
 }
 
 /* line 19, foundation/scss/tw_colors.scss */
@@ -46,7 +46,7 @@
 
 /* line 29, foundation/scss/tw_colors.scss */
 .task.active .blocked {
-  background-color: #3f3f24;
+  background-color: #7f7f4a;
 }
 
 /* line 32, foundation/scss/tw_colors.scss */
@@ -72,7 +72,7 @@
 
 /* line 47, foundation/scss/tw_colors.scss */
 .task.active .summary__bar {
-  background-color: #2b882b;
+  background-color: #51c851;
 }
 
 /* line 50, foundation/scss/tw_colors.scss */
@@ -87,7 +87,7 @@
 
 /* line 56, foundation/scss/tw_colors.scss */
 .task.active .alternate {
-  background-color: #e6e6e6;
+  background-color: white;
 }
 
 /* line 59, foundation/scss/tw_colors.scss */
@@ -102,7 +102,7 @@
 
 /* line 65, foundation/scss/tw_colors.scss */
 .task.active .burndown__started {
-  background-color: #b79225;
+  background-color: #e0c062;
 }
 
 /* line 68, foundation/scss/tw_colors.scss */
@@ -112,7 +112,7 @@
 
 /* line 71, foundation/scss/tw_colors.scss */
 .task.active .calendar__overdue {
-  background-color: #b72525;
+  background-color: #e06262;
 }
 
 /* line 76, foundation/scss/tw_colors.scss */
@@ -122,7 +122,7 @@
 
 /* line 79, foundation/scss/tw_colors.scss */
 .task.active .history__done {
-  background-color: #2b882b;
+  background-color: #51c851;
 }
 
 /* line 82, foundation/scss/tw_colors.scss */
@@ -143,7 +143,7 @@
 
 /* line 94, foundation/scss/tw_colors.scss */
 .task.active .calendar__holiday {
-  background-color: #286328;
+  background-color: #46ab46;
 }
 
 /* line 97, foundation/scss/tw_colors.scss */
@@ -153,7 +153,7 @@
 
 /* line 100, foundation/scss/tw_colors.scss */
 .task.active .burndown__done {
-  background-color: #b8b8b8;
+  background-color: #ebebeb;
 }
 
 /* line 103, foundation/scss/tw_colors.scss */
@@ -179,7 +179,7 @@
 
 /* line 118, foundation/scss/tw_colors.scss */
 .task.active .active {
-  background-color: #884a2b;
+  background-color: #c87951;
 }
 
 /* line 121, foundation/scss/tw_colors.scss */
@@ -195,7 +195,7 @@
 
 /* line 128, foundation/scss/tw_colors.scss */
 .task.active .blocking {
-  background-color: #636328;
+  background-color: #abab46;
 }
 
 /* line 131, foundation/scss/tw_colors.scss */
@@ -205,7 +205,7 @@
 
 /* line 134, foundation/scss/tw_colors.scss */
 .task.active .burndown__pending {
-  background-color: #3f3f24;
+  background-color: #7f7f4a;
 }
 
 /* line 137, foundation/scss/tw_colors.scss */
@@ -220,7 +220,7 @@
 
 /* line 143, foundation/scss/tw_colors.scss */
 .task.active .calendar__due__today {
-  background-color: #b74925;
+  background-color: #e08162;
 }
 
 /* line 146, foundation/scss/tw_colors.scss */
@@ -230,7 +230,7 @@
 
 /* line 149, foundation/scss/tw_colors.scss */
 .task.active .calendar__due {
-  background-color: #b79225;
+  background-color: #e0c062;
 }
 
 /* line 152, foundation/scss/tw_colors.scss */
@@ -240,7 +240,7 @@
 
 /* line 155, foundation/scss/tw_colors.scss */
 .task.active .history__add {
-  background-color: #243f24;
+  background-color: #4a7f4a;
 }
 
 /* line 158, foundation/scss/tw_colors.scss */
