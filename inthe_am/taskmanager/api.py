@@ -14,9 +14,13 @@ from twilio.twiml import Response
 from django.conf.urls import url
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import (
+    HttpResponse, HttpResponseBadRequest,
+    HttpResponseNotAllowed, HttpResponseNotFound
+)
 
 from . import models
+from . import forms
 from .decorators import requires_taskd_sync, git_checkpoint
 
 
@@ -65,6 +69,12 @@ class UserResource(resources.ModelResource):
                     self._meta.resource_name
                 ),
                 self.wrap_view('taskrc_extras')
+            ),
+            url(
+                r"^(?P<resource_name>%s)/configure-taskd/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('configure_taskd')
             )
         ]
 
@@ -84,7 +94,34 @@ class UserResource(resources.ModelResource):
             )
             return response
 
+    @git_checkpoint("Configuring taskd server")
+    def configure_taskd(self, request, store=None, **kwargs):
+        if request.method != 'POST':
+            raise HttpResponseNotAllowed(
+                'Only POST requests are allowed'
+            )
+
+        form = forms.TaskdConfigurationForm(request.POST, request.FILES)
+        if not form.is_valid():
+            return HttpResponseBadRequest(
+                json.dumps(form.errors),
+                content_type='application/json',
+            )
+
+        # Write files from form to user directory
+        store.taskrc.update({
+            'taskd.certificate': '',
+            'taskd.key': '',
+            'taskd.ca': '',
+            'taskd.server': form.cleaned_data['server'],
+            'taskd.credentials': form.cleaned_data['credentials'],
+        })
+
     def my_certificate(self, request, **kwargs):
+        if request.method != 'GET':
+            raise HttpResponseNotAllowed(
+                'Only GET requests are allowed'
+            )
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
             ts.certificate_path,
@@ -92,6 +129,10 @@ class UserResource(resources.ModelResource):
         )
 
     def my_key(self, request, **kwargs):
+        if request.method != 'GET':
+            raise HttpResponseNotAllowed(
+                'Only GET requests are allowed'
+            )
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
             ts.key_path,
@@ -99,6 +140,10 @@ class UserResource(resources.ModelResource):
         )
 
     def ca_certificate(self, request, **kwargs):
+        if request.method != 'GET':
+            raise HttpResponseNotAllowed(
+                'Only GET requests are allowed'
+            )
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
             ts.server_config.get('ca.cert'),
@@ -128,9 +173,8 @@ class UserResource(resources.ModelResource):
                 content_type='application/json',
             )
         else:
-            return HttpResponse(
-                '',
-                status=405,
+            return HttpResponseNotAllowed(
+                'Only GET or PUT requests are allowed'
             )
 
     def account_status(self, request, **kwargs):

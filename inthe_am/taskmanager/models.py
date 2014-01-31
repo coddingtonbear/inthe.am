@@ -33,6 +33,8 @@ class TaskStore(models.Model):
         allow_folders=True,
         blank=True,
     )
+    taskd_server = models.CharField(max_length=255, blank=True)
+    taskd_credentials = models.CharField(max_length=255, blank=True)
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)
 
@@ -290,20 +292,20 @@ class TaskStore(models.Model):
         with open(cert_filename, 'w') as out:
             out.write(cert)
 
+        taskd_credentials = '%s/%s/%s' % (
+            settings.TASKD_ORG,
+            self.user.username,
+            taskd_user_key,
+        )
         self.taskrc.update({
             'data.location': self.local_path,
             'taskd.certificate': cert_filename,
             'taskd.key': private_key_filename,
             'taskd.ca': self.server_config['ca.cert'],
             'taskd.server': settings.TASKD_SERVER,
-            'taskd.credentials': (
-                '%s/%s/%s' % (
-                    settings.TASKD_ORG,
-                    self.user.username,
-                    taskd_user_key,
-                )
-            )
+            'taskd.credentials': taskd_credentials
         })
+        self.metadata['generated_taskd_credentials'] = taskd_credentials
 
         self.save()
         self.create_git_checkpoint("Local store created")
