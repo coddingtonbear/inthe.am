@@ -218,12 +218,14 @@ class TaskStore(models.Model):
     def autoconfigure_taskd(self):
         self.configured = True
 
+        # Remove any cached taskrc/taskw clients
         for attr in ('_taskrc', '_client', ):
             try:
                 delattr(self, attr)
             except AttributeError:
                 pass
 
+        # Create the user directory
         user_tasks = os.path.join(
             settings.TASK_STORAGE_PATH,
             self.user.username
@@ -236,6 +238,7 @@ class TaskStore(models.Model):
         )
         os.mkdir(self.local_path)
 
+        # Create a new user username
         key_proc = subprocess.Popen(
             [
                 settings.TASKD_BINARY,
@@ -251,6 +254,7 @@ class TaskStore(models.Model):
         key_proc_output = key_proc.communicate()[0].split('\n')
         taskd_user_key = key_proc_output[0].split(':')[1].strip()
 
+        # Create and write a new private key
         private_key_proc = subprocess.Popen(
             [
                 'certtool',
@@ -266,6 +270,7 @@ class TaskStore(models.Model):
         with open(private_key_filename, 'w') as out:
             out.write(private_key)
 
+        # Create and write a new public key
         cert_proc = subprocess.Popen(
             [
                 'certtool',
@@ -289,6 +294,7 @@ class TaskStore(models.Model):
         with open(cert_filename, 'w') as out:
             out.write(cert)
 
+        # Save these details to the taskrc
         taskd_credentials = '%s/%s/%s' % (
             settings.TASKD_ORG,
             self.user.username,
