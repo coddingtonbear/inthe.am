@@ -21,7 +21,8 @@ from django.http import (
 
 from . import models
 from . import forms
-from .decorators import requires_taskd_sync, git_checkpoint
+from .context_managers import git_checkpoint
+from .decorators import requires_taskd_sync, git_managed
 
 
 logger = logging.getLogger(__name__)
@@ -94,7 +95,7 @@ class UserResource(resources.ModelResource):
             )
             return response
 
-    @git_checkpoint("Configuring taskd server")
+    @git_managed("Configuring taskd server")
     def configure_taskd(self, request, store=None, **kwargs):
         if request.method != 'POST':
             raise HttpResponseNotAllowed(
@@ -150,7 +151,7 @@ class UserResource(resources.ModelResource):
             content_type='application/x-pem-file',
         )
 
-    @git_checkpoint("Updating custom taskrc configuration")
+    @git_managed("Updating custom taskrc configuration")
     def taskrc_extras(self, request, **kwargs):
         if request.method == 'GET':
             ts = models.TaskStore.get_for_user(request.user)
@@ -321,7 +322,7 @@ class TaskResource(resources.Resource):
             ),
         ]
 
-    @git_checkpoint("Mark task completed")
+    @git_managed("Mark task completed")
     @requires_taskd_sync
     def complete(self, request, uuid, store, **kwargs):
         store.client.task_done(uuid=uuid)
@@ -329,7 +330,7 @@ class TaskResource(resources.Resource):
             status=200
         )
 
-    @git_checkpoint("Delete task")
+    @git_managed("Delete task")
     def delete(self, request, uuid, **kwargs):
         return HttpResponse(
             status=501
@@ -344,47 +345,43 @@ class TaskResource(resources.Resource):
         r = Response()
         store = models.TaskStore.get_for_user(user)
 
-        from_ = request.POST['From']
-        body = request.POST['Body']
-        task_info = body[4:]
+        with git_checkpoint(store, "Incoming SMS"):
+            from_ = request.POST['From']
+            body = request.POST['Body']
+            task_info = body[4:]
 
-        if not body.lower().startswith('add'):
-            r.sms("Bad Request: Unknown command.")
-            logger.warning(
-                "Incoming SMS from %s had no recognized command: '%s'" % (
-                    from_,
-                    body,
+            if not body.lower().startswith('add'):
+                r.sms("Bad Request: Unknown command.")
+                logger.warning(
+                    "Incoming SMS from %s had no recognized command: '%s'" % (
+                        from_,
+                        body,
+                    )
                 )
-            )
-        elif not task_info:
-            logger.warning(
-                "Incoming SMS from %s had no content." % (
-                    from_,
-                    body,
+            elif not task_info:
+                logger.warning(
+                    "Incoming SMS from %s had no content." % (
+                        from_,
+                        body,
+                    )
                 )
-            )
-            r.sms("Bad Request: Empty task.")
-        else:
-            store.sync()
-            task_args = ['add'] + shlex.split(task_info)
-            result = store.client._execute(*task_args)
-            stdout, stderr = result
-            r.sms("Added.")
-            store.create_git_checkpoint(
-                "Added task via SMS",
-                args=(request, username),
-                kwargs=kwargs,
-            )
+                r.sms("Bad Request: Empty task.")
+            else:
+                store.sync()
+                task_args = ['add'] + shlex.split(task_info)
+                result = store.client._execute(*task_args)
+                stdout, stderr = result
+                r.sms("Added.")
 
-            logger.info(
-                "Added task from %s; message '%s'; response: '%s'" % (
-                    from_,
-                    body,
-                    stdout,
+                logger.info(
+                    "Added task from %s; message '%s'; response: '%s'" % (
+                        from_,
+                        body,
+                        stdout,
+                    )
                 )
-            )
 
-            store.sync()
+                store.sync()
         return HttpResponse(str(r), content_type='application/xml')
 
     def autoconfigure(self, request, **kwargs):

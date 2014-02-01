@@ -1,6 +1,7 @@
 from functools import wraps
 
 from . import models
+from .context_managers import git_checkpoint
 
 
 def requires_taskd_sync(f):
@@ -21,7 +22,7 @@ def requires_taskd_sync(f):
     return wrapper
 
 
-def git_checkpoint(message):
+def git_managed(message):
     def git_sync(f):
         @wraps(f)
         def wrapper(self, *args, **kwargs):
@@ -32,20 +33,8 @@ def git_checkpoint(message):
                 user = kwargs['bundle'].request.user
             store = models.TaskStore.get_for_user(user)
             kwargs['store'] = store
-            store.create_git_checkpoint(
-                message,
-                function=f.__name__,
-                args=args,
-                kwargs=kwargs,
-                pre_operation=True,
-            )
-            result = f(self, *args, **kwargs)
-            store.create_git_checkpoint(
-                message,
-                function=f.__name__,
-                args=args,
-                kwargs=kwargs
-            )
+            with git_checkpoint(store, message, f.__name__, args, kwargs):
+                result = f(self, *args, **kwargs)
             return result
         return wrapper
     return git_sync
