@@ -13,6 +13,8 @@ from django.template.loader import render_to_string
 from taskw import TaskWarriorExperimental
 from tastypie.models import create_api_key
 
+from .context_managers import git_checkpoint
+
 
 logger = logging.getLogger(__name__)
 
@@ -208,13 +210,8 @@ class TaskStore(models.Model):
     #  Taskd-related methods
 
     def sync(self):
-        self.create_git_checkpoint(
-            "Pre-synchronization"
-        )
-        self.client.sync()
-        self.create_git_checkpoint(
-            "Post-synchronization"
-        )
+        with git_checkpoint(self, 'Synchronization'):
+            self.client.sync()
 
     def autoconfigure_taskd(self):
         self.configured = True
