@@ -109,8 +109,14 @@ class UserResource(resources.ModelResource):
                 'Only POST requests are allowed'
             )
         store.taskrc.update({
-            'taskd.certificate': store.DEFAULT_FILENAMES['certificate'],
-            'taskd.key': store.DEFAULT_FILENAMES['key'],
+            'taskd.certificate': os.path.join(
+                store.local_path,
+                store.DEFAULT_FILENAMES['certificate']
+            ),
+            'taskd.key': os.path.join(
+                store.local_path,
+                store.DEFAULT_FILENAMES['key']
+            ),
             'taskd.ca': store.server_config['ca.cert'],
             'taskd.server': settings.TASKD_SERVER,
             'taskd.credentials': store.metadata['generated_taskd_credentials']
@@ -161,7 +167,7 @@ class UserResource(resources.ModelResource):
             )
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
-            ts.certificate_path,
+            ts.taskrc.get('taskd.certificate'),
             content_type='application/x-pem-file',
         )
 
@@ -172,7 +178,7 @@ class UserResource(resources.ModelResource):
             )
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
-            ts.key_path,
+            ts.taskrc.get('taskd.key'),
             content_type='application/x-pem-file',
         )
 
