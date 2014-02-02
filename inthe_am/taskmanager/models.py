@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.template.loader import render_to_string
+from dulwich.repo import Repo
 from taskw import TaskWarriorExperimental
 from tastypie.models import create_api_key
 
@@ -61,6 +62,10 @@ class TaskStore(models.Model):
         if not getattr(self, '_taskrc', None):
             self._taskrc = TaskRc(self.metadata['taskrc'])
         return self._taskrc
+
+    @property
+    def repository(self):
+        return Repo(self.local_path)
 
     @property
     def server_config(self):
@@ -165,15 +170,20 @@ class TaskStore(models.Model):
         return False
 
     def _git_command(self, *args):
-        command = [
-            'git',
-            '--work-tree=%s' % self.local_path,
-            '--git-dir=%s' % os.path.join(
-                self.local_path,
-                '.git'
+        with open(os.devnull, 'wb') as devnull:
+            command = [
+                'git',
+                '--work-tree=%s' % self.local_path,
+                '--git-dir=%s' % os.path.join(
+                    self.local_path,
+                    '.git'
+                )
+            ] + list(args)
+            return subprocess.call(
+                command,
+                stdout=devnull,
+                stderr=devnull,
             )
-        ] + list(args)
-        return subprocess.call(command)
 
     def create_git_checkpoint(
         self, message, function=None,
@@ -214,17 +224,18 @@ class TaskStore(models.Model):
                 pass
 
         # Create the user directory
-        user_tasks = os.path.join(
-            settings.TASK_STORAGE_PATH,
-            self.user.username
-        )
-        if not os.path.isdir(user_tasks):
-            os.mkdir(user_tasks)
-        self.local_path = os.path.join(
-            user_tasks,
-            str(uuid.uuid4())
-        )
-        os.mkdir(self.local_path)
+        if not self.local_path:
+            user_tasks = os.path.join(
+                settings.TASK_STORAGE_PATH,
+                self.user.username
+            )
+            if not os.path.isdir(user_tasks):
+                os.mkdir(user_tasks)
+            self.local_path = os.path.join(
+                user_tasks,
+                str(uuid.uuid4())
+            )
+            os.mkdir(self.local_path)
 
         # Create a new user username
         key_proc = subprocess.Popen(
