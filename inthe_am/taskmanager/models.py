@@ -99,7 +99,7 @@ class TaskStore(models.Model):
         except (ValueError, TypeError):
             return False
 
-    def _get_extra_safety(self, key, val):
+    def _get_extra_safely(self, key, val):
         valid_numeric_starts = [
             'urgency.next.coefficient',
             'urgency.blocking.coefficient',
@@ -140,7 +140,7 @@ class TaskStore(models.Model):
 
             with open(extras_path, 'w') as applied_extras:
                 for key, value in extras.items():
-                    safe, message = self._get_extra_safety(key, value)
+                    safe, message = self._get_extra_safely(key, value)
                     if safe:
                         applied[key] = value
                         applied_extras.write(
