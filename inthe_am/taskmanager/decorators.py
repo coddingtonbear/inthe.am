@@ -33,7 +33,7 @@ def git_managed(message):
                 user = kwargs['bundle'].request.user
             store = models.TaskStore.get_for_user(user)
             kwargs['store'] = store
-            with git_checkpoint(store, message, f.__name__, args, kwargs):
+            with git_checkpoint(store, message, f.__name__, args[1:], kwargs):
                 result = f(self, *args, **kwargs)
             return result
         return wrapper

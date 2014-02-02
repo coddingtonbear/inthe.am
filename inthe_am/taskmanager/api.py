@@ -11,6 +11,7 @@ from tastypie import (
 )
 from twilio.twiml import Response
 
+from django.conf import settings
 from django.conf.urls import url
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -102,21 +103,35 @@ class UserResource(resources.ModelResource):
                 'Only POST requests are allowed'
             )
 
-        form = forms.TaskdConfigurationForm(request.POST, request.FILES)
+        form = forms.TaskdConfigurationForm(request.POST)
         if not form.is_valid():
             return HttpResponseBadRequest(
                 json.dumps(form.errors),
                 content_type='application/json',
             )
 
+        cert_path = os.path.join(store.local_path, 'private.cert.pem')
+        with open(cert_path, 'w') as out:
+            out.write(form.cleaned_data['certificate'])
+
+        key_path = os.path.join(store.local_path, 'private.key.pem')
+        with open(key_path, 'w') as out:
+            out.write(form.cleaned_data['key'])
+
+        ca_path = os.path.join(store.local_path, 'ca.pem')
+        with open(ca_path, 'w') as out:
+            out.write(form.cleaned_data['ca'])
+
         # Write files from form to user directory
         store.taskrc.update({
-            'taskd.certificate': '',
-            'taskd.key': '',
-            'taskd.ca': '',
+            'taskd.certificate': cert_path,
+            'taskd.key': key_path,
+            'taskd.ca': ca_path,
             'taskd.server': form.cleaned_data['server'],
             'taskd.credentials': form.cleaned_data['credentials'],
         })
+
+        return HttpResponse('OK')
 
     def my_certificate(self, request, **kwargs):
         if request.method != 'GET':
@@ -193,7 +208,10 @@ class UserResource(resources.ModelResource):
                 'email': request.user.email,
                 'configured': store.configured,
                 'taskd_credentials': store.taskrc.get('taskd.credentials'),
-                'taskd_server': 'taskwarrior.inthe.am:53589',
+                'taskd_server': store.taskrc.get('taskd.server'),
+                'taskd_is_custom': (
+                    store.taskrc.get('taskd.server') != settings.TASKD_SERVER
+                ),
                 'taskrc_extras': store.taskrc_extras,
                 'api_key': request.user.api_key.key,
                 'sms_url': reverse(

@@ -7,6 +7,7 @@ var controller = Ember.Controller.extend({
     my_certificate: '/api/v1/user/my-certificate/',
     my_key: '/api/v1/user/my-key/',
     taskrc_extras: '/api/v1/user/taskrc/',
+    taskd_settings: '/api/v1/user/configure-taskd/',
     sms_url: null,
   },
   init: function(){

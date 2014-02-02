@@ -15,6 +15,14 @@ i.fa:before {
   width: 18px;
 }
 
+label[for] {
+  display: inline-block;
+  margin-left: 0.44rem;
+  margin-right: 0.44rem;
+  margin-bottom: 0;
+  vertical-align: baseline;
+}
+
 nav {
   button {
     margin-bottom: 0px;
@@ -105,4 +113,9 @@ span {
     font-weight: 700;
     font-size: 0.8em;
   }
+}
+
+div.alert-box.error {
+  background-color: #AA0000;
+  border-color: #AA0000;
 }

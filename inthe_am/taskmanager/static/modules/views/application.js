@@ -1,6 +1,17 @@
 var view = Ember.View.extend({
+  initializeFoundation: function(){
+    Ember.run.next(
+      this,
+      function(){
+        Ember.$(document).foundation();
+      }
+    );
+  },
   didInsertElement: function(){
-    $(document).foundation();
+    setInterval(
+      this.initializeFoundation,
+      1000
+    );
   }
 });
 

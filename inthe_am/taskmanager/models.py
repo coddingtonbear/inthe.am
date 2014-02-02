@@ -35,8 +35,6 @@ class TaskStore(models.Model):
         allow_folders=True,
         blank=True,
     )
-    taskd_server = models.CharField(max_length=255, blank=True)
-    taskd_credentials = models.CharField(max_length=255, blank=True)
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)
 
@@ -194,19 +192,20 @@ class TaskStore(models.Model):
     ):
         self._create_git_repo()
         self._git_command('add', '-A')
+        commit_message = render_to_string(
+            'git_checkpoint.txt',
+            {
+                'message': message,
+                'function': function,
+                'args': args,
+                'kwargs': kwargs,
+                'preop': pre_operation,
+            }
+        )
         self._git_command(
             'commit',
             '-m',
-            render_to_string(
-                'git_checkpoint.txt',
-                {
-                    'message': message,
-                    'function': function,
-                    'args': args,
-                    'kwargs': kwargs,
-                    'preop': pre_operation,
-                }
-            )
+            commit_message
         )
 
     #  Taskd-related methods
