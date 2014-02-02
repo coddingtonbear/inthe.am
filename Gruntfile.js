@@ -29,37 +29,39 @@ module.exports = function(grunt){
         }
       }
     },
-    compass: {
+    //compass: {
+    //  dist: {
+    //    options: {
+    //      require: 'zurb-foundation',
+    //      config: 'inthe_am/taskmanager/static/foundation/config.rb',
+    //      basePath: 'inthe_am/taskmanager/static/foundation/'
+    //    }
+    //  }
+    //},
+    sass: {
+      options: {
+        includePaths: [
+          'inthe_am/taskmanager/static/foundation/bower_components/foundation/scss'
+        ]
+      },
       dist: {
         options: {
-          require: 'zurb-foundation',
-          config: 'inthe_am/taskmanager/static/foundation/config.rb',
-          basePath: 'inthe_am/taskmanager/static/foundation/'
-        }
-      }
-    },
-    sass: {
-      dist: {
+          'outputStyle': 'compressed'
+        },
         files: {
-          'inthe_am/taskmanager/static/main.css': 'inthe_am/taskmanager/static/scss/main.scss'
+          'inthe_am/taskmanager/static/app.css': 'inthe_am/taskmanager/static/foundation/scss/app.scss',
         }
       }
     },
     watch: {
       sass: {
         files: [
-          'inthe_am/taskmanager/static/scss/*.scss',
+          'inthe_am/taskmanager/static/**/*.scss',
+          //'inthe_am/taskmanager/static/foudnation/scss/*.scss',
+          //'inthe_am/taskmanager/static/scss/*.scss',
         ],
         tasks: [
           'sass'
-        ]
-      },
-      compass: {
-        files: [
-          'inthe_am/taskmanager/static/foundation/scss/*.scss',
-        ],
-        tasks: [
-          'compass',
         ]
       },
       jscript: {
@@ -82,7 +84,6 @@ module.exports = function(grunt){
   });
 
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-ember-handlebars');
   grunt.loadNpmTasks('grunt-sass');
