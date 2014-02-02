@@ -77,6 +77,12 @@ class UserResource(resources.ModelResource):
                     self._meta.resource_name
                 ),
                 self.wrap_view('configure_taskd')
+            ),
+            url(
+                r"^(?P<resource_name>%s)/reset-taskd-configuration/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('reset_taskd_configuration')
             )
         ]
 
@@ -96,6 +102,21 @@ class UserResource(resources.ModelResource):
             )
             return response
 
+    @git_managed("Reset taskd configuration")
+    def reset_taskd_configuration(self, request, store=None, **kwargs):
+        if request.method != 'POST':
+            raise HttpResponseNotAllowed(
+                'Only POST requests are allowed'
+            )
+        store.taskrc.update({
+            'taskd.certificate': store.DEFAULT_FILENAMES['certificate'],
+            'taskd.key': store.DEFAULT_FILENAMES['key'],
+            'taskd.ca': store.server_config['ca.cert'],
+            'taskd.server': settings.TASKD_SERVER,
+            'taskd.credentials': store.metadata['generated_taskd_credentials']
+        })
+        return HttpResponse('OK')
+
     @git_managed("Configuring taskd server")
     def configure_taskd(self, request, store=None, **kwargs):
         if request.method != 'POST':
@@ -110,15 +131,15 @@ class UserResource(resources.ModelResource):
                 content_type='application/json',
             )
 
-        cert_path = os.path.join(store.local_path, 'private.cert.pem')
+        cert_path = os.path.join(store.local_path, 'custom.private.cert.pem')
         with open(cert_path, 'w') as out:
             out.write(form.cleaned_data['certificate'])
 
-        key_path = os.path.join(store.local_path, 'private.key.pem')
+        key_path = os.path.join(store.local_path, 'custom.private.key.pem')
         with open(key_path, 'w') as out:
             out.write(form.cleaned_data['key'])
 
-        ca_path = os.path.join(store.local_path, 'ca.pem')
+        ca_path = os.path.join(store.local_path, 'custom.ca.pem')
         with open(ca_path, 'w') as out:
             out.write(form.cleaned_data['ca'])
 

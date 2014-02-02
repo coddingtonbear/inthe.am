@@ -3,47 +3,47 @@
     <div id="settings_alerts">
     </div>
 
-    <h3><span class="code">.taskrc</span> settings</h3>
-
-    {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
-    <p class="help">
-        Only configuration values relating to urgency will have an effect,
-        but entering your entire local <span class="code">.taskrc</span>
-        is both safe and encouraged.
-    </p>
-    <input type="submit" value="Save" {{action "save_taskrc" }} />
-
-    <h3>Taskd Server Configuration</h3>
-
-    <div class="row">
-        <div class="large-12 columns">
-            {{input type="checkbox" id="use_custom_taskd" name="custom_taskd" checked=controllers.application.user.taskd_is_custom}}
-            <label for="user_custom_taskd">Use a custom taskd server?</label>
-        </div>
-    </div>
-    <form id="custom_taskd_server">
-        <div class="row">
-            <div class="large-12 columns">
-                <label>Taskd Server</label>
-                {{input type="text" id="id_server" name="server" value=controllers.application.user.taskd_server}}
+    <dl class="accordion" data-accordion>
+        <dd>
+            <a href="#custom_taskrc"><span class="code">.taskrc</span> settings</a>
+            <div id="custom_taskrc" class="content active">
+                {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
+                <p class="help">
+                    Only configuration values relating to urgency will have an effect,
+                    but entering your entire local <span class="code">.taskrc</span>
+                    is both safe and encouraged.
+                </p>
+                <a href="" class="button radius" {{action "save_taskrc"}}>Save Settings</a>
             </div>
-            <div class="large-12 columns">
-                <label>Taskd Credentials</label>
-                {{input type="text" id="id_credentials" name="credentials" value=controllers.application.user.taskd_credentials}}
+        </dd>
+        <dd>
+            <a href="#custom_taskd">Taskd Server Configuration</a>
+            <div id="custom_taskd" class="content">
+                <div class="row">
+                    <div class="large-12 columns">
+                        <label>Taskd Server</label>
+                        {{input type="text" id="id_server" name="server" value=controllers.application.user.taskd_server}}
+                    </div>
+                    <div class="large-12 columns">
+                        <label>Taskd Credentials</label>
+                        {{input type="text" id="id_credentials" name="credentials" value=controllers.application.user.taskd_credentials}}
+                    </div>
+                    <div class="large-12 columns">
+                        <label>Certificate</label>
+                        <input type="file" name="certificate" id="id_certificate">
+                    </div>
+                    <div class="large-12 columns">
+                        <label>Key</label>
+                        <input type="file" name="key" id="id_key">
+                    </div>
+                    <div class="large-12 columns">
+                        <label>CA Certificate</label>
+                        <input type="file" name="ca" id="id_ca">
+                    </div>
+                </div>
+                <a href="" class="button radius" {{action "save_taskd"}}>Save Settings</a>
+                <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset to Default</a>
             </div>
-            <div class="large-12 columns">
-                <label>Certificate</label>
-                <input type="file" name="certificate" id="id_certificate">
-            </div>
-            <div class="large-12 columns">
-                <label>Key</label>
-                <input type="file" name="key" id="id_key">
-            </div>
-            <div class="large-12 columns">
-                <label>CA Certificate</label>
-                <input type="file" name="ca" id="id_ca">
-            </div>
-        </div>
-        <input type="submit" value="Save" {{action "save_taskd"}} />
-    </form>
+        </dd>
+    </dl>
 </div>

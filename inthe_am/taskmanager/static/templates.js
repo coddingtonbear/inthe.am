@@ -147,7 +147,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', stack1, hashContexts, hashTypes, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<div class=\"row standalone\">\n    <h2>Settings</h2>\n    <div id=\"settings_alerts\">\n    </div>\n\n    <h3><span class=\"code\">.taskrc</span> settings</h3>\n\n    ");
+  data.buffer.push("<div class=\"row standalone\">\n    <h2>Settings</h2>\n    <div id=\"settings_alerts\">\n    </div>\n\n    <dl class=\"accordion\" data-accordion>\n        <dd>\n            <a href=\"#custom_taskrc\"><span class=\"code\">.taskrc</span> settings</a>\n            <div id=\"custom_taskrc\" class=\"content active\">\n                ");
   hashContexts = {'name': depth0,'value': depth0,'cols': depth0,'rows': depth0};
   hashTypes = {'name': "STRING",'value': "ID",'cols': "STRING",'rows': "STRING"};
   options = {hash:{
@@ -157,21 +157,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
     'rows': ("10")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.textarea || depth0.textarea),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "textarea", options))));
-  data.buffer.push("\n    <p class=\"help\">\n        Only configuration values relating to urgency will have an effect,\n        but entering your entire local <span class=\"code\">.taskrc</span>\n        is both safe and encouraged.\n    </p>\n    <input type=\"submit\" value=\"Save\" ");
+  data.buffer.push("\n                <p class=\"help\">\n                    Only configuration values relating to urgency will have an effect,\n                    but entering your entire local <span class=\"code\">.taskrc</span>\n                    is both safe and encouraged.\n                </p>\n                <a href=\"\" class=\"button radius\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save_taskrc", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(" />\n\n    <h3>Taskd Server Configuration</h3>\n\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n            ");
-  hashContexts = {'type': depth0,'id': depth0,'name': depth0,'checked': depth0};
-  hashTypes = {'type': "STRING",'id': "STRING",'name': "STRING",'checked': "ID"};
-  options = {hash:{
-    'type': ("checkbox"),
-    'id': ("use_custom_taskd"),
-    'name': ("custom_taskd"),
-    'checked': ("controllers.application.user.taskd_is_custom")
-  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push("\n            <label for=\"user_custom_taskd\">Use a custom taskd server?</label>\n        </div>\n    </div>\n    <form id=\"custom_taskd_server\">\n        <div class=\"row\">\n            <div class=\"large-12 columns\">\n                <label>Taskd Server</label>\n                ");
+  data.buffer.push(">Save Settings</a>\n            </div>\n        </dd>\n        <dd>\n            <a href=\"#custom_taskd\">Taskd Server Configuration</a>\n            <div id=\"custom_taskd\" class=\"content\">\n                <div class=\"row\">\n                    <div class=\"large-12 columns\">\n                        <label>Taskd Server</label>\n                        ");
   hashContexts = {'type': depth0,'id': depth0,'name': depth0,'value': depth0};
   hashTypes = {'type': "STRING",'id': "STRING",'name': "STRING",'value': "ID"};
   options = {hash:{
@@ -181,7 +171,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
     'value': ("controllers.application.user.taskd_server")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push("\n            </div>\n            <div class=\"large-12 columns\">\n                <label>Taskd Credentials</label>\n                ");
+  data.buffer.push("\n                    </div>\n                    <div class=\"large-12 columns\">\n                        <label>Taskd Credentials</label>\n                        ");
   hashContexts = {'type': depth0,'id': depth0,'name': depth0,'value': depth0};
   hashTypes = {'type': "STRING",'id': "STRING",'name': "STRING",'value': "ID"};
   options = {hash:{
@@ -191,11 +181,15 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
     'value': ("controllers.application.user.taskd_credentials")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push("\n            </div>\n            <div class=\"large-12 columns\">\n                <label>Certificate</label>\n                <input type=\"file\" name=\"certificate\" id=\"id_certificate\">\n            </div>\n            <div class=\"large-12 columns\">\n                <label>Key</label>\n                <input type=\"file\" name=\"key\" id=\"id_key\">\n            </div>\n            <div class=\"large-12 columns\">\n                <label>CA Certificate</label>\n                <input type=\"file\" name=\"ca\" id=\"id_ca\">\n            </div>\n        </div>\n        <input type=\"submit\" value=\"Save\" ");
+  data.buffer.push("\n                    </div>\n                    <div class=\"large-12 columns\">\n                        <label>Certificate</label>\n                        <input type=\"file\" name=\"certificate\" id=\"id_certificate\">\n                    </div>\n                    <div class=\"large-12 columns\">\n                        <label>Key</label>\n                        <input type=\"file\" name=\"key\" id=\"id_key\">\n                    </div>\n                    <div class=\"large-12 columns\">\n                        <label>CA Certificate</label>\n                        <input type=\"file\" name=\"ca\" id=\"id_ca\">\n                    </div>\n                </div>\n                <a href=\"\" class=\"button radius\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save_taskd", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(" />\n    </form>\n</div>\n");
+  data.buffer.push(">Save Settings</a>\n                <a href=\"\" class=\"button radius alert\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "reset_taskd", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(">Reset to Default</a>\n            </div>\n        </dd>\n    </dl>\n</div>\n");
   return buffer;
   
 });

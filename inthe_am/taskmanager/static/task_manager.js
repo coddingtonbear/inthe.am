@@ -1,6 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var App = Ember.Application.create({
-  LOG_TRANSITIONS: true
 });
 
 App.ApplicationAdapter = DS.DjangoTastypieAdapter.extend({
@@ -9,6 +8,25 @@ App.ApplicationAdapter = DS.DjangoTastypieAdapter.extend({
 App.ApplicationSerializer = DS.DjangoTastypieSerializer.extend();
 
 module.exports = App;
+
+Ember.View.reopen({
+  didInsertElement: function() {
+    this._super();
+    Ember.run.scheduleOnce('afterRender', this, this.didRenderElement);
+  },
+  initializeFoundation: function(){
+    Ember.run.debounce(
+      this,
+      function(){
+        Ember.$(document).foundation();
+      },
+      250
+    );
+  },
+  didRenderElement: function() {
+    this.initializeFoundation();
+  }
+});
 
 },{}],2:[function(require,module,exports){
 var controller = Ember.Controller.extend({
@@ -28,6 +46,7 @@ var controller = Ember.Controller.extend({
     my_key: '/api/v1/user/my-key/',
     taskrc_extras: '/api/v1/user/taskrc/',
     taskd_settings: '/api/v1/user/configure-taskd/',
+    taskd_reset: '/api/v1/user/reset-taskd-configuration/',
     sms_url: null,
   },
   init: function(){
@@ -91,7 +110,7 @@ var controller = Ember.Controller.extend({
     if (
       data.certificate === false || data.key === false || data.ca === false
     ) {
-      self.error_message("An error was encountered while uploading your files")
+      self.error_message("An error was encountered while uploading your files");
       return;
     } else if (
       !data.certificate || !data.key || !data.ca
@@ -131,6 +150,7 @@ var controller = Ember.Controller.extend({
         $("<a>", {'href': '#', 'class': 'close'}).html("&times;")
       )
     );
+    $(document).foundation();
   },
   success_message: function(message) {
     $("#settings_alerts").append(
@@ -139,6 +159,7 @@ var controller = Ember.Controller.extend({
         $("<a>", {'href': '#', 'class': 'close'}).html("&times;")
       )
     );
+    $(document).foundation();
   },
   actions: {
     save_taskrc: function() {
@@ -162,6 +183,29 @@ var controller = Ember.Controller.extend({
         },
         error: function() {
           self.error_message("An error was encountered while saving your taskrc settings.");
+        }
+      });
+    },
+    reset_taskd: function() {
+      var csrftoken = this.get('controllers.application').getCookie(
+        'csrftoken'
+      );
+      var url = this.get('controllers.application').urls.taskd_reset;
+      var self = this;
+      $.ajax({
+        url: url,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        data: {},
+        success: function(){
+          self.success_message("Taskd settings reset to default.");
+        },
+        error: function(xhr){
+          self.error_message(
+            "Error encountered while resetting taskd settings to defaults."
+          );
         }
       });
     },
@@ -593,20 +637,6 @@ module.exports = route;
 
 },{}],24:[function(require,module,exports){
 var view = Ember.View.extend({
-  initializeFoundation: function(){
-    Ember.run.next(
-      this,
-      function(){
-        Ember.$(document).foundation();
-      }
-    );
-  },
-  didInsertElement: function(){
-    setInterval(
-      this.initializeFoundation,
-      1000
-    );
-  }
 });
 
 module.exports = view;

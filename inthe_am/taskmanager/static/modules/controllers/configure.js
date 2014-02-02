@@ -5,7 +5,7 @@ var controller = Ember.Controller.extend({
     if (
       data.certificate === false || data.key === false || data.ca === false
     ) {
-      self.error_message("An error was encountered while uploading your files")
+      self.error_message("An error was encountered while uploading your files");
       return;
     } else if (
       !data.certificate || !data.key || !data.ca
@@ -45,6 +45,7 @@ var controller = Ember.Controller.extend({
         $("<a>", {'href': '#', 'class': 'close'}).html("&times;")
       )
     );
+    $(document).foundation();
   },
   success_message: function(message) {
     $("#settings_alerts").append(
@@ -53,6 +54,7 @@ var controller = Ember.Controller.extend({
         $("<a>", {'href': '#', 'class': 'close'}).html("&times;")
       )
     );
+    $(document).foundation();
   },
   actions: {
     save_taskrc: function() {
@@ -76,6 +78,29 @@ var controller = Ember.Controller.extend({
         },
         error: function() {
           self.error_message("An error was encountered while saving your taskrc settings.");
+        }
+      });
+    },
+    reset_taskd: function() {
+      var csrftoken = this.get('controllers.application').getCookie(
+        'csrftoken'
+      );
+      var url = this.get('controllers.application').urls.taskd_reset;
+      var self = this;
+      $.ajax({
+        url: url,
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        data: {},
+        success: function(){
+          self.success_message("Taskd settings reset to default.");
+        },
+        error: function(xhr){
+          self.error_message(
+            "Error encountered while resetting taskd settings to defaults."
+          );
         }
       });
     },

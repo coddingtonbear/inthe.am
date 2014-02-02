@@ -28,6 +28,11 @@ class NoTaskFoldersFound(Exception):
 
 
 class TaskStore(models.Model):
+    DEFAULT_FILENAMES = {
+        'key': 'private.key.pem',
+        'certificate': 'private.certificate.pem',
+    }
+
     user = models.ForeignKey(User, related_name='task_stores')
     local_path = models.FilePathField(
         path=settings.TASK_STORAGE_PATH,
@@ -47,25 +52,9 @@ class TaskStore(models.Model):
 
     @property
     def metadata(self):
-        if os.path.exists(self.metadata_registry):
-            with open(self.metadata_registry, 'r') as m:
-                return json.loads(m.read())
-        else:
-            return {
-                'files': {
-                },
-                'taskrc': os.path.join(
-                    self.local_path,
-                    '.taskrc',
-                ),
-            }
-
-    @metadata.setter
-    def metadata(self, data):
-        with open(self.metadata_registry, 'w') as m:
-            m.write(
-                json.dumps(data)
-            )
+        if not getattr(self, '_metadata', None):
+            self._metadata = Metadata(self, self.metadata_registry)
+        return self._metadata
 
     @property
     def taskrc(self):
@@ -264,7 +253,7 @@ class TaskStore(models.Model):
         private_key = private_key_proc.communicate()[0]
         private_key_filename = os.path.join(
             self.local_path,
-            'private.key.pem',
+            self.DEFAULT_FILENAMES['key'],
         )
         with open(private_key_filename, 'w') as out:
             out.write(private_key)
@@ -288,7 +277,7 @@ class TaskStore(models.Model):
         cert = cert_proc.communicate()[0]
         cert_filename = os.path.join(
             self.local_path,
-            'private.cert.pem',
+            self.DEFAULT_FILENAMES['certificate'],
         )
         with open(cert_filename, 'w') as out:
             out.write(cert)
@@ -311,6 +300,62 @@ class TaskStore(models.Model):
 
         self.save()
         self.create_git_checkpoint("Local store created")
+
+
+class Metadata(dict):
+    def __init__(self, store, path):
+        self.path = path
+        self.store = store
+
+        self.config = self._read()
+
+    def _init(self):
+        self.config = {
+            'files': {
+            },
+            'taskrc': os.path.join(
+                self.store.local_path,
+                '.taskrc',
+            ),
+        }
+        self._write()
+        return self.config
+
+    def _read(self):
+        if not os.path.isfile(self.path):
+            return self._init()
+
+        with open(self.path, 'r') as config_file:
+            return json.loads(config_file.read())
+
+    def _write(self):
+        with open(self.path, 'w') as config_file:
+            config_file.write(json.dumps(self.config))
+
+    def items(self):
+        return self.config.items()
+
+    def keys(self):
+        return self.config.keys()
+
+    def get(self, item, default=None):
+        try:
+            return self[item]
+        except KeyError:
+            return default
+
+    def __getitem__(self, item):
+        return self.config[item]
+
+    def __setitem__(self, item, value):
+        self.config[item] = value
+        self._write()
+
+    def __unicode__(self):
+        return u'metadata at %s' % self.path
+
+    def __str__(self):
+        return self.__unicode__().encode('utf-8', 'REPLACE')
 
 
 class TaskRc(object):
