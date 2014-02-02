@@ -536,12 +536,35 @@ class TaskResource(resources.Resource):
         except ValueError:
             raise exceptions.NotFound()
 
+    @git_managed("Creating task")
+    @requires_taskd_sync
+    def obj_create(self, bundle, store, **kwargs):
+        pass
+
+    @git_managed("Updating task")
+    @requires_taskd_sync
+    def obj_update(self, bundle, store, **kwargs):
+        pass
+
+    @git_managed("Deleting many tasks")
+    @requires_taskd_sync
+    def obj_delete_list(self, bundle, store, **kwargs):
+        raise exceptions.BadRequest()
+
+    @git_managed("Deleting task")
+    @requires_taskd_sync
+    def obj_delete(self, bundle, store, **kwargs):
+        try:
+            store.client.task_done(uuid=kwargs['pk'])
+        except ValueError:
+            raise exceptions.NotFound()
+
     class Meta:
         authentication = authentication.MultiAuthentication(
             authentication.ApiKeyAuthentication(),
             authentication.SessionAuthentication(),
         )
-        list_allowed_methods = ['get']
-        detail_allowed_methods = ['get']
+        list_allowed_methods = ['get', 'put', 'post', 'delete']
+        detail_allowed_methods = ['get', 'put', 'post', 'delete']
         limit = 1000
         max_limit = 1000
