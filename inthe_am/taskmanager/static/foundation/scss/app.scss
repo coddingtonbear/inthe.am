@@ -39,8 +39,8 @@ div.row {
     overflow: hidden;
   }
   &.standalone {
-    overflow: scroll;
-    height: 100%;
+    //overflow: scroll;
+    //height: 100%;
     padding-bottom: 100px;
 
     ul, ol {

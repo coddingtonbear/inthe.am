@@ -40,7 +40,14 @@ var controller = Ember.Controller.extend({
       }
     }
     return cookieValue;
-  }
+  },
+  updateStyles: function(){
+    if(this.currentPath.substring(0, 5) == "tasks") {
+      $("body").css('overflow', 'hidden');
+    } else {
+      $("body").css('overflow', 'scroll');
+    }
+  }.observes('currentPath')
 });
 
 module.exports = controller;
