@@ -320,6 +320,8 @@ class Task(object):
 
 
 class TaskResource(resources.Resource):
+    TASK_TYPE = 'pending'
+
     id = fields.IntegerField(attribute='id', null=True)
     uuid = fields.CharField(attribute='uuid')
     status = fields.CharField(attribute='status')
@@ -505,11 +507,14 @@ class TaskResource(resources.Resource):
         return obj_list
 
     def passes_filters(self, task, filters):
+        passes = True
         for key, value in filters.items():
+            if key not in self.Meta.filter_fields:
+                continue
             task_value = getattr(task, key, None)
-            if task_value == value:
-                return True
-        return False
+            if task_value != value:
+                passes = False
+        return passes
 
     @requires_taskd_sync
     def obj_get_list(self, bundle, store, **kwargs):
@@ -517,12 +522,8 @@ class TaskResource(resources.Resource):
             filters = bundle.request.GET.copy()
         filters.update(kwargs)
 
-        key = 'pending'
-        if int(bundle.request.GET.get('completed', 0)):
-            key = 'completed'
-
         objects = []
-        for task_json in store.client.load_tasks()[key]:
+        for task_json in store.client.load_tasks()[self.TASK_TYPE]:
             task = Task(task_json)
             if self.passes_filters(task, filters):
                 objects.append(task)
@@ -539,12 +540,12 @@ class TaskResource(resources.Resource):
     @git_managed("Creating task")
     @requires_taskd_sync
     def obj_create(self, bundle, store, **kwargs):
-        pass
+        store.client.task_add(**kwargs)
 
     @git_managed("Updating task")
     @requires_taskd_sync
     def obj_update(self, bundle, store, **kwargs):
-        pass
+        store.client.task_update(kwargs)
 
     @git_managed("Deleting many tasks")
     @requires_taskd_sync
@@ -566,5 +567,47 @@ class TaskResource(resources.Resource):
         )
         list_allowed_methods = ['get', 'put', 'post', 'delete']
         detail_allowed_methods = ['get', 'put', 'post', 'delete']
-        limit = 1000
-        max_limit = 1000
+        filter_fields = [
+            'status',
+            'due',
+            'entry',
+            'id',
+            'imask',
+            'modified',
+            'parent',
+            'recur',
+            'status',
+            'urgency',
+            'uuid',
+            'wait',
+        ]
+        limit = 100
+        max_limit = 400
+
+
+class CompletedTaskResource(TaskResource):
+    TASK_TYPE = 'completed'
+
+    class Meta:
+        authentication = authentication.MultiAuthentication(
+            authentication.ApiKeyAuthentication(),
+            authentication.SessionAuthentication(),
+        )
+        list_allowed_methods = ['get']
+        detail_allowed_methods = ['get']
+        filter_fields = [
+            'status',
+            'due',
+            'entry',
+            'id',
+            'imask',
+            'modified',
+            'parent',
+            'recur',
+            'status',
+            'urgency',
+            'uuid',
+            'wait',
+        ]
+        limit = 100
+        max_limit = 400

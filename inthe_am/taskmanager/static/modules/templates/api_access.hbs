@@ -35,9 +35,7 @@
 
     <h3>Endpoints</h3>
 
-    <p>
-        The Tasks REST API supports only <strong>GET</strong> requests.
-    </p>
+    <h4>Pending Tasks</h4>
 
     <table class="pure-table pure-table-horizontal">
         <tr>
@@ -56,5 +54,69 @@
                 <code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/</code>
             </td>
         </tr>
+    </table>
+
+
+    <table class="pure-table pure-table-horizontal">
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GET</td>
+                <td>Retrieve task information.</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>Create new task.  Used only with 'Task List' detail endpoint.</td>
+            </tr>
+            <tr>
+                <td>PUT</td>
+                <td>Update existing task.  Used with 'Task Detail' endpoint only.</td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>Marks a task as completed.  After ran, task will only be accessible from 'Completed Task' endpoints.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4>Completed Tasks</h4>
+
+    <table class="pure-table pure-table-horizontal">
+        <tr>
+            <th>
+                Completed Task List
+            </th>
+            <td>
+                <code>https://inthe.am/api/v1/completedtask/</code>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Completed Task Detail
+            </th>
+            <td>
+                <code>https://inthe.am/api/v1/completedtask/<b>&lt;TASK UUID&gt;</b>/</code>
+            </td>
+        </tr>
+    </table>
+
+    <table class="pure-table pure-table-horizontal">
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GET</td>
+                <td>Retrieve task information.</td>
+            </tr>
+        </tbody>
     </table>
 </div>
