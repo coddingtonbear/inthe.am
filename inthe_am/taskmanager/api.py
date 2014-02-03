@@ -277,6 +277,9 @@ class Task(object):
     DATE_FIELDS = [
         'due', 'entry', 'modified', 'start', 'wait', 'scheduled',
     ]
+    READ_ONLY_FIELDS = [
+        'id', 'uuid', 'urgency', 'entry', 'modified', 'imask',
+    ]
 
     def __init__(self, json):
         if not json:
@@ -293,11 +296,20 @@ class Task(object):
         )
         return static_timezone
 
+    def get_json(self):
+        return self.json
+
+    def get_safe_json(self):
+        return {
+            k: v for k, v in self.json.items()
+            if v is not None and k not in self.READ_ONLY_FIELDS
+        }
+
     @classmethod
     def from_serialized(cls, data):
         data = copy.deepcopy(data)
         for key in data:
-            if key in cls.DATE_FIELDS:
+            if key in cls.DATE_FIELDS and data[key]:
                 data[key] = dateutil.parser.parse(
                     data[key],
                     tzinfos=cls.get_timezone
@@ -566,7 +578,7 @@ class TaskResource(resources.Resource):
         with git_checkpoint(store, "Creating Task"):
             bundle.obj = Task(
                 store.client.task_add(
-                    **Task.from_serialized(bundle.data).json
+                    **Task.from_serialized(bundle.data).get_safe_json()
                 )
             )
             return bundle
@@ -578,8 +590,10 @@ class TaskResource(resources.Resource):
                 raise exceptions.BadRequest(
                     "Changing the UUID of an existing task is not possible."
                 )
-            bundle.data.pop('id')
-            store.client.task_update(Task.from_serialized(bundle.data).json)
+            bundle.data.pop('id', None)
+            serialized = Task.from_serialized(bundle.data).get_safe_json()
+            serialized['uuid'] = kwargs['pk']
+            store.client.task_update(serialized)
             bundle.obj = Task(store.client.get_task(uuid=kwargs['pk'])[1])
             return bundle
 
@@ -597,9 +611,10 @@ class TaskResource(resources.Resource):
 
     class Meta:
         always_return_data = True
+        authorization = authorization.Authorization()
         authentication = authentication.MultiAuthentication(
-            authentication.ApiKeyAuthentication(),
             authentication.SessionAuthentication(),
+            authentication.ApiKeyAuthentication(),
         )
         list_allowed_methods = ['get', 'put', 'post', 'delete']
         detail_allowed_methods = ['get', 'put', 'post', 'delete']
@@ -627,8 +642,8 @@ class CompletedTaskResource(TaskResource):
     class Meta:
         always_return_data = True
         authentication = authentication.MultiAuthentication(
-            authentication.ApiKeyAuthentication(),
             authentication.SessionAuthentication(),
+            authentication.ApiKeyAuthentication(),
         )
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get']

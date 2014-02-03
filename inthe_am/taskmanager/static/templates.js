@@ -41,7 +41,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 this["Ember"]["TEMPLATES"]["application"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1, hashTypes, hashContexts, self=this, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  var buffer = '', stack1, hashTypes, hashContexts, options, self=this, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 function program1(depth0,data) {
   
@@ -70,7 +70,11 @@ function program1(depth0,data) {
   options = {hash:{},inverse:self.noop,fn:self.program(8, program8, data),contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['link-to'] || depth0['link-to']),stack1 ? stack1.call(depth0, "configure", options) : helperMissing.call(depth0, "link-to", "configure", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n                </li>\n                <li>\n                    <a href=\"/logout/\"><i class=\"fa fa-sign-out\">Log Out</i></a>\n                </li>\n            </ul>\n\n            <!-- Left Nav Section -->\n            <ul class=\"left\">\n                <li>\n                    ");
+  data.buffer.push("\n                </li>\n                <li>\n                    <a href=\"/logout/\"><i class=\"fa fa-sign-out\">Log Out</i></a>\n                </li>\n            </ul>\n\n            <!-- Left Nav Section -->\n            <ul class=\"left\">\n                <li>\n                    <a href=\"#\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "create_task", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("><i class=\"fa fa-pencil-square-o\"></i></a>\n                </li>\n                <li>\n                    ");
   hashTypes = {};
   hashContexts = {};
   options = {hash:{},inverse:self.noop,fn:self.program(10, program10, data),contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
@@ -137,6 +141,11 @@ function program14(depth0,data) {
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "outlet", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("\n");
+  hashTypes = {};
+  hashContexts = {};
+  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.outlet || depth0.outlet),stack1 ? stack1.call(depth0, "modal", options) : helperMissing.call(depth0, "outlet", "modal", options))));
+  data.buffer.push("\n");
   return buffer;
   
 });
@@ -190,6 +199,67 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "reset_taskd", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push(">Reset to Default</a>\n            </div>\n        </dd>\n    </dl>\n</div>\n");
+  return buffer;
+  
+});
+
+this["Ember"]["TEMPLATES"]["create_task"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, hashTypes, hashContexts, options, self=this, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+
+function program1(depth0,data) {
+  
+  
+  data.buffer.push("\n        <h2>Edit task</h2>\n    ");
+  }
+
+function program3(depth0,data) {
+  
+  
+  data.buffer.push("\n        <h2>Create a new task</h2>\n    ");
+  }
+
+  data.buffer.push("<div id=\"new_task_form\" class=\"reveal-modal\" data-reveal>\n    ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers['if'].call(depth0, "uuid", {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n\n    <div class=\"row\">\n        <div class=\"medium-12 columns\">\n            <label>Description</label>\n            ");
+  hashContexts = {'value': depth0};
+  hashTypes = {'value': "ID"};
+  options = {hash:{
+    'value': ("description")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+  data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Priority</label>\n            ");
+  hashContexts = {'content': depth0,'optionValuePath': depth0,'optionLabelPath': depth0,'value': depth0};
+  hashTypes = {'content': "ID",'optionValuePath': "STRING",'optionLabelPath': "STRING",'value': "ID"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "Ember.Select", {hash:{
+    'content': ("priorities"),
+    'optionValuePath': ("content.short"),
+    'optionLabelPath': ("content.long"),
+    'value': ("priority")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Due</label>\n            ");
+  hashContexts = {'value': depth0};
+  hashTypes = {'value': "ID"};
+  options = {hash:{
+    'value': ("due")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+  data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Project</label>\n            ");
+  hashContexts = {'value': depth0};
+  hashTypes = {'value': "ID"};
+  options = {hash:{
+    'value': ("project")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+  data.buffer.push("\n        </div>\n    </div>\n\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <button class=\"secondary-button\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "save", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(">\n                <i class=\"fa fa-save\">Save</i>\n            </button>\n        </div>\n    </div>\n\n    <a class=\"close-reveal-modal\">&#215;</a>\n</div>\n");
   return buffer;
   
 });

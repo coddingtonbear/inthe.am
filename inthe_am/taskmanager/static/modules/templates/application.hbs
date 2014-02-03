@@ -29,6 +29,9 @@
             <!-- Left Nav Section -->
             <ul class="left">
                 <li>
+                    <a href="#" {{action "create_task"}}><i class="fa fa-pencil-square-o"></i></a>
+                </li>
+                <li>
                     {{#link-to "refresh"}}<i class="fa fa-refresh"></i>{{/link-to}}
                 </li>
                 <li>
@@ -47,3 +50,4 @@
     {{/if}}
 </nav>
 {{outlet}}
+{{outlet modal}}

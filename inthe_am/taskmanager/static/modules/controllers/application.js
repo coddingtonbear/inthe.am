@@ -1,7 +1,5 @@
 var controller = Ember.Controller.extend({
   user: null,
-  pending_count: null,
-  csrftoken: null,
   urls: {
     ca_certificate: '/api/v1/user/ca-certificate/',
     my_certificate: '/api/v1/user/my-certificate/',
@@ -25,6 +23,11 @@ var controller = Ember.Controller.extend({
       )
     );
     this.set('urls.sms_url', this.get('user').sms_url);
+    $.ajaxSetup({
+      headers: {
+        'X-CSRFToken': this.getCookie('csrftoken')
+      }
+    });
   },
   getCookie: function(name) {
     var cookieValue = null;

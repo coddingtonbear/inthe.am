@@ -3,15 +3,10 @@ var controller = Ember.ObjectController.extend({
     'complete': function(){
       var url = this.store.adapterFor('task').buildURL('task', this.get('uuid')) + 'complete/';
       var self = this;
-      $.ajax({
-        url: url,
-        dataType: 'json',
-        statusCode: {
-          200: function(){
-            self.get('model').unloadRecord();
-            self.transitionToRoute('refresh');
-          },
-        }
+      this.get('model').destroyRecord().then(function(){
+        self.transitionToRoute('refresh');
+      }, function(){
+        alert("An error was encountered while marking this task completed.");
       });
     },
     'delete': function(){

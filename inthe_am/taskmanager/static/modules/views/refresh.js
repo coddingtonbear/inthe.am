@@ -1,6 +1,6 @@
 var view = Ember.View.extend({
   didInsertElement: function(){
-    this.controller.transitionTo('tasks');
+    this.controller.transitionToRoute('tasks');
   }
 });
 

@@ -7,7 +7,7 @@ var route = Ember.Route.extend({
     var all = this.store.all(App.Task);
     for (var i = 0; i < all.content.length; i++) {
       var record = all.content[i];
-      if (record.get('isLoaded')) {
+      if (record.get('isLoaded') && !record.get('isDirty')) {
         this.store.unloadRecord(record);
       }
     }
