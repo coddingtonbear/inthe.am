@@ -219,8 +219,6 @@ class TasksApi(TaskManagerTest):
             data=updated_task,
             authentication=self.get_credentials()
         )
-        import ipdb
-        ipdb.set_trace()
 
         actual_task = self.deserialize(data)
         for k, v in updated_data.items():
