@@ -1,6 +1,15 @@
 <div class="row standalone">
     <h2>Accessing your tasks via the REST API</h2>
 
+    <p>
+        Your Taskwarrior tasks are now accessible via an API; you can
+        use this to programatically query, create, complete, or change
+        tasks in your task list.
+    </p>
+
+
+    <h3>Authentication</h3>
+
     <table class="pure-table pure-table-horizontal">
         <tr>
             <th>
@@ -19,9 +28,6 @@
             </td>
         </tr>
     </table>
-
-
-    <h3>Authentication</h3>
 
     <p>
         Using your API key and username, use the header "<code>Authorization</code>";
@@ -68,28 +74,28 @@
         <tbody>
             <tr>
                 <td>GET</td>
-                <td>Retrieve task information.</td>
+                <td>Retrieve an existing task.</td>
             </tr>
             <tr>
                 <td>POST</td>
                 <td>
-                    Create new task.<br />
-                    <em>Used with 'Task List' endpoint only</em>.
+                    Create a new task.<br />
+                    <em>This is used with only the 'Task List' endpoint</em>.
                 </td>
             </tr>
             <tr>
                 <td>PUT</td>
                 <td>
-                    Update existing task.<br />
-                    <em>Used with 'Task Detail' endpoint only</em>.
+                    Update an existing task.<br />
+                    <em>This is used with only the 'Task Detail' endpoint</em>.
                 </td>
             </tr>
             <tr>
                 <td>DELETE</td>
                 <td>
-                    Marks a task as completed.
-                    After ran, task will only be accessible from 'Completed Task' endpoints.<br />
-                    <em>Used with 'Task Detail' endpoint only</em>.
+                    Marks an existing task as completed.
+                    After ran, the task will only be listed from 'Completed Task' endpoints.<br />
+                    <em>This is used with only the 'Task Detail' endpoint</em>.
                 </td>
             </tr>
         </tbody>
@@ -126,7 +132,7 @@
         <tbody>
             <tr>
                 <td>GET</td>
-                <td>Retrieve task information.</td>
+                <td>Retrieve a completed task.</td>
             </tr>
         </tbody>
     </table>
