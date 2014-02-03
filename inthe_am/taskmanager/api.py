@@ -1,3 +1,4 @@
+import copy
 import datetime
 import json
 import logging
@@ -5,6 +6,7 @@ import operator
 import os
 import shlex
 
+import dateutil
 import pytz
 from tastypie import (
     authentication, authorization, bundle, exceptions, fields, resources
@@ -260,6 +262,7 @@ class UserResource(resources.ModelResource):
         )
 
     class Meta:
+        always_return_data = True
         queryset = User.objects.all()
         authorization = UserAuthorization()
         list_allowed_methods = ['get']
@@ -279,6 +282,27 @@ class Task(object):
         if not json:
             raise ValueError()
         self.json = json
+
+    @staticmethod
+    def get_timezone(tzname, offset):
+        if tzname is not None:
+            return pytz.timezone(tzname)
+        static_timezone = pytz.tzinfo.StaticTzInfo()
+        static_timezone._utcoffset = datetime.timedelta(
+            seconds=offset
+        )
+        return static_timezone
+
+    @classmethod
+    def from_serialized(cls, data):
+        data = copy.deepcopy(data)
+        for key in data:
+            if key in cls.DATE_FIELDS:
+                data[key] = dateutil.parser.parse(
+                    data[key],
+                    tzinfos=cls.get_timezone
+                )
+        return Task(data)
 
     def _date_from_taskw(self, value):
         value = datetime.datetime.strptime(
@@ -537,30 +561,42 @@ class TaskResource(resources.Resource):
         except ValueError:
             raise exceptions.NotFound()
 
-    @git_managed("Creating task")
     @requires_taskd_sync
     def obj_create(self, bundle, store, **kwargs):
-        store.client.task_add(**kwargs)
+        with git_checkpoint(store, "Creating Task"):
+            bundle.obj = Task(
+                store.client.task_add(
+                    **Task.from_serialized(bundle.data).json
+                )
+            )
+            return bundle
 
-    @git_managed("Updating task")
     @requires_taskd_sync
     def obj_update(self, bundle, store, **kwargs):
-        store.client.task_update(kwargs)
+        with git_checkpoint(store, "Updating Task"):
+            if bundle.data['uuid'] != kwargs['pk']:
+                raise exceptions.BadRequest(
+                    "Changing the UUID of an existing task is not possible."
+                )
+            bundle.data.pop('id')
+            store.client.task_update(Task.from_serialized(bundle.data).json)
+            bundle.obj = Task(store.client.get_task(uuid=kwargs['pk'])[1])
+            return bundle
 
-    @git_managed("Deleting many tasks")
-    @requires_taskd_sync
     def obj_delete_list(self, bundle, store, **kwargs):
         raise exceptions.BadRequest()
 
-    @git_managed("Deleting task")
     @requires_taskd_sync
     def obj_delete(self, bundle, store, **kwargs):
-        try:
-            store.client.task_done(uuid=kwargs['pk'])
-        except ValueError:
-            raise exceptions.NotFound()
+        with git_checkpoint(store, "Completing Task"):
+            try:
+                store.client.task_done(uuid=kwargs['pk'])
+                return bundle
+            except ValueError:
+                raise exceptions.NotFound()
 
     class Meta:
+        always_return_data = True
         authentication = authentication.MultiAuthentication(
             authentication.ApiKeyAuthentication(),
             authentication.SessionAuthentication(),
@@ -589,6 +625,7 @@ class CompletedTaskResource(TaskResource):
     TASK_TYPE = 'completed'
 
     class Meta:
+        always_return_data = True
         authentication = authentication.MultiAuthentication(
             authentication.ApiKeyAuthentication(),
             authentication.SessionAuthentication(),

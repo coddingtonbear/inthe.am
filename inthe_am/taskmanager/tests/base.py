@@ -3,13 +3,14 @@ import os
 import tempfile
 
 from django.contrib.auth.models import User
-from django.test import TestCase
+from tastypie.test import ResourceTestCase
 
 from inthe_am.taskmanager.models import TaskStore
 
 
-class TaskManagerTest(TestCase):
+class TaskManagerTest(ResourceTestCase):
     def setUp(self):
+        super(TaskManagerTest, self).setUp()
         self.store_path = tempfile.mkdtemp()
 
         self.username = 'alpha'

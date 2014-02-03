@@ -10,9 +10,13 @@ def requires_taskd_sync(f):
         try:
             # Normal Views
             user = args[0].user
+        except AttributeError:
+            # Some Tastypie Views
+            user = args[0].request.user
         except IndexError:
-            # Tastypie Views
+            # Other Tastypie Views
             user = kwargs['bundle'].request.user
+
         store = models.TaskStore.get_for_user(user)
         kwargs['store'] = store
         store.sync()
