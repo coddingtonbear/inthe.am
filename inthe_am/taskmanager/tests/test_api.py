@@ -150,6 +150,9 @@ class TasksApi(TaskManagerTest):
             'project': 'Arbitrary',
             'description': 'Once upon a time',
             'tags': ['one', 'two'],
+            'annotations': [
+                'This is magical',
+            ],
             'wait': self.format_date(wait_date)
         }
 
@@ -168,22 +171,42 @@ class TasksApi(TaskManagerTest):
         actual_task_data = self.deserialize(data)
 
         for k, v in arbitrary_task.items():
+            if k in ['status', 'annotations']:
+                continue
             self.assertEqual(
                 actual_task_data[k],
                 v,
                 k + ' does not match'
             )
+        self.assertEqual(
+            actual_task_data['annotations'][0]['description'],
+            arbitrary_task['annotations'][0]
+        )
 
     def test_update_task(self):
+        arbitrary_existing_annotation = 'Chapter 1'
+        arbitrary_existing_annotation_to_delete = 'Chapter 2'
         updated_task = copy.deepcopy(self.arbitrary_task)
         wait_time = datetime.datetime.now() + datetime.timedelta(hours=72)
         updated_data = {
             'project': 'Alphaville',
             'tags': ['alpha', 'aleph', 'ah'],
-            'wait': self.format_date(wait_time)
+            'wait': self.format_date(wait_time),
+            'annotations': [
+                arbitrary_existing_annotation,
+                'Chapter 3',
+            ]
         }
         updated_task.update(updated_data)
 
+        self.store.client.task_annotate(
+            self.arbitrary_task,
+            arbitrary_existing_annotation,
+        )
+        self.store.client.task_annotate(
+            self.arbitrary_task,
+            arbitrary_existing_annotation_to_delete,
+        )
         data = self.api_client.put(
             reverse(
                 'api_dispatch_detail',
@@ -196,11 +219,12 @@ class TasksApi(TaskManagerTest):
             data=updated_task,
             authentication=self.get_credentials()
         )
+        import ipdb
+        ipdb.set_trace()
 
         actual_task = self.deserialize(data)
         for k, v in updated_data.items():
-            if k == 'status':
-                # Skip status -- we expect it to change to waiting
+            if k in ['status', 'annotations']:
                 continue
             self.assertEqual(
                 actual_task[k],
@@ -211,3 +235,11 @@ class TasksApi(TaskManagerTest):
             actual_task['uuid'],
             self.arbitrary_task['uuid'],
         )
+        self.assertEqual(
+            len(actual_task['annotations']),
+            len(updated_data['annotations']),
+        )
+        for annotation in actual_task['annotations']:
+            self.assertTrue(
+                annotation['description'] in updated_data['annotations']
+            )
