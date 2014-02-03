@@ -154,6 +154,20 @@ class TaskStore(models.Model):
         return applied, errored
 
     def save(self, *args, **kwargs):
+        # Create the user directory
+        if not self.local_path:
+            user_tasks = os.path.join(
+                settings.TASK_STORAGE_PATH,
+                self.user.username
+            )
+            if not os.path.isdir(user_tasks):
+                os.mkdir(user_tasks)
+            self.local_path = os.path.join(
+                user_tasks,
+                str(uuid.uuid4())
+            )
+            os.mkdir(self.local_path)
+
         self.apply_extras()
         super(TaskStore, self).save(*args, **kwargs)
 
@@ -222,20 +236,6 @@ class TaskStore(models.Model):
                 delattr(self, attr)
             except AttributeError:
                 pass
-
-        # Create the user directory
-        if not self.local_path:
-            user_tasks = os.path.join(
-                settings.TASK_STORAGE_PATH,
-                self.user.username
-            )
-            if not os.path.isdir(user_tasks):
-                os.mkdir(user_tasks)
-            self.local_path = os.path.join(
-                user_tasks,
-                str(uuid.uuid4())
-            )
-            os.mkdir(self.local_path)
 
         # Create a new user username
         key_proc = subprocess.Popen(
