@@ -205,7 +205,9 @@ class UserResource(resources.ModelResource):
             )
         elif request.method == 'PUT':
             ts = models.TaskStore.get_for_user(request.user)
-            ts.taskrc_extras = request.body.decode(request.encoding)
+            ts.taskrc_extras = request.body.decode(
+                request.encoding if request.encoding else 'utf-8'
+            )
             results = ts.apply_extras()
             ts.save()
             return HttpResponse(
