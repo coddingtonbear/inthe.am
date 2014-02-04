@@ -37,6 +37,7 @@ module.exports = controller;
 
 },{}],3:[function(require,module,exports){
 var controller = Ember.Controller.extend({
+  needs: ['tasks'],
   user: null,
   urls: {
     ca_certificate: '/api/v1/user/ca-certificate/',
@@ -88,7 +89,12 @@ var controller = Ember.Controller.extend({
     } else {
       $("body").css('overflow', 'scroll');
     }
-  }.observes('currentPath')
+  }.observes('currentPath'),
+  actions: {
+    'refresh': function(){
+      this.get('controllers.tasks').refresh();
+    }
+  }
 });
 
 module.exports = controller;
@@ -293,6 +299,7 @@ module.exports = controller;
 
 },{}],7:[function(require,module,exports){
 var controller = Ember.ObjectController.extend({
+  needs: ['tasks'],
   priorities: [
     {short: '', long: '(none)'},
     {short: 'l', long: 'Low'},
@@ -311,10 +318,12 @@ var controller = Ember.ObjectController.extend({
         Ember.run.next(self, function(){
           if (model.get('isDirty')) {
             model.save().then(function(){
-              self.transitionToRoute('refresh');
+              self.get('controllers.tasks').refresh();
+              self.transitionToRoute('task', model);
             });
           } else {
-            self.transitionToRoute('refresh');
+            self.get('controllers.tasks').refresh();
+            self.transitionToRoute('task', model);
           }
         });
       }, function(){
@@ -379,12 +388,13 @@ module.exports=require(2)
 module.exports=require(2)
 },{}],11:[function(require,module,exports){
 var controller = Ember.ObjectController.extend({
+  needs: ['tasks'],
   actions: {
     'complete': function(){
-      var url = this.store.adapterFor('task').buildURL('task', this.get('uuid')) + 'complete/';
       var self = this;
       this.get('model').destroyRecord().then(function(){
-        self.transitionToRoute('refresh');
+        self.get('controllers.tasks').refresh();
+        self.transitionToRoute('tasks');
       }, function(){
         alert("An error was encountered while marking this task completed.");
       });
@@ -397,7 +407,8 @@ var controller = Ember.ObjectController.extend({
         statusCode: {
           200: function(){
             self.get('model').unloadRecord();
-            self.transitionToRoute('refresh');
+            self.get('controllers.tasks').refresh();
+            self.transitionToRoute('tasks');
           },
           501: function(){
             alert("Deleting tasks is currently unimplemented");
@@ -414,6 +425,10 @@ module.exports = controller;
 var controller = Ember.ArrayController.extend({
   sortProperties: ['urgency'],
   sortAscending: false,
+  refresh: function(){
+    console.log("Updating tasks...");
+    this.get('content').update();
+  }
 });
 
 module.exports = controller;
@@ -710,7 +725,8 @@ module.exports = route;
 },{}],25:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(){
-    return this.store.findQuery('task', {'status': 'pending'});
+    return this.store.find('task');
+    //return this.store.findQuery('task', {'status': 'pending'});
   },
   afterModel: function(tasks, transition) {
     if (tasks.get('length') === 0) {

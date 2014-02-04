@@ -1,4 +1,5 @@
 var controller = Ember.ObjectController.extend({
+  needs: ['tasks'],
   priorities: [
     {short: '', long: '(none)'},
     {short: 'l', long: 'Low'},
@@ -17,10 +18,12 @@ var controller = Ember.ObjectController.extend({
         Ember.run.next(self, function(){
           if (model.get('isDirty')) {
             model.save().then(function(){
-              self.transitionToRoute('refresh');
+              self.get('controllers.tasks').refresh();
+              self.transitionToRoute('task', model);
             });
           } else {
-            self.transitionToRoute('refresh');
+            self.get('controllers.tasks').refresh();
+            self.transitionToRoute('task', model);
           }
         });
       }, function(){

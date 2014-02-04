@@ -1,10 +1,11 @@
 var controller = Ember.ObjectController.extend({
+  needs: ['tasks'],
   actions: {
     'complete': function(){
-      var url = this.store.adapterFor('task').buildURL('task', this.get('uuid')) + 'complete/';
       var self = this;
       this.get('model').destroyRecord().then(function(){
-        self.transitionToRoute('refresh');
+        self.get('controllers.tasks').refresh();
+        self.transitionToRoute('tasks');
       }, function(){
         alert("An error was encountered while marking this task completed.");
       });
@@ -17,7 +18,8 @@ var controller = Ember.ObjectController.extend({
         statusCode: {
           200: function(){
             self.get('model').unloadRecord();
-            self.transitionToRoute('refresh');
+            self.get('controllers.tasks').refresh();
+            self.transitionToRoute('tasks');
           },
           501: function(){
             alert("Deleting tasks is currently unimplemented");

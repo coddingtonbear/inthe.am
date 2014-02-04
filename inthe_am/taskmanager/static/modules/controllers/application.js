@@ -1,4 +1,5 @@
 var controller = Ember.Controller.extend({
+  needs: ['tasks'],
   user: null,
   urls: {
     ca_certificate: '/api/v1/user/ca-certificate/',
@@ -50,7 +51,12 @@ var controller = Ember.Controller.extend({
     } else {
       $("body").css('overflow', 'scroll');
     }
-  }.observes('currentPath')
+  }.observes('currentPath'),
+  actions: {
+    'refresh': function(){
+      this.get('controllers.tasks').refresh();
+    }
+  }
 });
 
 module.exports = controller;
