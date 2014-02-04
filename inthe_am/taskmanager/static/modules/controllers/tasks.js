@@ -5,7 +5,17 @@ var controller = Ember.ArrayController.extend({
     this.get('content').update();
   },
   pendingTasks: function() {
-    return this.get('model').filterProperty('status', 'pending');
+    var result = this.get('model').filterProperty('status', 'pending');
+
+    var sortedResult = Em.ArrayProxy.createWithMixins(
+      Ember.SortableMixin,
+      {
+        content:result,
+        sortProperties: this.sortProperties,
+        sortAscending: false
+      }
+    );
+    return sortedResult;
   }.property('model.@each.status')
 });
 
