@@ -191,7 +191,7 @@ class UserResource(resources.ModelResource):
             )
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
-            ts.server_config.get('ca.cert'),
+            ts.taskrc.get('taskd.ca'),
             content_type='application/x-pem-file',
         )
 
