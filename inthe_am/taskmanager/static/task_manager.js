@@ -426,9 +426,11 @@ var controller = Ember.ArrayController.extend({
   sortProperties: ['urgency'],
   sortAscending: false,
   refresh: function(){
-    console.log("Updating tasks...");
     this.get('content').update();
-  }
+  },
+  pendingTasks: function() {
+    return this.get('model').filterProperty('status', 'pending');
+  }.property('model.@each.status')
 });
 
 module.exports = controller;
@@ -463,7 +465,7 @@ require("./routes");
 require("./views");
 require("./helpers");
 
-},{"./app":1,"./controllers":8,"./helpers":13,"./models":15,"./routes":22,"./views":29}],15:[function(require,module,exports){
+},{"./app":1,"./controllers":8,"./helpers":13,"./models":15,"./routes":22,"./views":28}],15:[function(require,module,exports){
 
 App.User = require("./user.js");
 App.Task = require("./task.js");
@@ -670,29 +672,9 @@ App.TasksRoute = require("./tasks");
 App.TaskRoute = require("./task");
 App.CompletedRoute = require("./completed");
 App.CompletedTaskRoute = require("./completedTask");
-App.RefreshRoute = require("./refresh");
 App.ApplicationRoute = require("./application");
 
-},{"./application":19,"./completed":20,"./completedTask":21,"./refresh":23,"./task":24,"./tasks":25}],23:[function(require,module,exports){
-var route = Ember.Route.extend({
-  beforeModel: function(transition) {
-    // Manually enumerate over loaded records; only try to
-    // unload records that are marked as loaded -- otherwise, may
-    // throw "attempted to handle event 'unloadRecord' while in state
-    // root.empty.
-    var all = this.store.all(App.Task);
-    for (var i = 0; i < all.content.length; i++) {
-      var record = all.content[i];
-      if (record.get('isLoaded') && !record.get('isDirty')) {
-        this.store.unloadRecord(record);
-      }
-    }
-  }
-});
-
-module.exports = route;
-
-},{}],24:[function(require,module,exports){
+},{"./application":19,"./completed":20,"./completedTask":21,"./task":23,"./tasks":24}],23:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(params) {
      return this.store.find('task', params.uuid);
@@ -721,11 +703,10 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var route = Ember.Route.extend({
-  model: function(){
+  model: function() {
     return this.store.find('task');
-    //return this.store.findQuery('task', {'status': 'pending'});
   },
   afterModel: function(tasks, transition) {
     if (tasks.get('length') === 0) {
@@ -738,13 +719,13 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var view = Ember.View.extend({
 });
 
 module.exports = view;
 
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var view = Ember.View.extend({
   templateName: 'tasks',
   name: 'completed'
@@ -752,7 +733,7 @@ var view = Ember.View.extend({
 
 module.exports = view;
 
-},{}],28:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var view = Ember.View.extend({
   templateName: 'task',
   name: 'completedTask'
@@ -760,14 +741,14 @@ var view = Ember.View.extend({
 
 module.exports = view;
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 
 App.CompletedView = require("./completed");
 App.CompletedTaskView = require("./completedTask");
 App.RefreshView = require("./refresh");
 App.ApplicationView = require("./application");
 
-},{"./application":26,"./completed":27,"./completedTask":28,"./refresh":30}],30:[function(require,module,exports){
+},{"./application":25,"./completed":26,"./completedTask":27,"./refresh":29}],29:[function(require,module,exports){
 var view = Ember.View.extend({
   didInsertElement: function(){
     this.controller.transitionToRoute('tasks');

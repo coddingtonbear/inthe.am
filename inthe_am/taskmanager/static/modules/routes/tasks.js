@@ -1,7 +1,6 @@
 var route = Ember.Route.extend({
-  model: function(){
+  model: function() {
     return this.store.find('task');
-    //return this.store.findQuery('task', {'status': 'pending'});
   },
   afterModel: function(tasks, transition) {
     if (tasks.get('length') === 0) {

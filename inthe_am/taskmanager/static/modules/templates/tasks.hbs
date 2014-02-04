@@ -1,6 +1,6 @@
 <div class="row full-width">
     <div id="list">
-        {{#each task in controller}}
+        {{#each task in pendingTasks}}
             {{#link-to "task" task tagName="div" class="task"}}
                 <div {{bind-attr class=":task-item task.taskwarrior_class"}}>
                     <div {{bind-attr class=":task-list-icon task.status"}}>
