@@ -230,6 +230,12 @@ class TaskStore(models.Model):
     def autoconfigure_taskd(self):
         self.configured = True
 
+        logger.warning(
+            '%s just autoconfigured an account!' % (
+                self.user.username,
+            )
+        )
+
         # Remove any cached taskrc/taskw clients
         for attr in ('_taskrc', '_client', ):
             try:
