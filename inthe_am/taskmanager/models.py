@@ -177,34 +177,38 @@ class TaskStore(models.Model):
     #  Git-related methods
 
     def _create_git_repo(self):
-        result = self._git_command('status')
+        result = self._simple_git_command('status')
         if result != 0:
-            self._git_command('init')
+            self._simple_git_command('init')
             return True
         return False
 
     def _git_command(self, *args):
-        with open(os.devnull, 'wb') as devnull:
-            command = [
-                'git',
-                '--work-tree=%s' % self.local_path,
-                '--git-dir=%s' % os.path.join(
-                    self.local_path,
-                    '.git'
-                )
-            ] + list(args)
-            return subprocess.call(
-                command,
-                stdout=devnull,
-                stderr=devnull,
+        command = [
+            'git',
+            '--work-tree=%s' % self.local_path,
+            '--git-dir=%s' % os.path.join(
+                self.local_path,
+                '.git'
             )
+        ] + list(args)
+        return subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+
+    def _simple_git_command(self, *args):
+        proc = self._git_command(*args)
+        stdout, stderr = proc.communicate()
+        return proc.returncode
 
     def create_git_checkpoint(
         self, message, function=None,
         args=None, kwargs=None, pre_operation=False
     ):
         self._create_git_repo()
-        self._git_command('add', '-A')
+        self._simple_git_command('add', '-A')
         commit_message = render_to_string(
             'git_checkpoint.txt',
             {
@@ -215,7 +219,7 @@ class TaskStore(models.Model):
                 'preop': pre_operation,
             }
         )
-        self._git_command(
+        self._simple_git_command(
             'commit',
             '-m',
             commit_message

@@ -65,8 +65,16 @@ var controller = Ember.Controller.extend({
     this.set('urls.sms_url', this.get('user').sms_url);
 
     var statusUpdater = new EventSource(this.get('urls.status_feed'));
+    var self = this;
     for (var key in this.get('statusActions')) {
-      //statusUpdater.addEventListener(key, this.get('statusActions.' + key));
+      statusUpdater.addEventListener(
+          key, 
+          function(evt) {
+            console.log("EXECUTED");
+            debugger;
+            self.get('statusActions.' + key)(self, evt);
+          }
+      );
     }
 
     $.ajaxSetup({
@@ -76,11 +84,15 @@ var controller = Ember.Controller.extend({
     });
   },
   statusActions: {
-    'task_changed': function(evt) {
+    'task_changed': function(self, evt) {
+      debugger;
       console.log(evt);
     },
-    'status': function(evt) {
-      console.log(evt);
+    'status': function(self, evt) {
+      //console.log(evt);
+    },
+    'head_changed': function(self, evt) {
+      //console.log(evt)
     }
   },
   getCookie: function(name) {
