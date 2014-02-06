@@ -11,10 +11,10 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.template.loader import render_to_string
 from dulwich.repo import Repo
-from taskw import TaskWarriorExperimental
 from tastypie.models import create_api_key
 
 from .context_managers import git_checkpoint
+from .taskwarrior_client import TaskwarriorClient
 
 
 logger = logging.getLogger(__name__)
@@ -87,7 +87,7 @@ class TaskStore(models.Model):
     @property
     def client(self):
         if not getattr(self, '_client', None):
-            self._client = TaskWarriorExperimental(
+            self._client = TaskwarriorClient(
                 self.taskrc.path
             )
         return self._client
