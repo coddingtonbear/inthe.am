@@ -11,3 +11,4 @@ python-memcached==1.53
 webcolors==1.4
 django-twilio==0.4
 dulwich==0.9.4
+python-raven>=0.5

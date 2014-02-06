@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'django_mailbox',
     'south',
     'tastypie',
+    'raven.contrib.django.raven_compat',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -200,6 +201,7 @@ SOCIAL_AUTH_SESSION_EXPIRATION = False
 #  TASKD_DATA
 #  TASKD_SIGNING_TEMPLATE
 #  TASK_BINARY
+#  RAVEN_DSN
 this_module = sys.modules[__name__]
 for key, value in os.environ.items():
     if key.startswith(ENVIRONMENT_SETTING_PREFIX):
@@ -208,3 +210,8 @@ for key, value in os.environ.items():
             key[len(ENVIRONMENT_SETTING_PREFIX):],
             value
         )
+
+
+RAVEN_CONFIG = {
+    'dsn': RAVEN_DSN
+}
