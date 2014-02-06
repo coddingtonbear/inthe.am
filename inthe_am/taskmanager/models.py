@@ -231,9 +231,8 @@ class TaskStore(models.Model):
         self.configured = True
 
         logger.warning(
-            '%s just autoconfigured an account!' % (
-                self.user.username,
-            )
+            '%s just autoconfigured an account!',
+            self.user.username,
         )
 
         # Remove any cached taskrc/taskw clients
