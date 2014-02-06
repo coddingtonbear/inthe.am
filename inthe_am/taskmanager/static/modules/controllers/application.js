@@ -25,15 +25,25 @@ var controller = Ember.Controller.extend({
       )
     );
     this.set('urls.sms_url', this.get('user').sms_url);
-    //var statusUpdater = new EventSource(this.get('urls.status_feed'));
-    //statusUpdater.addEventListener("status", function(e){
-    //  console.log(e.data);
-    //});
+
+    var statusUpdater = new EventSource(this.get('urls.status_feed'));
+    for (var key in this.get('statusActions')) {
+      //statusUpdater.addEventListener(key, this.get('statusActions.' + key));
+    }
+
     $.ajaxSetup({
       headers: {
         'X-CSRFToken': this.getCookie('csrftoken')
       }
     });
+  },
+  statusActions: {
+    'task_changed': function(evt) {
+      console.log(evt);
+    },
+    'status': function(evt) {
+      console.log(evt);
+    }
   },
   getCookie: function(name) {
     var cookieValue = null;
