@@ -8,6 +8,7 @@ var controller = Ember.Controller.extend({
     taskrc_extras: '/api/v1/user/taskrc/',
     taskd_settings: '/api/v1/user/configure-taskd/',
     taskd_reset: '/api/v1/user/reset-taskd-configuration/',
+    status_feed: '/status/',
     sms_url: null,
   },
   init: function(){
@@ -24,6 +25,10 @@ var controller = Ember.Controller.extend({
       )
     );
     this.set('urls.sms_url', this.get('user').sms_url);
+    //var statusUpdater = new EventSource(this.get('urls.status_feed'));
+    //statusUpdater.addEventListener("status", function(e){
+    //  console.log(e.data);
+    //});
     $.ajaxSetup({
       headers: {
         'X-CSRFToken': this.getCookie('csrftoken')
