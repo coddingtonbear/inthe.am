@@ -81,6 +81,12 @@ class UserResource(resources.ModelResource):
                 self.wrap_view('configure_taskd')
             ),
             url(
+                r"^(?P<resource_name>%s)/echo/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('echo')
+            ),
+            url(
                 r"^(?P<resource_name>%s)/reset-taskd-configuration/?$" % (
                     self._meta.resource_name
                 ),
@@ -103,6 +109,9 @@ class UserResource(resources.ModelResource):
                 os.path.basename(out)
             )
             return response
+
+    def echo(self, request, **kwargs):
+        raise Exception("Intentional Exception")
 
     @git_managed("Reset taskd configuration")
     def reset_taskd_configuration(self, request, store=None, **kwargs):
