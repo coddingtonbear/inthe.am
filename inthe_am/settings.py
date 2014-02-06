@@ -150,11 +150,15 @@ LOGGING = {
             'maxBytes': 1048576,
             'backupCount': 5,
             'formatter': 'verbose',
+        },
+        'sentry': {
+            'level': 'WARNING',
+            'class': 'raven.contrib.django.handlers.SentryHandler'
         }
     },
     'loggers': {
         '': {
-            'handlers': ['exception_log', 'store'],
+            'handlers': ['exception_log', 'store', 'sentry'],
             'propagate': True,
             'level': 'DEBUG',
         },
