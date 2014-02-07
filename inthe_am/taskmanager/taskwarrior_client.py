@@ -48,7 +48,7 @@ class TaskwarriorClient(TaskWarriorShellout):
 
     def _execute_safe(self, *args):
         return self._execute(
-            self._strip_unsafe_args(*args)
+            *self._strip_unsafe_args(*args)
         )
 
     def _execute(self, *args):
