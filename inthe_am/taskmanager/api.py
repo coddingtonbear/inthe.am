@@ -454,7 +454,7 @@ class TaskResource(resources.Resource):
             else:
                 store.sync()
                 task_args = ['add'] + shlex.split(task_info)
-                result = store.client._execute(*task_args)
+                result = store.client._execute_safe(*task_args)
                 stdout, stderr = result
                 r.sms("Added.")
 

@@ -1,3 +1,4 @@
+import curses.ascii
 import logging
 import subprocess
 
@@ -9,6 +10,47 @@ logger = logging.getLogger(__name__)
 
 
 class TaskwarriorClient(TaskWarriorShellout):
+    ACCEPTABLE_COMMANDS = [
+        'priority',
+        'project',
+        'due',
+        'wait',
+    ]
+
+    def _get_acceptable_prefix(self, command):
+        if ' ' in command:
+            return command
+        if command.lower() in self.ACCEPTABLE_COMMANDS:
+            return command.lower()
+        return False
+
+    def _strip_unsafe_args(self, *args):
+        final_args = []
+        for raw_arg in args:
+            arg = self._strip_unsafe_chars(raw_arg)
+            if ':' in arg:
+                cmd, value = arg.split(':', 1)
+                acceptable_cmd = self._get_acceptable_prefix(cmd)
+                if acceptable_cmd is False:
+                    continue  # Don't add this arg!
+                arg = ':'.join(
+                    [acceptable_cmd, value]
+                )
+
+            final_args.append(arg)
+
+        return final_args
+
+    def _strip_unsafe_chars(self, incoming):
+        return ''.join(
+            char for char in incoming if curses.ascii.isprint(char)
+        )
+
+    def _execute_safe(self, *args):
+        return self._execute(
+            self._strip_unsafe_args(*args)
+        )
+
     def _execute(self, *args):
         """ Execute a given taskwarrior command with arguments
 
