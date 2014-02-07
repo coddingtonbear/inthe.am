@@ -31,7 +31,6 @@ var controller = Ember.Controller.extend({
 
     statusActions = {
       'task_changed': function(evt) {
-        console.log("Reloading: " + evt.data);
         Ember.run.next(self, function(){
           self.store.find('task', evt.data).then(function(record){
             if (record.get('isLoaded') && (!record.get('isDirty') && !record.get('isSaving'))) {
@@ -52,7 +51,7 @@ var controller = Ember.Controller.extend({
     });
   },
   getCookie: function(name) {
-    var cookieValue = null;
+    varer cookieValue = null;
     if (document.cookie && document.cookie !== '') {
       var cookies = document.cookie.split(';');
       for (var i = 0; i < cookies.length; i++) {
