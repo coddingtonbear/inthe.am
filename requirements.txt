@@ -13,3 +13,5 @@ django-twilio==0.4
 dulwich==0.9.4
 raven>=4.0.4
 mock>=1.0.1
+django-sse>=0.4.1
+sse>=1.2
