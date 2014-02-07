@@ -51,8 +51,6 @@ var controller = Ember.Controller.extend({
       }
     });
   },
-  statusActions: {
-  },
   getCookie: function(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
