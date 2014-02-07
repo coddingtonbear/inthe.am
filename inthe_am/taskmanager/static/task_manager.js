@@ -50,6 +50,7 @@ var controller = Ember.Controller.extend({
     sms_url: null,
   },
   init: function(){
+    var self = this;
     this.set(
       'user',
       JSON.parse(
@@ -64,30 +65,29 @@ var controller = Ember.Controller.extend({
     );
     this.set('urls.sms_url', this.get('user').sms_url);
 
-    var statusUpdater = new EventSource(this.get('urls.status_feed'));
-    var self = this;
-
-    statusActions = {
-      'task_changed': function(evt) {
-        console.log("Reloading: " + evt.data);
-        Ember.run.next(self, function(){
-          self.store.find('task', evt.data).then(function(record){
-            if (record.get('isLoaded') && (!record.get('isDirty') && !record.get('isSaving'))) {
-              record.reload();
-            }
+    if(EventSource) {
+      var statusUpdater = new EventSource(this.get('urls.status_feed'));
+      statusActions = {
+        'task_changed': function(evt) {
+          Ember.run.next(self, function(){
+            self.store.find('task', evt.data).then(function(record){
+              if (record.get('isLoaded') && (!record.get('isDirty') && !record.get('isSaving'))) {
+                record.reload();
+              }
+            });
           });
-        });
+        }
+      };
+      for (var key in statusActions) {
+        statusUpdater.addEventListener(key, statusActions[key]);
       }
-    };
-    for (var key in statusActions) {
-      statusUpdater.addEventListener(key, statusActions[key]);
-    }
 
-    $.ajaxSetup({
-      headers: {
-        'X-CSRFToken': this.getCookie('csrftoken')
-      }
-    });
+      $.ajaxSetup({
+        headers: {
+          'X-CSRFToken': this.getCookie('csrftoken')
+        }
+      });
+    }
   },
   getCookie: function(name) {
     var cookieValue = null;
