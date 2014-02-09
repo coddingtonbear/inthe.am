@@ -323,9 +323,9 @@ var controller = Ember.ObjectController.extend({
   needs: ['tasks'],
   priorities: [
     {short: '', long: '(none)'},
-    {short: 'l', long: 'Low'},
-    {short: 'm', long: 'Medium'},
-    {short: 'h', long: 'High'},
+    {short: 'L', long: 'Low'},
+    {short: 'M', long: 'Medium'},
+    {short: 'H', long: 'High'},
   ],
   actions: {
     'save': function() {
