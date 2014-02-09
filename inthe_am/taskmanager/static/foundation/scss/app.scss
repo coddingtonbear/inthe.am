@@ -10,6 +10,9 @@ html, body {
   }
 }
 
+textarea {
+  height: 165px;
+}
 
 i.fa:before {
   display: inline-block;
@@ -102,10 +105,38 @@ div.row {
 }
 
 #task-details {
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: scroll;
   height: 100%;
   padding-left: 40px;
   padding-bottom: 45px;
+
+  div.tags {
+    margin-bottom: 20px;
+  }
+  ul.annotation_list {
+    font-size: 0.876rem;
+    word-wrap: break-word;
+    word-break: break-all;
+
+    span.date {
+      font-weight: 700;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+  }
+
+  table.details {
+    width: 100%;
+
+    th {
+      text-align: left;
+    }
+  }
+  div.task-content-body {
+    margin-right: inherit;
+  }
 }
 
 span {

@@ -1,5 +1,5 @@
-<div class="task-content-header pure-g">
-    <div class="pure-u-1-2">
+<div class="row task-content-header">
+    <div class="medium-12 columns">
         <h1 class="title">
             {{description}}
         </h1>
@@ -14,98 +14,108 @@
             {{/each}}
         </div>
     </div>
-    <div class="pure-u-1-2 controls">
+</div>
+<div class="row">
+    <div class="medium-12 columns">
         {{#if editable}}
-            <button class="pure-button secondary-button" {{action "complete"}}>
+            <button class="secondary-button" {{action "complete"}}>
                 <i class="fa fa-check-circle-o">Mark Completed</i>
             </button>
-            <button class="pure-button secondary-button" {{action "edit"}}>
+            <button class="secondary-button" {{action "edit"}}>
                 <i class="fa fa-pencil-square-o">Edit</i>
+            </button>
+            <button class="secondary-button" {{action "add_annotation"}}>
+                <i class="fa fa-pencil">Add Annotation</i>
             </button>
         {{/if}}
     </div>
 </div>
-<div class="task-content-body">
-    <table class="pure-table pure-table-horizontal">
-        <tbody>
-            {{#if dependent_tickets}}
+<div class="row task-content-body">
+    <div class="medium-6 columns">
+        <table class="details">
+            <tbody>
+                {{#if dependent_tickets}}
+                    <tr>
+                        <th>Depends Upon</th>
+                        <td>
+                            <ul class="depends_tickets">
+                                {{#each dependent_tickets}}
+                                    <li {{bind-attr class="this.status"}}>
+                                        {{#link-to 'task' this}}{{this.description}}{{/link-to}}
+                                    </li>
+                                {{/each}}
+                            </ul>
+                        </td>
+                    </tr>
+                {{/if}}
                 <tr>
-                    <th>Depends Upon</th>
+                    <th>Description</th>
+                    <td>{{description}}</td>
+                </tr>
+                <tr>    
+                    <th>Project</th>
+                    <td><span class="project">{{project}}</span></td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>{{propercase status}}</td>
+                </tr>
+                <tr>
+                    <th>Tags</th>
                     <td>
-                        <ul class="depends_tickets">
-                            {{#each dependent_tickets}}
-                                <li {{bind-attr class="this.status"}}>
-                                    {{#link-to 'task' this}}{{this.description}}{{/link-to}}
-                                </li>
-                            {{/each}}
-                        </ul>
+                        {{#each tags}}
+                            <i class="fa fa-tag">{{this}}</i>
+                        {{/each}}
                     </td>
                 </tr>
-            {{/if}}
-            <tr>
-                <th>Description</th>
-                <td>{{description}}</td>
-            </tr>
-            <tr>    
-                <th>Project</th>
-                <td><span class="project">{{project}}</span></td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>{{propercase status}}</td>
-            </tr>
-            <tr>
-                <th>Tags</th>
-                <td>
-                    {{#each tags}}
-                        <i class="fa fa-tag">{{this}}</i>
-                    {{/each}}
-                </td>
-            </tr>
-            <tr>
-                <th>Urgency</th>
-                <td>{{urgency}}</td>
-            </tr>
-            <tr>
-                <th>Priority</th>
-                <td>{{priority}}</td>
-            </tr>
-            <tr>
-                <th>Due</th>
-                <td>{{calendar due}}</td>
-            </tr>
-            <tr>
-                <th>Entered</th>
-                <td>{{calendar entry}}</td>
-            </tr>
-            <tr>
-                <th>Started</th>
-                <td>{{calendar start}}</td>
-            </tr>
-            <tr>
-                <th>Wait</th>
-                <td>{{calendar wait}}</td>
-            </tr>
-            <tr>
-                <th>Scheduled</th>
-                <td>{{calendar scheduled}}</td>
-            </tr>
-            <tr>
-                <th>Modified</th>
-                <td>{{calendar modified}}</td>
-            </tr>
-            <tr>
-                <th>UUID</th>
-                <td><span class="uuid">{{uuid}}</span></td>
-            </tr>
-        </tbody>
-    </table>
-    <ul class='annotation_list'>
-        {{#each processed_annotations}}
-            <li>
-                {{calendar this.entry}}:
-                {{ this.description }}
-            </li>
-        {{/each}}
-    </ul>
+                <tr>
+                    <th>Urgency</th>
+                    <td>{{urgency}}</td>
+                </tr>
+                <tr>
+                    <th>Priority</th>
+                    <td>{{priority}}</td>
+                </tr>
+                <tr>
+                    <th>Due</th>
+                    <td>{{calendar due}}</td>
+                </tr>
+                <tr>
+                    <th>Entered</th>
+                    <td>{{calendar entry}}</td>
+                </tr>
+                <tr>
+                    <th>Started</th>
+                    <td>{{calendar start}}</td>
+                </tr>
+                <tr>
+                    <th>Wait</th>
+                    <td>{{calendar wait}}</td>
+                </tr>
+                <tr>
+                    <th>Scheduled</th>
+                    <td>{{calendar scheduled}}</td>
+                </tr>
+                <tr>
+                    <th>Modified</th>
+                    <td>{{calendar modified}}</td>
+                </tr>
+                <tr>
+                    <th>UUID</th>
+                    <td><span class="uuid">{{uuid}}</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="medium-6 columns">
+        <ul class='annotation_list'>
+            {{#each processed_annotations}}
+                <li>
+                    <a {{action "delete_annotation" this.description }}>&#215;</a>
+                    {{calendar this.entry}}:
+                    {{ this.description }}
+                </li>
+            {{/each}}
+        </ul>
+    </div>
 </div>

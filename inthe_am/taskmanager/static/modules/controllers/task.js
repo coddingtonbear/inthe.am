@@ -10,6 +10,18 @@ var controller = Ember.ObjectController.extend({
         alert("An error was encountered while marking this task completed.");
       });
     },
+    'delete_annotation': function(description) {
+      var model = this.get('model');
+      var annotations = model.get('annotations');
+
+      for (var i = 0; i < annotations.length; i++) {
+        if (annotations[i].description == description) {
+          annotations.removeAt(i);
+        }
+      }
+      model.set('annotations', annotations);
+      model.save();
+    },
     'delete': function(){
       var url = this.store.adapterFor('task').buildURL('task', this.get('uuid')) + 'delete/';
       $.ajax({

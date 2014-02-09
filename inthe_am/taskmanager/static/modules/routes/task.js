@@ -21,6 +21,23 @@ var route = Ember.Route.extend({
       });
       return rendered;
     },
+    'add_annotation': function(){
+      this.controllerFor('create_annotation').set(
+        'model',
+        this.controllerFor('task').get('model')
+      );
+      var rendered = this.render(
+          'create_annotation',
+          {
+            'into': 'application',
+            'outlet': 'modal',
+          }
+      );
+      Ember.run.next(null, function(){
+        $(document).foundation();
+        $("#new_annotation_form").foundation('reveal', 'open');
+      });
+    }
   }
 });
 
