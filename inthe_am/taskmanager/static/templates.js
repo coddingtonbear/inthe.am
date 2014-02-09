@@ -233,14 +233,6 @@ function program3(depth0,data) {
     'optionLabelPath': ("content.long"),
     'value': ("priority")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Due</label>\n            ");
-  hashContexts = {'identity': depth0,'date': depth0,'placeholder': depth0};
-  hashTypes = {'identity': "ID",'date': "ID",'placeholder': "STRING"};
-  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.DateField", {hash:{
-    'identity': ("uuid"),
-    'date': ("due"),
-    'placeholder': ("YYYY-MM-DD HH:MM")
-  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Project</label>\n            ");
   hashContexts = {'value': depth0};
   hashTypes = {'value': "ID"};
@@ -248,13 +240,21 @@ function program3(depth0,data) {
     'value': ("project")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push("\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"medium-4 columns\">\n            <label>Tags</label>\n            ");
+  data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Tags</label>\n            ");
   hashContexts = {'identity': depth0,'tags': depth0,'placeholder': depth0};
   hashTypes = {'identity': "ID",'tags': "ID",'placeholder': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.TagField", {hash:{
     'identity': ("uuid"),
     'tags': ("tags"),
     'placeholder': ("tag1 tag2 (tags separated by a space)")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"medium-4 columns\">\n            <label>Due</label>\n            ");
+  hashContexts = {'identity': depth0,'date': depth0,'placeholder': depth0};
+  hashTypes = {'identity': "ID",'date': "ID",'placeholder': "STRING"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.DateField", {hash:{
+    'identity': ("uuid"),
+    'date': ("due"),
+    'placeholder': ("YYYY-MM-DD HH:MM")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Wait</label>\n            ");
   hashContexts = {'identity': depth0,'date': depth0,'placeholder': depth0};

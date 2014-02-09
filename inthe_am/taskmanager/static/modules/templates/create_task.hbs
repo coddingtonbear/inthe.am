@@ -20,18 +20,18 @@
             {{view Ember.Select content=priorities optionValuePath="content.short" optionLabelPath="content.long" value=this.priority}}
         </div>
         <div class="medium-4 columns">
-            <label>Due</label>
-            {{view App.DateField identity=this.uuid date=this.due placeholder="YYYY-MM-DD HH:MM"}}
-        </div>
-        <div class="medium-4 columns">
             <label>Project</label>
             {{input value=this.project}}
+        </div>
+        <div class="medium-4 columns">
+            <label>Tags</label>
+            {{view App.TagField identity=this.uuid tags=this.tags placeholder="tag1 tag2 (tags separated by a space)"}}
         </div>
     </div>
     <div class="row">
         <div class="medium-4 columns">
-            <label>Tags</label>
-            {{view App.TagField identity=this.uuid tags=this.tags placeholder="tag1 tag2 (tags separated by a space)"}}
+            <label>Due</label>
+            {{view App.DateField identity=this.uuid date=this.due placeholder="YYYY-MM-DD HH:MM"}}
         </div>
         <div class="medium-4 columns">
             <label>Wait</label>
