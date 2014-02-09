@@ -1,12 +1,20 @@
 from fabric.api import task, run, local, sudo, cd, env
-from fabric.context_managers import settings
+
 
 env.hosts = [
     'acodding@eugene.adamcoddington.net:22424',
 ]
 
-def virtualenv(command):
-    run('source /var/www/envs/twweb/bin/activate && ' + command)
+
+def virtualenv(command, user=None):
+    if user:
+        sudo(
+            'source /var/www/envs/twweb/bin/activate && ' + command,
+            user=user
+        )
+    else:
+        run('source /var/www/envs/twweb/bin/activate && ' + command)
+
 
 @task
 def deploy():
@@ -14,6 +22,6 @@ def deploy():
     with cd('/var/www/twweb'):
         run('git pull')
         virtualenv('pip install -r /var/www/twweb/requirements.txt')
-        virtualenv('python manage.py collectstatic --noinput')
-        virtualenv('python manage.py migrate')
+        virtualenv('python manage.py collectstatic --noinput', user='www-data')
+        virtualenv('python manage.py migrate', user='www-data')
         sudo('service twweb restart')
