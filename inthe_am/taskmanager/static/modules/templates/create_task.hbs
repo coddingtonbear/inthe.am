@@ -1,31 +1,50 @@
 <div id="new_task_form" class="reveal-modal" data-reveal>
-    {{#if this.uuid}}
-        <h2>Edit task</h2>
-    {{else}}
-        <h2>Create a new task</h2>
-    {{/if}}
-
+    <div class="row">
+        <div class="medium-12 columns">
+            {{#if this.uuid}}
+                <h2>Edit task</h2>
+            {{else}}
+                <h2>Create a new task</h2>
+            {{/if}}
+        </div>
+    </div>
     <div class="row">
         <div class="medium-12 columns">
             <label>Description</label>
             {{input value=this.description}}
         </div>
+    </div>
+    <div class="row">
         <div class="medium-4 columns">
             <label>Priority</label>
             {{view Ember.Select content=priorities optionValuePath="content.short" optionLabelPath="content.long" value=this.priority}}
         </div>
         <div class="medium-4 columns">
             <label>Due</label>
-            {{input value=this.due}}
+            {{view App.DateField identity=this.uuid date=this.due placeholder="YYYY-MM-DD HH:MM"}}
         </div>
         <div class="medium-4 columns">
             <label>Project</label>
             {{input value=this.project}}
         </div>
     </div>
+    <div class="row">
+        <div class="medium-4 columns">
+            <label>Tags</label>
+            {{view App.TagField identity=this.uuid tags=this.tags placeholder="tag1 tag2 (tags separated by a space)"}}
+        </div>
+        <div class="medium-4 columns">
+            <label>Wait</label>
+            {{view App.DateField identity=this.uuid date=this.wait placeholder="YYYY-MM-DD HH:MM"}}
+        </div>
+        <div class="medium-4 columns">
+            <label>Scheduled</label>
+            {{view App.DateField identity=this.uuid date=this.scheduled placeholder="YYYY-MM-DD HH:MM"}}
+        </div>
+    </div>
 
     <div class="row">
-        <div class="large-12 columns">
+        <div class="medium-12 columns">
             <button class="secondary-button" {{action "save"}}>
                 <i class="fa fa-save">Save</i>
             </button>

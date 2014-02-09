@@ -280,8 +280,12 @@ class Task(object):
     DATE_FIELDS = [
         'due', 'entry', 'modified', 'start', 'wait', 'scheduled',
     ]
+    LIST_FIELDS = [
+        'annotations', 'tags',
+    ]
     READ_ONLY_FIELDS = [
         'id', 'uuid', 'urgency', 'entry', 'modified', 'imask',
+        'resource_uri', 'start',
     ]
 
     def __init__(self, json):
@@ -305,7 +309,7 @@ class Task(object):
     def get_safe_json(self):
         return {
             k: v for k, v in self.json.items()
-            if v is not None and k not in self.READ_ONLY_FIELDS
+            if k not in self.READ_ONLY_FIELDS
         }
 
     @classmethod
@@ -317,6 +321,8 @@ class Task(object):
                     data[key],
                     tzinfos=cls.get_timezone
                 )
+            elif key in cls.LIST_FIELDS and data[key] is None:
+                data[key] = []
         return Task(data)
 
     def _date_from_taskw(self, value):

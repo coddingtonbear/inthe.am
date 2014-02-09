@@ -1,3 +1,4 @@
+var App = require('./app');
 
 Ember.Handlebars.helper('comma_to_list', function(item, options){
   return item.split(',');

@@ -203,28 +203,28 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   
-  data.buffer.push("\n        <h2>Edit task</h2>\n    ");
+  data.buffer.push("\n                <h2>Edit task</h2>\n            ");
   }
 
 function program3(depth0,data) {
   
   
-  data.buffer.push("\n        <h2>Create a new task</h2>\n    ");
+  data.buffer.push("\n                <h2>Create a new task</h2>\n            ");
   }
 
-  data.buffer.push("<div id=\"new_task_form\" class=\"reveal-modal\" data-reveal>\n    ");
+  data.buffer.push("<div id=\"new_task_form\" class=\"reveal-modal\" data-reveal>\n    <div class=\"row\">\n        <div class=\"medium-12 columns\">\n            ");
   hashTypes = {};
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "uuid", {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\n\n    <div class=\"row\">\n        <div class=\"medium-12 columns\">\n            <label>Description</label>\n            ");
+  data.buffer.push("\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"medium-12 columns\">\n            <label>Description</label>\n            ");
   hashContexts = {'value': depth0};
   hashTypes = {'value': "ID"};
   options = {hash:{
     'value': ("description")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Priority</label>\n            ");
+  data.buffer.push("\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"medium-4 columns\">\n            <label>Priority</label>\n            ");
   hashContexts = {'content': depth0,'optionValuePath': depth0,'optionLabelPath': depth0,'value': depth0};
   hashTypes = {'content': "ID",'optionValuePath': "STRING",'optionLabelPath': "STRING",'value': "ID"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "Ember.Select", {hash:{
@@ -234,12 +234,13 @@ function program3(depth0,data) {
     'value': ("priority")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Due</label>\n            ");
-  hashContexts = {'value': depth0};
-  hashTypes = {'value': "ID"};
-  options = {hash:{
-    'value': ("due")
-  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+  hashContexts = {'identity': depth0,'date': depth0,'placeholder': depth0};
+  hashTypes = {'identity': "ID",'date': "ID",'placeholder': "STRING"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.DateField", {hash:{
+    'identity': ("uuid"),
+    'date': ("due"),
+    'placeholder': ("YYYY-MM-DD HH:MM")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Project</label>\n            ");
   hashContexts = {'value': depth0};
   hashTypes = {'value': "ID"};
@@ -247,7 +248,31 @@ function program3(depth0,data) {
     'value': ("project")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push("\n        </div>\n    </div>\n\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <button class=\"secondary-button\" ");
+  data.buffer.push("\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"medium-4 columns\">\n            <label>Tags</label>\n            ");
+  hashContexts = {'identity': depth0,'tags': depth0,'placeholder': depth0};
+  hashTypes = {'identity': "ID",'tags': "ID",'placeholder': "STRING"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.TagField", {hash:{
+    'identity': ("uuid"),
+    'tags': ("tags"),
+    'placeholder': ("tag1 tag2 (tags separated by a space)")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Wait</label>\n            ");
+  hashContexts = {'identity': depth0,'date': depth0,'placeholder': depth0};
+  hashTypes = {'identity': "ID",'date': "ID",'placeholder': "STRING"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.DateField", {hash:{
+    'identity': ("uuid"),
+    'date': ("wait"),
+    'placeholder': ("YYYY-MM-DD HH:MM")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n        </div>\n        <div class=\"medium-4 columns\">\n            <label>Scheduled</label>\n            ");
+  hashContexts = {'identity': depth0,'date': depth0,'placeholder': depth0};
+  hashTypes = {'identity': "ID",'date': "ID",'placeholder': "STRING"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.DateField", {hash:{
+    'identity': ("uuid"),
+    'date': ("scheduled"),
+    'placeholder': ("YYYY-MM-DD HH:MM")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n        </div>\n    </div>\n\n    <div class=\"row\">\n        <div class=\"medium-12 columns\">\n            <button class=\"secondary-button\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
