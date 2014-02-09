@@ -176,9 +176,9 @@ class TaskStore(models.Model):
                 user_tasks,
                 str(uuid.uuid4())
             )
+            os.mkdir(self.local_path)
             with open(os.path.join(self.local_path, '.gitignore'), 'w') as out:
                 out.write('.lock\n')
-            os.mkdir(self.local_path)
 
         self.apply_extras()
         super(TaskStore, self).save(*args, **kwargs)
