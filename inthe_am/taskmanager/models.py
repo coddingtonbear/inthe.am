@@ -15,6 +15,7 @@ from tastypie.models import create_api_key
 
 from .context_managers import git_checkpoint
 from .taskwarrior_client import TaskwarriorClient
+from .taskstore_migrations import upgrade as upgrade_taskstore
 
 
 logger = logging.getLogger(__name__)
@@ -43,6 +44,14 @@ class TaskStore(models.Model):
     )
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)
+
+    @property
+    def version(self):
+        return self.metadata.get('version', 0)
+
+    @version.setter
+    def version(self, value):
+        self.metadata['version'] = value
 
     @property
     def metadata_registry(self):
@@ -82,6 +91,7 @@ class TaskStore(models.Model):
         store, created = TaskStore.objects.get_or_create(
             user=user,
         )
+        upgrade_taskstore(store)
         return store
 
     @property
@@ -166,6 +176,8 @@ class TaskStore(models.Model):
                 user_tasks,
                 str(uuid.uuid4())
             )
+            with open(os.path.join(self.local_path, '.gitignore'), 'w') as out:
+                out.write('.lock\n')
             os.mkdir(self.local_path)
 
         self.apply_extras()

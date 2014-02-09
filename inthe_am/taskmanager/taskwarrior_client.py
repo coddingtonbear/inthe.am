@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class TaskwarriorClient(TaskWarriorShellout):
-    ACCEPTABLE_COMMANDS = [
+    ACCEPTABLE_PROPERTIES = [
         'priority',
         'project',
         'due',
@@ -20,7 +20,7 @@ class TaskwarriorClient(TaskWarriorShellout):
     def _get_acceptable_prefix(self, command):
         if ' ' in command:
             return command
-        if command.lower() in self.ACCEPTABLE_COMMANDS:
+        if command.lower() in self.ACCEPTABLE_PROPERTIES:
             return command.lower()
         return False
 

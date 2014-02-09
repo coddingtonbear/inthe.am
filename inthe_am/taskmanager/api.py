@@ -12,6 +12,7 @@ from tastypie import (
     authentication, authorization, bundle, exceptions, fields, resources
 )
 from twilio.twiml import Response
+from lockfile import LockTimeout
 
 from django.conf import settings
 from django.conf.urls import url
@@ -405,7 +406,41 @@ class TaskResource(resources.Resource):
                 ),
                 self.wrap_view('delete')
             ),
+            url(
+                r"^(?P<resource_name>%s)/lock/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('manage_lock')
+            ),
         ]
+
+    def manage_lock(self, request, **kwargs):
+        store = models.TaskStore.get_for_user(request.user)
+        lockfile = os.path.join(store.local_path, '.lock')
+        if request.method == 'DELETE':
+            if os.path.exists(lockfile):
+                os.unlink(lockfile)
+                return HttpResponse(
+                    '',
+                    status=200
+                )
+            return HttpResponse(
+                '',
+                status=404
+            )
+        elif request.method == 'GET':
+            if os.path.exists(lockfile):
+                return HttpResponse(
+                    '',
+                    status=200
+                )
+            return HttpResponse(
+                '',
+                status=404
+            )
+        raise HttpResponseNotAllowed(
+            'Only POST requests are allowed'
+        )
 
     @git_managed("Mark task completed")
     @requires_taskd_sync
@@ -601,6 +636,23 @@ class TaskResource(resources.Resource):
 
     def obj_delete_list(self, bundle, store, **kwargs):
         raise exceptions.BadRequest()
+
+    def dispatch(self, *args, **kwargs):
+        try:
+            return super(TaskResource, self).dispatch(*args, **kwargs)
+        except LockTimeout:
+            return HttpResponse(
+                json.dumps(
+                    {
+                        'error_message': (
+                            'Task list is currently locked by another client.'
+                            'If this error persists, please force ',
+                            'clear the lockfile.'
+                        )
+                    }
+                ),
+                status=409,
+            )
 
     @requires_taskd_sync
     def obj_delete(self, bundle, store, **kwargs):
