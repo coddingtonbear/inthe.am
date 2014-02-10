@@ -16,6 +16,8 @@ class Status(BaseSseView):
 
     def get_store(self):
         if getattr(self, '_store', None) is None:
+            if not self.request.user.is_authenticated():
+                return None
             try:
                 store = TaskStore.objects.get(user=self.request.user)
                 setattr(self, '_store', store)
@@ -45,6 +47,8 @@ class Status(BaseSseView):
 
     def iterator(self):
         store = self.get_store()
+        if not store:
+            return
         store.sync()
         created = time.time()
         last_sync = time.time()
