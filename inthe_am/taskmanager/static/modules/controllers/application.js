@@ -12,8 +12,7 @@ var controller = Ember.Controller.extend({
     status_feed: '/status/',
     sms_url: null,
   },
-  init: function(){
-    var self = this;
+  update_user_info: function() {
     this.set(
       'user',
       JSON.parse(
@@ -27,6 +26,10 @@ var controller = Ember.Controller.extend({
       )
     );
     this.set('urls.sms_url', this.get('user').sms_url);
+  },
+  init: function(){
+    var self = this;
+    this.update_user_info();
 
     $.ajaxSetup({
       headers: {

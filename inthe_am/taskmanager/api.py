@@ -144,27 +144,46 @@ class UserResource(resources.ModelResource):
                 json.dumps(form.errors),
                 content_type='application/json',
             )
+        if form.cleaned_data['trust'] == 'no' and not form.cleaned_data['ca']:
+            return HttpResponseBadRequest(
+                json.dumps(
+                    {
+                        'error_message': (
+                            'You must either submit a CA Certificate or '
+                            'explicitly trust the taskd server.'
+                        )
+                    }
+                ),
+                content_type='application/json',
+            )
+
+        taskd_data = {
+            'taskd.server': form.cleaned_data['server'],
+            'taskd.credentials': form.cleaned_data['credentials'],
+        }
 
         cert_path = os.path.join(store.local_path, 'custom.private.cert.pem')
         with open(cert_path, 'w') as out:
+            taskd_data['taskd.certificate'] = cert_path
             out.write(form.cleaned_data['certificate'])
 
         key_path = os.path.join(store.local_path, 'custom.private.key.pem')
         with open(key_path, 'w') as out:
+            taskd_data['taskd.key'] = key_path
             out.write(form.cleaned_data['key'])
 
-        ca_path = os.path.join(store.local_path, 'custom.ca.pem')
-        with open(ca_path, 'w') as out:
-            out.write(form.cleaned_data['ca'])
+        if form.cleaned_data['ca']:
+            ca_path = os.path.join(store.local_path, 'custom.ca.pem')
+            with open(ca_path, 'w') as out:
+                taskd_data['taskd.ca'] = ca_path
+                taskd_data['taskd.trust'] = 'no'
+                out.write(form.cleaned_data['ca'])
+        else:
+            taskd_data['taskd.ca'] = ''
+            taskd_data['taskd.trust'] = 'yes'
 
         # Write files from form to user directory
-        store.taskrc.update({
-            'taskd.certificate': cert_path,
-            'taskd.key': key_path,
-            'taskd.ca': ca_path,
-            'taskd.server': form.cleaned_data['server'],
-            'taskd.credentials': form.cleaned_data['credentials'],
-        })
+        store.taskrc.update(taskd_data)
 
         return HttpResponse('OK')
 
@@ -245,9 +264,7 @@ class UserResource(resources.ModelResource):
                 'configured': store.configured,
                 'taskd_credentials': store.taskrc.get('taskd.credentials'),
                 'taskd_server': store.taskrc.get('taskd.server'),
-                'taskd_is_custom': (
-                    store.taskrc.get('taskd.server') != settings.TASKD_SERVER
-                ),
+                'taskd_files': store.taskd_certificate_status,
                 'twilio_auth_token': store.twilio_auth_token,
                 'sms_whitelist': store.sms_whitelist,
                 'taskrc_extras': store.taskrc_extras,

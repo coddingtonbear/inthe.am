@@ -29,6 +29,7 @@ App.IndexController = Ember.Controller.extend({
             dataType: 'json',
             statusCode: {
               200: function(){
+                self.get('controllers.application').update_user_info();
                 self.transitionToRoute('tasks');
               },
               404: function(){

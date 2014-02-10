@@ -76,6 +76,26 @@ class TaskStore(models.Model):
         return self._taskrc
 
     @property
+    def taskd_certificate_status(self):
+        results = {}
+        certificate_settings = (
+            'taskd.certificate',
+            'taskd.key',
+            'taskd.ca',
+        )
+        for setting in certificate_settings:
+            setting_value = setting.replace('.', '_')
+            value = self.taskrc.get(setting, '')
+            if not value:
+                results[setting_value] = 'No file available'
+            elif 'custom' in value:
+                results[setting_value] = 'Custom certificate in use'
+            else:
+                results[setting_value] = 'Standard certificate in use'
+        results['taskd_trust'] = self.taskrc.get('taskd.trust', 'no')
+        return results
+
+    @property
     def repository(self):
         return Repo(self.local_path)
 

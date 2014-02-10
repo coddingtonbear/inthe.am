@@ -19,14 +19,29 @@
                     <div class="large-12 columns">
                         <label>Certificate</label>
                         <input type="file" name="certificate" id="id_certificate">
+                        <p class="input-note">
+                            {{controllers.application.user.taskd_files.taskd_certificate}}
+                        </p>
                     </div>
                     <div class="large-12 columns">
                         <label>Key</label>
                         <input type="file" name="key" id="id_key">
+                        <p class="input-note">
+                            {{controllers.application.user.taskd_files.taskd_key}}
+                        </p>
                     </div>
                     <div class="large-12 columns">
                         <label>CA Certificate</label>
+                        <p class="input-note">
+                            If you select to trust the taskd server, you need not upload a CA Certificate,
+                            but uploading a certificate and requesting that we validate the taskd server
+                            using that certificate is safer.
+                        </p>
+                        {{view Ember.Select value=controllers.application.user.taskd_files.taskd_trust optionValuePath="content.short" optionLabelPath="content.long" content=taskd_trust_settings id="id_trust"}}
                         <input type="file" name="ca" id="id_ca">
+                        <p class="input-note">
+                            {{controllers.application.user.taskd_files.taskd_ca}}
+                        </p>
                     </div>
                 </div>
                 <a href="" class="button radius" {{action "save_taskd"}}>Save Settings</a>
@@ -44,7 +59,9 @@
                     <div class="large-12 columns">
                         <label>Phone number whitelist</label>
                         {{textarea name="sms_whitelist" id="id_sms_whitelist" value=controllers.application.user.sms_whitelist placeholder="+15555555555"}}
-                        <em>One phone number per line.  Leave empty to allow messages from any phone number.</em>
+                        <p class='input-note'>
+                            One phone number per line.  Leave empty to allow messages from any phone number.
+                        </p>
                     </div>
                 </div>
                 <a href="" class="button radius" {{action "save_twilio"}}>Save Settings</a>
@@ -53,12 +70,16 @@
         <dd>
             <a href="#custom_taskrc">Custom <span class="code">.taskrc</span></a>
             <div id="custom_taskrc" class="content">
-                {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
-                <p class="help">
-                    Only configuration values relating to urgency will have an effect,
-                    but entering your entire local <span class="code">.taskrc</span>
-                    is both safe and encouraged.
-                </p>
+                <div class="row">
+                    <div class="large-12 columns">
+                        {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
+                        <p class="input-note">
+                            Only configuration values relating to urgency will have an effect,
+                            but entering your entire local <span class="code">.taskrc</span>
+                            is both safe and encouraged.
+                        </p>
+                    </div>
+                </div>
                 <a href="" class="button radius" {{action "save_taskrc"}}>Save Settings</a>
             </div>
         </dd>

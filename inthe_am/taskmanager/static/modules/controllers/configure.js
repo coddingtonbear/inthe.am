@@ -1,6 +1,9 @@
 var controller = Ember.Controller.extend({
   needs: ['application'],
-
+  taskd_trust_settings: [
+    {short: 'no', long: 'Validate taskd server using an uploaded CA Certificate'},
+    {short: 'yes', long: 'Trust taskd server implicitly; do not validate using a CA Certificate'},
+  ],
   submit_taskd: function(data) {
     if (
       data.certificate === false || data.key === false || data.ca === false
@@ -8,7 +11,7 @@ var controller = Ember.Controller.extend({
       self.error_message("An error was encountered while uploading your files");
       return;
     } else if (
-      !data.certificate || !data.key || !data.ca
+      !data.certificate || !data.key || (!data.ca && data.trust == 'no')
     ) {
       return;
     }
@@ -23,6 +26,7 @@ var controller = Ember.Controller.extend({
       type: 'POST',
       data: data,
       success: function(){
+        self.get('controllers.application').update_user_info();
         self.success_message("Taskd settings saved.");
       },
       error: function(xhr){
@@ -71,6 +75,7 @@ var controller = Ember.Controller.extend({
         dataType: 'text',
         data: value,
         success: function() {
+          self.get('controllers.application').update_user_info();
           self.success_message("Taskrc settings saved");
         },
         error: function() {
@@ -92,6 +97,7 @@ var controller = Ember.Controller.extend({
         },
         data: {},
         success: function(){
+          self.get('controllers.application').update_user_info();
           self.success_message("Taskd settings reset to default.");
         },
         error: function(xhr){
@@ -103,8 +109,9 @@ var controller = Ember.Controller.extend({
     },
     save_taskd: function() {
       var data = {
-        'server': document.getElementById('id_server').value,
-        'credentials': document.getElementById('id_credentials').value,
+        server: document.getElementById('id_server').value,
+        credentials: document.getElementById('id_credentials').value,
+        trust: document.getElementById('id_trust').value,
       };
       var self = this;
 
@@ -149,24 +156,26 @@ var controller = Ember.Controller.extend({
       key_reader.readAsBinaryString(key_file);
 
       // Load CA Certificate
-      var ca_reader = new FileReader();
-      ca_reader.onload = function(evt){
-        data.ca = evt.target.result;
-        self.submit_taskd(data);
-      };
-      ca_reader.onerror = function(evt) {
-        data.ca = false;
-        self.submit_taskd(data);
-      };
-      ca_reader.onabort = function(evt) {
-        data.ca = false;
-        self.submit_taskd(data);
-      };
-      var ca_file = document.getElementById('id_ca').files[0];
-      if (ca_file === undefined) {
-        self.error_message("Please select a CA Certificate");
+      if (data.trust === 'no') {
+        var ca_reader = new FileReader();
+        ca_reader.onload = function(evt){
+          data.ca = evt.target.result;
+          self.submit_taskd(data);
+        };
+        ca_reader.onerror = function(evt) {
+          data.ca = false;
+          self.submit_taskd(data);
+        };
+        ca_reader.onabort = function(evt) {
+          data.ca = false;
+          self.submit_taskd(data);
+        };
+        var ca_file = document.getElementById('id_ca').files[0];
+        if (ca_file === undefined) {
+          self.error_message("Please select a CA Certificate");
+        }
+        ca_reader.readAsBinaryString(ca_file);
       }
-      ca_reader.readAsBinaryString(ca_file);
     },
     save_twilio: function() {
       var data = {

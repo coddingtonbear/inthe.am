@@ -6,3 +6,4 @@ logs/
 /static/
 taskd/
 .DS_Store
+tasks/*
