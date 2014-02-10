@@ -108,9 +108,7 @@ class UserResource(resources.ModelResource):
     @git_managed("Reset taskd configuration")
     def reset_taskd_configuration(self, request, store=None, **kwargs):
         if request.method != 'POST':
-            raise HttpResponseNotAllowed(
-                'Only POST requests are allowed'
-            )
+            raise HttpResponseNotAllowed(request.method)
         store.taskrc.update({
             'taskd.certificate': os.path.join(
                 store.local_path,
@@ -129,9 +127,7 @@ class UserResource(resources.ModelResource):
     @git_managed("Configuring taskd server")
     def configure_taskd(self, request, store=None, **kwargs):
         if request.method != 'POST':
-            raise HttpResponseNotAllowed(
-                'Only POST requests are allowed'
-            )
+            raise HttpResponseNotAllowed(request.method)
 
         form = forms.TaskdConfigurationForm(request.POST)
         if not form.is_valid():
@@ -165,9 +161,7 @@ class UserResource(resources.ModelResource):
 
     def my_certificate(self, request, **kwargs):
         if request.method != 'GET':
-            raise HttpResponseNotAllowed(
-                'Only GET requests are allowed'
-            )
+            raise HttpResponseNotAllowed(request.method)
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
             ts.taskrc.get('taskd.certificate'),
@@ -176,9 +170,7 @@ class UserResource(resources.ModelResource):
 
     def my_key(self, request, **kwargs):
         if request.method != 'GET':
-            raise HttpResponseNotAllowed(
-                'Only GET requests are allowed'
-            )
+            raise HttpResponseNotAllowed(request.method)
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
             ts.taskrc.get('taskd.key'),
@@ -187,9 +179,7 @@ class UserResource(resources.ModelResource):
 
     def ca_certificate(self, request, **kwargs):
         if request.method != 'GET':
-            raise HttpResponseNotAllowed(
-                'Only GET requests are allowed'
-            )
+            raise HttpResponseNotAllowed(request.method)
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
             ts.taskrc.get('taskd.ca'),
@@ -221,9 +211,7 @@ class UserResource(resources.ModelResource):
                 content_type='application/json',
             )
         else:
-            return HttpResponseNotAllowed(
-                'Only GET or PUT requests are allowed'
-            )
+            return HttpResponseNotAllowed(request.method)
 
     def account_status(self, request, **kwargs):
         if request.user.is_authenticated():
@@ -401,12 +389,6 @@ class TaskResource(resources.Resource):
                 name="incoming_sms"
             ),
             url(
-                r"^(?P<resource_name>%s)/(?P<uuid>[\w\d_.-]+)/complete/?$" % (
-                    self._meta.resource_name
-                ),
-                self.wrap_view('complete')
-            ),
-            url(
                 r"^(?P<resource_name>%s)/(?P<uuid>[\w\d_.-]+)/start/?$" % (
                     self._meta.resource_name
                 ),
@@ -456,21 +438,13 @@ class TaskResource(resources.Resource):
                 '',
                 status=404
             )
-        raise HttpResponseNotAllowed(
-            'Only POST requests are allowed'
-        )
-
-    @requires_taskd_sync
-    @git_managed("Mark task completed")
-    def complete(self, request, uuid, store, **kwargs):
-        store.client.task_done(uuid=uuid)
-        return HttpResponse(
-            status=200
-        )
+        raise HttpResponseNotAllowed(request.method)
 
     @requires_taskd_sync
     @git_managed("Start task")
     def start_task(self, request, uuid, store, **kwargs):
+        if not request.method == 'POST':
+            return HttpResponseNotAllowed(request.method)
         store.client.task_start(uuid=uuid)
         return HttpResponse(
             status=200
@@ -479,6 +453,8 @@ class TaskResource(resources.Resource):
     @requires_taskd_sync
     @git_managed("Stop task")
     def stop_task(self, request, uuid, store, **kwargs):
+        if not request.method == 'POST':
+            return HttpResponseNotAllowed(request.method)
         store.client.task_stop(uuid=uuid)
         return HttpResponse(
             status=200
@@ -486,9 +462,12 @@ class TaskResource(resources.Resource):
 
     @requires_taskd_sync
     @git_managed("Delete task")
-    def delete(self, request, uuid, **kwargs):
+    def delete(self, request, uuid, store, **kwargs):
+        if not request.method == 'POST':
+            return HttpResponseNotAllowed(request.method)
+        store.client.task_delete(uuid=uuid)
         return HttpResponse(
-            status=501
+            status=200
         )
 
     def incoming_sms(self, request, username, **kwargs):

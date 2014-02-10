@@ -101,6 +101,71 @@
         </tbody>
     </table>
 
+    <h5>Special Task Actions</h5>
+
+    <table>
+        <thead>
+            <th>URL</th>
+            <th>Method</th>
+            <th>Description</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/delete/</code></td>
+                <td>POST</td>
+                <td>
+                    Marks an existing task as deleted.
+                    After ran, this task will not be listed from any endpoint.
+                </td>
+            </tr>
+            <tr>
+                <td><code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/start/</code></td>
+                <td>POST</td>
+                <td>
+                    Marks an existing task as started.
+                </td>
+            </tr>
+            <tr>
+                <td><code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/stop/</code></td>
+                <td>POST</td>
+                <td>
+                    Marks an existing task as stopped.
+                </td>
+            </tr>
+            <tr>
+                <td><code>https://inthe.am/api/v1/task/lock/</code></td>
+                <td>DELETE</td>
+                <td>
+                    Force-unlocks the task list.  This is a dangerous operation
+                    and could render your tasks inaccessible.
+                    <br /><br />
+                    Only a single task operation is allowed to occur on a
+                    user's repository at a time, and in order to prevent
+                    simultaneous actions a lock is used.  In very rare
+                    situations, problems may occur that cause a lock
+                    to not be released following an action.  Please be careful.
+                    <br />
+                    <ul>
+                        <li><b>200</b>: Unlocked successfully.</li>
+                        <li><b>404</b>: The task list is not currently locked.</li>
+                    <ul>
+                </td>
+            </tr>
+            <tr>
+                <td><code>https://inthe.am/api/v1/task/lock/</code></td>
+                <td>GET</td>
+                <td>
+                    Returns whether or not the task list is currently locked.
+                    <br />
+                    <ul>
+                        <li><b>200</b>: The task list is currently locked.</li>
+                        <li><b>404</b>: The task list is not currently locked.</li>
+                    <ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
     <h4>Completed Tasks</h4>
 
     <table class="pure-table pure-table-horizontal">
