@@ -407,6 +407,18 @@ class TaskResource(resources.Resource):
                 self.wrap_view('complete')
             ),
             url(
+                r"^(?P<resource_name>%s)/(?P<uuid>[\w\d_.-]+)/start/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('start_task')
+            ),
+            url(
+                r"^(?P<resource_name>%s)/(?P<uuid>[\w\d_.-]+)/stop/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('stop_task')
+            ),
+            url(
                 r"^(?P<resource_name>%s)/(?P<uuid>[\w\d_.-]+)/delete/?$" % (
                     self._meta.resource_name
                 ),
@@ -448,14 +460,31 @@ class TaskResource(resources.Resource):
             'Only POST requests are allowed'
         )
 
-    @git_managed("Mark task completed")
     @requires_taskd_sync
+    @git_managed("Mark task completed")
     def complete(self, request, uuid, store, **kwargs):
         store.client.task_done(uuid=uuid)
         return HttpResponse(
             status=200
         )
 
+    @requires_taskd_sync
+    @git_managed("Start task")
+    def start_task(self, request, uuid, store, **kwargs):
+        store.client.task_start(uuid=uuid)
+        return HttpResponse(
+            status=200
+        )
+
+    @requires_taskd_sync
+    @git_managed("Stop task")
+    def stop_task(self, request, uuid, store, **kwargs):
+        store.client.task_stop(uuid=uuid)
+        return HttpResponse(
+            status=200
+        )
+
+    @requires_taskd_sync
     @git_managed("Delete task")
     def delete(self, request, uuid, **kwargs):
         return HttpResponse(

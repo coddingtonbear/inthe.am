@@ -22,6 +22,34 @@ var controller = Ember.ObjectController.extend({
       model.set('annotations', annotations);
       model.save();
     },
+    'start': function() {
+      var model = this.get('model');
+      model.set('start', new Date());
+      var url = this.store.adapterFor('task').buildURL('task', model.get('uuid')) + 'start/';
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        type: 'POST',
+        success: function() {
+          console.log("returned");
+          model.reload();
+        }
+      });
+    },
+    'stop': function() {
+      var model = this.get('model');
+      model.set('start', null);
+      var url = this.store.adapterFor('task').buildURL('task', model.get('uuid')) + 'stop/';
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        type: 'POST',
+        success: function() {
+          console.log("returned");
+          model.reload();
+        }
+      });
+    },
     'delete': function(){
       var url = this.store.adapterFor('task').buildURL('task', this.get('uuid')) + 'delete/';
       $.ajax({

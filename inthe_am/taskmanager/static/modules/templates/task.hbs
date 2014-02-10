@@ -27,6 +27,15 @@
             <button class="secondary-button" {{action "add_annotation"}}>
                 <i class="fa fa-pencil">Add Annotation</i>
             </button>
+            {{#if start}}
+                <button class="secondary-button" {{action "stop"}}>
+                    <i class="fa fa-star-o">Stop</i>
+                </button>
+            {{else}}
+                <button class="secondary-button" {{action "start"}}>
+                    <i class="fa fa-star">Start</i>
+                </button>
+            {{/if}}
         {{/if}}
     </div>
 </div>
