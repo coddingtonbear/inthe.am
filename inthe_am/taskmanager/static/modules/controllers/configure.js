@@ -21,9 +21,6 @@ var controller = Ember.Controller.extend({
     $.ajax({
       url: url,
       type: 'POST',
-      headers: {
-        'X-CSRFToken': csrftoken
-      },
       data: data,
       success: function(){
         self.success_message("Taskd settings saved.");
@@ -170,6 +167,30 @@ var controller = Ember.Controller.extend({
         self.error_message("Please select a CA Certificate");
       }
       ca_reader.readAsBinaryString(ca_file);
+    },
+    save_twilio: function() {
+      var data = {
+        'twilio_auth_token': document.getElementById('id_twilio_auth_token').value
+      };
+      var url  = this.get('controllers.application').urls.twilio_integration;
+      var self = this;
+
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: function() {
+          self.success_message("Twilio settings saved.");
+        },
+        error: function() {
+          var response = JSON.parse(xhr.responseText);
+          for (var property in response) {
+            self.error_message(
+              "Error encountered: " + property + ": " + response[property]
+            );
+          }
+        }
+      });
     }
   }
 });

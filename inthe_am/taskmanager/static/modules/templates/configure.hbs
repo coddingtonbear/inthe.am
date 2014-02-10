@@ -5,19 +5,7 @@
 
     <dl class="accordion" data-accordion>
         <dd>
-            <a href="#custom_taskrc"><span class="code">.taskrc</span> settings</a>
-            <div id="custom_taskrc" class="content active">
-                {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
-                <p class="help">
-                    Only configuration values relating to urgency will have an effect,
-                    but entering your entire local <span class="code">.taskrc</span>
-                    is both safe and encouraged.
-                </p>
-                <a href="" class="button radius" {{action "save_taskrc"}}>Save Settings</a>
-            </div>
-        </dd>
-        <dd>
-            <a href="#custom_taskd">Taskd Server Configuration</a>
+            <a href="#custom_taskd">Taskd Server Synchronization</a>
             <div id="custom_taskd" class="content">
                 <div class="row">
                     <div class="large-12 columns">
@@ -43,6 +31,30 @@
                 </div>
                 <a href="" class="button radius" {{action "save_taskd"}}>Save Settings</a>
                 <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset to Default</a>
+            </div>
+        </dd>
+        <dd>
+            <a href="#twilio">Twilio SMS Integration</a>
+            <div id="twilio" class="content">
+                <div class="row">
+                    <div class="large-12 columns">
+                        <label>Twilio Auth Token</label>
+                        {{input type="text" id="id_twilio_auth_token" name="twilio_auth_token" value=controllers.application.user.twilio_auth_token}}
+                    </div>
+                </div>
+                <a href="" class="button radius" {{action "save_twilio"}}>Save Settings</a>
+            </div>
+        </dd>
+        <dd>
+            <a href="#custom_taskrc">Custom <span class="code">.taskrc</span></a>
+            <div id="custom_taskrc" class="content active">
+                {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
+                <p class="help">
+                    Only configuration values relating to urgency will have an effect,
+                    but entering your entire local <span class="code">.taskrc</span>
+                    is both safe and encouraged.
+                </p>
+                <a href="" class="button radius" {{action "save_taskrc"}}>Save Settings</a>
             </div>
         </dd>
     </dl>

@@ -12,6 +12,7 @@ from tastypie import (
     authentication, authorization, bundle, exceptions, fields, resources
 )
 from twilio.twiml import Response
+from twilio.util import RequestValidator
 from lockfile import LockTimeout
 
 from django.conf import settings
@@ -20,7 +21,8 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import (
     HttpResponse, HttpResponseBadRequest,
-    HttpResponseNotAllowed, HttpResponseNotFound
+    HttpResponseNotAllowed, HttpResponseNotFound,
+    HttpResponseForbidden,
 )
 
 from . import models
@@ -86,6 +88,12 @@ class UserResource(resources.ModelResource):
                     self._meta.resource_name
                 ),
                 self.wrap_view('reset_taskd_configuration')
+            ),
+            url(
+                r"^(?P<resource_name>%s)/twilio-integration/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('twilio_integration')
             )
         ]
 
@@ -157,6 +165,12 @@ class UserResource(resources.ModelResource):
             'taskd.credentials': form.cleaned_data['credentials'],
         })
 
+        return HttpResponse('OK')
+
+    def twilio_integration(self, request, **kwargs):
+        ts = models.TaskStore.get_for_user(request.user)
+        ts.twilio_auth_token = request.POST.get('twilio_auth_token', '')
+        ts.save()
         return HttpResponse('OK')
 
     def my_certificate(self, request, **kwargs):
@@ -232,6 +246,7 @@ class UserResource(resources.ModelResource):
                 'taskd_is_custom': (
                     store.taskrc.get('taskd.server') != settings.TASKD_SERVER
                 ),
+                'twilio_auth_token': store.twilio_auth_token,
                 'taskrc_extras': store.taskrc_extras,
                 'api_key': request.user.api_key.key,
                 'sms_url': reverse(
@@ -478,6 +493,17 @@ class TaskResource(resources.Resource):
 
         r = Response()
         store = models.TaskStore.get_for_user(user)
+
+        if not store.twilio_auth_token:
+            return HttpResponse(status=404)
+        try:
+            validator = RequestValidator(store.twilio_auth_token)
+            url = request.build_absolute_uri()
+            signature = request.META['HTTP_X_TWILIO_SIGNATURE']
+        except (AttributeError, KeyError):
+            return HttpResponseForbidden()
+        if not validator.validate(url, request.POST, signature):
+            return HttpResponseForbidden()
 
         with git_checkpoint(store, "Incoming SMS"):
             from_ = request.POST['From']

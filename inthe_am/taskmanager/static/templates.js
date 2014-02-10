@@ -17,7 +17,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', hashTypes, hashContexts, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<div class=\"row standalone\">\n    <h2>Accessing your tasks via the REST API</h2>\n\n    <p>\n        Your Taskwarrior tasks are now accessible via an API; you can\n        use this to programatically query, create, complete, or change\n        tasks in your task list.\n    </p>\n\n\n    <h3>Authentication</h3>\n\n    <table class=\"pure-table pure-table-horizontal\">\n        <tr>\n            <th>\n                Username\n            </th>\n            <td>\n                ");
+  data.buffer.push("<div class=\"row standalone\">\n    <h2>Accessing your tasks via the REST API</h2>\n\n    <p>\n        Your Taskwarrior tasks are accessible via a REST API; you can\n        use this to programatically query, create, complete, or change\n        tasks in your task list.\n    </p>\n\n\n    <h3>Authentication</h3>\n\n    <table class=\"pure-table pure-table-horizontal\">\n        <tr>\n            <th>\n                Username\n            </th>\n            <td>\n                ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "controllers.application.user.username", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -148,21 +148,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', stack1, hashContexts, hashTypes, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<div class=\"row standalone\">\n    <h2>Settings</h2>\n    <div id=\"settings_alerts\">\n    </div>\n\n    <dl class=\"accordion\" data-accordion>\n        <dd>\n            <a href=\"#custom_taskrc\"><span class=\"code\">.taskrc</span> settings</a>\n            <div id=\"custom_taskrc\" class=\"content active\">\n                ");
-  hashContexts = {'name': depth0,'value': depth0,'cols': depth0,'rows': depth0};
-  hashTypes = {'name': "STRING",'value': "ID",'cols': "STRING",'rows': "STRING"};
-  options = {hash:{
-    'name': ("custom_taskrc"),
-    'value': ("controllers.application.user.taskrc_extras"),
-    'cols': ("80"),
-    'rows': ("10")
-  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  data.buffer.push(escapeExpression(((stack1 = helpers.textarea || depth0.textarea),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "textarea", options))));
-  data.buffer.push("\n                <p class=\"help\">\n                    Only configuration values relating to urgency will have an effect,\n                    but entering your entire local <span class=\"code\">.taskrc</span>\n                    is both safe and encouraged.\n                </p>\n                <a href=\"\" class=\"button radius\" ");
-  hashTypes = {};
-  hashContexts = {};
-  data.buffer.push(escapeExpression(helpers.action.call(depth0, "save_taskrc", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">Save Settings</a>\n            </div>\n        </dd>\n        <dd>\n            <a href=\"#custom_taskd\">Taskd Server Configuration</a>\n            <div id=\"custom_taskd\" class=\"content\">\n                <div class=\"row\">\n                    <div class=\"large-12 columns\">\n                        <label>Taskd Server</label>\n                        ");
+  data.buffer.push("<div class=\"row standalone\">\n    <h2>Settings</h2>\n    <div id=\"settings_alerts\">\n    </div>\n\n    <dl class=\"accordion\" data-accordion>\n        <dd>\n            <a href=\"#custom_taskd\">Taskd Server Synchronization</a>\n            <div id=\"custom_taskd\" class=\"content\">\n                <div class=\"row\">\n                    <div class=\"large-12 columns\">\n                        <label>Taskd Server</label>\n                        ");
   hashContexts = {'type': depth0,'id': depth0,'name': depth0,'value': depth0};
   hashTypes = {'type': "STRING",'id': "STRING",'name': "STRING",'value': "ID"};
   options = {hash:{
@@ -190,7 +176,35 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "reset_taskd", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">Reset to Default</a>\n            </div>\n        </dd>\n    </dl>\n</div>\n");
+  data.buffer.push(">Reset to Default</a>\n            </div>\n        </dd>\n        <dd>\n            <a href=\"#twilio\">Twilio SMS Integration</a>\n            <div id=\"twilio\" class=\"content\">\n                <div class=\"row\">\n                    <div class=\"large-12 columns\">\n                        <label>Twilio Auth Token</label>\n                        ");
+  hashContexts = {'type': depth0,'id': depth0,'name': depth0,'value': depth0};
+  hashTypes = {'type': "STRING",'id': "STRING",'name': "STRING",'value': "ID"};
+  options = {hash:{
+    'type': ("text"),
+    'id': ("id_twilio_auth_token"),
+    'name': ("twilio_auth_token"),
+    'value': ("controllers.application.user.twilio_auth_token")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+  data.buffer.push("\n                    </div>\n                </div>\n                <a href=\"\" class=\"button radius\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "save_twilio", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(">Save Settings</a>\n            </div>\n        </dd>\n        <dd>\n            <a href=\"#custom_taskrc\">Custom <span class=\"code\">.taskrc</span></a>\n            <div id=\"custom_taskrc\" class=\"content active\">\n                ");
+  hashContexts = {'name': depth0,'value': depth0,'cols': depth0,'rows': depth0};
+  hashTypes = {'name': "STRING",'value': "ID",'cols': "STRING",'rows': "STRING"};
+  options = {hash:{
+    'name': ("custom_taskrc"),
+    'value': ("controllers.application.user.taskrc_extras"),
+    'cols': ("80"),
+    'rows': ("10")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.textarea || depth0.textarea),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "textarea", options))));
+  data.buffer.push("\n                <p class=\"help\">\n                    Only configuration values relating to urgency will have an effect,\n                    but entering your entire local <span class=\"code\">.taskrc</span>\n                    is both safe and encouraged.\n                </p>\n                <a href=\"\" class=\"button radius\" ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "save_taskrc", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(">Save Settings</a>\n            </div>\n        </dd>\n    </dl>\n</div>\n");
   return buffer;
   
 });
@@ -348,18 +362,35 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 this["Ember"]["TEMPLATES"]["sms"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', hashTypes, hashContexts, escapeExpression=this.escapeExpression;
+  var buffer = '', stack1, hashTypes, hashContexts, escapeExpression=this.escapeExpression, self=this;
 
-
-  data.buffer.push("<div class=\"row standalone\">\n    <h2>Adding tasks via SMS</h2>\n\n    <table class=\"pure-table pure-table-horizontal\">\n        <tr>\n            <th>\n                Twilio Messaging Request URL <strong>(POST)</strong>\n            </th>\n            <td>\n                https://inthe.am");
+function program1(depth0,data) {
+  
+  var buffer = '', hashTypes, hashContexts;
+  data.buffer.push("\n        <table class=\"pure-table pure-table-horizontal\">\n            <tr>\n                <th>\n                    Twilio Messaging Request URL <strong>(POST)</strong>\n                </th>\n                <td>\n                    https://inthe.am");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "controllers.application.urls.sms_url", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\n            </td>\n        </tr>\n    </table>\n\n    <h3>Setup Instructions</h3>\n\n    <p>\n        Inthe.am can receive and add items to your task list via SMS, but\n        it requires a little bit of configuration on your part.\n    </p>\n    <ol>\n        <li>Sign up for a <a href=\"https://www.twilio.com/try-twilio\">Twilio account</a>.</li>\n        <li>\n            Add funds to your twilio account. At the time of writing,  Twilio charges\n            around $0.01 for each incoming or outgoing SMS message (incoming messages are slightly cheaper),\n            and each phone number costs $1.00/month.\n        </li>\n        <li>\n            <a href=\"https://www.twilio.com/user/account/phone-numbers/available/local\">Buy a phone number</a>.\n        </li>\n        <li>\n            From your phone number's configuration screen, set the field \"Messaging Request URL\" to\n            your personal incoming SMS URL: <span class=\"code\">https://inthe.am");
+  data.buffer.push("\n                </td>\n            </tr>\n        </table>\n    ");
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  
+  data.buffer.push("\n        <div class=\"block error\">\n            <p>\n                For your security, the ability to send task messages via\n                SMS is currently disabled for your account since you\n                have not yet entered your Twilio auth token.\n            </p>\n            <p>\n                This token is necessary for verifying that incoming messages\n                were sent to Inthe.AM by Twilio from your account.\n            </p>\n        </div>\n    ");
+  }
+
+  data.buffer.push("<div class=\"row standalone\">\n    <h2>Adding tasks via SMS</h2>\n\n    ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers['if'].call(depth0, "controllers.application.user.twilio_auth_token", {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\n\n    <h3>Setup Instructions</h3>\n\n    <p>\n        Inthe.am can receive and add items to your task list via SMS, but\n        it requires a little bit of configuration on your part.\n    </p>\n    <ol>\n        <li>Sign up for a <a href=\"https://www.twilio.com/try-twilio\">Twilio account</a>.</li>\n        <li>\n            Add funds to your twilio account. At the time of writing,  Twilio charges\n            around $0.01 for each incoming or outgoing SMS message (incoming messages are slightly cheaper),\n            and each phone number costs $1.00/month.\n        </li>\n        <li>\n            <a href=\"https://www.twilio.com/user/account/phone-numbers/available/local\">Buy a phone number</a>.\n        </li>\n        <li>\n            From your phone number's configuration screen, set the field \"Messaging Request URL\" to\n            your personal incoming SMS URL: <span class=\"code\">https://inthe.am");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "controllers.application.urls.sms_url", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</span>.\n        </li>\n        <li>\n            Press save.\n        </li>\n    </ol>\n    <p>\n        After you have configured the above, you can send SMS messages to your\n        Twilio phone number.  Currently, the only command implemented is 'add',\n        but in the future additional commands may be added.\n    </p>\n    <p>\n        As an example, you could add a task to the project \"birthday\" with a due\n        date of tomorrow and high priority by sending an SMS message with the following\n        contents:\n        <pre>add project:birthday due:tomorrow priority:h It's my birthday</pre>.\n    </p>\n</div>\n");
+  data.buffer.push("</span>.\n        </li>\n        <li>\n            Press save.\n        </li>\n    </ol>\n    <p>\n        After you have configured the above, you can send SMS messages to your\n        Twilio phone number.  Currently, the only command implemented is 'add',\n        but in the future additional commands may be added.\n    </p>\n    <p>\n        As an example, you could add a task to the project \"birthday\" with a due\n        date of tomorrow and high priority by sending an SMS message with the following\n        contents:\n        <pre>add project:birthday due:tomorrow priority:h It's my birthday</pre>\n    </p>\n</div>\n");
   return buffer;
   
 });

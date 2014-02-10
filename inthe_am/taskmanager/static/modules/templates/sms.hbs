@@ -1,16 +1,30 @@
 <div class="row standalone">
     <h2>Adding tasks via SMS</h2>
 
-    <table class="pure-table pure-table-horizontal">
-        <tr>
-            <th>
-                Twilio Messaging Request URL <strong>(POST)</strong>
-            </th>
-            <td>
-                https://inthe.am{{ controllers.application.urls.sms_url }}
-            </td>
-        </tr>
-    </table>
+    {{#if controllers.application.user.twilio_auth_token}}
+        <table class="pure-table pure-table-horizontal">
+            <tr>
+                <th>
+                    Twilio Messaging Request URL <strong>(POST)</strong>
+                </th>
+                <td>
+                    https://inthe.am{{ controllers.application.urls.sms_url }}
+                </td>
+            </tr>
+        </table>
+    {{else}}
+        <div class="block error">
+            <p>
+                For your security, the ability to send task messages via
+                SMS is currently disabled for your account since you
+                have not yet entered your Twilio auth token.
+            </p>
+            <p>
+                This token is necessary for verifying that incoming messages
+                were sent to Inthe.AM by Twilio from your account.
+            </p>
+        </div>
+    {{/if}}
 
     <h3>Setup Instructions</h3>
 
@@ -45,6 +59,6 @@
         As an example, you could add a task to the project "birthday" with a due
         date of tomorrow and high priority by sending an SMS message with the following
         contents:
-        <pre>add project:birthday due:tomorrow priority:h It's my birthday</pre>.
+        <pre>add project:birthday due:tomorrow priority:h It's my birthday</pre>
     </p>
 </div>

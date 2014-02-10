@@ -42,6 +42,7 @@ class TaskStore(models.Model):
         allow_folders=True,
         blank=True,
     )
+    twilio_auth_token = models.CharField(max_length=32, blank=True)
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)
 
