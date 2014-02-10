@@ -248,7 +248,7 @@ class UserResource(resources.ModelResource):
                 ),
                 'twilio_auth_token': store.twilio_auth_token,
                 'taskrc_extras': store.taskrc_extras,
-                'api_key': request.user.api_key.key,
+                'api_key': store.api_key.key,
                 'sms_url': reverse(
                     'incoming_sms',
                     kwargs={

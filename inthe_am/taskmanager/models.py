@@ -8,10 +8,11 @@ import uuid
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.template.loader import render_to_string
 from dulwich.repo import Repo
-from tastypie.models import create_api_key
+from tastypie.models import create_api_key, ApiKey
 
 from .context_managers import git_checkpoint
 from .taskwarrior_client import TaskwarriorClient
@@ -102,6 +103,13 @@ class TaskStore(models.Model):
                 self.taskrc.path
             )
         return self._client
+
+    @property
+    def api_key(self):
+        try:
+            return self.user.apk_key
+        except ObjectDoesNotExist:
+            return ApiKey.objects.create(user=self.user)
 
     def _is_numeric(self, val):
         try:
