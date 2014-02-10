@@ -107,7 +107,7 @@ class TaskStore(models.Model):
     @property
     def api_key(self):
         try:
-            return self.user.apk_key
+            return self.user.api_key
         except ObjectDoesNotExist:
             return ApiKey.objects.create(user=self.user)
 
