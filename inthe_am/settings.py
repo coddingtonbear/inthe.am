@@ -76,13 +76,6 @@ WSGI_APPLICATION = 'inthe_am.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -197,6 +190,12 @@ TASTYPIE_DATETIME_FORMATTING = 'rfc-2822'
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 RAVEN_DSN = ''
+DATABASE_ENGINE = 'django.db.backends.sqlite3'
+DATABASE_NAME = os.path.join(BASE_DIR, 'db.sqlite3')
+DATABASE_USER = ''
+DATABASE_PASSWORD = ''
+DATABASE_HOST = ''
+DATABASE_PORT = ''
 
 # Sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
@@ -220,4 +219,15 @@ for key, value in os.environ.items():
 
 RAVEN_CONFIG = {
     'dsn': RAVEN_DSN
+}
+
+DATABASES = {
+    'default': {
+        'ENGINE': DATABASE_ENGINE,
+        'NAME': DATABASE_NAME,
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': DATABASE_HOST,
+        'PORT': DATABASE_PORT
+    }
 }

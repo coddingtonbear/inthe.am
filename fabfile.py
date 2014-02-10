@@ -22,6 +22,6 @@ def deploy():
     with cd('/var/www/twweb'):
         run('git pull')
         virtualenv('pip install -r /var/www/twweb/requirements.txt')
-        virtualenv('python manage.py collectstatic --noinput', user='www-data')
-        virtualenv('python manage.py migrate', user='www-data')
-        sudo('service twweb restart')
+        #virtualenv('python manage.py collectstatic --noinput', user='www-data')
+        #virtualenv('python manage.py migrate', user='www-data')
+        #sudo('service twweb restart')
