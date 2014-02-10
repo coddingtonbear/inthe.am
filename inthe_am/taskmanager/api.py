@@ -495,14 +495,29 @@ class TaskResource(resources.Resource):
         store = models.TaskStore.get_for_user(user)
 
         if not store.twilio_auth_token:
+            logger.warning(
+                "Incoming SMS for %s, but no auth token specified.",
+                user,
+                user,
+            )
             return HttpResponse(status=404)
         try:
             validator = RequestValidator(store.twilio_auth_token)
             url = request.build_absolute_uri()
             signature = request.META['HTTP_X_TWILIO_SIGNATURE']
-        except (AttributeError, KeyError):
+        except (AttributeError, KeyError) as e:
+            logger.warning(
+                "Incoming SMS for %s, but error encountered while "
+                "attempting to build request validator: %s.",
+                user,
+                e,
+            )
             return HttpResponseForbidden()
         if not validator.validate(url, request.POST, signature):
+            logger.warning(
+                "Incoming SMS for %s, but validator rejected message.",
+                user,
+            )
             return HttpResponseForbidden()
 
         with git_checkpoint(store, "Incoming SMS"):
