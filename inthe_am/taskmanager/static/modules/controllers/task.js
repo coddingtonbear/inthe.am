@@ -31,7 +31,6 @@ var controller = Ember.ObjectController.extend({
         dataType: 'json',
         type: 'POST',
         success: function() {
-          console.log("returned");
           model.reload();
         }
       });
@@ -45,7 +44,6 @@ var controller = Ember.ObjectController.extend({
         dataType: 'json',
         type: 'POST',
         success: function() {
-          console.log("returned");
           model.reload();
         }
       });

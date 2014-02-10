@@ -70,8 +70,8 @@ var controller = Ember.Controller.extend({
       var statusUpdater = new EventSource(this.get('urls.status_feed'));
       statusActions = {
         'task_changed': function(evt) {
-          Ember.run.next(self, function(){
-            self.store.find('task', evt.data).then(function(record){
+          Ember.run.once(self, function(){
+            this.store.find('task', evt.data).then(function(record){
               if (record.get('isLoaded') && (!record.get('isDirty') && !record.get('isSaving'))) {
                 record.reload();
               }
@@ -458,7 +458,6 @@ var controller = Ember.ObjectController.extend({
         dataType: 'json',
         type: 'POST',
         success: function() {
-          console.log("returned");
           model.reload();
         }
       });
@@ -472,7 +471,6 @@ var controller = Ember.ObjectController.extend({
         dataType: 'json',
         type: 'POST',
         success: function() {
-          console.log("returned");
           model.reload();
         }
       });
