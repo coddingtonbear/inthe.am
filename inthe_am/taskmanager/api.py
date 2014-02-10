@@ -520,7 +520,7 @@ class TaskResource(resources.Resource):
             )
             return HttpResponseForbidden()
 
-        with git_checkpoint(store, "Incoming SMS"):
+        with git_checkpoint(store, "Incoming SMS", sync=True):
             from_ = request.POST['From']
             body = request.POST['Body']
             task_info = body[4:]
@@ -542,7 +542,6 @@ class TaskResource(resources.Resource):
                 )
                 r.sms("Bad Request: Empty task.")
             else:
-                store.sync()
                 task_args = ['add'] + shlex.split(task_info)
                 result = store.client._execute_safe(*task_args)
                 stdout, stderr = result
@@ -556,7 +555,6 @@ class TaskResource(resources.Resource):
                     )
                 )
 
-                store.sync()
         return HttpResponse(str(r), content_type='application/xml')
 
     def autoconfigure(self, request, **kwargs):

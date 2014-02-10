@@ -5,7 +5,9 @@ from lockfile.pidlockfile import PIDLockFile
 
 
 @contextmanager
-def git_checkpoint(store, message, function=None, args=None, kwargs=None):
+def git_checkpoint(store, message, function=None, args=None, kwargs=None, sync=False):
+    if sync:
+        store.sync()
     with PIDLockFile(os.path.join(store.local_path, '.lock')):
         store.create_git_checkpoint(
             message,
@@ -21,3 +23,5 @@ def git_checkpoint(store, message, function=None, args=None, kwargs=None):
             args=args,
             kwargs=kwargs
         )
+    if sync:
+        store.sync()
