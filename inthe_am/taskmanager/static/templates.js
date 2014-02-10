@@ -148,7 +148,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', stack1, hashContexts, hashTypes, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("<div class=\"row standalone\">\n    <h2>Settings</h2>\n    <div id=\"settings_alerts\">\n    </div>\n\n    <dl class=\"accordion\" data-accordion>\n        <dd>\n            <a href=\"#custom_taskd\">Taskd Server Synchronization</a>\n            <div id=\"custom_taskd\" class=\"content\">\n                <div class=\"row\">\n                    <div class=\"large-12 columns\">\n                        <label>Taskd Server</label>\n                        ");
+  data.buffer.push("<div class=\"row standalone\">\n    <h2>Settings</h2>\n    <div id=\"settings_alerts\">\n    </div>\n\n    <dl class=\"accordion\" data-accordion>\n        <dd>\n            <a href=\"#custom_taskd\">Taskd Server Synchronization</a>\n            <div id=\"custom_taskd\" class=\"content active\">\n                <div class=\"row\">\n                    <div class=\"large-12 columns\">\n                        <label>Taskd Server</label>\n                        ");
   hashContexts = {'type': depth0,'id': depth0,'name': depth0,'value': depth0};
   hashTypes = {'type': "STRING",'id': "STRING",'name': "STRING",'value': "ID"};
   options = {hash:{
@@ -190,7 +190,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save_twilio", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push(">Save Settings</a>\n            </div>\n        </dd>\n        <dd>\n            <a href=\"#custom_taskrc\">Custom <span class=\"code\">.taskrc</span></a>\n            <div id=\"custom_taskrc\" class=\"content active\">\n                ");
+  data.buffer.push(">Save Settings</a>\n            </div>\n        </dd>\n        <dd>\n            <a href=\"#custom_taskrc\">Custom <span class=\"code\">.taskrc</span></a>\n            <div id=\"custom_taskrc\" class=\"content\">\n                ");
   hashContexts = {'name': depth0,'value': depth0,'cols': depth0,'rows': depth0};
   hashTypes = {'name': "STRING",'value': "ID",'cols': "STRING",'rows': "STRING"};
   options = {hash:{

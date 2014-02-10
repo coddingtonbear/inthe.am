@@ -6,7 +6,7 @@
     <dl class="accordion" data-accordion>
         <dd>
             <a href="#custom_taskd">Taskd Server Synchronization</a>
-            <div id="custom_taskd" class="content">
+            <div id="custom_taskd" class="content active">
                 <div class="row">
                     <div class="large-12 columns">
                         <label>Taskd Server</label>
@@ -47,7 +47,7 @@
         </dd>
         <dd>
             <a href="#custom_taskrc">Custom <span class="code">.taskrc</span></a>
-            <div id="custom_taskrc" class="content active">
+            <div id="custom_taskrc" class="content">
                 {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
                 <p class="help">
                     Only configuration values relating to urgency will have an effect,
