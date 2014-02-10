@@ -170,7 +170,8 @@ var controller = Ember.Controller.extend({
     },
     save_twilio: function() {
       var data = {
-        'twilio_auth_token': document.getElementById('id_twilio_auth_token').value
+        'twilio_auth_token': document.getElementById('id_twilio_auth_token').value,
+        'sms_whitelist': document.getElementById('id_sms_whitelist').value
       };
       var url  = this.get('controllers.application').urls.twilio_integration;
       var self = this;

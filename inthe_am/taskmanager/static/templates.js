@@ -186,7 +186,17 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
     'value': ("controllers.application.user.twilio_auth_token")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push("\n                    </div>\n                </div>\n                <a href=\"\" class=\"button radius\" ");
+  data.buffer.push("\n                    </div>\n                    <div class=\"large-12 columns\">\n                        <label>Phone number whitelist</label>\n                        ");
+  hashContexts = {'name': depth0,'id': depth0,'value': depth0,'placeholder': depth0};
+  hashTypes = {'name': "STRING",'id': "STRING",'value': "ID",'placeholder': "STRING"};
+  options = {hash:{
+    'name': ("sms_whitelist"),
+    'id': ("id_sms_whitelist"),
+    'value': ("controllers.application.user.sms_whitelist"),
+    'placeholder': ("+15555555555")
+  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.textarea || depth0.textarea),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "textarea", options))));
+  data.buffer.push("\n                        <em>One phone number per line.  Leave empty to allow messages from any phone number.</em>\n                    </div>\n                </div>\n                <a href=\"\" class=\"button radius\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "save_twilio", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));

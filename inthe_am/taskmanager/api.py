@@ -4,6 +4,7 @@ import json
 import logging
 import operator
 import os
+import re
 import shlex
 
 import dateutil
@@ -170,6 +171,7 @@ class UserResource(resources.ModelResource):
     def twilio_integration(self, request, **kwargs):
         ts = models.TaskStore.get_for_user(request.user)
         ts.twilio_auth_token = request.POST.get('twilio_auth_token', '')
+        ts.sms_whitelist = request.POST.get('sms_whitelist', '')
         ts.save()
         return HttpResponse('OK')
 
@@ -247,6 +249,7 @@ class UserResource(resources.ModelResource):
                     store.taskrc.get('taskd.server') != settings.TASKD_SERVER
                 ),
                 'twilio_auth_token': store.twilio_auth_token,
+                'sms_whitelist': store.sms_whitelist,
                 'taskrc_extras': store.taskrc_extras,
                 'api_key': store.api_key.key,
                 'sms_url': reverse(
@@ -501,6 +504,25 @@ class TaskResource(resources.Resource):
                 user,
             )
             return HttpResponse(status=404)
+        if store.sms_whitelist:
+            incoming_number = re.sub('[^0-9]', '', request.POST['From'])
+            valid_numbers = [
+                re.sub('[^0-9]', '', n)
+                for n in store.sms_whitelist.split('\n')
+            ]
+            if incoming_number not in valid_numbers:
+                logger.warning(
+                    "Incoming SMS for %s, but phone number %s is not "
+                    "in the whitelist.",
+                    user,
+                    incoming_number,
+                    extra={
+                        'data': {
+                            'incoming_number': incoming_number,
+                            'whitelist': valid_numbers,
+                        }
+                    }
+                )
         try:
             validator = RequestValidator(store.twilio_auth_token)
             url = request.build_absolute_uri()

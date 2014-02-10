@@ -41,6 +41,11 @@
                         <label>Twilio Auth Token</label>
                         {{input type="text" id="id_twilio_auth_token" name="twilio_auth_token" value=controllers.application.user.twilio_auth_token}}
                     </div>
+                    <div class="large-12 columns">
+                        <label>Phone number whitelist</label>
+                        {{textarea name="sms_whitelist" id="id_sms_whitelist" value=controllers.application.user.sms_whitelist placeholder="+15555555555"}}
+                        <em>One phone number per line.  Leave empty to allow messages from any phone number.</em>
+                    </div>
                 </div>
                 <a href="" class="button radius" {{action "save_twilio"}}>Save Settings</a>
             </div>
