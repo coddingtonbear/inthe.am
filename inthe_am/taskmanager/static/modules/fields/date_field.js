@@ -28,7 +28,7 @@ var field = Ember.TextField.extend({
   didInsertElement: function(){
     this.$().datetimepicker({
       format: this.picker_format,
-      validateOnBlur: false
+      allowBlank: true
     });
   }
 });
