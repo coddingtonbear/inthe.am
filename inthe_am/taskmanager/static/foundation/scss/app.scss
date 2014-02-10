@@ -158,3 +158,19 @@ div.alert-box.error {
   background-color: #AA0000;
   border-color: #AA0000;
 }
+
+@media screen and (max-width: 350px) {
+  #list {
+    display: none;
+  }
+  i.fa {
+    font-size: 0px;
+
+    &::before {
+      font-size: 15px;
+    }
+  }
+  button {
+    padding: 10px;
+  }
+}
