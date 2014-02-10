@@ -2,6 +2,7 @@
 App.ApplicationController = require("./application");
 App.TaskController = require("./task");
 App.TasksController = require("./tasks");
+App.MobileTasksController = require("./mobileTasks");
 App.CompletedController = require("./completed");
 App.CompletedTaskController = require("./completedTask");
 App.ApiAccessController = require("./api_access");

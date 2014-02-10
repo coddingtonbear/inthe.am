@@ -1,0 +1,26 @@
+<div class="row full-width">
+    <div id="mobile-list">
+        {{#each task in pendingTasks}}
+            {{#link-to "task" task tagName="div" class="task"}}
+                <div {{bind-attr class=":task-item task.taskwarrior_class"}}>
+                    <div {{bind-attr class=":task-list-icon task.status"}}>
+                        <i {{bind-attr class=":task-icon :fa task.icon"}}></i>
+                    </div>
+                    <div class="task-list-item">
+                        {{#if task.project}}
+                            <h5 class="status" {{bind-attr title="task.project"}}>{{propercase task.project}}</h5>
+                        {{/if}}
+                        <p class="description">{{task.description}}</p>
+                        {{#each task.tags}}
+                            <i class="fa fa-tag">{{this}}</i>
+                        {{/each}}
+                    </div>
+                </div>
+            {{/link-to}}
+        {{else}}
+            <div class="task task-selected pure-g">
+                Nothing to see here...
+            </div>
+        {{/each}}
+    </div>
+</div>

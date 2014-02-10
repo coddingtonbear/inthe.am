@@ -16,6 +16,10 @@ p.input-note {
   color: #888888;
 }
 
+button#show-task-list {
+  display: none;
+}
+
 textarea {
   height: 165px;
 }
@@ -36,6 +40,9 @@ label[for] {
 nav {
   button {
     margin-bottom: 0px;
+  }
+  li.mobile-only {
+    display: none;
   }
 }
 
@@ -58,7 +65,7 @@ div.row {
   }
 }
 
-#list {
+#list, #mobile-list {
   background-color: #202020;
   color: #bbbbbb;
   width: 25%;
@@ -163,4 +170,44 @@ div.block.error {
 div.alert-box.error {
   background-color: #AA0000;
   border-color: #AA0000;
+}
+
+@media screen and (max-width: 800px) {
+  // Hide text content of buttons
+  nav, #task-details {
+    i.fa {
+      font-size: 0px;
+      &::before {
+        font-size: 15px;
+      }
+    }
+  }
+  // Make buttons a little less padding-filled
+  button {
+    padding: 10px;
+  }
+
+  // Hide task list by default
+  #list {
+    display: none;
+  }
+  #task-details {
+    padding-left: 10px;
+  }
+  nav {
+    .top-bar-section {
+      a {
+        padding: 0px 5px !important;
+      }
+      li.desktop-only {
+        display: none;
+      }
+      li.mobile-only {
+        display: list-item;
+      }
+    }
+    button#show-task-list {
+      display: inline-block;
+    }
+  }
 }

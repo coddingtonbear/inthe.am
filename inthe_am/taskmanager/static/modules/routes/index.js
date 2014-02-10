@@ -4,8 +4,9 @@ App.IndexRoute = Ember.Route.extend({
     this.render('index');
   }
 });
-App.TasksRoute = require("./tasks");
 App.TaskRoute = require("./task");
+App.TasksRoute = require("./tasks");
+App.MobileTasksRoute = require("./mobileTasks");
 App.CompletedRoute = require("./completed");
 App.CompletedTaskRoute = require("./completedTask");
 App.ApplicationRoute = require("./application");
