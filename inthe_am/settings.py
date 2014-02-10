@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'django_mailbox',
     'south',
     'tastypie',
+    'django_extensions',
     'raven.contrib.django.raven_compat',
 )
 
