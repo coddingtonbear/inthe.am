@@ -46,10 +46,11 @@ class Status(BaseSseView):
     def iterator(self):
         store = self.get_store()
         store.sync()
+        created = time.time()
         last_sync = time.time()
-        head = store.repository.head()
-        while True:
-            if time.time() - last_sync > 30:
+        head = self.request.GET.get('head', store.repository.head())
+        while time.time() - created < 240:
+            if time.time() - last_sync > 15:
                 last_sync = time.time()
                 store.sync()
 
@@ -58,10 +59,10 @@ class Status(BaseSseView):
             if head != new_head:
                 logger.info('Found new repository head -- %s' % new_head)
                 ids = self.get_changed_ids(store, head, new_head)
-                self.sse.add_message("head_changed", new_head)
                 for id in ids:
                     self.sse.add_message("task_changed", id)
                 head = new_head
+                self.sse.add_message("head_changed", new_head)
             else:
                 self.sse.add_message("heartbeat", str(time.time()))
 

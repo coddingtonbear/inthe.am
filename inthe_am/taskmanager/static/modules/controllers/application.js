@@ -27,28 +27,38 @@ var controller = Ember.Controller.extend({
     );
     this.set('urls.sms_url', this.get('user').sms_url);
 
+    $.ajaxSetup({
+      headers: {
+        'X-CSRFToken': this.getCookie('csrftoken')
+      }
+    });
+
     if(EventSource) {
       var statusUpdater = new EventSource(this.get('urls.status_feed'));
-      statusActions = {
-        'task_changed': function(evt) {
-          Ember.run.once(self, function(){
-            this.store.find('task', evt.data).then(function(record){
-              if (record.get('isLoaded') && (!record.get('isDirty') && !record.get('isSaving'))) {
-                record.reload();
-              }
-            });
-          });
-        }
-      };
-      for (var key in statusActions) {
-        statusUpdater.addEventListener(key, statusActions[key]);
+      this.bindStatusActions(statusUpdater);
+      this.set('statusUpdater', statusUpdater);
+    }
+  },
+  bindStatusActions: function(updater) {
+      for (var key in this.get('statusActions')) {
+        updater.addEventListener(key, this.get('statusActions')[key].bind(this));
       }
-
-      $.ajaxSetup({
-        headers: {
-          'X-CSRFToken': this.getCookie('csrftoken')
-        }
+  },
+  statusActions: {
+    'task_changed': function(evt) {
+      Ember.run.once(this, function(){
+        this.store.find('task', evt.data).then(function(record){
+          if (record.get('isLoaded') && (!record.get('isDirty') && !record.get('isSaving'))) {
+            record.reload();
+          }
+        });
       });
+    },
+    'head_changed': function(evt) {
+      this.get('statusUpdater').close();
+      var statusUpdater = new EventSource(this.get('urls.status_feed') + '?head=' + evt.data);
+      this.bindStatusActions(statusUpdater);
+      this.set('statusUpdater', statusUpdater);
     }
   },
   getCookie: function(name) {
