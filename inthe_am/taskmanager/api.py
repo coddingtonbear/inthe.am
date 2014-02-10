@@ -523,6 +523,7 @@ class TaskResource(resources.Resource):
                         }
                     }
                 )
+                return HttpResponseForbidden()
         try:
             validator = RequestValidator(store.twilio_auth_token)
             url = request.build_absolute_uri()
