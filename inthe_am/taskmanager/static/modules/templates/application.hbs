@@ -1,7 +1,7 @@
 <nav class="top-bar" data-topbar>
     <ul class="title-area">
         <li class="name">
-            <h1><a href="/">Inthe.AM</a></h1>
+            <h1><a href="#" {{action "home"}}>Inthe.AM</a></h1>
         </li>
     </ul>
 
@@ -22,7 +22,7 @@
                     {{#link-to "configure"}}<i class="fa fa-wrench">Settings</i>{{/link-to}}
                 </li>
                 <li>
-                    <a href="/logout/"><i class="fa fa-sign-out">Log Out</i></a>
+                    <a href="#" {{action "logout"}}><i class="fa fa-sign-out">Log Out</i></a>
                 </li>
             </ul>
 
@@ -46,7 +46,7 @@
         <section class="top-bar-section">
             <ul class="left">
                 <li>
-                    <a href="/login/google-oauth2/"><i class="fa fa-sign-in">Log In with Google</i></a>
+                    <a href="#" {{action "login"}}><i class="fa fa-sign-in">Log In with Google</i></a>
                 </li>
             </ul>
         </section>

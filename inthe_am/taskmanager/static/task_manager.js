@@ -127,8 +127,17 @@ var controller = Ember.Controller.extend({
     }
   }.observes('currentPath'),
   actions: {
-    'refresh': function(){
+    refresh: function(){
       this.get('controllers.tasks').refresh();
+    },
+    home: function(){
+      window.location = '/';
+    },
+    login: function(){
+      window.location = '/login/google-oauth2/';
+    },
+    logout: function(){
+      window.location = '/logout/';
     }
   }
 });
