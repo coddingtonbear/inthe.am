@@ -80,6 +80,12 @@ function program1(depth0,data) {
   options = {hash:{},inverse:self.noop,fn:self.program(10, program10, data),contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   stack2 = ((stack1 = helpers['link-to'] || depth0['link-to']),stack1 ? stack1.call(depth0, "mobileTasks", options) : helperMissing.call(depth0, "link-to", "mobileTasks", options));
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
+  data.buffer.push("\n                </li>\n                <li class=\"desktop-only\">\n                    ");
+  hashTypes = {};
+  hashContexts = {};
+  options = {hash:{},inverse:self.noop,fn:self.program(10, program10, data),contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  stack2 = ((stack1 = helpers['link-to'] || depth0['link-to']),stack1 ? stack1.call(depth0, "tasks", options) : helperMissing.call(depth0, "link-to", "tasks", options));
+  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
   data.buffer.push("\n                </li>\n                <li>\n                    <a href=\"#\" ");
   hashTypes = {};
   hashContexts = {};
@@ -88,13 +94,7 @@ function program1(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "refresh", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("><i class=\"fa fa-refresh\"></i></a>\n                </li>\n                <li>\n                    ");
-  hashTypes = {};
-  hashContexts = {};
-  options = {hash:{},inverse:self.noop,fn:self.program(12, program12, data),contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  stack2 = ((stack1 = helpers['link-to'] || depth0['link-to']),stack1 ? stack1.call(depth0, "tasks", options) : helperMissing.call(depth0, "link-to", "tasks", options));
-  if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\n                </li>\n            </ul>\n        </section>\n    ");
+  data.buffer.push("><i class=\"fa fa-refresh\"></i></a>\n                </li>\n            </ul>\n        </section>\n    ");
   return buffer;
   }
 function program2(depth0,data) {
@@ -129,12 +129,6 @@ function program10(depth0,data) {
 
 function program12(depth0,data) {
   
-  
-  data.buffer.push("Pending");
-  }
-
-function program14(depth0,data) {
-  
   var buffer = '', hashTypes, hashContexts;
   data.buffer.push("\n        <section class=\"top-bar-section\">\n            <ul class=\"left\">\n                <li>\n                    <a href=\"#\" ");
   hashTypes = {};
@@ -151,7 +145,7 @@ function program14(depth0,data) {
   data.buffer.push(">Inthe.AM</a></h1>\n        </li>\n    </ul>\n\n    ");
   hashTypes = {};
   hashContexts = {};
-  stack1 = helpers['if'].call(depth0, "controller.user.name", {hash:{},inverse:self.program(14, program14, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack1 = helpers['if'].call(depth0, "controller.user.name", {hash:{},inverse:self.program(12, program12, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\n</nav>\n");
   hashTypes = {};
