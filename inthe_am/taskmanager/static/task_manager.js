@@ -985,7 +985,7 @@ var route = Ember.Route.extend({
     if (tasks.get('length') === 0) {
       this.transitionTo('getting_started');
     } else if (transition.targetName == "tasks.index") {
-      if($(document).width() > 350) {
+      if($(document).width() > 700) {
         this.transitionTo('task', tasks.get('firstObject'));
       } else {
         if (window.navigator.standalone) {
