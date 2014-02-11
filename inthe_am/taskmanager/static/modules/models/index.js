@@ -1,7 +1,7 @@
 
 App.User = require("./user.js");
 App.Task = require("./task.js");
-App.Activitylog = require("./activityLog.js");
+App.Activitylog = require("./activitylog.js");
 
 App.DirectTransform = DS.Transform.extend({
   serialize: function(value) {
