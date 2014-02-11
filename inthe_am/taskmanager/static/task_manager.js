@@ -80,6 +80,8 @@ var controller = Ember.Controller.extend({
       var statusUpdater = new EventSource(this.get('urls.status_feed'));
       this.bindStatusActions(statusUpdater);
       this.set('statusUpdater', statusUpdater);
+    } else {
+      $('#refresh-link').show();
     }
   },
   bindStatusActions: function(updater) {

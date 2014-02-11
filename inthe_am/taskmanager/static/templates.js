@@ -90,7 +90,7 @@ function program1(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "create_task", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("><i class=\"fa fa-pencil-square-o\"></i></a>\n                </li>\n                <li>\n                    <a href=\"#\" ");
+  data.buffer.push("><i class=\"fa fa-pencil-square-o\">New</i></a>\n                </li>\n                <li id=\"refresh-link\">\n                    <a href=\"#\" ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "refresh", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
