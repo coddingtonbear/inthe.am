@@ -13,6 +13,7 @@ var controller = Ember.Controller.extend({
     status_feed: '/status/',
     sms_url: null,
   },
+  raven_dsn: 'http://5392633065104fbd83f3e5d0c1ccce4f@sentry.adamcoddington.net/3',
   update_user_info: function() {
     this.set(
       'user',
@@ -26,18 +27,48 @@ var controller = Ember.Controller.extend({
         ).responseText
       )
     );
+    if(this.get('user').logged_in){
+      Raven.setUser({
+        email: this.get('user').email,
+        id: this.get('user').uid,
+        username: this.get('user').username
+      });
+    } else {
+      Raven.setUser();
+    }
     this.set('urls.sms_url', this.get('user').sms_url);
+  },
+  reportError: function(error) {
+    Raven.captureException(error);
   },
   init: function(){
     var self = this;
+
+    // Set up error reporting
+    Raven.config(
+      this.raven_dsn,
+      {
+        whitelistUrls: [
+          /inthe\.am/,
+          /127\.0\.0\.1/
+        ]
+      }
+    ).install();
+    Ember.onerror = this.get('reportError');
+    Ember.RSVP.configure('onerror', this.get('reportError'));
+    window.onerror = this.get('reportError');
+
+    // Fetch user information
     this.update_user_info();
 
+    // Ensure that we always add the CSRF token
     $.ajaxSetup({
       headers: {
         'X-CSRFToken': this.getCookie('csrftoken')
       }
     });
 
+    // Set up the event stream
     if(EventSource) {
       var statusUpdater = new EventSource(this.get('urls.status_feed'));
       this.bindStatusActions(statusUpdater);

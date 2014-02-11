@@ -1,5 +1,8 @@
 var route = Ember.Route.extend({
   actions: {
+    'error': function(error) {
+      this.controllerFor('application').reportError(error);
+    },
     'create_task': function() {
       this.controllerFor('create_task').set(
         'model',

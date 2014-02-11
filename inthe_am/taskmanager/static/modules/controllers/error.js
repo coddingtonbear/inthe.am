@@ -4,7 +4,7 @@ var controller = Ember.ObjectController.extend({
     var self = this;
     Ember.run.next(self, function(){
       var url = self.get('controllers.application').urls.about;
-      //window.location = url;
+      window.location = url;
     });
   }
 });
