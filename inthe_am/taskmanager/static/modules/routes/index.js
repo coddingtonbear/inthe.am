@@ -13,3 +13,4 @@ App.CompletedTaskRoute = require("./completedTask");
 App.ActivityLogRoute = require("./activitylog");
 App.ApplicationRoute = require("./application");
 App.AddToHomeScreenRoute = require("./addToHomeScreen");
+App.ErrorRoute = require("./error");
