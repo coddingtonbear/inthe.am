@@ -2,13 +2,17 @@ from tastypie.api import Api
 
 from django.conf.urls import include, patterns, url
 
-from .api import UserResource, TaskResource, CompletedTaskResource
+from .api import (
+    UserResource, TaskResource, CompletedTaskResource,
+    ActivityLogResource
+)
 from .views import home, Status
 
 api = Api(api_name='v1')
 api.register(UserResource())
 api.register(TaskResource())
 api.register(CompletedTaskResource())
+api.register(ActivityLogResource())
 
 
 urlpatterns = patterns('inthe_am.taskmanager.views',

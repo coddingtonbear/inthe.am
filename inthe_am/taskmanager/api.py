@@ -45,6 +45,16 @@ class UserAuthorization(authorization.Authorization):
         return bundle.obj == bundle.request.user
 
 
+class TaskStoreAuthorization(authorization.Authorization):
+    def read_list(self, object_list, bundle):
+        return object_list.filter(
+            store__user=bundle.request.user
+        )
+
+    def read_detail(self, object_list, bundle):
+        return bundle.obj.store.user == bundle.request.user
+
+
 class UserResource(resources.ModelResource):
     def prepend_urls(self):
         return [
@@ -812,3 +822,15 @@ class CompletedTaskResource(TaskResource):
         ]
         limit = 100
         max_limit = 400
+
+
+class ActivityLogResource(resources.ModelResource):
+    class Meta:
+        queryset = models.TaskStoreActivityLog.objects.all()
+        authorization = TaskStoreAuthorization()
+        list_allowed_methods = ['get']
+        detail_allowed_methods = ['get']
+        authentication = authentication.MultiAuthentication(
+            authentication.ApiKeyAuthentication(),
+            authentication.SessionAuthentication(),
+        )
