@@ -1,7 +1,7 @@
-{% if preop %}[PRE-OPERATION] {% endif %}{{ message }}
+{% if preop %}[PRE-OPERATION] {% endif %}{{ message|safe }}
 
-* [message]: {{ message }}
-* [function]: {{ function }}
-* [args]: {{ args }}
-* [kwargs]: {{ kwargs }}
+* [message]: {{ message|safe }}
+* [function]: {{ function|safe }}
+* [args]: {{ args|safe }}
+* [kwargs]: {{ kwargs|safe }}
 * [pre_operation]: {% if preop %}True{% else %}False{% endif %}
