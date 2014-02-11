@@ -80,6 +80,10 @@ div.row {
   float: left;
   padding-bottom: 45px;
 
+  a {
+    color: inherit;
+  }
+
   .task {
     &.active {
       background-color: #303030;
