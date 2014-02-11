@@ -227,6 +227,11 @@ div.alert-box.error {
   button {
     padding: 10px;
   }
+  div.row.standalone {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
 
   // Hide task list by default
   #list {
@@ -251,6 +256,13 @@ div.alert-box.error {
     button#show-task-list {
       display: inline-block;
     }
+  }
+  td {
+    word-break: break-all;
+  }
+  pre {
+    white-space: pre-line;
+    word-break: break-all;
   }
   .reveal-modal {
     width: 100%;
