@@ -1,5 +1,6 @@
 import datetime
 import json
+import hashlib
 import logging
 import os
 import subprocess
@@ -11,6 +12,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.template.loader import render_to_string
+from django.utils.timezone import now
 from dulwich.repo import Repo
 from tastypie.models import create_api_key, ApiKey
 
@@ -363,6 +365,52 @@ class TaskStore(models.Model):
 
         self.save()
         self.create_git_checkpoint("Local store created")
+
+    def _log_entry(self, message, error, *parameters):
+        message_hash = hashlib.md5(message % parameters).hexdigest()
+        instance, created = TaskStoreActivityLog.objects.get_or_create(
+            store=self,
+            md5hash=message_hash,
+            defaults={
+                'error': error,
+                'message': message % parameters,
+                'count': 0,
+            }
+        )
+        instance.count = instance.count + 1
+        instance.last_seen = now()
+        instance.save()
+        return instance
+
+    def log_message(self, message, *parameters):
+        self._log_entry(
+            message,
+            False,
+            *parameters
+        )
+
+    def log_error(self, message, *parameters):
+        self._log_entry(
+            message,
+            True,
+            *parameters
+        )
+
+
+class TaskStoreActivityLog(models.Model):
+    store = models.ForeignKey(TaskStore, related_name='log_entries')
+    md5hash = models.CharField(max_length=32)
+    last_seen = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    error = models.BooleanField(default=False)
+    message = models.TextField()
+    count = models.IntegerField(default=0)
+
+    def __unicode__(self):
+        return self.message.replace('\n', ' ')[0:50]
+
+    class Meta:
+        unique_together = ('store', 'md5hash', )
 
 
 class Metadata(dict):
