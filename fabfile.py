@@ -21,6 +21,7 @@ def deploy():
     local('git push origin master')
     with cd('/var/www/twweb'):
         run('git pull')
+        run('grunt ember_handlebars sass browserify')
         virtualenv('pip install -r /var/www/twweb/requirements.txt')
         virtualenv('python manage.py collectstatic --noinput', user='www-data')
         virtualenv('python manage.py migrate', user='www-data')
