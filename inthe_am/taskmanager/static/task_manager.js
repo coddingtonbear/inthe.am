@@ -898,6 +898,7 @@ App.IndexRoute = Ember.Route.extend({
 });
 App.TaskRoute = require("./task");
 App.TasksRoute = require("./tasks");
+App.TasksIndexRoute = require("./tasks");
 App.MobileTasksRoute = require("./mobileTasks");
 App.CompletedRoute = require("./completed");
 App.CompletedTaskRoute = require("./completedTask");
@@ -967,7 +968,11 @@ var route = Ember.Route.extend({
     if (tasks.get('length') === 0) {
       this.transitionTo('getting_started');
     } else if (transition.targetName == "tasks.index") {
-      this.transitionTo('task', tasks.get('firstObject'));
+      if($(document).width() > 350) {
+        this.transitionTo('task', tasks.get('firstObject'));
+      } else {
+        this.transitionTo('mobileTasks');
+      }
     }
   }
 });

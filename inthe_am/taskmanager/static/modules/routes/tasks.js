@@ -6,7 +6,11 @@ var route = Ember.Route.extend({
     if (tasks.get('length') === 0) {
       this.transitionTo('getting_started');
     } else if (transition.targetName == "tasks.index") {
-      this.transitionTo('task', tasks.get('firstObject'));
+      if($(document).width() > 350) {
+        this.transitionTo('task', tasks.get('firstObject'));
+      } else {
+        this.transitionTo('mobileTasks');
+      }
     }
   }
 });
