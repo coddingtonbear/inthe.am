@@ -189,6 +189,9 @@ div.alert-box.error {
 
 @media screen and (max-width: 700px) {
   // Hide text content of buttons
+  html, body {
+    overflow: scroll;
+  }
   nav, #task-details {
     i.fa {
       font-size: 0px;
