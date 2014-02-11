@@ -83,6 +83,10 @@ var controller = Ember.Controller.extend({
     } else {
       $('#refresh-link').show();
     }
+
+    $(window).on('swipeleft', function(event){
+      self.transitionToRoute('tasks');
+    });
   },
   bindStatusActions: function(updater) {
       for (var key in this.get('statusActions')) {
