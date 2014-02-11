@@ -59,6 +59,7 @@ nav {
 }
 
 div.row {
+  -webkit-overflow-scrolling: touch;
 
   &.full-width {
     width: 100%;
@@ -91,7 +92,6 @@ div.row {
   vertical-align: top;
   height: 100%;
   overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
   float: left;
   padding-bottom: 45px;
@@ -141,7 +141,6 @@ div.row {
 #task-details {
   overflow-x: hidden;
   overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
   height: 100%;
   padding-left: 40px;
   padding-bottom: 45px;
