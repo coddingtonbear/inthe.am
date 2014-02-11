@@ -67,6 +67,10 @@ div.row {
     ul, ol {
       margin-left: 50px;
     }
+
+    &.add-to-home-screen {
+      text-align: center;
+    }
   }
 }
 

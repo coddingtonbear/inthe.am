@@ -11,3 +11,4 @@ App.MobileTasksRoute = require("./mobileTasks");
 App.CompletedRoute = require("./completed");
 App.CompletedTaskRoute = require("./completedTask");
 App.ApplicationRoute = require("./application");
+App.AddToHomeScreenRoute = require("./addToHomeScreen");

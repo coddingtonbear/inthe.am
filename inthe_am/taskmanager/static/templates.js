@@ -11,6 +11,16 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   
 });
 
+this["Ember"]["TEMPLATES"]["addToHomeScreen"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  
+
+
+  data.buffer.push("<div class=\"row standalone add-to-home-screen\">\n    <h1>Install Inthe.AM<br />on your device</h1>\n    <p>\n        For the best experience, install Inthe.AM\n        on your device by adding this to your home screen.\n    </p>\n    <p class=\"input-note\">\n        Tap the icon below to \"Add to Home Screen\".\n    </p>\n    <p>\n        <i class=\"fa fa-arrow-down\"></i>\n    </p>\n</div>\n");
+  
+});
+
 this["Ember"]["TEMPLATES"]["api_access"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};

@@ -697,7 +697,7 @@ require("./views");
 require("./helpers");
 require("./fields");
 
-},{"./app":1,"./controllers":9,"./fields":16,"./helpers":18,"./models":20,"./routes":27,"./views":34}],20:[function(require,module,exports){
+},{"./app":1,"./controllers":9,"./fields":16,"./helpers":18,"./models":20,"./routes":28,"./views":35}],20:[function(require,module,exports){
 
 App.User = require("./user.js");
 App.Task = require("./task.js");
@@ -830,6 +830,7 @@ module.exports = model;
 App.Router.map(function(){
   this.route("login", {path: "/login"});
   this.route("about", {path: "/about"});
+  this.resource("addToHomeScreen", {path: "/add-to-home-screen"});
   this.resource("mobileTasks", {path: "/mobile-tasks"});
   this.resource("tasks", function(){
     this.resource("task", {path: "/:uuid"});
@@ -850,6 +851,17 @@ App.Router.reopen({
 });
 
 },{}],24:[function(require,module,exports){
+var route = Ember.Route.extend({
+  afterModel: function(tasks, transition) {
+    if (window.navigator.standalone) {
+      this.transitionTo('mobileTasks');
+    }
+  }
+});
+
+module.exports = route;
+
+},{}],25:[function(require,module,exports){
 var route = Ember.Route.extend({
   actions: {
     'create_task': function() {
@@ -875,7 +887,7 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(){
     return this.store.findQuery('task', {completed: 1, order_by: '-modified'});
@@ -884,7 +896,7 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(params) {
     return this.store.find('task', params.uuid);
@@ -893,7 +905,7 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 
 App.IndexRoute = Ember.Route.extend({
   renderTemplate: function() {
@@ -907,8 +919,9 @@ App.MobileTasksRoute = require("./mobileTasks");
 App.CompletedRoute = require("./completed");
 App.CompletedTaskRoute = require("./completedTask");
 App.ApplicationRoute = require("./application");
+App.AddToHomeScreenRoute = require("./addToHomeScreen");
 
-},{"./application":24,"./completed":25,"./completedTask":26,"./mobileTasks":28,"./task":29,"./tasks":30}],28:[function(require,module,exports){
+},{"./addToHomeScreen":24,"./application":25,"./completed":26,"./completedTask":27,"./mobileTasks":29,"./task":30,"./tasks":31}],29:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function() {
     return this.store.find('task');
@@ -917,7 +930,7 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function(params) {
      return this.store.find('task', params.uuid);
@@ -963,7 +976,7 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 var route = Ember.Route.extend({
   model: function() {
     return this.store.find('task');
@@ -975,7 +988,11 @@ var route = Ember.Route.extend({
       if($(document).width() > 350) {
         this.transitionTo('task', tasks.get('firstObject'));
       } else {
-        this.transitionTo('mobileTasks');
+        if (window.navigator.standalone) {
+          this.transitionTo('mobileTasks');
+        } else {
+          this.transitionTo('addToHomeScreen');
+        }
       }
     }
   }
@@ -983,13 +1000,13 @@ var route = Ember.Route.extend({
 
 module.exports = route;
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var view = Ember.View.extend({
 });
 
 module.exports = view;
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var view = Ember.View.extend({
   templateName: 'tasks',
   name: 'completed'
@@ -997,7 +1014,7 @@ var view = Ember.View.extend({
 
 module.exports = view;
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 var view = Ember.View.extend({
   templateName: 'task',
   name: 'completedTask'
@@ -1005,14 +1022,14 @@ var view = Ember.View.extend({
 
 module.exports = view;
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 
 App.CompletedView = require("./completed");
 App.CompletedTaskView = require("./completedTask");
 App.RefreshView = require("./refresh");
 App.ApplicationView = require("./application");
 
-},{"./application":31,"./completed":32,"./completedTask":33,"./refresh":35}],35:[function(require,module,exports){
+},{"./application":32,"./completed":33,"./completedTask":34,"./refresh":36}],36:[function(require,module,exports){
 var view = Ember.View.extend({
   didInsertElement: function(){
     this.controller.transitionToRoute('tasks');

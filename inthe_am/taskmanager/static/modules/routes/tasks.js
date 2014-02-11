@@ -9,7 +9,11 @@ var route = Ember.Route.extend({
       if($(document).width() > 350) {
         this.transitionTo('task', tasks.get('firstObject'));
       } else {
-        this.transitionTo('mobileTasks');
+        if (window.navigator.standalone) {
+          this.transitionTo('mobileTasks');
+        } else {
+          this.transitionTo('addToHomeScreen');
+        }
       }
     }
   }
