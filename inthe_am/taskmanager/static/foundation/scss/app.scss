@@ -242,9 +242,6 @@ div.alert-box.error {
   }
   nav {
     .top-bar-section {
-      a {
-        padding: 0px 5px !important;
-      }
       li.desktop-only {
         display: none;
       }
@@ -262,5 +259,22 @@ div.alert-box.error {
     top: 0px;
     margin: 0px;
     padding: 5px;
+  }
+}
+
+
+@media screen and (max-width: 550px) {
+  nav {
+    .top-bar-section {
+      a {
+        padding: 0px 5px !important;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .top-bar .name h1 {
+    font-size: 0.7rem;
   }
 }
