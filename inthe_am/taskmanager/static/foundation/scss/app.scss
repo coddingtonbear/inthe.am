@@ -199,6 +199,9 @@ div.alert-box.error {
       }
     }
   }
+  .row .row {
+    width: 100%;
+  }
   // Make buttons a little less padding-filled
   button {
     padding: 10px;
