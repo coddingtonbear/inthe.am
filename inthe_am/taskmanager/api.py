@@ -45,6 +45,16 @@ class UserAuthorization(authorization.Authorization):
         return bundle.obj == bundle.request.user
 
 
+class TaskStoreAuthorization(authorization.Authorization):
+    def read_list(self, object_list, bundle):
+        return object_list.filter(
+            store__user=bundle.request.user
+        )
+
+    def read_detail(self, object_list, bundle):
+        return bundle.obj.store.user == bundle.request.user
+
+
 class UserResource(resources.ModelResource):
     def prepend_urls(self):
         return [
@@ -515,11 +525,13 @@ class TaskResource(resources.Resource):
         store = models.TaskStore.get_for_user(user)
 
         if not store.twilio_auth_token:
-            logger.warning(
+            log_args = (
                 "Incoming SMS for %s, but no auth token specified.",
                 user,
                 user,
             )
+            logger.warning(*log_args)
+            store.log_error(*log_args)
             return HttpResponse(status=404)
         if store.sms_whitelist:
             incoming_number = re.sub('[^0-9]', '', request.POST['From'])
@@ -528,11 +540,15 @@ class TaskResource(resources.Resource):
                 for n in store.sms_whitelist.split('\n')
             ]
             if incoming_number not in valid_numbers:
-                logger.warning(
+                log_args = (
                     "Incoming SMS for %s, but phone number %s is not "
                     "in the whitelist.",
                     user,
                     incoming_number,
+                )
+                store.log_error(*log_args)
+                logger.warning(
+                    *log_args,
                     extra={
                         'data': {
                             'incoming_number': incoming_number,
@@ -546,18 +562,22 @@ class TaskResource(resources.Resource):
             url = request.build_absolute_uri()
             signature = request.META['HTTP_X_TWILIO_SIGNATURE']
         except (AttributeError, KeyError) as e:
-            logger.warning(
+            log_args = (
                 "Incoming SMS for %s, but error encountered while "
                 "attempting to build request validator: %s.",
                 user,
                 e,
             )
+            logger.warning(*log_args)
+            store.log_error(*log_args)
             return HttpResponseForbidden()
         if not validator.validate(url, request.POST, signature):
-            logger.warning(
+            log_args = (
                 "Incoming SMS for %s, but validator rejected message.",
                 user,
             )
+            logger.warning(*log_args)
+            store.log_error(*log_args)
             return HttpResponseForbidden()
 
         with git_checkpoint(store, "Incoming SMS", sync=True):
@@ -567,19 +587,23 @@ class TaskResource(resources.Resource):
 
             if not body.lower().startswith('add'):
                 r.sms("Bad Request: Unknown command.")
-                logger.warning(
+                log_args = (
                     "Incoming SMS from %s had no recognized command: '%s'" % (
                         from_,
                         body,
-                    )
+                    ),
                 )
+                logger.warning(*log_args)
+                store.log_error(*log_args)
             elif not task_info:
-                logger.warning(
+                log_args = (
                     "Incoming SMS from %s had no content." % (
                         from_,
                         body,
-                    )
+                    ),
                 )
+                logger.warning(*log_args)
+                store.log_error(*log_args)
                 r.sms("Bad Request: Empty task.")
             else:
                 task_args = ['add'] + shlex.split(task_info)
@@ -587,13 +611,15 @@ class TaskResource(resources.Resource):
                 stdout, stderr = result
                 r.sms("Added.")
 
-                logger.info(
+                log_args = (
                     "Added task from %s; message '%s'; response: '%s'" % (
                         from_,
                         body,
                         stdout,
-                    )
+                    ),
                 )
+                logger.info(*log_args)
+                store.log_message(*log_args)
 
         return HttpResponse(str(r), content_type='application/xml')
 
@@ -602,6 +628,11 @@ class TaskResource(resources.Resource):
         try:
             store.autoconfigure_taskd()
         except Exception as e:
+            err_message = (
+                "Error encountered while attempting to autoconfigure."
+            )
+            logger.exception(err_message)
+            store.log_error(err_message)
             return HttpResponse(
                 json.dumps({
                     'error': str(e)
@@ -730,20 +761,25 @@ class TaskResource(resources.Resource):
     def obj_delete_list(self, bundle, store, **kwargs):
         raise exceptions.BadRequest()
 
-    def dispatch(self, *args, **kwargs):
+    def dispatch(self, request_type, request, *args, **kwargs):
         try:
-            return super(TaskResource, self).dispatch(*args, **kwargs)
+            return super(TaskResource, self).dispatch(
+                request_type, request, *args, **kwargs
+            )
         except LockTimeout:
+            message = (
+                'Your task list is currently locked by another client.'
+                'If this error persists, you may try ',
+                'clearing the lockfile by sending a DELETE request '
+                'to http://inthe.am/api/v1/task/lock/. '
+                'Please refer to the API documentation for details.'
+            )
+            store = models.TaskStore.get_for_user(request.user)
+            store.log_error(message)
             return HttpResponse(
                 json.dumps(
                     {
-                        'error_message': (
-                            'Your task list is currently locked by another client.'
-                            'If this error persists, you may try ',
-                            'clearing the lockfile by sending a DELETE request '
-                            'to http://inthe.am/api/v1/task/lock/. '
-                            'Please refer to the API documentation for details.'
-                        )
+                        'error_message': message
                     }
                 ),
                 status=409,
@@ -809,6 +845,28 @@ class CompletedTaskResource(TaskResource):
             'urgency',
             'uuid',
             'wait',
+        ]
+        limit = 100
+        max_limit = 400
+
+
+class ActivityLogResource(resources.ModelResource):
+    class Meta:
+        resource_name = 'activitylog'
+        queryset = models.TaskStoreActivityLog.objects.order_by('-last_seen')
+        authorization = TaskStoreAuthorization()
+        list_allowed_methods = ['get']
+        detail_allowed_methods = ['get']
+        authentication = authentication.MultiAuthentication(
+            authentication.ApiKeyAuthentication(),
+            authentication.SessionAuthentication(),
+        )
+        filter_fields = [
+            'last_seen',
+            'created',
+            'error',
+            'message',
+            'count'
         ]
         limit = 100
         max_limit = 400

@@ -18,3 +18,9 @@ Ember.Handlebars.helper('calendar', function(date, options) {
     return new Handlebars.SafeString('<span class="calendar date" title="' + moment(date).format('LLLL') + '">' + moment(date).calendar() + "</span>");
   }
 });
+
+Ember.Handlebars.helper('fromnow', function(date, options) {
+  if (date) {
+    return new Handlebars.SafeString('<span class="calendar date" title="' + moment(date).format('LLLL') + '">' + moment(date).fromNow() + "</span>");
+  }
+});

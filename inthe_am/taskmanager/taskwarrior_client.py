@@ -9,6 +9,14 @@ from taskw import TaskWarriorShellout
 logger = logging.getLogger(__name__)
 
 
+class TaskwarriorError(Exception):
+    def __init__(self, stderr, stdout, code):
+        self.stderr = stderr.strip()
+        self.stdout = stdout.strip()
+        self.code = code
+        super(TaskwarriorError, self).__init__(self.stderr)
+
+
 class TaskwarriorClient(TaskWarriorShellout):
     ACCEPTABLE_PROPERTIES = [
         'priority',
@@ -85,4 +93,5 @@ class TaskwarriorClient(TaskWarriorShellout):
                     }
                 }
             )
+            raise TaskwarriorError(stderr, stdout, proc.returncode)
         return stdout, stderr

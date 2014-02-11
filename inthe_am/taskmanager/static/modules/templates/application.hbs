@@ -18,6 +18,9 @@
                 <li class="desktop-only">
                     {{#link-to "api_access"}}<i class="fa fa-gears">API</i>{{/link-to}}
                 </li>
+                <li class="desktop-only">
+                    {{#link-to "activityLog"}}<i class="fa fa-list">Log</i>{{/link-to}}
+                </li>
                 <li>
                     {{#link-to "configure"}}<i class="fa fa-wrench">Settings</i>{{/link-to}}
                 </li>
@@ -29,10 +32,10 @@
             <!-- Left Nav Section -->
             <ul class="left">
                 <li class="mobile-only">
-                    {{#link-to "mobileTasks"}}<i class="fa fa-list-ul">Tasks</i>{{/link-to}}
+                    {{#link-to "mobileTasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
                 <li class="desktop-only">
-                    {{#link-to "tasks"}}<i class="fa fa-list-ul">Tasks</i>{{/link-to}}
+                    {{#link-to "tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
                 <li>
                     <a href="#" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>

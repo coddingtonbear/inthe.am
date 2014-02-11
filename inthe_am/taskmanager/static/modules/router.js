@@ -9,6 +9,7 @@ App.Router.map(function(){
   this.resource("completed", function(){
     this.resource("completedTask", {path: "/:uuid"});
   });
+  this.resource("activityLog", {path: "/activity-log"});
   this.route("unconfigurable", {path: "/no-tasks"});
   this.route("api_access", {path: "/api-access"});
   this.route("synchronization", {path: "/synchronization"});
