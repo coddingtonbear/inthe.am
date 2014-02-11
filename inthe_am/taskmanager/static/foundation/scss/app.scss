@@ -51,6 +51,13 @@ nav {
   }
 }
 
+#footer {
+  color: #888888;
+  font-size: 0.75rem;
+  text-align: center;
+  padding-bottom: 50px;
+}
+
 div.row {
 
   &.full-width {
@@ -191,11 +198,8 @@ div.alert-box.error {
   border-color: #AA0000;
 }
 
-@media screen and (max-width: 700px) {
-  // Hide text content of buttons
-  html, body {
-    overflow: scroll;
-  }
+
+@media screen and (max-width: 800px) {
   nav, #task-details {
     i.fa {
       font-size: 0px;
@@ -209,6 +213,13 @@ div.alert-box.error {
         font-size: 15px;
       }
     }
+  }
+}
+
+@media screen and (max-width: 700px) {
+  // Hide text content of buttons
+  html, body {
+    overflow: scroll;
   }
   .row .row {
     width: 100%;
