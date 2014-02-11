@@ -1,6 +1,8 @@
 var route = Ember.Route.extend({
   afterModel: function(tasks, transition) {
-    if (window.navigator.standalone) {
+    if($(document).width() > 700) {
+      this.transitionTo('about');
+    } else if (window.navigator.standalone) {
       this.transitionTo('mobileTasks');
     }
   }
