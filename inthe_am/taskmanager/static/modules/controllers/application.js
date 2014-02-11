@@ -45,7 +45,7 @@ var controller = Ember.Controller.extend({
       $('#refresh-link').show();
     }
 
-    $(window).on('swipeleft', function(event){
+    $(window).on('swiperight', function(event){
       self.transitionToRoute('tasks');
     });
   },
