@@ -1,4 +1,40 @@
-<div class="row task-content-header">
+<div class="row" id="task-action-bar">
+    <div class="medium-12 columns">
+        {{#if editable}}
+            <ul id="task-actions" class="inline-list">
+                <li>
+                    <a href="#" {{action "complete"}}>
+                        <i class="fa fa-check-circle-o">Mark Completed</i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" {{action "edit"}}>
+                        <i class="fa fa-pencil-square-o">Edit</i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" {{action "add_annotation"}}>
+                        <i class="fa fa-pencil">Add Annotation</i>
+                    </a>
+                </li>
+                {{#if start}}
+                    <li>
+                        <a href="#" {{action "stop"}}>
+                            <i class="fa fa-star-o">Stop</i>
+                        </a>
+                    </li>
+                {{else}}
+                    <li>
+                        <a href="#" {{action "start"}}>
+                            <i class="fa fa-star">Start</i>
+                        </a>
+                    </li>
+                {{/if}}
+            </ul>
+        {{/if}}
+    </div>
+</div>
+<div class="row" id="task-header">
     <div class="medium-12 columns">
         <h1 class="title">
             {{description}}
@@ -13,30 +49,6 @@
                 <i class="fa fa-tag">{{this}}</i>
             {{/each}}
         </div>
-    </div>
-</div>
-<div class="row">
-    <div class="medium-12 columns">
-        {{#if editable}}
-            <button class="secondary-button" {{action "complete"}}>
-                <i class="fa fa-check-circle-o">Mark Completed</i>
-            </button>
-            <button class="secondary-button" {{action "edit"}}>
-                <i class="fa fa-pencil-square-o">Edit</i>
-            </button>
-            <button class="secondary-button" {{action "add_annotation"}}>
-                <i class="fa fa-pencil">Add Annotation</i>
-            </button>
-            {{#if start}}
-                <button class="secondary-button" {{action "stop"}}>
-                    <i class="fa fa-star-o">Stop</i>
-                </button>
-            {{else}}
-                <button class="secondary-button" {{action "start"}}>
-                    <i class="fa fa-star">Start</i>
-                </button>
-            {{/if}}
-        {{/if}}
     </div>
 </div>
 <div class="row task-content-body">

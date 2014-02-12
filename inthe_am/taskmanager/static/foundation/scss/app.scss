@@ -142,8 +142,12 @@ div.row {
   overflow-x: hidden;
   overflow-y: scroll;
   height: 100%;
-  padding-left: 40px;
   padding-bottom: 45px;
+
+  &>div {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
 
   div.tags {
     margin-bottom: 20px;
@@ -159,6 +163,45 @@ div.row {
     li {
       margin-bottom: 10px;
     }
+  }
+  #task-action-bar {
+    padding-left: 0px;
+    padding-right: 0px;
+
+    #task-actions {
+      list-style: none;
+      margin:0;
+      padding:0;
+      display: table;
+      width: 100%;
+
+      li {
+        background-color: #C0C0C0;
+        border-right: 1px solid #A0A0A0;
+        display: table-cell;
+        text-align: center;
+        float: none;
+
+        &:hover {
+          background-color: #B0B0B0;
+
+          a {
+            color: #F0F0F0;
+          }
+        }
+
+        a {
+          color: #303030;
+          font-size: 0.8rem;
+          line-height: 2rem;
+        }
+      }
+    }
+  }
+  #task-header {
+    background-color: #F9F9F9;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #F0F0F0;
   }
 
   table.details {
