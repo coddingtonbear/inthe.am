@@ -1,5 +1,5 @@
 var controller = Ember.Controller.extend({
-  needs: ['tasks'],
+  needs: ['tasks', 'activityLog'],
   user: null,
   urls: {
     about: '/about/',
@@ -110,6 +110,8 @@ var controller = Ember.Controller.extend({
       this.get('statusUpdater').close();
       var statusUpdater = new EventSource(this.get('urls.status_feed') + '?head=' + evt.data);
       this.bindStatusActions(statusUpdater);
+      this.get('controllers.activityLog').refresh();
+      this.get('controllers.tasks').refresh();
       this.set('statusUpdater', statusUpdater);
     }
   },

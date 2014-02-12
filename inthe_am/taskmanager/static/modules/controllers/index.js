@@ -1,5 +1,6 @@
 
 App.ApplicationController = require("./application");
+App.ActivityLogController = require("./activitylog");
 App.TaskController = require("./task");
 App.TasksController = require("./tasks");
 App.MobileTasksController = require("./mobileTasks");
