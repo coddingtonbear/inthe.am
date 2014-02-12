@@ -13,7 +13,7 @@ var controller = Ember.Controller.extend({
     status_feed: '/status/',
     sms_url: null,
   },
-  raven_dsn: 'http://5392633065104fbd83f3e5d0c1ccce4f@sentry.adamcoddington.net/3',
+  raven_dsn: 'http://9b0ea040d8414b2180548e304cac5018@sentry.adamcoddington.net/2',
   update_user_info: function() {
     this.set(
       'user',
