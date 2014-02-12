@@ -141,6 +141,7 @@ class UserResource(resources.ModelResource):
             'taskd.server': settings.TASKD_SERVER,
             'taskd.credentials': store.metadata['generated_taskd_credentials']
         })
+        store.log_message("Taskd settings reset to default.")
         return HttpResponse('OK')
 
     @git_managed("Configuring taskd server")
@@ -193,14 +194,19 @@ class UserResource(resources.ModelResource):
             taskd_data['taskd.trust'] = 'yes'
 
         # Write files from form to user directory
+        store.log_message("Taskd settings changed.")
         store.taskrc.update(taskd_data)
 
         return HttpResponse('OK')
 
     def twilio_integration(self, request, **kwargs):
+        if request.method != 'POST':
+            raise HttpResponseNotAllowed(request.method)
+
         ts = models.TaskStore.get_for_user(request.user)
         ts.twilio_auth_token = request.POST.get('twilio_auth_token', '')
         ts.sms_whitelist = request.POST.get('sms_whitelist', '')
+        ts.log_message("Twilio settings changed.")
         ts.save()
         return HttpResponse('OK')
 
@@ -246,6 +252,7 @@ class UserResource(resources.ModelResource):
             )
             results = ts.apply_extras()
             ts.save()
+            ts.log_message("Taskrc extras saved.")
             return HttpResponse(
                 json.dumps(
                     {
@@ -465,10 +472,14 @@ class TaskResource(resources.Resource):
         if request.method == 'DELETE':
             if os.path.exists(lockfile):
                 os.unlink(lockfile)
+                store.log_message("Lockfile deleted.")
                 return HttpResponse(
                     '',
                     status=200
                 )
+            store.log_error(
+                "Attempted to delete lockfile, but repository was not locked."
+            )
             return HttpResponse(
                 '',
                 status=404
@@ -491,6 +502,7 @@ class TaskResource(resources.Resource):
         if not request.method == 'POST':
             return HttpResponseNotAllowed(request.method)
         store.client.task_start(uuid=uuid)
+        store.log_message("Task %s started.", uuid)
         return HttpResponse(
             status=200
         )
@@ -501,6 +513,7 @@ class TaskResource(resources.Resource):
         if not request.method == 'POST':
             return HttpResponseNotAllowed(request.method)
         store.client.task_stop(uuid=uuid)
+        store.log_message("Task %s stopped.", uuid)
         return HttpResponse(
             status=200
         )
@@ -511,6 +524,7 @@ class TaskResource(resources.Resource):
         if not request.method == 'POST':
             return HttpResponseNotAllowed(request.method)
         store.client.task_delete(uuid=uuid)
+        store.log_message("Task %s deleted.", uuid)
         return HttpResponse(
             status=200
         )
@@ -588,7 +602,7 @@ class TaskResource(resources.Resource):
             if not body.lower().startswith('add'):
                 r.sms("Bad Request: Unknown command.")
                 log_args = (
-                    "Incoming SMS from %s had no recognized command: '%s'" % (
+                    "Incoming SMS from %s had no recognized command: '%s'." % (
                         from_,
                         body,
                     ),
@@ -612,7 +626,7 @@ class TaskResource(resources.Resource):
                 r.sms("Added.")
 
                 log_args = (
-                    "Added task from %s; message '%s'; response: '%s'" % (
+                    "Added task from %s; message '%s'; response: '%s'." % (
                         from_,
                         body,
                         stdout,
@@ -640,6 +654,7 @@ class TaskResource(resources.Resource):
                 status=500,
                 content_type='application/json',
             )
+        store.log_message("Taskstore autoconfiguration completed.")
         return HttpResponse(
             json.dumps({
                 'status': 'Successfully configured'
@@ -737,10 +752,12 @@ class TaskResource(resources.Resource):
     @requires_taskd_sync
     def obj_create(self, bundle, store, **kwargs):
         with git_checkpoint(store, "Creating Task"):
+            safe_json = Task.from_serialized(bundle.data).get_safe_json()
             bundle.obj = Task(
-                store.client.task_add(
-                    **Task.from_serialized(bundle.data).get_safe_json()
-                )
+                store.client.task_add(**safe_json)
+            )
+            store.log_message(
+                "New task created: %s.", safe_json
             )
             return bundle
 
@@ -755,6 +772,11 @@ class TaskResource(resources.Resource):
             serialized = Task.from_serialized(bundle.data).get_safe_json()
             serialized['uuid'] = kwargs['pk']
             store.client.task_update(serialized)
+            store.log_message(
+                "Task %s updated: %s.",
+                kwargs['pk'],
+                serialized
+            )
             bundle.obj = Task(store.client.get_task(uuid=kwargs['pk'])[1])
             return bundle
 
@@ -789,6 +811,7 @@ class TaskResource(resources.Resource):
     def obj_delete(self, bundle, store, **kwargs):
         with git_checkpoint(store, "Completing Task"):
             try:
+                store.log_message("Task %s completed.", kwargs['pk'])
                 store.client.task_done(uuid=kwargs['pk'])
                 return bundle
             except ValueError:
