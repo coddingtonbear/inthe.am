@@ -67,7 +67,6 @@ var controller = Ember.Controller.extend({
     ).install();
     Ember.onerror = this.get('reportError');
     Ember.RSVP.configure('onerror', this.get('reportError'));
-    window.onerror = this.get('reportError');
 
     // Fetch user information
     this.update_user_info();
