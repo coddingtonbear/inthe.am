@@ -19,6 +19,31 @@
     {% block scripts %}{% endblock %}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="//cdn.ravenjs.com/1.1.10/raven.min.js"></script>
+    <script type="text/javascript">
+      Raven.config(
+        'http://9b0ea040d8414b2180548e304cac5018@sentry.adamcoddington.net/2',
+        {
+          whitelistUrls: [
+            /inthe\.am/,
+            /127\.0\.0\.1/
+          ]
+        }
+      ).install();
+      function reportError(error) {
+        if (typeof(error) == 'object') {
+          if (error.stack) {
+            // this is a native JS error; yay!
+          } else if (error.statusText) {
+            error = new Error(error.status + " " + error.statusText);
+          } else {
+            error = new Error(JSON.stringify(error));
+          }
+        } else if (typeof(error) == 'string') {
+          error = new Error(error);
+        }
+        Raven.captureException(error);
+      }
+    </script>
     <script src="{% static "jquery.datetimepicker.js" %}"></script>
     <script src="{% static "jquery.mobile.custom.min.js" %}"></script>
     <script src="{% static "moment.min.js" %}"></script>

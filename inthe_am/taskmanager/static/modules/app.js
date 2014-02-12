@@ -27,3 +27,4 @@ Ember.View.reopen({
     this.initializeFoundation();
   }
 });
+

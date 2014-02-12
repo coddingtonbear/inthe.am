@@ -3,7 +3,7 @@ var route = Ember.Route.extend({
     this._super();
     var self = this;
     Ember.run.once(_, function(){
-      self.controllerFor('application').reportError(error);
+      reportError(error);
       Ember.run.next(_, function(){
         var url = self.controllerFor('application').urls.about;
         window.location = url;

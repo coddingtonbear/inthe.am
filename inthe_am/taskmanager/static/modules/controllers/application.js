@@ -13,7 +13,6 @@ var controller = Ember.Controller.extend({
     status_feed: '/status/',
     sms_url: null,
   },
-  raven_dsn: 'http://9b0ea040d8414b2180548e304cac5018@sentry.adamcoddington.net/2',
   update_user_info: function() {
     this.set(
       'user',
@@ -38,35 +37,12 @@ var controller = Ember.Controller.extend({
     }
     this.set('urls.sms_url', this.get('user').sms_url);
   },
-  reportError: function(error) {
-    if (typeof(error) == 'object') {
-      if (error.stack) {
-        // this is a native JS error; yay!
-      } else if (error.statusText) {
-        error = new Error(error.status + " " + error.statusText);
-      } else {
-        error = new Error(JSON.stringify(error));
-      }
-    } else if (typeof(error) == 'string') {
-      error = new Error(error);
-    }
-    Raven.captureException(error);
-  },
   init: function(){
     var self = this;
 
     // Set up error reporting
-    Raven.config(
-      this.raven_dsn,
-      {
-        whitelistUrls: [
-          /inthe\.am/,
-          /127\.0\.0\.1/
-        ]
-      }
-    ).install();
-    Ember.onerror = this.get('reportError');
-    Ember.RSVP.configure('onerror', this.get('reportError'));
+    Ember.onerror = reportError;
+    Ember.RSVP.configure('onerror', reportError);
 
     // Fetch user information
     this.update_user_info();
