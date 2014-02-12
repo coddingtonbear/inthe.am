@@ -2,6 +2,7 @@ import logging
 import re
 import time
 
+from django.conf import settings
 from django_sse.views import BaseSseView
 from django.template.response import TemplateResponse
 
@@ -78,5 +79,7 @@ def home(request):
     return TemplateResponse(
         request,
         'home.html',
-        {}
+        {
+            'DEBUG': settings.DEBUG,
+        }
     )
