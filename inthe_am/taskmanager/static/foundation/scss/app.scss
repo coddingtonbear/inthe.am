@@ -167,6 +167,7 @@ div.row {
   #task-action-bar {
     padding-left: 0px;
     padding-right: 0px;
+    margin-bottom: 25px;
 
     #task-actions {
       list-style: none;
@@ -200,8 +201,6 @@ div.row {
   }
   #task-header {
     background-color: #F9F9F9;
-    margin-bottom: 25px;
-    border-bottom: 1px solid #F0F0F0;
   }
 
   table.details {
@@ -265,6 +264,12 @@ div.alert-box.error {
   }
   .row .row {
     width: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .column, .columns {
+    padding-right: 0px;
+    padding-left: 0px;
   }
   // Make buttons a little less padding-filled
   button {
@@ -281,8 +286,13 @@ div.alert-box.error {
     display: none;
   }
   #task-details {
-    margin-left: 10px;
+    margin-left: 0px;
     padding-left: 0px;
+
+    &>div{
+      padding-left: 5px;
+      padding-right: 5px;
+    }
   }
   #mobile-list {
     width: 100%;
