@@ -56,7 +56,7 @@ var controller = Ember.Controller.extend({
     });
 
     // Set up the event stream
-    if(EventSource) {
+    if(window.EventSource) {
       var statusUpdater = new EventSource(this.get('urls.status_feed'));
       this.bindStatusActions(statusUpdater);
       this.set('statusUpdater', statusUpdater);
