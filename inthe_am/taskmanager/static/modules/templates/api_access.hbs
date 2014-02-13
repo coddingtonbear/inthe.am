@@ -13,18 +13,10 @@
     <table class="pure-table pure-table-horizontal">
         <tr>
             <th>
-                Username
-            </th>
-            <td>
-                {{ controllers.application.user.username }}
-            </td>
-        </tr>
-        <tr>
-            <th>
                 Api Key
             </th>
             <td>
-                {{ controllers.application.user.api_key }}
+                {{ controllers.application.user.username }}:{{ controllers.application.user.api_key }}
             </td>
         </tr>
     </table>
