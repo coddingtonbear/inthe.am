@@ -6,6 +6,7 @@ App.TasksController = require("./tasks");
 App.MobileTasksController = require("./mobileTasks");
 App.CompletedController = require("./completed");
 App.CompletedTaskController = require("./completedTask");
+App.AboutController = require("./about");
 App.ApiAccessController = require("./api_access");
 App.SynchronizationController = require("./synchronization");
 App.ConfigureController = require("./configure");
