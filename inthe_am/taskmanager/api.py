@@ -25,6 +25,7 @@ from django.http import (
     HttpResponseNotAllowed, HttpResponseNotFound,
     HttpResponseForbidden,
 )
+from django.utils.timezone import now
 
 from . import models
 from . import forms
@@ -99,6 +100,12 @@ class UserResource(resources.ModelResource):
                     self._meta.resource_name
                 ),
                 self.wrap_view('reset_taskd_configuration')
+            ),
+            url(
+                r"^(?P<resource_name>%s)/tos-accept/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('tos_accept')
             ),
             url(
                 r"^(?P<resource_name>%s)/twilio-integration/?$" % (
@@ -199,6 +206,17 @@ class UserResource(resources.ModelResource):
 
         return HttpResponse('OK')
 
+    def tos_accept(self, request, **kwargs):
+        if request.method != 'POST':
+            raise HttpResponseNotAllowed(request.method)
+
+        meta = models.UserMetadata.get_for_user(request.user)
+        meta.tos_version = request.POST['version']
+        meta.tos_accepted = now()
+        meta.save()
+
+        return HttpResponse('OK')
+
     def twilio_integration(self, request, **kwargs):
         if request.method != 'POST':
             raise HttpResponseNotAllowed(request.method)
@@ -268,6 +286,7 @@ class UserResource(resources.ModelResource):
     def account_status(self, request, **kwargs):
         if request.user.is_authenticated():
             store = models.TaskStore.get_for_user(request.user)
+            meta = models.UserMetadata.get_for_user(request.user)
             user_data = {
                 'logged_in': True,
                 'uid': request.user.pk,
@@ -286,6 +305,7 @@ class UserResource(resources.ModelResource):
                 'sms_whitelist': store.sms_whitelist,
                 'taskrc_extras': store.taskrc_extras,
                 'api_key': store.api_key.key,
+                'tos_up_to_date': meta.tos_up_to_date,
                 'sms_url': reverse(
                     'incoming_sms',
                     kwargs={
@@ -784,6 +804,19 @@ class TaskResource(resources.Resource):
         raise exceptions.BadRequest()
 
     def dispatch(self, request_type, request, *args, **kwargs):
+        metadata = models.UserMetadata.get_for_user(request.user)
+        if not metadata.tos_up_to_date:
+            return HttpResponse(
+                json.dumps(
+                    {
+                        'error_message': (
+                            'Please accept the terms of service at '
+                            'https://inthe.am/terms-of-use.'
+                        )
+                    }
+                ),
+                status=403
+            )
         try:
             return super(TaskResource, self).dispatch(
                 request_type, request, *args, **kwargs

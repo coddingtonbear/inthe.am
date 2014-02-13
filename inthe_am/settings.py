@@ -190,6 +190,8 @@ TASTYPIE_DATETIME_FORMATTING = 'rfc-2822'
 
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 
+TOS_VERSION = 1
+
 RAVEN_DSN = ''
 DATABASE_ENGINE = 'django.db.backends.sqlite3'
 DATABASE_NAME = os.path.join(BASE_DIR, 'db.sqlite3')

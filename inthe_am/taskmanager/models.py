@@ -424,6 +424,33 @@ class TaskStoreActivityLog(models.Model):
         unique_together = ('store', 'md5hash', )
 
 
+class UserMetadata(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name='metadata',
+        unique=True,
+    )
+    tos_version = models.IntegerField(default=0)
+    tos_accepted = models.DateTimeField(
+        default=None,
+        null=True,
+    )
+
+    @property
+    def tos_up_to_date(self):
+        return self.tos_version == settings.TOS_VERSION
+
+    @classmethod
+    def get_for_user(self, user):
+        meta, created = UserMetadata.objects.get_or_create(
+            user=user
+        )
+        return meta
+
+    def __unicode__(self):
+        return self.user.username
+
+
 class Metadata(dict):
     def __init__(self, store, path):
         self.path = path

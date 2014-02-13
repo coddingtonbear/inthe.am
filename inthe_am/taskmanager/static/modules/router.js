@@ -16,6 +16,7 @@ App.Router.map(function(){
   this.route("configure", {path: "/configure"});
   this.route("getting_started", {path: "/getting-started"});
   this.route("sms", {path: "/sms"});
+  this.route("termsOfService", {path: "/terms-of-service"});
 });
 
 App.Router.reopen({

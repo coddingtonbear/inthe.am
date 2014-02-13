@@ -10,6 +10,7 @@ var controller = Ember.Controller.extend({
     taskd_settings: '/api/v1/user/configure-taskd/',
     taskd_reset: '/api/v1/user/reset-taskd-configuration/',
     twilio_integration: '/api/v1/user/twilio-integration/',
+    tos_accept: '/api/v1/user/tos-accept/',
     status_feed: '/status/',
     sms_url: null,
   },

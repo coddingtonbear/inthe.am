@@ -2,6 +2,11 @@ var route = Ember.Route.extend({
   model: function() {
     return this.store.find('task');
   },
+  beforeModel: function(tasks, transition) {
+    if(!this.controllerFor('application').user.tos_up_to_date) {
+      this.transitionTo('termsOfService');
+    }
+  },
   afterModel: function(tasks, transition) {
     if (tasks.get('length') === 0) {
       this.transitionTo('getting_started');
