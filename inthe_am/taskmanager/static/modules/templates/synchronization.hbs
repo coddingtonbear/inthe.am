@@ -17,14 +17,6 @@
                 <a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a>
             </td>
         </tr>
-        <tr>
-            <th>
-                Authority Certificate
-            </th>
-            <td>
-                <a href="{{ unbound controllers.application.urls.ca_certificate }}">ca.cert.pem</a>
-            </td>
-        </tr>
     </table>
     
     <p>
@@ -35,7 +27,7 @@
     <pre>
         taskd.certificate=/path/to/<a href="{{ unbound controllers.application.urls.my_certificate }}">private.cert.pem</a>
         taskd.key=/path/to/<a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a>
-        taskd.ca=/path/to/<a href="{{ unbound controllers.application.urls.ca_certificate }}">ca.cert.pem</a>
+        taskd.trust=yes
         taskd.server={{ controllers.application.user.taskd_server }}
         taskd.credentials={{ controllers.application.user.taskd_credentials }}
     </pre>
