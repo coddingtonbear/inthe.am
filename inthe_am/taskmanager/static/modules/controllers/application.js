@@ -65,7 +65,9 @@ var controller = Ember.Controller.extend({
     }
 
     $(window).on('swiperight', function(event){
-      self.transitionToRoute('tasks');
+      if (self.get('user').logged_in) {
+        self.transitionToRoute('tasks');
+      }
     });
   },
   bindStatusActions: function(updater) {
