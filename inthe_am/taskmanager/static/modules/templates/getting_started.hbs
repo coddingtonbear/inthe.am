@@ -1,10 +1,17 @@
 <div class="row standalone">
     <h2>Let's get started</h2>
     <p>
-        You can 
-        {{#link-to "configure"}}follow the instructions{{/link-to}}
-        for syncing your local
-        taskwarrior client with inthe.am, or you can
-        add tasks directly.
+        <strong>Inthe.AM is designed to augment Taskwarrior, not to
+        replace it</strong>, so we recommend that you
+        {{#link-to "synchronization"}}configure Taskwarrior to
+        synchronize with Inthe.AM{{/link-to}}, but if you already
+        synchronize Taskwarrior with a taskd server,
+        {{#link-to "configure"}}you can configure Inthe.AM to synchronize
+        with the same <code>taskd</code> server{{/link-to}} so you have
+        multiple ways of accessing your task list.
+    </p>
+    <p>
+        After you've synchronized or created some tasks, you can see
+        them in your {{#link-to "tasks"}}task list{{/link-to}}.
     </p>
 </div>
