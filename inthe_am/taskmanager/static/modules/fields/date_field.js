@@ -26,6 +26,7 @@ var field = Ember.TextField.extend({
     }
   }.observes('value'),
   didInsertElement: function(){
+    this._super();
     if($(document).width() > 350) {
       this.$().datetimepicker({
         format: this.picker_format,
