@@ -757,6 +757,10 @@ class TaskResource(resources.Resource):
     @requires_taskd_sync
     def obj_create(self, bundle, store, **kwargs):
         with git_checkpoint(store, "Creating Task"):
+            if not bundle.data['description']:
+                raise exceptions.BadRequest(
+                    "You must specify a description for each task."
+                )
             safe_json = Task.from_serialized(bundle.data).get_safe_json()
             bundle.obj = Task(
                 store.client.task_add(**safe_json)
@@ -772,6 +776,10 @@ class TaskResource(resources.Resource):
             if bundle.data['uuid'] != kwargs['pk']:
                 raise exceptions.BadRequest(
                     "Changing the UUID of an existing task is not possible."
+                )
+            elif not bundle.data['description']:
+                raise exceptions.BadRequest(
+                    "You must specify a description for each task."
                 )
             bundle.data.pop('id', None)
             serialized = Task.from_serialized(bundle.data).get_safe_json()
