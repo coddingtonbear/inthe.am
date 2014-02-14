@@ -63,17 +63,11 @@ var controller = Ember.Controller.extend({
     } else {
       $('#refresh-link').show();
     }
-
-    $(window).on('swiperight', function(event){
-      if (self.get('user') && self.get('user').logged_in) {
-        self.transitionToRoute('tasks');
-      }
-    });
   },
   bindStatusActions: function(updater) {
-      for (var key in this.get('statusActions')) {
-        updater.addEventListener(key, this.get('statusActions')[key].bind(this));
-      }
+    for (var key in this.get('statusActions')) {
+      updater.addEventListener(key, this.get('statusActions')[key].bind(this));
+    }
   },
   statusActions: {
     'task_changed': function(evt) {
