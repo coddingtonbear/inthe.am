@@ -33,9 +33,11 @@ class TaskwarriorClient(TaskWarriorShellout):
         return False
 
     def _strip_unsafe_args(self, *args):
-        final_args = []
+        if not args:
+            return args
+        final_args = [args[0]]
         description_args = []
-        for raw_arg in args:
+        for raw_arg in args[1:]:
             arg = self._strip_unsafe_chars(raw_arg)
             if ':' in arg:
                 cmd, value = arg.split(':', 1)
