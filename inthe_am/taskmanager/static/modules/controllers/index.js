@@ -20,6 +20,7 @@ App.TermsOfServiceController = require("./termsOfService");
 App.IndexController = Ember.Controller.extend({
   needs: ["application"],
   init: function(){
+    this._super();
     var user = this.get('controllers.application').user;
     var configured = user.configured;
     var self = this;

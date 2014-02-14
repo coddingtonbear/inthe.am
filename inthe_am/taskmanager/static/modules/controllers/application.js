@@ -39,6 +39,7 @@ var controller = Ember.Controller.extend({
     this.set('urls.sms_url', this.get('user').sms_url);
   },
   init: function(){
+    this._super();
     var self = this;
 
     // Set up error reporting
