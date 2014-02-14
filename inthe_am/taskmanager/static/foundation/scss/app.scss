@@ -8,6 +8,9 @@ html, body {
 
   >.ember-view {
     height: 100%;
+    >.ember-view {
+      height: 100%;
+    }
   }
 }
 
@@ -74,7 +77,7 @@ div.row {
     overflow: hidden;
   }
   &.standalone {
-    overflow: scroll;
+    overflow: auto;
     height: 100%;
     padding: 0px 25px 100px 25px;
 
@@ -84,9 +87,6 @@ div.row {
 
     &.add-to-home-screen {
       text-align: center;
-    }
-    &::-webkit-scrollbar {
-      display: none;
     }
   }
 }
@@ -100,14 +100,11 @@ div.row {
   word-spacing: normal;
   vertical-align: top;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   float: left;
   padding-bottom: 45px;
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
   a {
     color: inherit;
   }
@@ -152,7 +149,7 @@ div.row {
 
 #task-details {
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 100%;
   padding-bottom: 45px;
 
@@ -160,10 +157,6 @@ div.row {
     padding-left: 25px;
     padding-right: 25px;
   }
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
   div.tags {
     margin-bottom: 20px;
   }
@@ -275,7 +268,7 @@ div.alert-box.error {
 @media screen and (max-width: 700px) {
   // Hide text content of buttons
   html, body {
-    overflow: scroll;
+    overflow: hidden;
   }
   #footer {
     display: none;
