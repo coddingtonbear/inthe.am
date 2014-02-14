@@ -32,168 +32,6 @@
     </pre>
     </code>
 
-    <h3>Endpoints</h3>
-
-    <h4>Pending Tasks</h4>
-
-    <table class="pure-table pure-table-horizontal">
-        <tr>
-            <th>
-                Task List
-            </th>
-            <td>
-                <code>https://inthe.am/api/v1/task/</code>
-            </td>
-        </tr>
-        <tr>
-            <th>
-                Task Detail
-            </th>
-            <td>
-                <code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/</code>
-            </td>
-        </tr>
-    </table>
-
-
-    <table class="pure-table pure-table-horizontal">
-        <thead>
-            <tr>
-                <th>Method</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>GET</td>
-                <td>Retrieve an existing task.</td>
-            </tr>
-            <tr>
-                <td>POST</td>
-                <td>
-                    Create a new task.<br />
-                    <em>This is used with only the 'Task List' endpoint</em>.
-                </td>
-            </tr>
-            <tr>
-                <td>PUT</td>
-                <td>
-                    Update an existing task.<br />
-                    <em>This is used with only the 'Task Detail' endpoint</em>.
-                </td>
-            </tr>
-            <tr>
-                <td>DELETE</td>
-                <td>
-                    Marks an existing task as completed.
-                    After ran, the task will only be listed from 'Completed Task' endpoints.<br />
-                    <em>This is used with only the 'Task Detail' endpoint</em>.
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h5>Special Task Actions</h5>
-
-    <table>
-        <thead>
-            <th>URL</th>
-            <th>Method</th>
-            <th>Description</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td><code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/delete/</code></td>
-                <td>POST</td>
-                <td>
-                    Marks an existing task as deleted.
-                    After ran, this task will not be listed from any endpoint.
-                </td>
-            </tr>
-            <tr>
-                <td><code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/start/</code></td>
-                <td>POST</td>
-                <td>
-                    Marks an existing task as started.
-                </td>
-            </tr>
-            <tr>
-                <td><code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/stop/</code></td>
-                <td>POST</td>
-                <td>
-                    Marks an existing task as stopped.
-                </td>
-            </tr>
-            <tr>
-                <td><code>https://inthe.am/api/v1/task/lock/</code></td>
-                <td>DELETE</td>
-                <td>
-                    Force-unlocks the task list.  This is a dangerous operation
-                    and could render your tasks inaccessible.
-                    <br /><br />
-                    Only a single task operation is allowed to occur on a
-                    user's repository at a time, and in order to prevent
-                    simultaneous actions a lock is used.  In very rare
-                    situations, problems may occur that cause a lock
-                    to not be released following an action.  Please be careful.
-                    <br />
-                    <ul>
-                        <li><b>200</b>: Unlocked successfully.</li>
-                        <li><b>404</b>: The task list is not currently locked.</li>
-                    <ul>
-                </td>
-            </tr>
-            <tr>
-                <td><code>https://inthe.am/api/v1/task/lock/</code></td>
-                <td>GET</td>
-                <td>
-                    Returns whether or not the task list is currently locked.
-                    <br />
-                    <ul>
-                        <li><b>200</b>: The task list is currently locked.</li>
-                        <li><b>404</b>: The task list is not currently locked.</li>
-                    <ul>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h4>Completed Tasks</h4>
-
-    <table class="pure-table pure-table-horizontal">
-        <tr>
-            <th>
-                Completed Task List
-            </th>
-            <td>
-                <code>https://inthe.am/api/v1/completedtask/</code>
-            </td>
-        </tr>
-        <tr>
-            <th>
-                Completed Task Detail
-            </th>
-            <td>
-                <code>https://inthe.am/api/v1/completedtask/<b>&lt;TASK UUID&gt;</b>/</code>
-            </td>
-        </tr>
-    </table>
-
-    <table class="pure-table pure-table-horizontal">
-        <thead>
-            <tr>
-                <th>Method</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>GET</td>
-                <td>Retrieve a completed task.</td>
-            </tr>
-        </tbody>
-    </table>
-
     <h3>Task Format</h3>
 
     <p>
@@ -395,5 +233,163 @@
             </strong>
         </em>
     </p>
-    
+
+    <h3>Endpoints</h3>
+
+    <p>
+        All below endpoints share the following list of common response
+        codes unless otherwise elaborated upon below:
+    </p>
+
+    <ul>
+        <li>
+            <strong>200</strong>: Success.
+        </li>
+        <li>
+            <strong>201</strong>: Successfully created.
+        </li>
+        <li>
+            <strong>401</strong>: Your request did not include proper
+            authentication headers.  
+            Make sure that you've properly sent the Authorization
+            header described above.
+        </li>
+        <li>
+            <strong>400</strong>: Your request was malformed, or requested
+            an impossible operation.  A description of the problem will
+            be included in the response.
+        </li>
+        <li>
+            <strong>403</strong>: Your request was not properly authenticated,
+            or you have requested an entity for which you do not have
+            permission. Make sure that you've properly sent the Authorization
+            header described above.
+        </li>
+        <li>
+            <strong>404</strong>: The entity you have requested does not exist.
+        </li>
+        <li>
+            <strong>405</strong>: The request method used is not allowed
+            for the endpoint you are sending it to.  Please review
+            the below documentation and alter your request to use an acceptable
+            method.
+        </li>
+        <li>
+            <strong>409</strong>: Your repository is currently locked.
+            During operations against your task list, an exclusive lock
+            is obtained to prevent multiple processes from writing to your
+            task list simultaneously.  If you receive this error continuously,
+            see "Manage Lockfile" below.
+        </li>
+        <li>
+            <strong>500</strong>: A server error occurred while processing
+            your request.  An error was logged, and the administrators
+            of this site have been notified.  Please try your request again
+            later.
+        </li>
+    </ul>
+
+    <h4>Pending Tasks</h4>
+
+    <h5>Task List: <code>https://inthe.am/api/v1/task/</code></h5>
+
+    <h6>Acceptable Request Methods</h6>
+    <ul>
+        <li><strong>GET</strong>: List all pending tasks.</li>
+        <li><strong>POST</strong>: Given a task payload, create a new task.</li>
+    </ul>
+
+    <h5>Task Details: <code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/</code></h5>
+
+    <h6>Acceptable Request Methods</h6>
+    <ul>
+        <li><strong>GET</strong>: Get task details.</li>
+        <li><strong>PUT</strong>: Given a task payload, update a task's details.</li>
+        <li>
+            <strong>DELETE</strong>: Mark an existing task as deleted.
+            Perhaps surprisingly, this does not mark a task deleted;
+            to mark a Taskwarrior task as deleted, see 'Delete Task'.
+        </li>
+    </ul>
+
+    <h5>Delete a Task: <code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/delete/</code></h5>
+
+    <h6>Acceptable Request Methods</h6>
+    <ul>
+        <li>
+            <strong>POST</strong>: Mark an existing task as deleted.
+            Note that although using the <strong>DELETE</strong> method on the
+            Task Details endpoint may seem to be more intuitive, it is far
+            more common for one to mark a task as completed than deleted.  Think
+            of the Task List and Task Details endpoints as being listings of
+            only pending tasks, and that by issuing a <strong>DELETE</strong>
+            request you're removing it from your pending task list (and 
+            moving it to your completed task list).
+        </li>
+    </ul>
+
+    <h5>Start a Task: <code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/start/</code></h5>
+
+    <h6>Acceptable Request Methods</h6>
+    <ul>
+        <li><strong>POST</strong>: Mark an existing task as started.</li>
+    </ul>
+
+    <h5>Stop a Task: <code>https://inthe.am/api/v1/task/<b>&lt;TASK UUID&gt;</b>/stop/</code></h5>
+
+    <h6>Acceptable Request Methods</h6>
+    <ul>
+        <li><strong>POST</strong>: Mark an existing started task as stopped.</li>
+    </ul>
+
+    <h5>Manage Lockfile: <code>https://inthe.am/api/v1/task/lock/</code></h5>
+
+    <p>
+        You are very unlikely to come upon a reason to use this endpoint,
+        but if while interacting with the API, you receive an HTTP 409 error
+        continuously, an error may have been encountered by Inthe.AM that
+        prevented it from cleaning up after itself following an operation
+        on your task list.
+    </p>
+
+    <h6>Acceptable Request Methods</h6>
+    <ul>
+        <li>
+            <strong>DELETE</strong>:
+            Force-unlocks the task list.  This is a dangerous operation
+            and could render your tasks inaccessible.
+            <br /><br />
+            Only a single task operation is allowed to occur on a
+            user's repository at a time, and in order to prevent
+            simultaneous actions a lock is used.  In very rare
+            situations, problems may occur that cause a lock
+            to not be released following an action.  Please be careful.
+        </li>
+        <li>
+            <strong>GET</strong>
+            Returns whether or not the task list is currently locked.
+        </li>
+    </ul>
+
+    <h4>Completed Tasks</h4>
+
+    <h5>Completed Task List: <code>https://inthe.am/api/v1/completedtask/</code></h5>
+
+    <h6>Acceptable Request Methods</h6>
+    <ul>
+        <li>
+            <strong>GET</strong>:
+            List completed tasks.
+        </li>
+    </ul>
+
+    <h5>Completed Task Detail: <code>https://inthe.am/api/v1/completedtask/<b>&lt;TASK UUID&gt;</b>/</code></h5>
+
+    <h6>Acceptable Request Methods</h6>
+    <ul>
+        <li>
+            <strong>GET</strong>:
+            Get completed task details.
+        </li>
+    </ul>
 </div>

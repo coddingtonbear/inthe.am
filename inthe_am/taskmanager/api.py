@@ -511,7 +511,10 @@ class TaskResource(resources.Resource):
     def start_task(self, request, uuid, store, **kwargs):
         if not request.method == 'POST':
             return HttpResponseNotAllowed(request.method)
-        store.client.task_start(uuid=uuid)
+        try:
+            store.client.task_start(uuid=uuid)
+        except ValueError:
+            raise exceptions.NotFound()
         store.log_message("Task %s started.", uuid)
         return HttpResponse(
             status=200
@@ -522,7 +525,10 @@ class TaskResource(resources.Resource):
     def stop_task(self, request, uuid, store, **kwargs):
         if not request.method == 'POST':
             return HttpResponseNotAllowed(request.method)
-        store.client.task_stop(uuid=uuid)
+        try:
+            store.client.task_stop(uuid=uuid)
+        except ValueError:
+            raise exceptions.NotFound()
         store.log_message("Task %s stopped.", uuid)
         return HttpResponse(
             status=200
@@ -533,7 +539,11 @@ class TaskResource(resources.Resource):
     def delete(self, request, uuid, store, **kwargs):
         if not request.method == 'POST':
             return HttpResponseNotAllowed(request.method)
-        store.client.task_delete(uuid=uuid)
+        try:
+            store.client.task_delete(uuid=uuid)
+        except ValueError:
+            raise exceptions.NotFound()
+
         store.log_message("Task %s deleted.", uuid)
         return HttpResponse(
             status=200
