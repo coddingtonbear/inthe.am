@@ -31,15 +31,23 @@
 
             <!-- Left Nav Section -->
             <ul class="left">
+                <!-- Mobile-only -->
                 <li class="mobile-only">
                     {{#link-to "mobileTasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
+                <li class="mobile-only">
+                    {{#link-to "createTask"}}<i class="fa fa-pencil-square-o">New</i>{{/link-to}}
+                </li>
+
+                <!-- Desktop-only -->
                 <li class="desktop-only">
                     {{#link-to "tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
-                <li>
+                <li class="desktop-only">
                     <a href="#" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
                 </li>
+
+                <!-- Usually hidden -->
                 <li id="refresh-link">
                     <a href="#" {{action "refresh"}}><i class="fa fa-refresh"></i></a>
                 </li>

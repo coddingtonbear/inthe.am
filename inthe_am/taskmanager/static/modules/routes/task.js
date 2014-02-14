@@ -4,22 +4,26 @@ var route = Ember.Route.extend({
   },
   actions: {
     'edit': function(){
-      this.controllerFor('create_task').set(
-        'model',
-        this.controllerFor('task').get('model')
-      );
-      var rendered = this.render(
-        'create_task',
-        {
-          'into': 'application',
-          'outlet': 'modal',
-        }
-      );
-      Ember.run.next(null, function(){
-        $(document).foundation();
-        $("#new_task_form").foundation('reveal', 'open');
-      });
-      return rendered;
+      if (this.controllerFor('application').isSmallScreen()) {
+        this.transitionTo('createTask', this.controllerFor('task').get('model'));
+      } else {
+        this.controllerFor('createTaskModal').set(
+          'model',
+          this.controllerFor('task').get('model')
+        );
+        var rendered = this.render(
+          'createTaskModal',
+          {
+            'into': 'application',
+            'outlet': 'modal',
+          }
+        );
+        Ember.run.next(null, function(){
+          $(document).foundation();
+          $("#new_task_form").foundation('reveal', 'open');
+        });
+        return rendered;
+      }
     },
     'add_annotation': function(){
       this.controllerFor('create_annotation').set(

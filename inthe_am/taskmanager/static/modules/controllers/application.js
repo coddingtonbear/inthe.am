@@ -92,6 +92,9 @@ var controller = Ember.Controller.extend({
       this.set('statusUpdater', statusUpdater);
     }
   },
+  isSmallScreen: function() {
+    return $(document).width() <= 700;
+  },
   getCookie: function(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {

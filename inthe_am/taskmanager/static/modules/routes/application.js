@@ -1,12 +1,12 @@
 var route = Ember.Route.extend({
   actions: {
     'create_task': function() {
-      this.controllerFor('create_task').set(
+      this.controllerFor('createTaskModal').set(
         'model',
         this.store.createRecord('task', {})
       );
       var rendered = this.render(
-        'create_task',
+        'createTaskModal',
         {
           'into': 'application',
           'outlet': 'modal',

@@ -6,7 +6,7 @@ var route = Ember.Route.extend({
       reportError(error);
       Ember.run.next(_, function(){
         var url = self.controllerFor('application').urls.about;
-        window.location = url;
+        //window.location = url;
       });
     });
   },
