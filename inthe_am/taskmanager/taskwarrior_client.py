@@ -34,20 +34,24 @@ class TaskwarriorClient(TaskWarriorShellout):
 
     def _strip_unsafe_args(self, *args):
         final_args = []
+        description_args = []
         for raw_arg in args:
             arg = self._strip_unsafe_chars(raw_arg)
             if ':' in arg:
                 cmd, value = arg.split(':', 1)
                 acceptable_cmd = self._get_acceptable_prefix(cmd)
-                if acceptable_cmd is False:
-                    continue  # Don't add this arg!
-                arg = ':'.join(
-                    [acceptable_cmd, value]
-                )
+                if acceptable_cmd:
+                    final_args.append(
+                        ':'.join(
+                            [acceptable_cmd, value]
+                        )
+                    )
+                else:
+                    description_args.append(arg)
+            else:
+                description_args.append(arg)
 
-            final_args.append(arg)
-
-        return final_args
+        return final_args + ['--'] + description_args
 
     def _strip_unsafe_chars(self, incoming):
         return ''.join(

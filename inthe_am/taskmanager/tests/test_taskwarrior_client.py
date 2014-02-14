@@ -34,6 +34,8 @@ class TestTaskwarriorClient(TaskManagerTest):
         expected = [
             'something to keep: yes',
             'project:alpha',
+            '--',
+            'rc:one',
         ]
         actual = self.tw._strip_unsafe_args(*args)
 
