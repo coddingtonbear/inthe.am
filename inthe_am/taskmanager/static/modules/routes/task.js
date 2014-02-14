@@ -5,7 +5,7 @@ var route = Ember.Route.extend({
   actions: {
     'edit': function(){
       if (this.controllerFor('application').isSmallScreen()) {
-        this.transitionTo('createTask', this.controllerFor('task').get('model'));
+        this.transitionTo('editTask', this.controllerFor('task').get('model'));
       } else {
         this.controllerFor('createTaskModal').set(
           'model',

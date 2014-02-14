@@ -1,6 +1,5 @@
 var route = Ember.Route.extend({
-  setupController: function(controller) {
-    model = this.store.createRecord('task', {});
+  setupController: function(controller, model) {
     controller.set('model', model);
   }
 });

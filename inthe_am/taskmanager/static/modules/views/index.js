@@ -1,4 +1,5 @@
 
+App.CreateTaskView = require("./createTask");
 App.CompletedView = require("./completed");
 App.CompletedTaskView = require("./completedTask");
 App.RefreshView = require("./refresh");

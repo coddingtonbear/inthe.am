@@ -3,7 +3,8 @@ App.Router.map(function(){
   this.route("about", {path: "/about"});
   this.resource("addToHomeScreen", {path: "/add-to-home-screen"});
   this.resource("mobileTasks", {path: "/mobile-tasks"});
-  this.route("createTask", {path: "/create-task/:uuid"});
+  this.route("createTask", {path: "/create-task"});
+  this.route("editTask", {path: "/edit-task/:uuid"});
   this.route("annotateTask", {path: "/annotate-task"});
   this.resource("tasks", function(){
     this.resource("task", {path: "/:uuid"});
