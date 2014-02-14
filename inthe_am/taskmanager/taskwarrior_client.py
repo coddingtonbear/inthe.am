@@ -5,6 +5,8 @@ import subprocess
 import six
 from taskw import TaskWarriorShellout
 
+from .task import Task
+
 
 logger = logging.getLogger(__name__)
 
@@ -18,17 +20,15 @@ class TaskwarriorError(Exception):
 
 
 class TaskwarriorClient(TaskWarriorShellout):
-    ACCEPTABLE_PROPERTIES = [
-        'priority',
-        'project',
-        'due',
-        'wait',
-    ]
+    def _get_acceptable_properties(self):
+        return list(
+            set(Task.KNOWN_FIELDS) - set(Task.READ_ONLY_FIELDS)
+        )
 
     def _get_acceptable_prefix(self, command):
         if ' ' in command:
             return command
-        if command.lower() in self.ACCEPTABLE_PROPERTIES:
+        if command.lower() in self._get_acceptable_properties():
             return command.lower()
         return False
 
