@@ -72,8 +72,8 @@ div.row {
     overflow: hidden;
   }
   &.standalone {
-    //overflow: scroll;
-    //height: 100%;
+    overflow: scroll;
+    height: 100%;
     padding-bottom: 100px;
 
     ul, ol {
@@ -82,6 +82,9 @@ div.row {
 
     &.add-to-home-screen {
       text-align: center;
+    }
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
 }
@@ -100,6 +103,9 @@ div.row {
   float: left;
   padding-bottom: 45px;
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
   a {
     color: inherit;
   }
@@ -151,6 +157,9 @@ div.row {
   &>div {
     padding-left: 25px;
     padding-right: 25px;
+  }
+  &::-webkit-scrollbar {
+    display: none;
   }
 
   div.tags {

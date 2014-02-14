@@ -107,18 +107,6 @@ var controller = Ember.Controller.extend({
     }
     return cookieValue;
   },
-  updateStyles: function(){
-    if($(document).width() > 700) {
-      if(this.currentPath.substring(0, 5) == "tasks") {
-        $('body > .ember-view').offset({top: 0});
-        $("body").css('overflow', 'hidden');
-      } else {
-        $("body").css('overflow', 'scroll');
-      }
-    } else {
-      $("body").css('overflow', 'scroll');
-    }
-  }.observes('currentPath'),
   actions: {
     refresh: function(){
       this.get('controllers.tasks').refresh();
