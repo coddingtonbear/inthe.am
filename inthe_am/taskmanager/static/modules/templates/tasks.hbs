@@ -11,9 +11,11 @@
                             <h5 class="status" {{bind-attr title="task.project"}}>{{propercase task.project}}</h5>
                         {{/if}}
                         <p class="description">{{task.description}}</p>
-                        {{#each task.tags}}
-                            <i class="fa fa-tag">{{this}}</i>
-                        {{/each}}
+                        <p class="tags">
+                            {{#each task.tags}}
+                                <i class="fa fa-tag">{{this}}</i>
+                            {{/each}}
+                        </p>
                     </div>
                 </div>
             {{/link-to}}

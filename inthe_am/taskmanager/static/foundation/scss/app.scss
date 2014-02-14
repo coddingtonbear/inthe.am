@@ -4,7 +4,7 @@
 html, body {
   height: 100%;
   overflow: hidden;
-  background-color: #F9F9F9;
+  background-color: #FFFFFF;
 
   >.ember-view {
     height: 100%;
@@ -70,6 +70,15 @@ div.row {
   -webkit-overflow-scrolling: touch;
   background-color: #FFFFFF;
 
+  p {
+    font-size: 0.95rem;
+    line-height: 0.95rem;
+  }
+  li {
+    font-size: 0.95rem;
+    line-height: 0.95rem;
+  }
+
   &.full-width {
     width: 100%;
     max-width: inherit;
@@ -117,7 +126,9 @@ div.row {
     h5 {
       color: inherit;
       text-transform: uppercase;
-      font-size: 0.75em;
+      font-size: 0.75rem;
+      line-height: 0.8rem;
+      margin: 5px 0 0 0;
     }
 
     p {
@@ -125,17 +136,21 @@ div.row {
       word-wrap: break-word;
     }
 
+    p.tags {
+      font-size: 0.8rem;
+    }
+
     .task-item {
       padding: 0.9em 1.0em;
 
       .task-list-icon {
         display: inline-block;
-        width: 60px;
+        width: 45px;
         vertical-align: top;
 
         i.task-icon {
-          font-size: 60px;
-          width: 55px;
+          font-size: 3rem;
+          width: 45px;
           margin-right: 5px;
         }
       }
@@ -154,7 +169,7 @@ div.row {
   padding-bottom: 45px;
 
   &>div {
-    padding-left: 25px;
+    padding-left: 15px;
     padding-right: 25px;
   }
   div.tags {
@@ -208,7 +223,11 @@ div.row {
     }
   }
   #task-header {
-    background-color: #F9F9F9;
+    background-color: #FFFFFF;
+
+    &>div {
+      margin-left: 15px;
+    }
   }
 
   table.details {
@@ -302,8 +321,8 @@ div.alert-box.error {
     padding-left: 0px;
 
     &>div{
-      padding-left: 5px;
-      padding-right: 5px;
+      padding-left: 0px;
+      padding-right: 0px;
     }
   }
   #mobile-list {

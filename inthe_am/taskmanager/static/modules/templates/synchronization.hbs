@@ -6,7 +6,7 @@
                 Your Certificate
             </th>
             <td>
-                <a href="{{ unbound controllers.application.urls.my_certificate }}">private.cert.pem</a>
+                <a {{bind-attr href=controllers.application.urls.my_certificate }}>private.cert.pem</a>
             </td>
         </tr>
         <tr>
@@ -14,7 +14,7 @@
                Your Key 
             </th>
             <td>
-                <a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a>
+                <a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
             </td>
         </tr>
     </table>
@@ -25,11 +25,27 @@
 
     <code>
     <pre>
-        taskd.certificate=/path/to/<a href="{{ unbound controllers.application.urls.my_certificate }}">private.cert.pem</a>
-        taskd.key=/path/to/<a href="{{ unbound controllers.application.urls.my_key }}">private.key.pem</a>
+        taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.cert.pem</a>
+        taskd.key=/path/to/<a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
         taskd.trust=yes
         taskd.server={{ controllers.application.user.taskd_server }}
         taskd.credentials={{ controllers.application.user.taskd_credentials }}
     </pre>
     </code>
+
+    <p>
+        Synchronizing for the first time is as easy as running <code>task sync init</code> 
+        &mdash; running that command will instruct Taskwarrior to send all of its tasks to Inthe.AM.
+        After the initial synchronization, you can synchronize with Inthe.AM by running <code>task sync</code>.
+    </p>
+    <p>
+        If you are using a modern browser other than Internet Explorer, 
+        entries displayed on Inthe.AM will be automatically updated within 30
+        seconds of synchronization, but those using an older browser need
+        only click the refresh button (<i class="fa fa-refresh"></i>) to
+        fetch new changes.  Note: the refresh button will <strong>not</strong>
+        be visible if your browser is modern enough to support the
+        <a href="https://developer.mozilla.org/en-US/docs/Web/API/EventSource">API used
+        by Inthe.AM for dynamically updating displayed tasks</a>.
+    </p>
 </div>
