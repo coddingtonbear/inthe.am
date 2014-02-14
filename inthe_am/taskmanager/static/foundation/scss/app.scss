@@ -70,6 +70,7 @@ label[for] {
   font-size: 0.75rem;
   text-align: center;
   padding-bottom: 50px;
+  margin-top: 50px;
 }
 
 div.row {
@@ -295,9 +296,6 @@ div.alert-box.error {
   // Hide text content of buttons
   html, body {
     overflow: hidden;
-  }
-  #footer {
-    display: none;
   }
   .row .row {
     width: 100%;
