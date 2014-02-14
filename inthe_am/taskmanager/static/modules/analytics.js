@@ -4,7 +4,6 @@ Ember.GoogleAnalyticsTrackingMixin = Ember.Mixin.create({
   },
 
   trackPageView: function(page) {
-    debugger;
     if (this.pageHasGa()) {
       if (!page) {
         var loc = window.location;
