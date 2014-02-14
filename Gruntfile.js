@@ -29,15 +29,6 @@ module.exports = function(grunt){
         }
       }
     },
-    //compass: {
-    //  dist: {
-    //    options: {
-    //      require: 'zurb-foundation',
-    //      config: 'inthe_am/taskmanager/static/foundation/config.rb',
-    //      basePath: 'inthe_am/taskmanager/static/foundation/'
-    //    }
-    //  }
-    //},
     sass: {
       options: {
         includePaths: [
