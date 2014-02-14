@@ -330,8 +330,12 @@ class Task(object):
     ]
     READ_ONLY_FIELDS = [
         'id', 'uuid', 'urgency', 'entry', 'modified', 'imask',
-        'resource_uri', 'start',
+        'resource_uri', 'start', 'status',
     ]
+    STRING_FIELDS = [
+        'depends', 'description', 'project', 'priority',
+    ]
+    KNOWN_FIELDS = DATE_FIELDS + LIST_FIELDS + STRING_FIELDS
 
     def __init__(self, json):
         if not json:
@@ -355,6 +359,7 @@ class Task(object):
         return {
             k: v for k, v in self.json.items()
             if k not in self.READ_ONLY_FIELDS
+            and k in self.KNOWN_FIELDS
         }
 
     @classmethod
