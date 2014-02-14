@@ -4,6 +4,7 @@
 html, body {
   height: 100%;
   overflow: hidden;
+  background-color: #F9F9F9;
 
   >.ember-view {
     height: 100%;
@@ -64,6 +65,7 @@ nav {
 
 div.row {
   -webkit-overflow-scrolling: touch;
+  background-color: #FFFFFF;
 
   &.full-width {
     width: 100%;
@@ -74,7 +76,7 @@ div.row {
   &.standalone {
     overflow: scroll;
     height: 100%;
-    padding-bottom: 100px;
+    padding: 0px 25px 100px 25px;
 
     ul, ol {
       margin-left: 50px;
@@ -295,6 +297,7 @@ div.alert-box.error {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
+    padding: 0px 5px 50px 5px;
   }
 
   // Hide task list by default
