@@ -249,15 +249,15 @@
             <strong>201</strong>: Successfully created.
         </li>
         <li>
+            <strong>400</strong>: Your request was malformed, or requested
+            an impossible operation.  A description of the problem will
+            be included in the response.
+        </li>
+        <li>
             <strong>401</strong>: Your request did not include proper
             authentication headers.  
             Make sure that you've properly sent the Authorization
             header described above.
-        </li>
-        <li>
-            <strong>400</strong>: Your request was malformed, or requested
-            an impossible operation.  A description of the problem will
-            be included in the response.
         </li>
         <li>
             <strong>403</strong>: Your request was not properly authenticated,
