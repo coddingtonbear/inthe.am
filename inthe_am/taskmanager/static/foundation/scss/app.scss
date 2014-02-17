@@ -136,7 +136,7 @@ div.row {
       text-transform: uppercase;
       font-size: 0.75rem;
       line-height: 0.8rem;
-      margin: 5px 0 0 0;
+      margin: 0;
     }
 
     p {
@@ -165,6 +165,7 @@ div.row {
       .task-list-item {
         display: inline-block;
         width: 220px;
+        padding: 5px 0 0 0;
       }
     }
   }
