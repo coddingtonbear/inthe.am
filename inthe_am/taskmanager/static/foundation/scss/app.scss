@@ -373,4 +373,11 @@ div.alert-box.error {
   .top-bar .name h1 {
     font-size: 0.7rem;
   }
+  nav {
+    .top-bar-section {
+      li.non-essential {
+        display: none;
+      }
+    }
+  }
 }
