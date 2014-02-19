@@ -1,5 +1,5 @@
 var controller = Ember.Controller.extend({
-  needs: ['tasks', 'activityLog'],
+  needs: ['tasks', 'activityLog', 'configure'],
   user: null,
   urls: {
     about: '/about/',
@@ -14,6 +14,9 @@ var controller = Ember.Controller.extend({
     status_feed: '/status/',
     sms_url: null,
   },
+  taskUpdateStreamEnabled: function() {
+    return this.get('controllers.configure.taskUpdateStreamEnabled');
+  }.property(),
   update_user_info: function() {
     this.set(
       'user',
@@ -56,12 +59,10 @@ var controller = Ember.Controller.extend({
     });
 
     // Set up the event stream
-    if(window.EventSource) {
+    if(this.get('taskUpdateStreamEnabled')){
       var statusUpdater = new EventSource(this.get('urls.status_feed'));
       this.bindStatusActions(statusUpdater);
       this.set('statusUpdater', statusUpdater);
-    } else {
-      $('#refresh-link').show();
     }
   },
   bindStatusActions: function(updater) {

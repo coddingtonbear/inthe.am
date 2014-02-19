@@ -47,10 +47,11 @@
                     <a href="#" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
                 </li>
 
-                <!-- Usually hidden -->
-                <li id="refresh-link">
-                    <a href="#" {{action "refresh"}}><i class="fa fa-refresh"></i></a>
-                </li>
+                {{#unless taskUpdateStreamEnabled}}
+                    <li id="refresh-link">
+                        <a href="#" {{action "refresh"}}><i class="fa fa-refresh"></i></a>
+                    </li>
+                {{/unless}}
             </ul>
         </section>
     {{else}}

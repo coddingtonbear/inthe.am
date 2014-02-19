@@ -58,11 +58,6 @@ label[for] {
   li.mobile-only {
     display: none;
   }
-  li#refresh-link {
-    // Will be programatically displayed if
-    // EventSource is not available.
-    display: none;
-  }
 }
 
 #footer {

@@ -4,6 +4,35 @@ var controller = Ember.Controller.extend({
     {short: 'no', long: 'Validate taskd server using an uploaded CA Certificate'},
     {short: 'yes', long: 'Trust taskd server implicitly; do not validate using a CA Certificate'},
   ],
+  taskUpdateStringSettings: [
+    {short: 'no', long: 'Disabled'},
+    {short: 'yes', long: 'Enabled'},
+  ],
+  taskUpdateStreamEnabledUI: function() {
+    if(this.get('taskUpdateStreamEnabled')) {
+      return 'yes';
+    } else {
+      return 'no';
+    }
+  }.property(),
+  taskUpdateStreamEnabled: function() {
+    if(!this.get('taskUpdateStreamCompatible')) {
+      return false;
+    }
+    if(window.localStorage.getItem('disable_ticket_stream')) {
+      return false;
+    }
+    return true;
+  }.property(),
+  taskUpdateStreamCompatible: function() {
+    if(!window.EventSource) {
+      return false;
+    }
+    if(!window.localStorage) {
+      return false;
+    }
+    return true;
+  }.property(),
   submit_taskd: function(data) {
     if (
       data.certificate === false || data.key === false || data.ca === false
@@ -201,6 +230,14 @@ var controller = Ember.Controller.extend({
           }
         }
       });
+    },
+    save_streaming: function() {
+      if($("#id_update_stream").val() === 'no') {
+        window.localStorage.setItem('disable_ticket_stream', 'yes');
+      } else {
+        window.localStorage.removeItem('disable_ticket_stream');
+      }
+      window.location.reload();
     }
   }
 });

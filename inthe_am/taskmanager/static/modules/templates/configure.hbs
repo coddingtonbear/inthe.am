@@ -83,6 +83,29 @@
                 <a href="" class="button radius" {{action "save_taskrc"}}>Save Settings</a>
             </div>
         </dd>
+        {{#if taskUpdateStreamCompatible}}
+            <dd>
+                <a href="#ticket_update_stream">Streaming Ticket Updates</a>
+                <div id="ticket_update_stream" class="content">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{view Ember.Select value=taskUpdateStreamEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=taskUpdateStringSettings id="id_update_stream"}}
+                            <p class="input-note">
+                                Task updates are streamed directly to your browser
+                                by default, but can be disabled if you are trying
+                                to reduce the amount of data used, or the amount
+                                battery consumed.
+                            </p>
+                            <p class="input-note">
+                                <strong>Note:</strong> Your page will refresh upon
+                                saving this change.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="" class="button radius" {{action "save_streaming"}}>Save Settings</a>
+                </div>
+            </dd>
+        {{/if}}
     </dl>
     {{partial "footer"}}
 </div>
