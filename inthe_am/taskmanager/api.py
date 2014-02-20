@@ -736,7 +736,7 @@ class TaskResource(resources.Resource):
         except LockTimeout:
             message = (
                 'Your task list is currently locked by another client.'
-                'If this error persists, you may try ',
+                'If this error persists, you may try '
                 'clearing the lockfile by sending a DELETE request '
                 'to http://inthe.am/api/v1/task/lock/. '
                 'Please refer to the API documentation for details.'
