@@ -4,10 +4,6 @@ var route = Ember.Route.extend({
     var self = this;
     Ember.run.once(_, function(){
       reportError(error);
-      Ember.run.next(_, function(){
-        var url = self.controllerFor('application').urls.about;
-        //window.location = url;
-      });
     });
   },
 });
