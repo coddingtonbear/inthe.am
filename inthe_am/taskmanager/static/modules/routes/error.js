@@ -5,7 +5,7 @@ var route = Ember.Route.extend({
     Ember.run.once(_, function(){
       reportError(error);
       Ember.run.next(_, function(){
-        setTimeout(window.location.reload, 3000);
+        setTimeout(function(){window.location.reload();}, 10000);
       });
     });
   },
