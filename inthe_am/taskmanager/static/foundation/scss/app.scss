@@ -248,6 +248,17 @@ div.row {
 
 table.log {
   width: 100%;
+
+  tr.error {
+    td.message {
+      color: #A02020;
+    }
+  }
+  tr.info {
+    td.message {
+      font-style: italic;
+    }
+  }
 }
 
 span {

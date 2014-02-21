@@ -12,11 +12,15 @@
         </thead>
         <tbody>
             {{#each message in controller}}
-                <tr>
-                    <td>{{fromnow message.last_seen}}</td>
-                    <td>{{fromnow message.created}}</td>
-                    <td>{{message.message}}</td>
-                    <td>{{message.count}}</td>
+                {{#if message.error}}
+                    <tr class="error">
+                {{else}}
+                    <tr class="info">
+                {{/if}}
+                    <td class="last_seen">{{fromnow message.last_seen}}</td>
+                    <td class="created">{{fromnow message.created}}</td>
+                    <td class="message">{{message.message}}</td>
+                    <td class="count">{{message.count}}</td>
                 </tr>
             {{/each}}
         </tbody>
