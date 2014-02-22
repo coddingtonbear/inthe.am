@@ -59,6 +59,7 @@ var controller = Ember.ObjectController.extend({
         $.ajax({
           url: url,
           dataType: 'json',
+          type: 'POST',
           success: function(){
             self.get('model').unloadRecord();
             self.get('controllers.tasks').refresh();
