@@ -685,7 +685,8 @@ class TaskResource(resources.Resource):
                 store.client.task_add(**safe_json)
             )
             store.log_message(
-                "New task created: %s.", safe_json
+                "New task created: %s.",
+                bundle.obj.get_json(),
             )
             return bundle
 

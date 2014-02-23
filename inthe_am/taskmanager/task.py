@@ -94,5 +94,8 @@ class Task(object):
     def urgency(self):
         return float(self.json['urgency']) if self.json['urgency'] else None
 
+    def __str__(self):
+        return self.__unicode__().encode('ascii', 'replace')
+
     def __unicode__(self):
         return self.description

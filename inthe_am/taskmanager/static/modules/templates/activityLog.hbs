@@ -11,16 +11,31 @@
             </tr>
         </thead>
         <tbody>
-            {{#each message in controller}}
-                {{#if message.error}}
+            {{#each msg in controller}}
+                {{#if msg.error}}
                     <tr class="error">
                 {{else}}
                     <tr class="info">
                 {{/if}}
-                    <td class="last_seen">{{fromnow message.last_seen}}</td>
-                    <td class="created">{{fromnow message.created}}</td>
-                    <td class="message">{{message.message}}</td>
-                    <td class="count">{{message.count}}</td>
+                    <td class="last_seen">{{fromnow msg.last_seen}}</td>
+                    <td class="created">{{fromnow msg.created}}</td>
+                    <td class="message">
+                        {{msg.message}}
+                        {{#if msg.task_uuids}}
+                            <ul>
+                                {{#each task_uuid in msg.task_uuids}}
+                                    <li>
+                                        {{#link-to 'task' task_uuid}}
+                                            <i class="fa fa-arrow-circle-o-right">
+                                                {{task_uuid}}
+                                            </i>
+                                        {{/link-to}}
+                                    </li>
+                                {{/each}}
+                            </li>
+                        {{/if}}
+                    </td>
+                    <td class="count">{{msg.count}}</td>
                 </tr>
             {{/each}}
         </tbody>
