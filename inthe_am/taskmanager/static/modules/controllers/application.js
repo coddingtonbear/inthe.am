@@ -85,6 +85,11 @@ var controller = Ember.Controller.extend({
       var statusUpdater = new EventSource(this.get('urls.status_feed') + '?head=' + evt.data);
       this.bindStatusActions(statusUpdater);
       this.set('statusUpdater', statusUpdater);
+      try {
+        this.store.find('activityLog').update();
+      } catch(e) {
+        // Pass
+      }
     }
   },
   isSmallScreen: function() {
