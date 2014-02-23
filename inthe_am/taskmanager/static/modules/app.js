@@ -9,22 +9,19 @@ App.ApplicationSerializer = DS.DjangoTastypieSerializer.extend({
 
 module.exports = App;
 
+var initializeFoundation = function() {
+  console.log("Initializing Foundation");
+  Ember.$(document).foundation();
+};
+
 Ember.View.reopen({
   didInsertElement: function() {
     this._super();
-    Ember.run.scheduleOnce('afterRender', this, this.didRenderElement);
-  },
-  initializeFoundation: function(){
     Ember.run.debounce(
-      this,
-      function(){
-        Ember.$(document).foundation();
-      },
-      250
+      null,
+      initializeFoundation,
+      500
     );
   },
-  didRenderElement: function() {
-    this.initializeFoundation();
-  }
 });
 

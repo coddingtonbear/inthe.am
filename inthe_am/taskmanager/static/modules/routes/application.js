@@ -12,10 +12,11 @@ var route = Ember.Route.extend({
           'outlet': 'modal',
         }
       );
-      Ember.run.next(null, function(){
+      var displayModal = function(){
         $(document).foundation();
         $("#new_task_form").foundation('reveal', 'open');
-      });
+      };
+      Ember.run.scheduleOnce('afterRender', this, displayModal);
       return rendered;
     }
   }

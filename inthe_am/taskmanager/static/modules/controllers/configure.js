@@ -75,7 +75,10 @@ var controller = Ember.Controller.extend({
         $("<a>", {'href': '#', 'class': 'close'}).html("&times;")
       )
     );
-    $(document).foundation();
+    var reloadFoundation = function(){
+      $(document).foundation();
+    };
+    Ember.run.scheduleOnce('afterRender', this, reloadFoundation);
   },
   success_message: function(message) {
     $("#settings_alerts").append(
@@ -84,7 +87,10 @@ var controller = Ember.Controller.extend({
         $("<a>", {'href': '#', 'class': 'close'}).html("&times;")
       )
     );
-    $(document).foundation();
+    var reloadFoundation = function(){
+      $(document).foundation();
+    };
+    Ember.run.scheduleOnce('afterRender', this, reloadFoundation);
   },
   actions: {
     save_taskrc: function() {
