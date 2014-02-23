@@ -10,7 +10,6 @@ App.ApplicationSerializer = DS.DjangoTastypieSerializer.extend({
 module.exports = App;
 
 var initializeFoundation = function() {
-  console.log("Initializing Foundation");
   Ember.$(document).foundation();
 };
 
