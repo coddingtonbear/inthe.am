@@ -4,6 +4,7 @@ import operator
 import os
 import re
 import shlex
+import uuid
 
 from tastypie import (
     authentication, authorization, bundle, exceptions, fields, resources
@@ -544,13 +545,16 @@ class TaskResource(resources.Resource):
                 store.log_error(*log_args)
                 r.sms("Bad Request: Empty task.")
             else:
+                task_uuid = str(uuid.uuid4())
                 task_args = ['add'] + shlex.split(task_info)
+                task_args.append('uuid:%s' % task_uuid)
                 result = store.client._execute_safe(*task_args)
                 stdout, stderr = result
                 r.sms("Added.")
 
                 log_args = (
-                    "Added task from %s; message '%s'; response: '%s'." % (
+                    "Added task %s from %s; message '%s'; response: '%s'." % (
+                        task_uuid,
                         from_,
                         body,
                         stdout,
