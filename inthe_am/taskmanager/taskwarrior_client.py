@@ -22,8 +22,8 @@ class TaskwarriorError(Exception):
 class TaskwarriorClient(TaskWarriorShellout):
     def _get_acceptable_properties(self):
         return list(
-            set(Task.KNOWN_FIELDS) - set(Task.READ_ONLY_FIELDS) + set(['uuid'])
-        )
+            set(Task.KNOWN_FIELDS) - set(Task.READ_ONLY_FIELDS)
+        ) + ['uuid']
 
     def _get_acceptable_prefix(self, command):
         if ' ' in command:
