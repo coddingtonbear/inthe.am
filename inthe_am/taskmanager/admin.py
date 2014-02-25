@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import TaskStore, UserMetadata
+from .models import TaskStore, TaskStoreActivityLog, UserMetadata
 
 
 class TaskStoreAdmin(admin.ModelAdmin):
@@ -10,6 +10,23 @@ class TaskStoreAdmin(admin.ModelAdmin):
 
 
 admin.site.register(TaskStore, TaskStoreAdmin)
+
+
+class TaskStoreActivityLogAdmin(admin.ModelAdmin):
+    search_fields = ('store__user__username', 'message', )
+    list_display = (
+        'username', 'last_seen', 'created', 'error', 'message', 'count'
+    )
+    date_hierarchy = 'last_seen'
+    list_filter = ('created', 'last_seen', )
+    list_select_related = True
+
+    def username(self, obj):
+        return obj.store.user.username
+    username.short_description = 'Username'
+
+
+admin.site.register(TaskStoreActivityLog, TaskStoreActivityLogAdmin)
 
 
 class UserMetadataAdmin(admin.ModelAdmin):
