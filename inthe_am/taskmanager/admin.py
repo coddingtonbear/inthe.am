@@ -20,6 +20,7 @@ class TaskStoreActivityLogAdmin(admin.ModelAdmin):
     date_hierarchy = 'last_seen'
     list_filter = ('created', 'last_seen', )
     list_select_related = True
+    ordering = ('-last_seen', )
 
     def username(self, obj):
         return obj.store.user.username
