@@ -137,6 +137,7 @@ class UserResource(resources.ModelResource):
                 store.DEFAULT_FILENAMES['key']
             ),
             'taskd.ca': store.server_config['ca.cert'],
+            'taskd.trust': 'no',
             'taskd.server': settings.TASKD_SERVER,
             'taskd.credentials': store.metadata['generated_taskd_credentials']
         })
