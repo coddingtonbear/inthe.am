@@ -342,35 +342,6 @@
         <li><strong>POST</strong>: Mark an existing started task as stopped.</li>
     </ul>
 
-    <h5>Manage Lockfile: <code>https://inthe.am/api/v1/task/lock/</code></h5>
-
-    <p>
-        You are very unlikely to come upon a reason to use this endpoint,
-        but if while interacting with the API, you receive an HTTP 409 error
-        continuously, an error may have been encountered by Inthe.AM that
-        prevented it from cleaning up after itself following an operation
-        on your task list.
-    </p>
-
-    <h6>Acceptable Request Methods</h6>
-    <ul>
-        <li>
-            <strong>DELETE</strong>:
-            Force-unlocks the task list.  This is a dangerous operation
-            and could render your tasks inaccessible.
-            <br /><br />
-            Only a single task operation is allowed to occur on a
-            user's repository at a time, and in order to prevent
-            simultaneous actions a lock is used.  In very rare
-            situations, problems may occur that cause a lock
-            to not be released following an action.  Please be careful.
-        </li>
-        <li>
-            <strong>GET</strong>
-            Returns whether or not the task list is currently locked.
-        </li>
-    </ul>
-
     <h4>Completed Tasks</h4>
 
     <h5>Completed Task List: <code>https://inthe.am/api/v1/completedtask/</code></h5>

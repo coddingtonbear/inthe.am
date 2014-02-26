@@ -741,11 +741,7 @@ class TaskResource(resources.Resource):
             )
         except LockTimeout:
             message = (
-                'Your task list is currently locked by another client.'
-                'If this error persists, you may try '
-                'clearing the lockfile by sending a DELETE request '
-                'to http://inthe.am/api/v1/task/lock/. '
-                'Please refer to the API documentation for details.'
+                'Your task list is currently in use; please try again later.'
             )
             store = models.TaskStore.get_for_user(request.user)
             store.log_error(message)
