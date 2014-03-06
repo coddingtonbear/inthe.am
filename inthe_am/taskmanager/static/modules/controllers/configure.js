@@ -253,7 +253,10 @@ var controller = Ember.Controller.extend({
         url: url,
         type: 'POST',
         success: function() {
-          self.success_message("Task data cleared.");
+          self.success_message("Task data cleared");
+          setTimeout(function(){
+            window.location.reload();
+          }, 3000);
         },
         error: function() {
           var response = JSON.parse(xhr.responseText);
