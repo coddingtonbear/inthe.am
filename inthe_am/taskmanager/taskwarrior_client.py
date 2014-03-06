@@ -86,8 +86,9 @@ class TaskwarriorClient(TaskWarriorShellout):
         stdout, stderr = proc.communicate()
         if proc.returncode != 0:
             logger.error(
-                'Non-zero return code returned from taskwarrior: %s' % (
-                    proc.returncode
+                'Non-zero return code returned from taskwarrior: %s; %s' % (
+                    proc.returncode,
+                    stderr,
                 ),
                 extra={
                     'stack': True,

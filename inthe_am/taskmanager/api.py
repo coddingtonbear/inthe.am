@@ -340,6 +340,7 @@ class TaskResource(resources.Resource):
     annotations = fields.ListField(attribute='annotations', null=True)
     tags = fields.ListField(attribute='tags', null=True)
     imask = fields.IntegerField(attribute='imask', null=True)
+    udas = fields.DictField(attribute='udas', null=True)
 
     def prepend_urls(self):
         return [
@@ -665,7 +666,7 @@ class TaskResource(resources.Resource):
 
         objects = []
         for task_json in store.client.load_tasks()[self.TASK_TYPE]:
-            task = Task(task_json)
+            task = Task(task_json, store.taskrc)
             if self.passes_filters(task, filters):
                 objects.append(task)
 
@@ -674,7 +675,10 @@ class TaskResource(resources.Resource):
     @requires_taskd_sync
     def obj_get(self, bundle, store, **kwargs):
         try:
-            return Task(store.client.get_task(uuid=kwargs['pk'])[1])
+            return Task(
+                store.client.get_task(uuid=kwargs['pk'])[1],
+                store.taskrc,
+            )
         except ValueError:
             raise exceptions.NotFound()
 
@@ -687,7 +691,8 @@ class TaskResource(resources.Resource):
                 )
             safe_json = Task.from_serialized(bundle.data).get_safe_json()
             bundle.obj = Task(
-                store.client.task_add(**safe_json)
+                store.client.task_add(**safe_json),
+                store.taskrc,
             )
             store.log_message(
                 "New task created: %s.",
@@ -715,7 +720,10 @@ class TaskResource(resources.Resource):
                 kwargs['pk'],
                 serialized
             )
-            bundle.obj = Task(store.client.get_task(uuid=kwargs['pk'])[1])
+            bundle.obj = Task(
+                store.client.get_task(uuid=kwargs['pk'])[1],
+                store.taskrc,
+            )
             return bundle
 
     def obj_delete_list(self, bundle, store, **kwargs):

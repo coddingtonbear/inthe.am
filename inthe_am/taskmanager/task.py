@@ -21,10 +21,11 @@ class Task(object):
     ]
     KNOWN_FIELDS = DATE_FIELDS + LIST_FIELDS + STRING_FIELDS
 
-    def __init__(self, json):
+    def __init__(self, json, taskrc=None):
         if not json:
             raise ValueError()
         self.json = json
+        self.taskrc = taskrc
 
     @staticmethod
     def get_timezone(tzname, offset):
@@ -70,6 +71,21 @@ class Task(object):
         raise NotImplementedError()
 
     def __getattr__(self, name):
+        if name == 'udas':
+            if not self.taskrc:
+                value = None
+            else:
+                value = {}
+                defined_udas = self.taskrc.get_udas()
+                for uda, definition in defined_udas.items():
+                    if uda not in self.get_json():
+                        continue
+                    value[uda] = {
+                        'label': definition['label'],
+                        'value': self.get_json()[uda],
+                    }
+            return value
+
         try:
             value = self.json[name]
             if name in self.DATE_FIELDS:

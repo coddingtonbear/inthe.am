@@ -536,6 +536,9 @@ class TaskRc(object):
             self.config, self.includes = {}, []
         else:
             self.config, self.includes = self._read(self.path)
+        self.include_values = {}
+        for include in self.includes:
+            self.include_values[include], _ = self._read(include)
 
     def _read(self, path):
         config = {}
@@ -592,20 +595,28 @@ class TaskRc(object):
                     )
                 )
 
+    @property
+    def assembled(self):
+        all_items = {}
+        for include_values in self.include_values.values():
+            all_items.update(include_values)
+        all_items.update(self.config)
+        return all_items
+
     def items(self):
-        return self.config.items()
+        return self.assembled.items()
 
     def keys(self):
-        return self.config.keys()
+        return self.assembled.keys()
 
     def get(self, item, default=None):
         try:
-            return self[item]
+            return self.assembled[item]
         except KeyError:
             return default
 
     def __getitem__(self, item):
-        return self.config[item]
+        return self.assembled[item]
 
     def __setitem__(self, item, value):
         self.config[item] = str(value)
@@ -614,6 +625,21 @@ class TaskRc(object):
     def update(self, value):
         self.config.update(value)
         self._write()
+
+    def get_udas(self):
+        udas = {}
+
+        uda_type = re.compile('^uda\.([^.]+)\.(type)$')
+        uda_label = re.compile('^uda\.([^.]+)\.(label)$')
+        for k, v in self.items():
+            for matcher in (uda_type, uda_label):
+                matches = matcher.match(k)
+                if matches:
+                    if matches.group(1) not in udas:
+                        udas[matches.group(1)] = {}
+                    udas[matches.group(1)][matches.group(2)] = v
+
+        return udas
 
     def add_include(self, item):
         if item not in self.includes:

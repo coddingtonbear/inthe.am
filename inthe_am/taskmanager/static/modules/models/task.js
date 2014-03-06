@@ -16,6 +16,7 @@ var model = DS.Model.extend({
   depends: DS.attr('string'),
   project: DS.attr('string'),
   imask: DS.attr('number'),
+  udas: DS.attr(),
 
   editable: function(){
     if (this.get('status') == 'pending') {
@@ -72,6 +73,14 @@ var model = DS.Model.extend({
     }
     return value;
   }.property('annotations'),
+
+  processed_udas: function() {
+    var value = [];
+    for(var v in this.get('udas')) {
+      value.push(this.get('udas')[v]);
+    }
+    return value;
+  }.property('udas'),
 
   dependent_tickets: function(){
     var value = this.get('depends');

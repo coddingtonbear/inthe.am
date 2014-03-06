@@ -130,6 +130,12 @@
                     <th>UUID</th>
                     <td><span class="uuid">{{uuid}}</span></td>
                 </tr>
+                {{#each processed_udas}}
+                    <tr>
+                        <th>{{this.label}}</th>
+                        <td>{{this.value}}</td>
+                    </tr>
+                {{/each}}
             </tbody>
         </table>
     </div>
