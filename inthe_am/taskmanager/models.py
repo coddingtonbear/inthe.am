@@ -537,12 +537,17 @@ class TaskRc(object):
         else:
             self.config, self.includes = self._read(self.path)
         self.include_values = {}
-        for include in self.includes:
-            self.include_values[include], _ = self._read(include)
+        for include_path in self.includes:
+            self.include_values[include_path], _ = self._read(
+                os.path.abspath(include_path),
+                include_from=self.path
+            )
 
-    def _read(self, path):
+    def _read(self, path, include_from=None):
         config = {}
         includes = []
+        if include_from and include_from.index(os.path.dirname(path)) != 0:
+            return config, includes
         with open(path, 'r') as config_file:
             for line in config_file.readlines():
                 if line.startswith('#'):
