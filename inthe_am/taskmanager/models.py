@@ -546,7 +546,7 @@ class TaskRc(object):
     def _read(self, path, include_from=None):
         config = {}
         includes = []
-        if include_from and include_from.index(os.path.dirname(path)) != 0:
+        if include_from and include_from.find(os.path.dirname(path)) != 0:
             return config, includes
         with open(path, 'r') as config_file:
             for line in config_file.readlines():
