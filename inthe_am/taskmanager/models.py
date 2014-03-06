@@ -3,6 +3,7 @@ import json
 import hashlib
 import logging
 import os
+import re
 import subprocess
 import tempfile
 import uuid
@@ -141,27 +142,47 @@ class TaskStore(models.Model):
         except (ValueError, TypeError):
             return False
 
+    def _is_valid_type(self, val):
+        if val in ('string', 'numeric', 'date', 'duration'):
+            return True
+        return False
+
     def _get_extra_safely(self, key, val):
-        valid_numeric_starts = [
-            'urgency.next.coefficient',
-            'urgency.blocking.coefficient',
-            'urgency.blocked.coefficient',
-            'urgency.priority.coefficient',
-            'urgency.waiting.coefficient',
-            'urgency.active.coefficient',
-            'urgency.project.coefficient',
-            'urgency.tags.coefficient',
-            'urgency.annotations.coefficient',
-            'urgency.user.tag',
-            'urgency.user.project',
-            'urgency.age.coefficient',
-            'urgency.age.max',
+        valid_patterns = [
+            (
+                re.compile('^urgency\.[^.]+\.coefficient$'),
+                self._is_numeric
+            ),
+            (
+                re.compile('^urgency\.user\.tag\.[^.]+\.coefficient$'),
+                self._is_numeric
+            ),
+            (
+                re.compile('^urgency\.user\.project\.[^.]+.coefficient$'),
+                self._is_numeric
+            ),
+            (
+                re.compile('^urgency\.age\.max$'),
+                self._is_numeric
+            ),
+            (
+                re.compile('^urgency\.uda\.[^.]+\.coefficient$'),
+                self._is_numeric
+            ),
+            (
+                re.compile('^uda\.[^.]+\.type$'),
+                self._is_valid_type
+            ),
+            (
+                re.compile('^uda\.[^.]+\.label$'),
+                lambda x: True  # Accept all strings
+            )
         ]
-        for start in valid_numeric_starts:
-            if key.startswith(start) and self._is_numeric(val):
+        for pattern, verifier in valid_patterns:
+            if pattern.match(key) and verifier(val):
                 return True, None
-            elif key.startswith(start):
-                return False, "Setting '%s' requires a numeric value." % key
+            elif pattern.match(key):
+                return False, "Setting '%s' has an invalid value." % key
         return False, "Setting '%s' could not be applied." % key
 
     def apply_extras(self):
