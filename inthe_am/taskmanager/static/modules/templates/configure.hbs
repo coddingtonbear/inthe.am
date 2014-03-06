@@ -107,6 +107,22 @@
                 </div>
             </dd>
         {{/if}}
+        <dd>
+            <a href="#dangerous">Danger Zone</a>
+            <div id="dangerous" class="content">
+                <div class="row">
+                    <div class="large-12 columns">
+                        <p>
+                            Pressing this button will delete both any task information
+                            currently stored in your tasks on Inthe.AM, as well as
+                            permanently clear any information stored in your Inthe.AM
+                            taskd account.
+                        </p>
+                    </div>
+                </div>
+                <a href="" class="button radius alert" {{action "clear_task_data"}}>Clear Task Data</a>
+            </div>
+        </dd>
     </dl>
     {{partial "footer"}}
 </div>

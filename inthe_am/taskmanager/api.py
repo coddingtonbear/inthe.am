@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import operator
@@ -104,6 +105,12 @@ class UserResource(resources.ModelResource):
                     self._meta.resource_name
                 ),
                 self.wrap_view('twilio_integration')
+            ),
+            url(
+                r"^(?P<resource_name>%s)/clear-task-data/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('clear_task_data')
             )
         ]
 
@@ -219,6 +226,43 @@ class UserResource(resources.ModelResource):
         ts.sms_whitelist = request.POST.get('sms_whitelist', '')
         ts.log_message("Twilio settings changed.")
         ts.save()
+        return HttpResponse('OK')
+
+    @git_managed("Clearing task data")
+    def clear_task_data(self, request, **kwargs):
+        if request.method != 'POST':
+            raise HttpResponseNotAllowed(request.method)
+
+        ts = models.TaskStore.get_for_user(request.user)
+
+        org, user, uid = (
+            ts.metadata['generated_taskd_credentials'].split('/')
+        )
+        taskd_data_path = os.path.join(
+            settings.TASKD_DATA,
+            'orgs',
+            org,
+            'users',
+            uid,
+            'tx.data'
+        )
+        os.rename(
+            taskd_data_path,
+            (
+                taskd_data_path
+                + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+            )
+        )
+
+        for path in os.listdir(ts.local_path):
+            if os.path.splitext(path)[1] == '.data':
+                os.unlink(
+                    os.path.join(
+                        ts.local_path,
+                        path
+                    )
+                )
+
         return HttpResponse('OK')
 
     def my_certificate(self, request, **kwargs):

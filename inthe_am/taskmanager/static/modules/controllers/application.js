@@ -11,6 +11,7 @@ var controller = Ember.Controller.extend({
     taskd_reset: '/api/v1/user/reset-taskd-configuration/',
     twilio_integration: '/api/v1/user/twilio-integration/',
     tos_accept: '/api/v1/user/tos-accept/',
+    clear_task_data: '/api/v1/user/clear-task-data/',
     status_feed: '/status/',
     sms_url: null,
   },

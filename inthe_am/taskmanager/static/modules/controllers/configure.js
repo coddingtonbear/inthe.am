@@ -244,6 +244,26 @@ var controller = Ember.Controller.extend({
         window.localStorage.removeItem('disable_ticket_stream');
       }
       window.location.reload();
+    },
+    clear_task_data: function() {
+      var url  = this.get('controllers.application').urls.clear_task_data;
+      var self = this;
+
+      $.ajax({
+        url: url,
+        type: 'POST',
+        success: function() {
+          self.success_message("Task data cleared.");
+        },
+        error: function() {
+          var response = JSON.parse(xhr.responseText);
+          for (var property in response) {
+            self.error_message(
+              "Error encountered: " + property + ": " + response[property]
+            );
+          }
+        }
+      });
     }
   }
 });
