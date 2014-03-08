@@ -235,21 +235,10 @@ class UserResource(resources.ModelResource):
 
         ts = models.TaskStore.get_for_user(request.user)
 
-        org, user, uid = (
-            ts.metadata['generated_taskd_credentials'].split('/')
-        )
-        taskd_data_path = os.path.join(
-            settings.TASKD_DATA,
-            'orgs',
-            org,
-            'users',
-            uid,
-            'tx.data'
-        )
         os.rename(
-            taskd_data_path,
+            ts.taskd_data_path,
             (
-                taskd_data_path
+                ts.taskd_data_path
                 + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             )
         )

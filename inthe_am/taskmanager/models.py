@@ -293,6 +293,28 @@ class TaskStore(models.Model):
 
     #  Taskd-related methods
 
+    @property
+    def using_local_taskd(self):
+        if not hasattr(self, '_local_taskd'):
+            if self.taskrc['taskd.server'] == settings.TASKD_SERVER:
+                self._local_taskd = True
+            self._local_taskd = False
+        return self._local_taskd
+
+    @property
+    def taskd_data_path(self):
+        org, user, uid = (
+            self.metadata['generated_taskd_credentials'].split('/')
+        )
+        return os.path.join(
+            settings.TASKD_DATA,
+            'orgs',
+            org,
+            'users',
+            uid,
+            'tx.data'
+        )
+
     def sync(self):
         try:
             with git_checkpoint(self, 'Synchronization'):
