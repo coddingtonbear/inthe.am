@@ -54,8 +54,10 @@ class Status(BaseSseView):
         created = time.time()
         last_sync = time.time()
         head = self.request.GET.get('head', store.repository.head())
-        while time.time() - created < 240:
-            if time.time() - last_sync > 15:
+        while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
+            if time.time() - last_sync > (
+                settings.EVENT_STREAM_POLLING_INTERVAL
+            ):
                 last_sync = time.time()
                 store.sync()
 
