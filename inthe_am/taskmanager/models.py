@@ -298,7 +298,8 @@ class TaskStore(models.Model):
         if not hasattr(self, '_local_taskd'):
             if self.taskrc['taskd.server'] == settings.TASKD_SERVER:
                 self._local_taskd = True
-            self._local_taskd = False
+            else:
+                self._local_taskd = False
         return self._local_taskd
 
     @property
