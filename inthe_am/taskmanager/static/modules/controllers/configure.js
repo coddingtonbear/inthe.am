@@ -8,6 +8,9 @@ var controller = Ember.Controller.extend({
     {short: 'no', long: 'Disabled'},
     {short: 'yes', long: 'Enabled'},
   ],
+  themeOptions: [
+    {file: '', name: ''},
+  ],
   taskUpdateStreamEnabledUI: function() {
     if(this.get('taskUpdateStreamEnabled')) {
       return 'yes';
