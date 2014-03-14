@@ -111,7 +111,13 @@ class UserResource(resources.ModelResource):
                     self._meta.resource_name
                 ),
                 self.wrap_view('clear_task_data')
-            )
+            ),
+            url(
+                r"^(?P<resource_name>%s)/colorscheme/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('colorscheme')
+            ),
         ]
 
     def _send_file(self, out, content_type=None, **kwargs):
@@ -205,6 +211,16 @@ class UserResource(resources.ModelResource):
         store.taskrc.update(taskd_data)
 
         return HttpResponse('OK')
+
+    def colorscheme(self, request, **kwargs):
+        meta = models.UserMetadata.get_for_user(request.user)
+        if request.method == 'PUT':
+            meta.colorscheme = request.body
+            meta.save()
+            return HttpResponse('OK')
+        elif request.method == 'GET':
+            return HttpResponse(meta.colorscheme)
+        raise HttpResponseNotAllowed(request.method)
 
     def tos_accept(self, request, **kwargs):
         if request.method != 'POST':
@@ -330,7 +346,8 @@ class UserResource(resources.ModelResource):
                         'resource_name': 'task',
                         'username': request.user.username,
                     }
-                )
+                ),
+                'colorscheme': meta.colorscheme,
             }
         else:
             user_data = {

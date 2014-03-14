@@ -40,6 +40,18 @@ module.exports = function(grunt){
           'outputStyle': 'compressed'
         },
         files: {
+          'inthe_am/taskmanager/static/colorschemes/light-16.theme.css': 'inthe_am/taskmanager/static/colorschemes/light-16.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/dark-16.theme.css': 'inthe_am/taskmanager/static/colorschemes/dark-16.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/light-256.theme.css': 'inthe_am/taskmanager/static/colorschemes/light-256.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/dark-256.theme.css': 'inthe_am/taskmanager/static/colorschemes/dark-256.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/dark-red-256.theme.css': 'inthe_am/taskmanager/static/colorschemes/dark-red-256.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/dark-green-256.theme.css': 'inthe_am/taskmanager/static/colorschemes/dark-green-256.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/dark-blue-256.theme.css': 'inthe_am/taskmanager/static/colorschemes/dark-blue-256.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/dark-violets-256.theme.css': 'inthe_am/taskmanager/static/colorschemes/dark-violets-256.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/dark-yellow-green.theme.css': 'inthe_am/taskmanager/static/colorschemes/dark-yellow-green.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/dark-gray-256.theme.css': 'inthe_am/taskmanager/static/colorschemes/dark-gray-256.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/solarized-dark-256.theme.css': 'inthe_am/taskmanager/static/colorschemes/solarized-dark-256.theme.scss',
+          'inthe_am/taskmanager/static/colorschemes/solarized-light-256.theme.css': 'inthe_am/taskmanager/static/colorschemes/solarized-light-256.theme.scss',
           'inthe_am/taskmanager/static/app.css': 'inthe_am/taskmanager/static/foundation/scss/app.scss',
         }
       }
@@ -48,8 +60,7 @@ module.exports = function(grunt){
       sass: {
         files: [
           'inthe_am/taskmanager/static/**/*.scss',
-          //'inthe_am/taskmanager/static/foudnation/scss/*.scss',
-          //'inthe_am/taskmanager/static/scss/*.scss',
+          'inthe_am/taskmanager/static/colorschemes/*.scss',
         ],
         tasks: [
           'sass'

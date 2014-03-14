@@ -1,0 +1,124 @@
+.task .calendar__today {
+}
+.task .tagged {
+	color: #797979;
+}
+.task .footnote {
+}
+.task .history__delete {
+	background-color: #8f8f8f;
+}
+.task.active .history__delete {
+	background-color: lighten(#8f8f8f, 10%)
+}
+.task .sync__rejected {
+	color: #bcbcbc;
+}
+.task .summary__background {
+	color: #ffffff;
+	background-color: #dddddd;
+}
+.task.active .summary__background {
+	background-color: lighten(#dddddd, 10%)
+}
+.task .blocked {
+}
+.task .due__today {
+}
+.task .project__none {
+}
+.task .calendar__weeknumber {
+	color: #d2d2d2;
+}
+.task .sync__added {
+	color: #8f8f8f;
+}
+.task .summary__bar {
+	color: #000000;
+	background-color: #797979;
+}
+.task.active .summary__bar {
+	background-color: lighten(#797979, 10%)
+}
+.task .sync__changed {
+	color: #585858;
+}
+.task .alternate {
+	background-color: #e8e8e8;
+}
+.task.active .alternate {
+	background-color: lighten(#e8e8e8, 10%)
+}
+.task .due {
+}
+.task .burndown__started {
+	background-color: #585858;
+}
+.task.active .burndown__started {
+	background-color: lighten(#585858, 10%)
+}
+.task .calendar__overdue {
+}
+.task .calendar__weekend {
+}
+.task .history__done {
+	background-color: #585858;
+}
+.task.active .history__done {
+	background-color: lighten(#585858, 10%)
+}
+.task .recurring {
+	color: #a5a5a5;
+}
+.task .tag__none {
+}
+.task .undo__after {
+	color: #585858;
+}
+.task .calendar__holiday {
+}
+.task .burndown__done {
+	background-color: #8f8f8f;
+}
+.task.active .burndown__done {
+	background-color: lighten(#8f8f8f, 10%)
+}
+.task .pri__M {
+}
+.task .pri__L {
+}
+.task .pri__H {
+}
+.task .pri__none {
+}
+.task .active {
+}
+.task .undo__before {
+	color: #bcbcbc;
+}
+.task .blocking {
+}
+.task .burndown__pending {
+	background-color: #bcbcbc;
+}
+.task.active .burndown__pending {
+	background-color: lighten(#bcbcbc, 10%)
+}
+.task .header {
+}
+.task .calendar__due__today {
+}
+.task .calendar__due {
+}
+.task .history__add {
+	background-color: #bcbcbc;
+}
+.task.active .history__add {
+	background-color: lighten(#bcbcbc, 10%)
+}
+.task .error {
+}
+.task .debug {
+}
+.task .overdue {
+}

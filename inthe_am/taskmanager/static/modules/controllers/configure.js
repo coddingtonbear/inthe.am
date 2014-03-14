@@ -8,6 +8,20 @@ var controller = Ember.Controller.extend({
     {short: 'no', long: 'Disabled'},
     {short: 'yes', long: 'Enabled'},
   ],
+  themeOptions: [
+    {file: 'light-16.theme', name: 'Light (4-bit)'},
+    {file: 'dark-16.theme', name: 'Dark (4-bit)'},
+    {file: 'light-256.theme', name: 'Light'},
+    {file: 'dark-256.theme', name: 'Dark'},
+    {file: 'dark-red-256.theme', name: 'Dark Red'},
+    {file: 'dark-green-256.theme', name: 'Dark Green'},
+    {file: 'dark-blue-256.theme', name: 'Dark Blue'},
+    {file: 'dark-violets-256.theme', name: 'Dark Violet'},
+    {file: 'dark-yellow-green.theme', name: 'Dark Yellow/Green'},
+    {file: 'dark-gray-256.theme', name: 'Dark Gray'},
+    {file: 'solarized-dark-256.theme', name: 'Solarized Dark'},
+    {file: 'solarized-light-256.theme', name: 'Solarized Light'},
+  ],
   taskUpdateStreamEnabledUI: function() {
     if(this.get('taskUpdateStreamEnabled')) {
       return 'yes';
@@ -265,6 +279,26 @@ var controller = Ember.Controller.extend({
               "Error encountered: " + property + ": " + response[property]
             );
           }
+        }
+      });
+    },
+    save_colorscheme: function() {
+      var value = $('#id_theme').val();
+      var url  = this.get('controllers.application').urls.set_colorscheme;
+      var self = this;
+      $.ajax({
+        url: url,
+        type: 'PUT',
+        data: value,
+        success: function() {
+          self.set('controllers.application.user.colorscheme', value);
+          self.get('controllers.application').updateColorscheme();
+          self.success_message("Colorscheme saved!");
+        },
+        error: function() {
+          self.error_message(
+            "An error was encountered while setting your colorscheme."
+          );
         }
       });
     }

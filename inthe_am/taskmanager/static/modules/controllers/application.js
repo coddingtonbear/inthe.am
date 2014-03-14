@@ -12,6 +12,7 @@ var controller = Ember.Controller.extend({
     twilio_integration: '/api/v1/user/twilio-integration/',
     tos_accept: '/api/v1/user/tos-accept/',
     clear_task_data: '/api/v1/user/clear-task-data/',
+    set_colorscheme: '/api/v1/user/colorscheme/',
     status_feed: '/status/',
     sms_url: null,
   },
@@ -31,6 +32,7 @@ var controller = Ember.Controller.extend({
         ).responseText
       )
     );
+    this.updateColorscheme();
     if(this.get('user').logged_in){
       Raven.setUser({
         email: this.get('user').email,
@@ -65,6 +67,10 @@ var controller = Ember.Controller.extend({
       this.bindStatusActions(statusUpdater);
       this.set('statusUpdater', statusUpdater);
     }
+  },
+  updateColorscheme: function() {
+    var scheme = this.get('user').colorscheme;
+    $("#colorscheme").attr('href', '/static/colorschemes/' + scheme + '.css');
   },
   bindStatusActions: function(updater) {
     for (var key in this.get('statusActions')) {

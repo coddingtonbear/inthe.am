@@ -49,6 +49,16 @@
             </div>
         </dd>
         <dd>
+            <a href="#custom_colors">Task Colors</a>
+            <div id="custom_colors" class="content">
+                <div class="row">
+                    <label>Color Scheme</label>
+                    {{view Ember.Select value=controllers.application.user.colorscheme optionValuePath="content.file" optionLabelPath="content.name" content=themeOptions id="id_theme"}}
+                </div>
+                <a href="" class="button radius" {{action "save_colorscheme"}}>Save Colorscheme</a>
+            </div>
+        </dd>
+        <dd>
             <a href="#twilio">Twilio SMS Integration</a>
             <div id="twilio" class="content">
                 <div class="row">

@@ -479,6 +479,10 @@ class UserMetadata(models.Model):
         default=None,
         null=True,
     )
+    colorscheme = models.CharField(
+        default='dark-yellow-green.theme',
+        max_length=255,
+    )
 
     @property
     def tos_up_to_date(self):
