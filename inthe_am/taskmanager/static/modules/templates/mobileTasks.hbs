@@ -13,6 +13,9 @@
                             {{/if}}
                             <p class="description">{{task.description}}</p>
                             <p class="tags">
+                                {{#if task.annotations}}
+                                    <i class="fa fa-pencil-square"></i>
+                                {{/if}}
                                 {{#each task.tags}}
                                     <i class="fa fa-tag">{{this}}</i>
                                 {{/each}}
