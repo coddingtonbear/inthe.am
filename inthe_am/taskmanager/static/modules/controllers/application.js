@@ -75,10 +75,20 @@ var controller = Ember.Controller.extend({
     });
 
     // Set up the event stream
-    if(this.get('taskUpdateStreamEnabled')){
-      var statusUpdater = new EventSource(this.get('urls.status_feed'));
-      this.bindStatusActions(statusUpdater);
-      this.set('statusUpdater', statusUpdater);
+    this.startEventStream();
+  },
+  startEventStream: function(head) {
+    var statusUpdater = this.get('statusUpdater');
+    if(!statusUpdater || statusUpdater.readyState == EventSource.CLOSED) {
+      if(this.get('taskUpdateStreamEnabled')){
+        url = this.get('urls.status_feed');
+        if(head && typeof(head) == 'string') {
+          url = url + "?head=" +  head;
+        }
+        statusUpdater = new EventSource(url);
+        this.bindStatusActions(statusUpdater);
+        this.set('statusUpdater', statusUpdater);
+      }
     }
   },
   updateColorscheme: function() {
@@ -89,6 +99,10 @@ var controller = Ember.Controller.extend({
     for (var key in this.get('statusActions')) {
       updater.addEventListener(key, this.get('statusActions')[key].bind(this));
     }
+    updater.addEventListener(
+      'error',
+      this.get('startEventStream').bind(this)
+    );
   },
   statusActions: {
     'task_changed': function(evt) {
@@ -102,9 +116,7 @@ var controller = Ember.Controller.extend({
     },
     'head_changed': function(evt) {
       this.get('statusUpdater').close();
-      var statusUpdater = new EventSource(this.get('urls.status_feed') + '?head=' + evt.data);
-      this.bindStatusActions(statusUpdater);
-      this.set('statusUpdater', statusUpdater);
+      this.get('startEventStream')(evt.data);
       try {
         this.store.find('activityLog').update();
       } catch(e) {
