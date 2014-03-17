@@ -3,7 +3,7 @@ var route = Ember.Route.extend({
      return this.store.find('task', params.uuid);
   },
   actions: {
-    'edit': function(){
+    edit: function(){
       if (this.controllerFor('application').isSmallScreen()) {
         this.transitionTo('editTask', this.controllerFor('task').get('model'));
       } else {
@@ -25,7 +25,7 @@ var route = Ember.Route.extend({
         return rendered;
       }
     },
-    'add_annotation': function(){
+    add_annotation: function(){
       this.controllerFor('create_annotation').set(
         'model',
         this.controllerFor('task').get('model')
@@ -41,6 +41,10 @@ var route = Ember.Route.extend({
         $(document).foundation();
         $("#new_annotation_form").foundation('reveal', 'open');
       });
+    },
+    error: function(reason, tsn) {
+      var application = this.controllerFor('application');
+      application.get('handleError').bind(application)(reason, tsn);
     }
   }
 });

@@ -780,8 +780,11 @@ class TaskResource(resources.Resource):
         raise exceptions.BadRequest()
 
     def dispatch(self, request_type, request, *args, **kwargs):
-        metadata = models.UserMetadata.get_for_user(request.user)
-        if not metadata.tos_up_to_date:
+        if request.user.is_authenticated():
+            metadata = models.UserMetadata.get_for_user(request.user)
+        else:
+            metadata = None
+        if metadata and not metadata.tos_up_to_date:
             return HttpResponse(
                 json.dumps(
                     {

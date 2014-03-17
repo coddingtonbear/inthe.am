@@ -21,6 +21,12 @@ var route = Ember.Route.extend({
         }
       }
     }
+  },
+  actions: {
+    error: function(reason, tsn) {
+      var application = this.controllerFor('application');
+      application.get('handleError').bind(application)(reason, tsn);
+    }
   }
 });
 

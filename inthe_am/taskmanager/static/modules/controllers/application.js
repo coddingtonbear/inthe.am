@@ -2,6 +2,8 @@ var controller = Ember.Controller.extend({
   needs: ['tasks', 'activityLog', 'configure'],
   user: null,
   urls: {
+    login: '/login/google-oauth2/',
+    logout: '/logout/',
     about: '/about/',
     ca_certificate: '/api/v1/user/ca-certificate/',
     my_certificate: '/api/v1/user/my-certificate/',
@@ -43,6 +45,17 @@ var controller = Ember.Controller.extend({
       Raven.setUser();
     }
     this.set('urls.sms_url', this.get('user').sms_url);
+  },
+  handleError: function(reason, tsn) {
+    if (reason.status == 401) {
+      alert(
+          [
+            "We're sorry, but your session appears to have expired.\n",
+            "Press OK log-in again.",
+          ].join('\n')
+      );
+      window.location = this.get('urls.login');
+    }
   },
   init: function(){
     var self = this;
@@ -125,10 +138,10 @@ var controller = Ember.Controller.extend({
       window.location = '/';
     },
     login: function(){
-      window.location = '/login/google-oauth2/';
+      window.location = this.get('urls.login');
     },
     logout: function(){
-      window.location = '/logout/';
+      window.location = this.get('urls.logout');
     }
   }
 });

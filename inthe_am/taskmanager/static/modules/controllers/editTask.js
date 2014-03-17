@@ -1,5 +1,5 @@
 var controller = Ember.ObjectController.extend({
-  needs: ['tasks'],
+  needs: ['application', 'tasks'],
   priorities: [
     {short: '', long: '(none)'},
     {short: 'L', long: 'Low'},
@@ -13,8 +13,9 @@ var controller = Ember.ObjectController.extend({
       $('#new_task_form').foundation('reveal', 'close');
       model.save().then(function(){
         self.transitionToRoute('task', model);
-      }, function(){
-        alert("An error was encountered while saving your task.");
+      }, function(reason){
+        var application = self.get('controllers.application');
+        application.get('handleError').bind(application)(reason);
       });
     }
   }
