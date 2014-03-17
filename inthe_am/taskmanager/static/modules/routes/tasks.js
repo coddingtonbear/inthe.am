@@ -3,7 +3,8 @@ var route = Ember.Route.extend({
     return this.store.find('task');
   },
   beforeModel: function(tasks, transition) {
-    if(!this.controllerFor('application').user.tos_up_to_date) {
+    var application = this.controllerFor('application');
+    if(application.user.logged_in && !application.user.tos_up_to_date) {
       this.transitionTo('termsOfService');
     }
   },
