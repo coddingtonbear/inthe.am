@@ -243,6 +243,12 @@ div.row {
   }
   div.task-content-body {
     margin-right: inherit;
+
+    ul.depends_tickets {
+      li.completed, li.deleted {
+        text-decoration: line-through;
+      }
+    }
   }
 }
 
