@@ -88,7 +88,7 @@ var model = DS.Model.extend({
     if (value) {
       var ticket_ids = value.split(',');
       var add_value_to_values = function(value) {
-        values[values.length] = value;
+        values.pushObject(value);
       };
       for (var i = 0; i < ticket_ids.length; i++) {
         this.store.find('task', ticket_ids[i]).then(add_value_to_values);
