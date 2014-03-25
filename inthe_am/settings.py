@@ -69,6 +69,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'access_type': 'offline'}
+
 ROOT_URLCONF = 'inthe_am.urls'
 
 WSGI_APPLICATION = 'inthe_am.wsgi.application'
