@@ -56,8 +56,25 @@ var model = DS.Model.extend({
       return 'pri__L';
     } else if (this.get('tags')) {
       return 'tagged';
+    } else if (this.get('is_blocked')) {
+      return 'blocked';
+    } else if (this.get('is_blocking')) {
+      return 'blocking';
     }
   }.property('status', 'urgency', 'start', 'due'),
+
+  is_blocked: function() {
+    for(var ticket in this.get('dependent_tickets')) {
+      if(ticket.get('status') == 'pending') {
+        return true;
+      }
+    }
+    return false;
+  },
+
+  is_blocking: function() {
+    return false;
+  },
 
   processed_annotations: function() {
     var value = this.get('annotations');
