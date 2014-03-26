@@ -61,20 +61,20 @@ var model = DS.Model.extend({
     } else if (this.get('is_blocking')) {
       return 'blocking';
     }
-  }.property('status', 'urgency', 'start', 'due'),
+  }.property('status', 'urgency', 'start', 'due', 'depends'),
 
   is_blocked: function() {
-    for(var ticket in this.get('dependent_tickets')) {
-      if(ticket.get('status') == 'pending') {
-        return true;
-      }
-    }
+    //for(var ticket in this.get('dependent_tickets')) {
+    //  if(ticket.get('status') == 'pending') {
+    //    return true;
+    //  }
+    //}
     return false;
-  },
+  }.property('depends'),
 
   is_blocking: function() {
     return false;
-  },
+  }.property('depends'),
 
   processed_annotations: function() {
     var value = this.get('annotations');
