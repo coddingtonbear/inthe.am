@@ -293,6 +293,14 @@ div.alert-box.error {
   border-color: #AA0000;
 }
 
+@media screen and (max-width: 1000px) {
+  div.details_table {
+    width: 100%;
+  }
+  div.annotations_list {
+    width: 100%;
+  }
+}
 
 @media screen and (max-width: 800px) {
   nav, #task-details {
