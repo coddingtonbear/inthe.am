@@ -39,37 +39,36 @@ var model = DS.Model.extend({
   }.property('status', 'start', 'due'),
 
   taskwarrior_class: function() {
+    var value = '';
     if (this.get('start')) {
-      return 'active';
+      value = 'active';
     } else if (this.get('is_blocked')) {
-      return 'blocked';
+      value = 'blocked';
     } else if (this.get('is_blocking')) {
-      return 'blocking';
+      value = 'blocking';
     } else if (moment(this.get('due')).isBefore(moment())) {
-      return 'overdue';
+      value = 'overdue';
     } else if (moment().add('hours', 24).isAfter(this.get('due'))) {
-      return 'due__today';
+      value = 'due__today';
     } else if (moment().add('days', 7).isAfter(this.get('due'))) {
-      return 'due';
+      value = 'due';
     } else if (this.get('imask')) {
-      return 'recurring';
+      value = 'recurring';
     } else if (this.get('priority') == 'H') {
-      return 'pri__H';
+      value = 'pri__H';
     } else if (this.get('priority') == 'M') {
-      return 'pri__M';
+      value = 'pri__M';
     } else if (this.get('priority') == 'L') {
-      return 'pri__L';
+      value = 'pri__L';
     } else if (this.get('tags')) {
-      return 'tagged';
+      value = 'tagged';
     }
-  }.property('status', 'urgency', 'start', 'due', 'depends'),
+    console.log(this.get('description'), value);
+    return value;
+  }.property('status', 'urgency', 'start', 'due', 'is_blocked', 'is_blocking'),
 
   is_blocked: function() {
-    // This doesn't work yet because we do not resolve
-    // dependent/blocks via a promise, so the list will always be
-    // empty until the requests complete.  Maybe we should calculate
-    // this in the API?
-
+    //console.log("Recalculating " + this.get('description'));
     //return this.get('dependent_tickets').any(
     //  function(item, idx, enumerable) {
     //    if (item.get('status') == 'pending') {
@@ -83,7 +82,7 @@ var model = DS.Model.extend({
 
   is_blocking: function() {
     return false;
-  }.property('blocks'),
+  }.property('blocked_tickets'),
 
   processed_annotations: function() {
     var value = this.get('annotations');
@@ -108,16 +107,24 @@ var model = DS.Model.extend({
     return value;
   }.property('udas'),
 
-  _string_field_to_data: function(field_name) {
+  _string_field_to_data: function(field_name, for_property) {
     var value = this.get(field_name);
     var values = [];
     if (value) {
       var ticket_ids = value.split(',');
       var add_value_to_values = function(value) {
+        var _for_property = for_property;
         values.pushObject(value);
+        console.log("<- Received " + value.get('description'));
+        console.log("-> Announcing " + _for_property + " has changed.");
+        //this.propertyDidChange(for_property);
       };
+      console.log("XX Beginning enumeration for " + this.get('id'));
       for (var i = 0; i < ticket_ids.length; i++) {
-        this.store.find('task', ticket_ids[i]).then(add_value_to_values);
+        console.log("-> Requesting " + ticket_ids[i] + " from API (" + this.get('id') + ":" + i + ")");
+        this.store.find('task', ticket_ids[i]).then(
+          add_value_to_values.bind(this)
+        );
       }
       return values;
     } else {
@@ -126,11 +133,11 @@ var model = DS.Model.extend({
   },
 
   dependent_tickets: function(){
-    return this._string_field_to_data('depends');
+    return this._string_field_to_data('depends', 'dependent_tickets');
   }.property('depends'),
 
   blocked_tickets: function(){
-    return this._string_field_to_data('blocks');
+    return this._string_field_to_data('blocks', 'blocked_tickets');
   }.property('blocks'),
 
   as_json: function() {
