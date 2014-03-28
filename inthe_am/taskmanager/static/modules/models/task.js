@@ -63,25 +63,29 @@ var model = DS.Model.extend({
     } else if (this.get('tags')) {
       value = 'tagged';
     }
-    console.log(this.get('description'), value);
     return value;
   }.property('status', 'urgency', 'start', 'due', 'is_blocked', 'is_blocking'),
 
   is_blocked: function() {
-    //console.log("Recalculating " + this.get('description'));
-    //return this.get('dependent_tickets').any(
-    //  function(item, idx, enumerable) {
-    //    if (item.get('status') == 'pending') {
-    //      return true;
-    //    }
-    //    return false;
-    //  }
-    //);
-    return false;
+    return this.get('dependent_tickets').any(
+      function(item, idx, enumerable) {
+        if (item.get('status') == 'pending') {
+          return true;
+        }
+        return false;
+      }
+    );
   }.property('dependent_tickets'),
 
   is_blocking: function() {
-    return false;
+    return this.get('blocked_tickets').any(
+      function(item, idx, enumerable) {
+        if (item.get('status') == 'pending') {
+          return true;
+        }
+        return false;
+      }
+    );
   }.property('blocked_tickets'),
 
   processed_annotations: function() {
@@ -108,20 +112,22 @@ var model = DS.Model.extend({
   }.property('udas'),
 
   _string_field_to_data: function(field_name, for_property) {
+    var cached_value = this.get('_' + field_name);
     var value = this.get(field_name);
     var values = [];
+    if (cached_value !== undefined) {
+      return cached_value;
+    } else {
+      this.set('_' + field_name, values);
+    }
     if (value) {
       var ticket_ids = value.split(',');
       var add_value_to_values = function(value) {
         var _for_property = for_property;
         values.pushObject(value);
-        console.log("<- Received " + value.get('description'));
-        console.log("-> Announcing " + _for_property + " has changed.");
-        //this.propertyDidChange(for_property);
+        this.propertyDidChange(_for_property);
       };
-      console.log("XX Beginning enumeration for " + this.get('id'));
       for (var i = 0; i < ticket_ids.length; i++) {
-        console.log("-> Requesting " + ticket_ids[i] + " from API (" + this.get('id') + ":" + i + ")");
         this.store.find('task', ticket_ids[i]).then(
           add_value_to_values.bind(this)
         );
