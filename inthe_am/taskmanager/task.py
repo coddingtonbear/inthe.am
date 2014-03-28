@@ -21,11 +21,12 @@ class Task(object):
     ]
     KNOWN_FIELDS = DATE_FIELDS + LIST_FIELDS + STRING_FIELDS
 
-    def __init__(self, json, taskrc=None):
+    def __init__(self, json, taskrc=None, store=None):
         if not json:
             raise ValueError()
         self.json = json
         self.taskrc = taskrc
+        self.store = store
 
     @staticmethod
     def get_timezone(tzname, offset):
@@ -85,6 +86,14 @@ class Task(object):
                         'value': self.get_json()[uda],
                     }
             return value
+        if name == 'blocks' and self.store:
+            uuid = self.json['uuid']
+            blocks = self.store.client.filter_tasks({
+                'depends': uuid,
+            })
+            return ','.join([
+                v['uuid'] for v in blocks
+            ])
 
         try:
             value = self.json[name]

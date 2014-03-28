@@ -74,6 +74,20 @@
                         </td>
                     </tr>
                 {{/if}}
+                {{#if blocked_tickets}}
+                    <tr>
+                        <th>Blocks</th>
+                        <td>
+                            <ul class="blocked_tickets">
+                                {{#each blocked_tickets}}
+                                    <li {{bind-attr class="this.status"}}>
+                                        {{#link-to 'task' this}}{{this.description}}{{/link-to}}
+                                    </li>
+                                {{/each}}
+                            </ul>
+                        </td>
+                    </tr>
+                {{/if}}
                 <tr>
                     <th>Description</th>
                     <td>{{description}}</td>

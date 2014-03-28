@@ -14,6 +14,7 @@ var model = DS.Model.extend({
   urgency: DS.attr('number'),
   uuid: DS.attr('string'),
   depends: DS.attr('string'),
+  blocks: DS.attr('string'),
   project: DS.attr('string'),
   imask: DS.attr('number'),
   udas: DS.attr(),
@@ -99,8 +100,8 @@ var model = DS.Model.extend({
     return value;
   }.property('udas'),
 
-  dependent_tickets: function(){
-    var value = this.get('depends');
+  _string_field_to_data: function(field_name) {
+    var value = this.get(field_name);
     var values = [];
     if (value) {
       var ticket_ids = value.split(',');
@@ -114,7 +115,15 @@ var model = DS.Model.extend({
     } else {
       return [];
     }
+  },
+
+  dependent_tickets: function(){
+    return this._string_field_to_data('depends');
   }.property('depends'),
+
+  blocked_tickets: function(){
+    return this._string_field_to_data('blocks');
+  }.property('blocks'),
 
   as_json: function() {
     return JSON.stringify(this.store.serialize(this));

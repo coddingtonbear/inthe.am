@@ -387,6 +387,7 @@ class TaskResource(resources.Resource):
     wait = fields.DateTimeField(attribute='wait', null=True)
     scheduled = fields.DateTimeField(attribute='scheduled', null=True)
     depends = fields.CharField(attribute='depends', null=True)
+    blocks = fields.CharField(attribute='blocks', null=True)
     annotations = fields.ListField(attribute='annotations', null=True)
     tags = fields.ListField(attribute='tags', null=True)
     imask = fields.IntegerField(attribute='imask', null=True)
@@ -716,7 +717,7 @@ class TaskResource(resources.Resource):
 
         objects = []
         for task_json in store.client.load_tasks()[self.TASK_TYPE]:
-            task = Task(task_json, store.taskrc)
+            task = Task(task_json, store.taskrc, store=store)
             if self.passes_filters(task, filters):
                 objects.append(task)
 
@@ -728,6 +729,7 @@ class TaskResource(resources.Resource):
             return Task(
                 store.client.get_task(uuid=kwargs['pk'])[1],
                 store.taskrc,
+                store=store,
             )
         except ValueError:
             raise exceptions.NotFound()
@@ -743,6 +745,7 @@ class TaskResource(resources.Resource):
             bundle.obj = Task(
                 store.client.task_add(**safe_json),
                 store.taskrc,
+                store=store,
             )
             store.log_message(
                 "New task created: %s.",
@@ -773,6 +776,7 @@ class TaskResource(resources.Resource):
             bundle.obj = Task(
                 store.client.get_task(uuid=kwargs['pk'])[1],
                 store.taskrc,
+                store=store,
             )
             return bundle
 
