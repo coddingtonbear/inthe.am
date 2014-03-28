@@ -69,10 +69,10 @@ var model = DS.Model.extend({
   is_blocked: function() {
     return this.get('dependent_tickets').any(
       function(item, idx, enumerable) {
-        if (item.get('status') == 'pending') {
-          return true;
+        if ($.inArray(item.get('status'), ['completed', 'deleted']) > -1) {
+          return false;
         }
-        return false;
+        return true;
       }
     );
   }.property('dependent_tickets'),
@@ -80,10 +80,10 @@ var model = DS.Model.extend({
   is_blocking: function() {
     return this.get('blocked_tickets').any(
       function(item, idx, enumerable) {
-        if (item.get('status') == 'pending') {
-          return true;
+        if ($.inArray(item.get('status'), ['completed', 'deleted']) > -1) {
+          return false;
         }
-        return false;
+        return true;
       }
     );
   }.property('blocked_tickets'),
