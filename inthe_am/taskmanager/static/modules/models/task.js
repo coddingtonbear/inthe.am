@@ -41,6 +41,10 @@ var model = DS.Model.extend({
   taskwarrior_class: function() {
     if (this.get('start')) {
       return 'active';
+    } else if (this.get('is_blocked')) {
+      return 'blocked';
+    } else if (this.get('is_blocking')) {
+      return 'blocking';
     } else if (moment(this.get('due')).isBefore(moment())) {
       return 'overdue';
     } else if (moment().add('hours', 24).isAfter(this.get('due'))) {
@@ -57,25 +61,29 @@ var model = DS.Model.extend({
       return 'pri__L';
     } else if (this.get('tags')) {
       return 'tagged';
-    } else if (this.get('is_blocked')) {
-      return 'blocked';
-    } else if (this.get('is_blocking')) {
-      return 'blocking';
     }
   }.property('status', 'urgency', 'start', 'due', 'depends'),
 
   is_blocked: function() {
-    //for(var ticket in this.get('dependent_tickets')) {
-    //  if(ticket.get('status') == 'pending') {
-    //    return true;
+    // This doesn't work yet because we do not resolve
+    // dependent/blocks via a promise, so the list will always be
+    // empty until the requests complete.  Maybe we should calculate
+    // this in the API?
+
+    //return this.get('dependent_tickets').any(
+    //  function(item, idx, enumerable) {
+    //    if (item.get('status') == 'pending') {
+    //      return true;
+    //    }
+    //    return false;
     //  }
-    //}
+    //);
     return false;
-  }.property('depends'),
+  }.property('dependent_tickets'),
 
   is_blocking: function() {
     return false;
-  }.property('depends'),
+  }.property('blocks'),
 
   processed_annotations: function() {
     var value = this.get('annotations');
