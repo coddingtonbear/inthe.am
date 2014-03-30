@@ -133,7 +133,7 @@ var controller = Ember.Controller.extend({
     },
     'head_changed': function(evt) {
       this.get('statusUpdater').close();
-      this.get('startEventStream')(evt.data);
+      this.get('startEventStream').bind(this)(evt.data);
       try {
         this.store.find('activityLog').update();
       } catch(e) {
