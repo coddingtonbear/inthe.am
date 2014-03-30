@@ -40,6 +40,7 @@ var route = Ember.Route.extend({
       Ember.run.next(null, function(){
         $(document).foundation();
         $("#new_annotation_form").foundation('reveal', 'open');
+        setTimeout(function(){$("#new_annotation_body").focus();}, 500);
       });
     },
     error: function(reason, tsn) {

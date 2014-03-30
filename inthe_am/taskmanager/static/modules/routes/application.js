@@ -15,6 +15,7 @@ var route = Ember.Route.extend({
       var displayModal = function(){
         $(document).foundation();
         $("#new_task_form").foundation('reveal', 'open');
+        setTimeout(function(){$("input[name=description]").focus();}, 500);
       };
       Ember.run.scheduleOnce('afterRender', this, displayModal);
       return rendered;
