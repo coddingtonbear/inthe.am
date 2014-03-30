@@ -77,18 +77,35 @@ var controller = Ember.Controller.extend({
     // Set up the event stream
     this.startEventStream();
   },
+  checkStatusUpdater: function() {
+    var statusUpdater = this.get('statusUpdater');
+    var connected = this.get('taskUpdateStreamConnected');
+    if ((statusUpdater.readyState != EventSource.OPEN) && connected) {
+      this.set('taskUpdateStreamConnected', false);
+    } else if ((statusUpdater.readyState == EventSource.OPEN) && !connected) {
+      this.set('taskUpdateStreamConnected', true);
+    }
+  },
   startEventStream: function(head) {
     var statusUpdater = this.get('statusUpdater');
-    if(!statusUpdater || statusUpdater.readyState == EventSource.CLOSED) {
-      if(this.get('taskUpdateStreamEnabled')){
-        url = this.get('urls.status_feed');
-        if(head && typeof(head) == 'string') {
-          url = url + "?head=" +  head;
-        }
-        statusUpdater = new EventSource(url);
-        this.bindStatusActions(statusUpdater);
-        this.set('statusUpdater', statusUpdater);
+    if (
+      this.get('taskUpdateStreamEnabled') &&
+      (!statusUpdater || statusUpdater.readyState == EventSource.CLOSED)
+    ){
+      url = this.get('urls.status_feed');
+      if(head && typeof(head) == 'string') {
+        url = url + "?head=" +  head;
       }
+      statusUpdater = new EventSource(url);
+      this.bindStatusActions(statusUpdater);
+      this.set('statusUpdater', statusUpdater);
+
+      setInterval(
+        this.checkStatusUpdater.bind(this),
+        500
+      );
+    } else {
+      this.set('taskUpdateStreamConnected', false);
     }
   },
   updateColorscheme: function() {

@@ -47,7 +47,7 @@
                     <a href="#" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
                 </li>
 
-                {{#unless taskUpdateStreamEnabled}}
+                {{#unless taskUpdateStreamConnected}}
                     <li id="refresh-link">
                         <a href="#" {{action "refresh"}}><i class="fa fa-refresh"></i></a>
                     </li>
