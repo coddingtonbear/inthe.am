@@ -76,14 +76,31 @@ var controller = Ember.Controller.extend({
 
     // Set up the event stream
     this.startEventStream();
+    setInterval(this.checkStatusUpdater.bind(this), 500);
   },
   checkStatusUpdater: function() {
     var statusUpdater = this.get('statusUpdater');
     var connected = this.get('taskUpdateStreamConnected');
-    if ((statusUpdater.readyState != window.EventSource.OPEN) && connected) {
+    if (
+      statusUpdater &&
+      (statusUpdater.readyState != window.EventSource.OPEN) &&
+      connected
+    ) {
       this.set('taskUpdateStreamConnected', false);
-    } else if ((statusUpdater.readyState == window.EventSource.OPEN) && !connected) {
+    } else if (
+      statusUpdater &&
+      (statusUpdater.readyState == window.EventSource.OPEN) &&
+      !connected
+    ) {
       this.set('taskUpdateStreamConnected', true);
+      var errorKnown = this.get('statusUpdaterErrorred');
+      if (errorKnown) {
+        $.growl.notice({
+          title: 'Connected',
+          message: 'Your connection to Inthe.AM was reestablished.',
+        });
+        this.set('statusUpdaterErrorred', false);
+      }
     }
   },
   startEventStream: function(head) {
@@ -100,21 +117,19 @@ var controller = Ember.Controller.extend({
       this.bindStatusActions(statusUpdater);
       this.set('statusUpdater', statusUpdater);
       this.set('statusUpdaterHead', head);
-
-      setInterval(
-        this.checkStatusUpdater.bind(this),
-        500
-      );
     } else {
       this.set('taskUpdateStreamConnected', false);
     }
   },
   eventStreamError: function(evt) {
-    $.growl.error({
-      title: "Reconnecting",
-      message: "Your connection to Inthe.AM was lost.",
-      duration: 2000,
-    });
+    var errorKnown = this.get('statusUpdaterErrorred');
+    if (! errorKnown) {
+      $.growl.error({
+        title: 'Reconnecting...',
+        message: 'Your connection to Inthe.AM was lost.',
+      });
+      this.set('statusUpdaterErrorred', true);
+    }
     this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
   },
   updateColorscheme: function() {
