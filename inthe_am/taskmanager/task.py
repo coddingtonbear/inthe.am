@@ -89,7 +89,7 @@ class Task(object):
         if name == 'blocks' and self.store:
             uuid = self.json['uuid']
             blocks = self.store.client.filter_tasks({
-                'depends': uuid,
+                'depends.contains': uuid,
             })
             return ','.join([
                 v['uuid'] for v in blocks
