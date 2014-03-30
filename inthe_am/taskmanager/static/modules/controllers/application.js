@@ -80,9 +80,9 @@ var controller = Ember.Controller.extend({
   checkStatusUpdater: function() {
     var statusUpdater = this.get('statusUpdater');
     var connected = this.get('taskUpdateStreamConnected');
-    if ((statusUpdater.readyState != EventSource.OPEN) && connected) {
+    if ((statusUpdater.readyState != window.EventSource.OPEN) && connected) {
       this.set('taskUpdateStreamConnected', false);
-    } else if ((statusUpdater.readyState == EventSource.OPEN) && !connected) {
+    } else if ((statusUpdater.readyState == window.EventSource.OPEN) && !connected) {
       this.set('taskUpdateStreamConnected', true);
     }
   },
@@ -90,13 +90,13 @@ var controller = Ember.Controller.extend({
     var statusUpdater = this.get('statusUpdater');
     if (
       this.get('taskUpdateStreamEnabled') &&
-      (!statusUpdater || statusUpdater.readyState == EventSource.CLOSED)
+      (!statusUpdater || statusUpdater.readyState == window.EventSource.CLOSED)
     ){
       url = this.get('urls.status_feed');
       if(head && typeof(head) == 'string') {
         url = url + "?head=" +  head;
       }
-      statusUpdater = new EventSource(url);
+      statusUpdater = new window.EventSource(url);
       this.bindStatusActions(statusUpdater);
       this.set('statusUpdater', statusUpdater);
 
