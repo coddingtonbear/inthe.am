@@ -83,28 +83,16 @@ var controller = Ember.Controller.extend({
     });
   },
   error_message: function(message) {
-    $("#settings_alerts").append(
-      $("<div>", {'data-alert': '', 'class': 'alert-box error radius'}).append(
-        message,
-        $("<a>", {'href': '#', 'class': 'close'}).html("&times;")
-      )
-    );
-    var reloadFoundation = function(){
-      $(document).foundation();
-    };
-    Ember.run.scheduleOnce('afterRender', this, reloadFoundation);
+    $.growl.error({
+      title: 'Error',
+      message: message,
+    });
   },
   success_message: function(message) {
-    $("#settings_alerts").append(
-      $("<div>", {'data-alert': '', 'class': 'alert-box success radius'}).append(
-        message,
-        $("<a>", {'href': '#', 'class': 'close'}).html("&times;")
-      )
-    );
-    var reloadFoundation = function(){
-      $(document).foundation();
-    };
-    Ember.run.scheduleOnce('afterRender', this, reloadFoundation);
+    $.growl.notice({
+      title: 'Success',
+      message: message,
+    });
   },
   actions: {
     save_taskrc: function() {

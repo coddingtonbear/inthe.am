@@ -99,6 +99,7 @@ var controller = Ember.Controller.extend({
       statusUpdater = new window.EventSource(url);
       this.bindStatusActions(statusUpdater);
       this.set('statusUpdater', statusUpdater);
+      this.set('statusUpdaterHead', head);
 
       setInterval(
         this.checkStatusUpdater.bind(this),
@@ -107,6 +108,14 @@ var controller = Ember.Controller.extend({
     } else {
       this.set('taskUpdateStreamConnected', false);
     }
+  },
+  eventStreamError: function(evt) {
+    $.growl.error({
+      title: "Reconnecting",
+      message: "Your connection to Inthe.AM was lost.",
+      duration: 2000,
+    });
+    this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
   },
   updateColorscheme: function() {
     var scheme = this.get('user').colorscheme;
@@ -118,7 +127,7 @@ var controller = Ember.Controller.extend({
     }
     updater.addEventListener(
       'error',
-      this.get('startEventStream').bind(this)
+      this.get('eventStreamError').bind(this)
     );
   },
   statusActions: {
