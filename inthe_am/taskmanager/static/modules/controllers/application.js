@@ -83,10 +83,27 @@ var controller = Ember.Controller.extend({
     var connected = this.get('taskUpdateStreamConnected');
     if (
       statusUpdater &&
-      (statusUpdater.readyState != window.EventSource.OPEN) &&
-      connected
+      (statusUpdater.readyState != window.EventSource.OPEN)
     ) {
-      this.set('taskUpdateStreamConnected', false);
+      if(connected) {
+        this.set('taskUpdateStreamConnected', false);
+      }
+      if (statusUpdater.readyState == window.EventSource.CLOSED) {
+        var since = this.get('taskUpdateStreamConnectionLost');
+        if (! since) {
+          this.set('taskUpdateStreamConnectionLost', new Date());
+        } else {
+          var now = new Date();
+          if(now - since > 5000) { // 5 Seconds
+            $.growl.warning({
+              title: 'Reconnecting...',
+              message: 'Your connection to Inthe.AM was lost.',
+            });
+            this.set('taskUpdateStreamConnectionLost', null);
+            this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
+          }
+        }
+      }
     } else if (
       statusUpdater &&
       (statusUpdater.readyState == window.EventSource.OPEN) &&
