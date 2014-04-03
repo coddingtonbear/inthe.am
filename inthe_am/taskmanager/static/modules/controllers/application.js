@@ -89,6 +89,7 @@ var controller = Ember.Controller.extend({
         this.set('taskUpdateStreamConnected', false);
       }
       if (statusUpdater.readyState == window.EventSource.CLOSED) {
+        this.set('statusUpdaterErrorred', true);
         var since = this.get('taskUpdateStreamConnectionLost');
         if (! since) {
           this.set('taskUpdateStreamConnectionLost', new Date());
@@ -140,10 +141,7 @@ var controller = Ember.Controller.extend({
     }
   },
   eventStreamError: function(evt) {
-    var errorKnown = this.get('statusUpdaterErrorred');
-    if (! errorKnown) {
-      this.set('statusUpdaterErrorred', true);
-    }
+    this.set('statusUpdaterErrorred', true);
     this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
   },
   updateColorscheme: function() {
