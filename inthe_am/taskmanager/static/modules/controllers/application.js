@@ -75,7 +75,7 @@ var controller = Ember.Controller.extend({
     });
 
     // Set up the event stream
-    if(window.EventSource) {
+    if(this.get('taskUpdateStreamEnabled')) {
       this.startEventStream();
       setInterval(this.checkStatusUpdater.bind(this), 500);
     }
