@@ -99,6 +99,7 @@ var controller = Ember.Controller.extend({
               title: 'Reconnecting...',
               message: 'Your connection to Inthe.AM was lost.',
             });
+            this.set('statusUpdaterErrorred', true);
             this.set('taskUpdateStreamConnectionLost', null);
             this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
           }
@@ -141,10 +142,6 @@ var controller = Ember.Controller.extend({
   eventStreamError: function(evt) {
     var errorKnown = this.get('statusUpdaterErrorred');
     if (! errorKnown) {
-      $.growl.error({
-        title: 'Reconnecting...',
-        message: 'Your connection to Inthe.AM was lost.',
-      });
       this.set('statusUpdaterErrorred', true);
     }
     this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
