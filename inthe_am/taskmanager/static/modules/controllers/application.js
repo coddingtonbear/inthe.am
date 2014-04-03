@@ -75,8 +75,10 @@ var controller = Ember.Controller.extend({
     });
 
     // Set up the event stream
-    this.startEventStream();
-    setInterval(this.checkStatusUpdater.bind(this), 500);
+    if(window.EventSource) {
+      this.startEventStream();
+      setInterval(this.checkStatusUpdater.bind(this), 500);
+    }
   },
   checkStatusUpdater: function() {
     var statusUpdater = this.get('statusUpdater');
@@ -141,7 +143,6 @@ var controller = Ember.Controller.extend({
     }
   },
   eventStreamError: function(evt) {
-    this.set('statusUpdaterErrorred', true);
     this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
   },
   updateColorscheme: function() {
