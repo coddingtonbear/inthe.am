@@ -17,6 +17,7 @@ var controller = Ember.Controller.extend({
     set_colorscheme: '/api/v1/user/colorscheme/',
     status_feed: '/status/',
     sms_url: null,
+    pebble_card_url: null,
   },
   taskUpdateStreamEnabled: function() {
     return this.get('controllers.configure.taskUpdateStreamEnabled');
@@ -45,6 +46,7 @@ var controller = Ember.Controller.extend({
       Raven.setUser();
     }
     this.set('urls.sms_url', this.get('user').sms_url);
+    this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
   },
   handleError: function(reason, tsn) {
     if (reason.status == 401) {

@@ -47,6 +47,7 @@ class TaskStore(models.Model):
         blank=True,
     )
     twilio_auth_token = models.CharField(max_length=32, blank=True)
+    secret_id = models.CharField(blank=True, max_length=36)
     sms_whitelist = models.TextField(blank=True)
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)
@@ -233,6 +234,9 @@ class TaskStore(models.Model):
                 os.mkdir(self.local_path)
             with open(os.path.join(self.local_path, '.gitignore'), 'w') as out:
                 out.write('.lock\n')
+
+        if not self.secret_id:
+            self.secret_id = str(uuid.uuid4())
 
         self.apply_extras()
         super(TaskStore, self).save(*args, **kwargs)

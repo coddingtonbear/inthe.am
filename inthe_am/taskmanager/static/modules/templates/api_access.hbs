@@ -6,10 +6,6 @@
         use this to query, create, complete, or change
         tasks in your task list.
     </p>
-    <p>
-        Soon: Pebble Cards API endpoint.
-    </p>
-
 
     <h3>Authentication</h3>
 
@@ -366,5 +362,19 @@
             Get completed task details.
         </li>
     </ul>
+
+    <h2>Pebble Card Access</h2>
+
+    <table class="pure-table pure-table-horizontal">
+        <tr>
+            <th>
+                Pebble Card URL
+            </th>
+            <td>
+                https://inthe.am{{ controllers.application.urls.pebble_card_url }}
+            </td>
+        </tr>
+    </table>
+
     {{partial "footer"}}
 </div>

@@ -348,6 +348,14 @@ class UserResource(resources.ModelResource):
                     }
                 ),
                 'colorscheme': meta.colorscheme,
+                'pebble_card_url': reverse(
+                    'pebble_card_url',
+                    kwargs={
+                        'api_name': 'v1',
+                        'resource_name': 'task',
+                        'secret_id': store.secret_id,
+                    }
+                )
             }
         else:
             user_data = {
@@ -432,6 +440,13 @@ class TaskResource(resources.Resource):
                 ),
                 self.wrap_view('manage_lock')
             ),
+            url(
+                r"^(?P<resource_name>%s)/pebble-card/(?P<secret_id>[\w\d_.-]+)/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('pebble_card'),
+                name='pebble_card_url',
+            ),
         ]
 
     def manage_lock(self, request, **kwargs):
@@ -463,6 +478,35 @@ class TaskResource(resources.Resource):
                 status=404
             )
         raise HttpResponseNotAllowed(request.method)
+
+    def pebble_card(self, request, secret_id, **kwargs):
+        if request.method != 'GET':
+            return HttpResponseNotAllowed(request.method)
+        try:
+            store = models.TaskStore.objects.get(secret_id=secret_id)
+        except:
+            return HttpResponseNotFound()
+
+        pending_tasks = store.client.load_tasks()['pending']
+
+        pending_tasks = sorted(
+            filter(
+                lambda d: d['status'] == 'pending',
+                pending_tasks,
+            ),
+            key=lambda d: float(d['urgency']),
+            reverse=True
+        )
+
+        response = {
+            'content': pending_tasks[0]['description'],
+            'refresh_frequency': 15
+        }
+
+        return HttpResponse(
+            json.dumps(response),
+            content_type='application/json',
+        )
 
     @requires_taskd_sync
     @git_managed("Start task")
