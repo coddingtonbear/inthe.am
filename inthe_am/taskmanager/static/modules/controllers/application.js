@@ -75,8 +75,10 @@ var controller = Ember.Controller.extend({
     });
 
     // Set up the event stream
-    this.startEventStream();
-    setInterval(this.checkStatusUpdater.bind(this), 500);
+    if(this.get('taskUpdateStreamEnabled')) {
+      this.startEventStream();
+      setInterval(this.checkStatusUpdater.bind(this), 500);
+    }
   },
   checkStatusUpdater: function() {
     var statusUpdater = this.get('statusUpdater');
@@ -89,6 +91,7 @@ var controller = Ember.Controller.extend({
         this.set('taskUpdateStreamConnected', false);
       }
       if (statusUpdater.readyState == window.EventSource.CLOSED) {
+        this.set('statusUpdaterErrorred', true);
         var since = this.get('taskUpdateStreamConnectionLost');
         if (! since) {
           this.set('taskUpdateStreamConnectionLost', new Date());
@@ -99,6 +102,7 @@ var controller = Ember.Controller.extend({
               title: 'Reconnecting...',
               message: 'Your connection to Inthe.AM was lost.',
             });
+            this.set('statusUpdaterErrorred', true);
             this.set('taskUpdateStreamConnectionLost', null);
             this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
           }
@@ -139,14 +143,6 @@ var controller = Ember.Controller.extend({
     }
   },
   eventStreamError: function(evt) {
-    var errorKnown = this.get('statusUpdaterErrorred');
-    if (! errorKnown) {
-      $.growl.error({
-        title: 'Reconnecting...',
-        message: 'Your connection to Inthe.AM was lost.',
-      });
-      this.set('statusUpdaterErrorred', true);
-    }
     this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
   },
   updateColorscheme: function() {
