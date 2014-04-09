@@ -423,6 +423,7 @@ class TaskStore(models.Model):
         self.metadata['generated_taskd_credentials'] = taskd_credentials
 
         self.save()
+        self.client.sync(init=True)
         self.create_git_checkpoint("Local store created")
 
     def _log_entry(self, message, error, *parameters):
@@ -691,7 +692,8 @@ class TaskRc(object):
 
 def autoconfigure_taskd_for_user(sender, instance, **kwargs):
     store = TaskStore.get_for_user(instance)
-    store.autoconfigure_taskd()
+    if not store.configured:
+        store.autoconfigure_taskd()
 
 
 models.signals.post_save.connect(create_api_key, sender=User)
