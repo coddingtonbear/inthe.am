@@ -662,32 +662,6 @@ class TaskResource(resources.Resource):
 
         return HttpResponse(str(r), content_type='application/xml')
 
-    def autoconfigure(self, request, **kwargs):
-        store = models.TaskStore.get_for_user(request.user)
-        try:
-            store.autoconfigure_taskd()
-        except Exception as e:
-            err_message = (
-                "Error encountered while attempting to autoconfigure."
-            )
-            logger.exception(err_message)
-            store.log_error(err_message)
-            return HttpResponse(
-                json.dumps({
-                    'error': str(e)
-                }),
-                status=500,
-                content_type='application/json',
-            )
-        store.log_message("Taskstore autoconfiguration completed.")
-        return HttpResponse(
-            json.dumps({
-                'status': 'Successfully configured'
-            }),
-            status=200,
-            content_type='application/json',
-        )
-
     def _get_store(self, user):
         return user.task_stores.get()
 

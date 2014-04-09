@@ -27,28 +27,7 @@ App.IndexController = Ember.Controller.extend({
     if (! user.logged_in) {
       self.transitionToRoute('about');
     } else {
-      if (configured) {
-        self.transitionToRoute('tasks');
-      } else {
-        $.ajax(
-          {
-            url: '/api/v1/task/autoconfigure/',
-            dataType: 'json',
-            statusCode: {
-              200: function(){
-                self.get('controllers.application').update_user_info();
-                self.transitionToRoute('tasks');
-              },
-              404: function(){
-                self.transitionToRoute('unconfigurable');
-              },
-              409: function(){
-                self.transitionToRoute('configure');
-              },
-            }
-          }
-        );
-      }
+      self.transitionToRoute('tasks');
     }
   }
 });
