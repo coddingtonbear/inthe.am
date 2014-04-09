@@ -689,7 +689,7 @@ class TaskRc(object):
         return self.__unicode__().encode('utf-8', 'REPLACE')
 
 
-def autoconfigure_taskd_for_user(sender, instance):
+def autoconfigure_taskd_for_user(sender, instance, **kwargs):
     store = models.TaskStore.get_for_user(instance)
     store.autoconfigure_taskd()
 
