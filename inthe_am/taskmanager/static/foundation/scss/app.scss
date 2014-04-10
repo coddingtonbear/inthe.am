@@ -240,6 +240,12 @@ div.row {
     th {
       text-align: left;
     }
+    td {
+      p {
+        font-size: 15px;
+        margin-bottom: 0.75rem;
+      }
+    }
   }
   div.task-content-body {
     margin-right: inherit;
