@@ -77,7 +77,10 @@ class TaskwarriorClient(TaskWarriorShellout):
             'rc.json.array=TRUE',
             'rc.verbose=nothing',
             'rc.confirmation=no',
-        ] + [six.text_type(arg) for arg in args]
+        ] + [
+            six.text_type(arg).encode('utf-8')
+            for arg in args
+        ]
         proc = subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
