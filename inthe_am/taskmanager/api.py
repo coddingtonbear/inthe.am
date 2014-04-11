@@ -348,6 +348,7 @@ class UserResource(resources.ModelResource):
                     }
                 ),
                 'colorscheme': meta.colorscheme,
+                'repository_head': store.repository.head(),
                 'pebble_card_url': reverse(
                     'pebble_card_url',
                     kwargs={

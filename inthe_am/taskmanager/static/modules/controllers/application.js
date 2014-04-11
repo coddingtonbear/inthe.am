@@ -47,6 +47,7 @@ var controller = Ember.Controller.extend({
     }
     this.set('urls.sms_url', this.get('user').sms_url);
     this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
+    this.set('statusUpdaterHead', this.get('user').repository_head);
   },
   handleError: function(reason, tsn) {
     if (reason.status == 401) {
@@ -78,6 +79,7 @@ var controller = Ember.Controller.extend({
 
     // Set up the event stream
     if(this.get('taskUpdateStreamEnabled')) {
+      this.set('statusUpdaterLog', []);
       this.startEventStream();
       setInterval(this.checkStatusUpdater.bind(this), 500);
     }
@@ -100,13 +102,17 @@ var controller = Ember.Controller.extend({
         } else {
           var now = new Date();
           if(now - since > 5000) { // 5 Seconds
+            var log = this.get('statusUpdaterLog');
+            log.pushObject(
+                [new Date(), 'Connection appears to be disconnected']
+            );
             $.growl.warning({
               title: 'Reconnecting...',
               message: 'Your connection to Inthe.AM was lost.',
             });
             this.set('statusUpdaterErrorred', true);
             this.set('taskUpdateStreamConnectionLost', null);
-            this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
+            this.get('startEventStream').bind(this)();
           }
         }
       }
@@ -126,7 +132,12 @@ var controller = Ember.Controller.extend({
       }
     }
   },
-  startEventStream: function(head) {
+  startEventStream: function() {
+    var head = this.get('statusUpdaterHead');
+    var log = this.get('statusUpdaterLog');
+    log.pushObject(
+      [new Date(), 'Starting with HEAD ' + head]
+    );
     var statusUpdater = this.get('statusUpdater');
     if (
       this.get('taskUpdateStreamEnabled') &&
@@ -145,7 +156,7 @@ var controller = Ember.Controller.extend({
     }
   },
   eventStreamError: function(evt) {
-    this.get('startEventStream').bind(this)(this.get('statusUpdaterHead'));
+    this.get('startEventStream').bind(this)();
   },
   updateColorscheme: function() {
     var scheme = this.get('user').colorscheme;
@@ -172,7 +183,8 @@ var controller = Ember.Controller.extend({
     },
     'head_changed': function(evt) {
       this.get('statusUpdater').close();
-      this.get('startEventStream').bind(this)(evt.data);
+      this.set('statusUpdaterHead', evt.data);
+      this.get('startEventStream').bind(this)();
       try {
         this.store.find('activityLog').update();
       } catch(e) {
