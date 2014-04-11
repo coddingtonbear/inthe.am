@@ -1,13 +1,16 @@
+import datetime
 import logging
 import os
 import re
 import time
 
+import pytz
+
 from django.conf import settings
 from django_sse.views import BaseSseView
 from django.template.response import TemplateResponse
 
-from .models import TaskStore
+from .models import TaskStore, TaskStoreActivityLog
 
 
 logger = logging.getLogger(__name__)
@@ -67,6 +70,7 @@ class Status(BaseSseView):
         return taskd_mtime
 
     def iterator(self):
+        last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
         store = self.get_store()
         if not store:
             return
@@ -76,6 +80,18 @@ class Status(BaseSseView):
         taskd_mtime = self.get_taskd_mtime(store)
         head = self.request.GET.get('head', store.repository.head())
         while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
+            entries = TaskStoreActivityLog.objects.filter(
+                last_seen__gt=last_checked,
+                error=True,
+                store=store,
+            )
+            last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
+            for entry in entries:
+                self.see.add_message(
+                    'error_logged',
+                    entry.message
+                )
+
             if store.using_local_taskd:
                 loop_interval = settings.EVENT_STREAM_LOCAL_LOOP_INTERVAL
                 new_mtime = self.get_taskd_mtime(store)

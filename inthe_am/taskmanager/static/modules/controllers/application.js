@@ -190,6 +190,12 @@ var controller = Ember.Controller.extend({
       } catch(e) {
         // Pass
       }
+    },
+    'error_logged': function(evt) {
+      $.growl.error({
+        title: 'Error',
+        message: evt.data
+      });
     }
   },
   isSmallScreen: function() {
