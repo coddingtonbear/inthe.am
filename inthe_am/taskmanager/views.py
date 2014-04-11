@@ -94,8 +94,15 @@ class Status(BaseSseView):
 
             if store.using_local_taskd:
                 new_mtime = self.get_taskd_mtime(store)
-                if new_mtime != taskd_mtime:
+                if (
+                    new_mtime != taskd_mtime
+                    or (
+                        (time.time() - last_sync)
+                        > settings.EVENT_STREAM_POLLING_INTERVAL
+                    )
+                ):
                     taskd_mtime = new_mtime
+                    last_sync = time.time()
                     store.sync()
                     head = self.check_head(head)
             else:
