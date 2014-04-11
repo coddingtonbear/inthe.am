@@ -93,14 +93,12 @@ class Status(BaseSseView):
                 )
 
             if store.using_local_taskd:
-                loop_interval = settings.EVENT_STREAM_LOCAL_LOOP_INTERVAL
                 new_mtime = self.get_taskd_mtime(store)
                 if new_mtime != taskd_mtime:
                     taskd_mtime = new_mtime
                     store.sync()
                     head = self.check_head(head)
             else:
-                loop_interval = settings.EVENT_STREAM_LOOP_INTERVAL
                 if time.time() - last_sync > (
                     settings.EVENT_STREAM_POLLING_INTERVAL
                 ):
@@ -113,7 +111,7 @@ class Status(BaseSseView):
 
             yield
 
-            time.sleep(loop_interval)
+            time.sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
 
 
 def home(request):
