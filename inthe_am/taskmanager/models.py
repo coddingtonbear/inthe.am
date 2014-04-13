@@ -323,7 +323,7 @@ class TaskStore(models.Model):
 
     def sync(self, celery=True):
         if celery:
-            sync_repository.apply_async(self)
+            sync_repository.apply_async(args=(self, ))
         else:
             try:
                 with git_checkpoint(self, 'Synchronization'):
