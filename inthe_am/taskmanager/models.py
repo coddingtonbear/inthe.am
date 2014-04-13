@@ -17,9 +17,9 @@ from django.utils.timezone import now
 from dulwich.repo import Repo
 from tastypie.models import create_api_key, ApiKey
 
-from .context_managers import git_checkpoint
-from .taskwarrior_client import TaskwarriorClient, TaskwarriorError
+from .taskwarrior_client import TaskwarriorClient
 from .taskstore_migrations import upgrade as upgrade_taskstore
+from .tasks import sync_repository
 
 
 logger = logging.getLogger(__name__)
@@ -321,19 +321,7 @@ class TaskStore(models.Model):
         )
 
     def sync(self):
-        try:
-            with git_checkpoint(self, 'Synchronization'):
-                self.client.sync()
-        except TaskwarriorError as e:
-            self.log_error(
-                "Error while syncing tasks! "
-                "Err. Code: %s; "
-                "Std. Error: %s; "
-                "Std. Out: %s.",
-                e.code,
-                e.stderr,
-                e.stdout,
-            )
+        sync_repository.apply_async(self)
 
     def autoconfigure_taskd(self):
         self.configured = True
