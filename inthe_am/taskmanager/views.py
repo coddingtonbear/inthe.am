@@ -122,6 +122,11 @@ class Status(BaseSseView):
 
 
 def home(request):
+    try:
+        store = TaskStore.objects.get(user=request.user)
+        store.sync(celery=False)
+    except:
+        pass
     return TemplateResponse(
         request,
         'home.html',
