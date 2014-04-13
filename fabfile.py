@@ -26,5 +26,5 @@ def deploy():
         virtualenv('python manage.py collectstatic --noinput', user='www-data')
         virtualenv('python manage.py migrate', user='www-data')
         sudo('service twweb restart')
-        sudo('service twweb-sync restart')
+        sudo('service twweb-status restart')
         sudo('service twweb-celery restart')
