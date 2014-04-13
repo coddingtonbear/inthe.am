@@ -6,7 +6,7 @@
                 Your Certificate
             </th>
             <td>
-                <a {{bind-attr href=controllers.application.urls.my_certificate }}>private.cert.pem</a>
+                <a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a>
             </td>
         </tr>
         <tr>
@@ -25,7 +25,7 @@
 
     <code>
     <pre>
-        taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.cert.pem</a>
+        taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a>
         taskd.key=/path/to/<a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
         taskd.trust=yes
         taskd.server={{ controllers.application.user.taskd_server }}
