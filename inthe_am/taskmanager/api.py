@@ -28,7 +28,7 @@ from django.utils.timezone import now
 from . import models
 from . import forms
 from .context_managers import git_checkpoint
-from .decorators import git_managed
+from .decorators import requires_task_store, git_managed
 from .task import Task
 
 

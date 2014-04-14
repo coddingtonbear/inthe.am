@@ -87,7 +87,7 @@ class Status(BaseSseView):
             )
             last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
             for entry in entries:
-                self.see.add_message(
+                self.sse.add_message(
                     'error_logged',
                     entry.message
                 )

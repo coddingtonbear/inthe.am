@@ -696,8 +696,15 @@ class TaskRc(object):
 
 def autoconfigure_taskd_for_user(sender, instance, **kwargs):
     store = TaskStore.get_for_user(instance)
-    if not store.configured:
-        store.autoconfigure_taskd()
+    try:
+        if not store.configured:
+            store.autoconfigure_taskd()
+    except:
+        if not settings.DEBUG:
+            raise
+        message = "Error encountered while configuring task store."
+        logger.exception(message)
+        store.log_error(message)
 
 
 models.signals.post_save.connect(create_api_key, sender=User)
