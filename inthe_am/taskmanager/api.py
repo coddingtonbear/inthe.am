@@ -509,6 +509,7 @@ class TaskResource(resources.Resource):
             content_type='application/json',
         )
 
+    @requires_task_store
     @git_managed("Start task", sync=True)
     def start_task(self, request, uuid, store, **kwargs):
         if not request.method == 'POST':
@@ -522,6 +523,7 @@ class TaskResource(resources.Resource):
             status=200
         )
 
+    @requires_task_store
     @git_managed("Stop task", sync=True)
     def stop_task(self, request, uuid, store, **kwargs):
         if not request.method == 'POST':
@@ -535,6 +537,7 @@ class TaskResource(resources.Resource):
             status=200
         )
 
+    @requires_task_store
     @git_managed("Delete task", sync=True)
     def delete(self, request, uuid, store, **kwargs):
         if not request.method == 'POST':
@@ -725,6 +728,7 @@ class TaskResource(resources.Resource):
                 passes = False
         return passes
 
+    @requires_task_store
     def obj_get_list(self, bundle, store, **kwargs):
         if hasattr(bundle.request, 'GET'):
             filters = bundle.request.GET.copy()
@@ -738,6 +742,7 @@ class TaskResource(resources.Resource):
 
         return objects
 
+    @requires_task_store
     def obj_get(self, bundle, store, **kwargs):
         try:
             return Task(
@@ -748,6 +753,7 @@ class TaskResource(resources.Resource):
         except ValueError:
             raise exceptions.NotFound()
 
+    @requires_task_store
     def obj_create(self, bundle, store, **kwargs):
         with git_checkpoint(store, "Creating Task", sync=True):
             if not bundle.data['description']:
@@ -766,6 +772,7 @@ class TaskResource(resources.Resource):
             )
             return bundle
 
+    @requires_task_store
     def obj_update(self, bundle, store, **kwargs):
         with git_checkpoint(store, "Updating Task", sync=True):
             if bundle.data['uuid'] != kwargs['pk']:
@@ -791,6 +798,16 @@ class TaskResource(resources.Resource):
                 store=store,
             )
             return bundle
+
+    @requires_task_store
+    def obj_delete(self, bundle, store, **kwargs):
+        with git_checkpoint(store, "Completing Task", sync=True):
+            try:
+                store.log_message("Task %s completed.", kwargs['pk'])
+                store.client.task_done(uuid=kwargs['pk'])
+                return bundle
+            except ValueError:
+                raise exceptions.NotFound()
 
     def obj_delete_list(self, bundle, store, **kwargs):
         raise exceptions.BadRequest()
@@ -830,15 +847,6 @@ class TaskResource(resources.Resource):
                 ),
                 status=409,
             )
-
-    def obj_delete(self, bundle, store, **kwargs):
-        with git_checkpoint(store, "Completing Task", sync=True):
-            try:
-                store.log_message("Task %s completed.", kwargs['pk'])
-                store.client.task_done(uuid=kwargs['pk'])
-                return bundle
-            except ValueError:
-                raise exceptions.NotFound()
 
     class Meta:
         always_return_data = True
