@@ -10,9 +10,9 @@ from lockfile.pidlockfile import PIDLockFile
 
 
 @contextmanager
-def git_checkpoint(store, message, function=None, args=None, kwargs=None, sync=False):
-    if sync:
-        store.sync()
+def git_checkpoint(
+    store, message, function=None, args=None, kwargs=None, sync=False
+):
     lockfile_path = os.path.join(store.local_path, '.lock')
     try:
         with PIDLockFile(lockfile_path, timeout=10):

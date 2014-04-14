@@ -28,7 +28,7 @@ from django.utils.timezone import now
 from . import models
 from . import forms
 from .context_managers import git_checkpoint
-from .decorators import requires_taskd_sync, git_managed
+from .decorators import git_managed
 from .task import Task
 
 
@@ -509,8 +509,7 @@ class TaskResource(resources.Resource):
             content_type='application/json',
         )
 
-    @requires_taskd_sync
-    @git_managed("Start task")
+    @git_managed("Start task", sync=True)
     def start_task(self, request, uuid, store, **kwargs):
         if not request.method == 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -523,8 +522,7 @@ class TaskResource(resources.Resource):
             status=200
         )
 
-    @requires_taskd_sync
-    @git_managed("Stop task")
+    @git_managed("Stop task", sync=True)
     def stop_task(self, request, uuid, store, **kwargs):
         if not request.method == 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -537,8 +535,7 @@ class TaskResource(resources.Resource):
             status=200
         )
 
-    @requires_taskd_sync
-    @git_managed("Delete task")
+    @git_managed("Delete task", sync=True)
     def delete(self, request, uuid, store, **kwargs):
         if not request.method == 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -728,7 +725,6 @@ class TaskResource(resources.Resource):
                 passes = False
         return passes
 
-    @requires_taskd_sync
     def obj_get_list(self, bundle, store, **kwargs):
         if hasattr(bundle.request, 'GET'):
             filters = bundle.request.GET.copy()
@@ -742,7 +738,6 @@ class TaskResource(resources.Resource):
 
         return objects
 
-    @requires_taskd_sync
     def obj_get(self, bundle, store, **kwargs):
         try:
             return Task(
@@ -753,9 +748,8 @@ class TaskResource(resources.Resource):
         except ValueError:
             raise exceptions.NotFound()
 
-    @requires_taskd_sync
     def obj_create(self, bundle, store, **kwargs):
-        with git_checkpoint(store, "Creating Task"):
+        with git_checkpoint(store, "Creating Task", sync=True):
             if not bundle.data['description']:
                 raise exceptions.BadRequest(
                     "You must specify a description for each task."
@@ -772,9 +766,8 @@ class TaskResource(resources.Resource):
             )
             return bundle
 
-    @requires_taskd_sync
     def obj_update(self, bundle, store, **kwargs):
-        with git_checkpoint(store, "Updating Task"):
+        with git_checkpoint(store, "Updating Task", sync=True):
             if bundle.data['uuid'] != kwargs['pk']:
                 raise exceptions.BadRequest(
                     "Changing the UUID of an existing task is not possible."
@@ -838,9 +831,8 @@ class TaskResource(resources.Resource):
                 status=409,
             )
 
-    @requires_taskd_sync
     def obj_delete(self, bundle, store, **kwargs):
-        with git_checkpoint(store, "Completing Task"):
+        with git_checkpoint(store, "Completing Task", sync=True):
             try:
                 store.log_message("Task %s completed.", kwargs['pk'])
                 store.client.task_done(uuid=kwargs['pk'])
