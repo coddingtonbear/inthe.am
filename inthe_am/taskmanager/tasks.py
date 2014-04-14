@@ -2,8 +2,9 @@ from __future__ import absolute_import
 
 from celery import shared_task
 
+from taskw.exceptions import TaskwarriorError
+
 from .context_managers import git_checkpoint
-from .taskwarrior_client import TaskwarriorError
 
 
 @shared_task

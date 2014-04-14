@@ -16,9 +16,10 @@ from django.template.loader import render_to_string
 from django.utils.timezone import now
 from dulwich.repo import Repo
 from tastypie.models import create_api_key, ApiKey
+from taskw.exceptions import TaskwarriorError
 
 from .context_managers import git_checkpoint
-from .taskwarrior_client import TaskwarriorClient, TaskwarriorError
+from .taskwarrior_client import TaskwarriorClient
 from .taskstore_migrations import upgrade as upgrade_taskstore
 from .tasks import sync_repository
 
