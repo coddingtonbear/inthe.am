@@ -15,7 +15,7 @@ var route = Ember.Route.extend({
       if($(document).width() > 700) {
         this.transitionTo('task', tasks.get('firstObject'));
       } else {
-        if (window.navigator.standalone) {
+        if (window.navigator.standalone || window.navigator.userAgent.indexOf('iPhone') === -1) {
           this.transitionTo('mobileTasks');
         } else {
           this.transitionTo('addToHomeScreen');
