@@ -88,21 +88,6 @@ var model = DS.Model.extend({
     );
   }.property('blocked_tickets'),
 
-  processed_annotations: function() {
-    var value = this.get('annotations');
-    if (value) {
-      for (var i = 0; i < value.length; i++) {
-        value[i] = {
-          entry: new Date(Ember.Date.parse(value[i].entry)),
-          description: value[i].description
-        };
-      }
-    } else {
-      return [];
-    }
-    return value;
-  }.property('annotations'),
-
   processed_udas: function() {
     var value = [];
     for(var v in this.get('udas')) {

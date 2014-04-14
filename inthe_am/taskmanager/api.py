@@ -784,9 +784,14 @@ class TaskResource(resources.Resource):
                     "You must specify a description for each task."
                 )
             bundle.data.pop('id', None)
+            _, original_task = store.client.get_task(uuid=kwargs['pk'])
             serialized = Task.from_serialized(bundle.data).get_safe_json()
-            serialized['uuid'] = kwargs['pk']
-            store.client.task_update(serialized)
+            import ipdb
+            ipdb.set_trace()
+            original_task.update(serialized)
+            import ipdb
+            ipdb.set_trace()
+            store.client.task_update(original_task)
             store.log_message(
                 "Task %s updated: %s.",
                 kwargs['pk'],

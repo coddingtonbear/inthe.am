@@ -96,18 +96,7 @@ class Task(object):
             ])
 
         try:
-            value = self.json[name]
-            if name in self.DATE_FIELDS:
-                value = self._date_from_taskw(value)
-            elif name == 'annotations':
-                new_value = []
-                for annotation in value:
-                    annotation['entry'] = self._date_from_taskw(
-                        annotation['entry']
-                    )
-                    new_value.append(annotation)
-                value = new_value
-            return value
+            return self.json[name]
         except KeyError:
             raise AttributeError()
 

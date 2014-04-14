@@ -18,7 +18,7 @@ var controller = Ember.ObjectController.extend({
       var annotations = model.get('annotations');
 
       for (var i = 0; i < annotations.length; i++) {
-        if (annotations[i].description == description) {
+        if (annotations[i] == description) {
           annotations.removeAt(i);
         }
       }

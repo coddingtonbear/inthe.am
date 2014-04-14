@@ -155,11 +155,10 @@
     </div>
     <div class="medium-6 columns annotations_list">
         <ul class='annotation_list'>
-            {{#each processed_annotations}}
+            {{#each annotations}}
                 <li>
-                    <a {{action "delete_annotation" this.description }}>&#215;</a>
-                    {{calendar this.entry}}:
-                    {{ this.description }}
+                    <a {{action "delete_annotation" this }}>&#215;</a>
+                    {{ this }}
                 </li>
             {{/each}}
         </ul>

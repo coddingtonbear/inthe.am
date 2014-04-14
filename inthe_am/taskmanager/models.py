@@ -127,7 +127,8 @@ class TaskStore(models.Model):
     def client(self):
         if not getattr(self, '_client', None):
             self._client = TaskwarriorClient(
-                self.taskrc.path
+                self.taskrc.path,
+                marshal=True,
             )
         return self._client
 
@@ -323,7 +324,7 @@ class TaskStore(models.Model):
         )
 
     def sync(self, celery=True):
-        if celery:
+        if celery and not settings.DEBUG:
             sync_repository.apply_async(args=(self, ))
         else:
             try:
