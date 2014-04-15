@@ -321,8 +321,8 @@ class TaskStore(models.Model):
             'tx.data'
         )
 
-    def sync(self, celery=True):
-        if celery:
+    def sync(self, async=True):
+        if async:
             sync_repository.apply_async(args=(self, ))
         else:
             try:
@@ -340,95 +340,95 @@ class TaskStore(models.Model):
                 )
 
     def autoconfigure_taskd(self):
-        self.configured = True
+        with git_checkpoint(self, 'Autoconfiguration'):
+            self.configured = True
 
-        logger.warning(
-            '%s just autoconfigured an account!',
-            self.user.username,
-        )
+            logger.warning(
+                '%s just autoconfigured an account!',
+                self.user.username,
+            )
 
-        # Remove any cached taskrc/taskw clients
-        for attr in ('_taskrc', '_client', ):
-            try:
-                delattr(self, attr)
-            except AttributeError:
-                pass
+            # Remove any cached taskrc/taskw clients
+            for attr in ('_taskrc', '_client', ):
+                try:
+                    delattr(self, attr)
+                except AttributeError:
+                    pass
 
-        # Create a new user username
-        key_proc = subprocess.Popen(
-            [
-                settings.TASKD_BINARY,
-                'add',
-                '--data',
-                settings.TASKD_DATA,
-                'user',
+            # Create a new user username
+            key_proc = subprocess.Popen(
+                [
+                    settings.TASKD_BINARY,
+                    'add',
+                    '--data',
+                    settings.TASKD_DATA,
+                    'user',
+                    settings.TASKD_ORG,
+                    self.user.username,
+                ],
+                stdout=subprocess.PIPE
+            )
+            key_proc_output = key_proc.communicate()[0].split('\n')
+            taskd_user_key = key_proc_output[0].split(':')[1].strip()
+
+            # Create and write a new private key
+            private_key_proc = subprocess.Popen(
+                [
+                    'certtool',
+                    '--generate-privkey',
+                ],
+                stdout=subprocess.PIPE
+            )
+            private_key = private_key_proc.communicate()[0]
+            private_key_filename = os.path.join(
+                self.local_path,
+                self.DEFAULT_FILENAMES['key'],
+            )
+            with open(private_key_filename, 'w') as out:
+                out.write(private_key)
+
+            # Create and write a new public key
+            cert_proc = subprocess.Popen(
+                [
+                    'certtool',
+                    '--generate-certificate',
+                    '--load-privkey',
+                    private_key_filename,
+                    '--load-ca-privkey',
+                    self.server_config['ca.key'],
+                    '--load-ca-certificate',
+                    self.server_config['ca.cert'],
+                    '--template',
+                    settings.TASKD_SIGNING_TEMPLATE,
+                ],
+                stdout=subprocess.PIPE
+            )
+            cert = cert_proc.communicate()[0]
+            cert_filename = os.path.join(
+                self.local_path,
+                self.DEFAULT_FILENAMES['certificate'],
+            )
+            with open(cert_filename, 'w') as out:
+                out.write(cert)
+
+            # Save these details to the taskrc
+            taskd_credentials = '%s/%s/%s' % (
                 settings.TASKD_ORG,
                 self.user.username,
-            ],
-            stdout=subprocess.PIPE
-        )
-        key_proc_output = key_proc.communicate()[0].split('\n')
-        taskd_user_key = key_proc_output[0].split(':')[1].strip()
+                taskd_user_key,
+            )
+            self.taskrc.update({
+                'data.location': self.local_path,
+                'taskd.certificate': cert_filename,
+                'taskd.key': private_key_filename,
+                'taskd.ca': self.server_config['ca.cert'],
+                'taskd.server': settings.TASKD_SERVER,
+                'taskd.credentials': taskd_credentials
+            })
+            self.metadata['generated_taskd_credentials'] = taskd_credentials
 
-        # Create and write a new private key
-        private_key_proc = subprocess.Popen(
-            [
-                'certtool',
-                '--generate-privkey',
-            ],
-            stdout=subprocess.PIPE
-        )
-        private_key = private_key_proc.communicate()[0]
-        private_key_filename = os.path.join(
-            self.local_path,
-            self.DEFAULT_FILENAMES['key'],
-        )
-        with open(private_key_filename, 'w') as out:
-            out.write(private_key)
-
-        # Create and write a new public key
-        cert_proc = subprocess.Popen(
-            [
-                'certtool',
-                '--generate-certificate',
-                '--load-privkey',
-                private_key_filename,
-                '--load-ca-privkey',
-                self.server_config['ca.key'],
-                '--load-ca-certificate',
-                self.server_config['ca.cert'],
-                '--template',
-                settings.TASKD_SIGNING_TEMPLATE,
-            ],
-            stdout=subprocess.PIPE
-        )
-        cert = cert_proc.communicate()[0]
-        cert_filename = os.path.join(
-            self.local_path,
-            self.DEFAULT_FILENAMES['certificate'],
-        )
-        with open(cert_filename, 'w') as out:
-            out.write(cert)
-
-        # Save these details to the taskrc
-        taskd_credentials = '%s/%s/%s' % (
-            settings.TASKD_ORG,
-            self.user.username,
-            taskd_user_key,
-        )
-        self.taskrc.update({
-            'data.location': self.local_path,
-            'taskd.certificate': cert_filename,
-            'taskd.key': private_key_filename,
-            'taskd.ca': self.server_config['ca.cert'],
-            'taskd.server': settings.TASKD_SERVER,
-            'taskd.credentials': taskd_credentials
-        })
-        self.metadata['generated_taskd_credentials'] = taskd_credentials
-
-        self.save()
-        self.client.sync(init=True)
-        self.create_git_checkpoint("Local store created")
+            self.save()
+            self.client.sync(init=True)
 
     def _log_entry(self, message, error, *parameters):
         message_hash = hashlib.md5(message % parameters).hexdigest()

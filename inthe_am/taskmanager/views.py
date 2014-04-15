@@ -74,7 +74,7 @@ class Status(BaseSseView):
         store = self.get_store()
         if not store:
             return
-        store.sync(celery=False)
+        store.sync(async=False)
         created = time.time()
         last_sync = time.time()
         taskd_mtime = self.get_taskd_mtime(store)
@@ -103,14 +103,14 @@ class Status(BaseSseView):
                 ):
                     taskd_mtime = new_mtime
                     last_sync = time.time()
-                    store.sync(celery=False)
+                    store.sync(async=False)
                     head = self.check_head(head)
             else:
                 if time.time() - last_sync > (
                     settings.EVENT_STREAM_POLLING_INTERVAL
                 ):
                     last_sync = time.time()
-                    store.sync(celery=False)
+                    store.sync(async=False)
 
                 head = self.check_head(head)
 
@@ -124,7 +124,7 @@ class Status(BaseSseView):
 def home(request):
     try:
         store = TaskStore.objects.get(user=request.user)
-        store.sync(celery=False)
+        store.sync(async=False)
     except:
         pass
     return TemplateResponse(
