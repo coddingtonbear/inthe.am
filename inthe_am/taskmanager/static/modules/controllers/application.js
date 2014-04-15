@@ -140,6 +140,10 @@ var controller = Ember.Controller.extend({
       // its metadata.  Weird, I know, but that is definitely what's
       // happening in Chrome 34 sometimes.
       statusUpdater.close();
+      var log = this.get('statusUpdaterLog');
+      log.pushObject(
+          [new Date(), 'Connection has flatlined; unplugging.']
+      );
     }
   },
   startEventStream: function() {
