@@ -87,6 +87,7 @@ var controller = Ember.Controller.extend({
   checkStatusUpdater: function() {
     var statusUpdater = this.get('statusUpdater');
     var connected = this.get('taskUpdateStreamConnected');
+    var lastHeartbeat = this.get('statusUpdaterHeartbeat');
     if (
       statusUpdater &&
       (statusUpdater.readyState != window.EventSource.OPEN)
@@ -130,11 +131,21 @@ var controller = Ember.Controller.extend({
         });
         this.set('statusUpdaterErrorred', false);
       }
+    } else if (
+      statusUpdater &&
+      (statusUpdater.readyState == window.EventSource.OPEN) &&
+      (lastHeartbeat && ((new Date() - lastHeartbeat) > 19000))
+    ) {
+      // The EventSource instance has died somehow, but never updated
+      // its metadata.  Weird, I know, but that is definitely what's
+      // happening in Chrome 34 sometimes.
+      statusUpdater.close();
     }
   },
   startEventStream: function() {
     var head = this.get('statusUpdaterHead');
     var log = this.get('statusUpdaterLog');
+    this.set('statusUpdaterHeartbeat', new Date());
     log.pushObject(
       [new Date(), 'Starting with HEAD ' + head]
     );
@@ -196,6 +207,9 @@ var controller = Ember.Controller.extend({
         title: 'Error',
         message: evt.data
       });
+    },
+    'heartbeat': function(evt) {
+      this.set('statusUpdaterHeartbeat', new Date());
     }
   },
   isSmallScreen: function() {
