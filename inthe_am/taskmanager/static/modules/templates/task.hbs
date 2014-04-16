@@ -159,7 +159,7 @@
                 <li>
                     <a {{action "delete_annotation" this.description }}>&#215;</a>
                     {{calendar this.entry}}:
-                    {{ this.description }}
+                    {{markdown this.description}}
                 </li>
             {{/each}}
         </ul>
