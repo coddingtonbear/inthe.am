@@ -735,7 +735,7 @@ class TaskResource(resources.Resource):
         filters.update(kwargs)
 
         objects = []
-        for task_json in store.client.load_tasks()[self.TASK_TYPE]:
+        for task_json in store.client.filter_tasks({'status': self.TASK_TYPE}):
             task = Task(task_json, store.taskrc, store=store)
             if self.passes_filters(task, filters):
                 objects.append(task)
