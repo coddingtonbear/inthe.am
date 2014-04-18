@@ -436,7 +436,9 @@ class TaskStore(models.Model):
             self.client.sync(init=True)
 
     def _log_entry(self, message, error, *parameters):
-        message_hash = hashlib.md5(message % parameters).hexdigest()
+        message_hash = hashlib.md5(
+            self.local_path + message % parameters
+        ).hexdigest()
         instance, created = TaskStoreActivityLog.objects.get_or_create(
             store=self,
             md5hash=message_hash,
