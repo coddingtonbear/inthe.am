@@ -17,7 +17,7 @@
     <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="{% static "startup_image_640x1096.png" %}" />
     <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" href="{% static "startup_image_640x920.png" %}" />
     <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 1)" href="{% static "startup_image_320x460.png" %}" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="referrer" content="always">
     <script src="{% static "modernizr.js" %}"></script>
     {% block head_scripts %}{% endblock %}
@@ -62,6 +62,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="{% static "jquery.datetimepicker.js" %}"></script>
     <script src="{% static "jquery.growl.js" %}"></script>
+    <script src="{% static "hammer.min.js" %}"></script>
     <script src="{% static "moment.min.js" %}"></script>
     <script src="{% static "markdown.min.js" %}"></script>
     <script src="{% static "handlebars-v1.3.0.js" %}"></script>
