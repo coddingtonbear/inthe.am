@@ -488,13 +488,9 @@ class TaskResource(resources.Resource):
         except:
             return HttpResponseNotFound()
 
-        pending_tasks = store.client.load_tasks()['pending']
-
+        pending_tasks = store.client.filter_tasks({'status': self.TASK_TYPE})
         pending_tasks = sorted(
-            filter(
-                lambda d: d['status'] == 'pending',
-                pending_tasks,
-            ),
+            pending_tasks,
             key=lambda d: float(d['urgency']),
             reverse=True
         )
