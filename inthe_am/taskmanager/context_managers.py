@@ -17,7 +17,10 @@ logger = logging.getLogger(__name__)
 def git_checkpoint(
     store, message, function=None, args=None, kwargs=None, sync=False
 ):
-    pre_work_sha = store.repository.head()
+    try:
+        pre_work_sha = store.repository.head()
+    except:
+        pre_work_sha = None
     lockfile_path = os.path.join(store.local_path, '.lock')
     try:
         with PIDLockFile(lockfile_path, timeout=10):
@@ -54,6 +57,8 @@ def git_checkpoint(
             os.unlink(lockfile_path)
         raise
     except Exception as e:
+        if not pre_work_sha:
+            raise
         store.create_git_checkpoint(
             str(e),
             function=function,
