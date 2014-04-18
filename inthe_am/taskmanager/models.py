@@ -274,9 +274,13 @@ class TaskStore(models.Model):
         stdout, stderr = proc.communicate()
         return proc.returncode
 
+    def git_reset(self, to_sha):
+        self._simple_git_command('reset', '--hard', to_sha)
+
     def create_git_checkpoint(
         self, message, function=None,
-        args=None, kwargs=None, pre_operation=False
+        args=None, kwargs=None, pre_operation=False,
+        rollback=False,
     ):
         self._create_git_repo()
         self._simple_git_command('add', '-A')
@@ -288,6 +292,7 @@ class TaskStore(models.Model):
                 'args': args,
                 'kwargs': kwargs,
                 'preop': pre_operation,
+                'rollback': rollback,
             }
         )
         self._simple_git_command(
