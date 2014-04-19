@@ -344,6 +344,22 @@ class TaskStore(models.Model):
                     e.stdout,
                 )
 
+    def reset_taskd_configuration(self):
+        self.taskrc.update({
+            'taskd.certificate': os.path.join(
+                self.local_path,
+                self.DEFAULT_FILENAMES['certificate']
+            ),
+            'taskd.key': os.path.join(
+                self.local_path,
+                self.DEFAULT_FILENAMES['key']
+            ),
+            'taskd.ca': self.server_config['ca.cert'],
+            'taskd.trust': 'no',
+            'taskd.server': settings.TASKD_SERVER,
+            'taskd.credentials': self.metadata['generated_taskd_credentials']
+        })
+
     def autoconfigure_taskd(self):
         with git_checkpoint(self, 'Autoconfiguration'):
             self.configured = True

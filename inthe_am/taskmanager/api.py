@@ -140,20 +140,7 @@ class UserResource(resources.ModelResource):
     def reset_taskd_configuration(self, request, store=None, **kwargs):
         if request.method != 'POST':
             raise HttpResponseNotAllowed(request.method)
-        store.taskrc.update({
-            'taskd.certificate': os.path.join(
-                store.local_path,
-                store.DEFAULT_FILENAMES['certificate']
-            ),
-            'taskd.key': os.path.join(
-                store.local_path,
-                store.DEFAULT_FILENAMES['key']
-            ),
-            'taskd.ca': store.server_config['ca.cert'],
-            'taskd.trust': 'no',
-            'taskd.server': settings.TASKD_SERVER,
-            'taskd.credentials': store.metadata['generated_taskd_credentials']
-        })
+        store.reset_taskd_configuration()
         store.log_message("Taskd settings reset to default.")
         return HttpResponse('OK')
 
