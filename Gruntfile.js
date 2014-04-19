@@ -5,7 +5,7 @@ module.exports = function(grunt){
       dist: {
         files: {
           'inthe_am/taskmanager/static/task_manager.js': [
-              'inthe_am/taskmanager/static/modules/*.js'
+              'ember_modules/*.js'
           ]
         },
         options: {
@@ -24,7 +24,7 @@ module.exports = function(grunt){
         },
         files: {
           'inthe_am/taskmanager/static/templates.js': [
-            'inthe_am/taskmanager/static/modules/templates/*.hbs'
+            'handlebars_templates/*.hbs'
           ]
         }
       }
@@ -68,7 +68,7 @@ module.exports = function(grunt){
       },
       jscript: {
         files: [
-          'inthe_am/taskmanager/static/modules/**/*.js',
+          'ember_modules/**/*.js',
         ],
         tasks: [
           'browserify'
@@ -76,7 +76,7 @@ module.exports = function(grunt){
       },
       handlebars: {
         files: [
-          'inthe_am/taskmanager/static/modules/**/*.hbs'
+          'handlebars_templates/**/*.hbs'
         ],
         tasks: [
           'ember_handlebars',
