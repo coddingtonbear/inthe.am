@@ -53,6 +53,9 @@ class TaskStore(models.Model):
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)
 
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
     @property
     def version(self):
         return self.metadata.get('version', 0)
