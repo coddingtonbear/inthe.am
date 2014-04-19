@@ -19,3 +19,4 @@ etc/*
 .vagrant/*
 bin
 bin/*
+environment_variables.sh
