@@ -247,7 +247,7 @@ class TaskStore(models.Model):
 
     #  Git-related methods
 
-    def _create_git_repo(self):
+    def create_git_repository(self):
         result = self._simple_git_command('status')
         if result != 0:
             self._simple_git_command('init')
@@ -282,7 +282,6 @@ class TaskStore(models.Model):
         args=None, kwargs=None, pre_operation=False,
         rollback=False,
     ):
-        self._create_git_repo()
         self._simple_git_command('add', '-A')
         commit_message = render_to_string(
             'git_checkpoint.txt',

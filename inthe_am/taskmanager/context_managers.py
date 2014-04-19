@@ -17,27 +17,55 @@ logger = logging.getLogger(__name__)
 def git_checkpoint(
     store, message, function=None, args=None, kwargs=None, sync=False
 ):
-    try:
-        pre_work_sha = store.repository.head()
-    except:
-        pre_work_sha = None
     lockfile_path = os.path.join(store.local_path, '.lock')
     try:
         with PIDLockFile(lockfile_path, timeout=10):
-            store.create_git_checkpoint(
-                message,
-                function=function,
-                args=args,
-                kwargs=kwargs,
-                pre_operation=True
-            )
-            yield
-            store.create_git_checkpoint(
-                message,
-                function=function,
-                args=args,
-                kwargs=kwargs
-            )
+            store.create_git_repository()
+            try:
+                store.create_git_checkpoint(
+                    message,
+                    function=function,
+                    args=args,
+                    kwargs=kwargs,
+                    pre_operation=True
+                )
+                pre_work_sha = store.repository.head()
+                yield
+                store.create_git_checkpoint(
+                    message,
+                    function=function,
+                    args=args,
+                    kwargs=kwargs
+                )
+            except Exception as e:
+                store.create_git_checkpoint(
+                    str(e),
+                    function=function,
+                    args=args,
+                    kwargs=kwargs,
+                    rollback=True
+                )
+                dangling_sha = store.repository.head()
+                changes_were_stored = dangling_sha != pre_work_sha
+                if changes_were_stored:
+                    logger.exception(
+                        "An error occurred that required rolling-back "
+                        "the git repository at %s from %s to %s.",
+                        store.local_path,
+                        dangling_sha,
+                        pre_work_sha,
+                    )
+                    store.log_error(
+                        "An error occurred while interacting with your task "
+                        "list, and your task list was recovered by "
+                        "rolling-back to the last known good state (%s).  "
+                        "Since your task list is synchronized with a taskd "
+                        "server, this will likely not have any negative "
+                        "effects.  Rollback ID: %s.",
+                        pre_work_sha,
+                        dangling_sha,
+                    )
+                    store.git_reset(pre_work_sha)
     except LockTimeout:
         lockfile_created = datetime.datetime.fromtimestamp(
             os.path.getctime(lockfile_path)
@@ -55,36 +83,6 @@ def git_checkpoint(
                 "be successful."
             )
             os.unlink(lockfile_path)
-        raise
-    except Exception as e:
-        if not pre_work_sha:
-            raise
-        store.create_git_checkpoint(
-            str(e),
-            function=function,
-            args=args,
-            kwargs=kwargs,
-            rollback=True
-        )
-        dangling_sha = store.repository.head()
-        if dangling_sha != pre_work_sha:
-            logger.exception(
-                "An error occurred that required rolling-back "
-                "the git repository at %s from %s to %s.",
-                store.local_path,
-                dangling_sha,
-                pre_work_sha,
-            )
-            store.log_error(
-                "An error occurred while interacting with your task list, "
-                "and your task list was recovered by rolling-back to the "
-                "last known good state (%s).  Since your task list is "
-                "synchronized with a taskd server, this will likely not "
-                "have any negative effects.  Rollback ID: %s.",
-                pre_work_sha,
-                dangling_sha,
-            )
-            store.git_reset(pre_work_sha)
         raise
     if sync:
         store.sync()
