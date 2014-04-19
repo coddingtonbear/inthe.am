@@ -20,8 +20,8 @@ logger = logging.getLogger(__name__)
 class Status(BaseSseView):
     UUID_MATCHER = re.compile(r'uuid:"([0-9a-zA-Z-]+)"')
 
-    def get_store(self):
-        if getattr(self, '_store', None) is None:
+    def get_store(self, cached=True):
+        if not cached or getattr(self, '_store', None) is None:
             if not self.request.user.is_authenticated():
                 return None
             try:
@@ -116,7 +116,7 @@ class Status(BaseSseView):
 
                 head = self.check_head(head)
 
-            store = self.get_store()
+            store = self.get_store(cached=False)
             self.sse.add_message(
                 "heartbeat",
                 json.dumps(
