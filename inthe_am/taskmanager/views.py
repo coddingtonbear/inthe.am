@@ -116,6 +116,7 @@ class Status(BaseSseView):
 
                 head = self.check_head(head)
 
+            store = self.get_store()
             self.sse.add_message(
                 "heartbeat",
                 json.dumps(
