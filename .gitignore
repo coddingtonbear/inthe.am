@@ -16,3 +16,6 @@ lib/*
 include/*
 etc/*
 .Python
+.vagrant/*
+bin
+bin/*
