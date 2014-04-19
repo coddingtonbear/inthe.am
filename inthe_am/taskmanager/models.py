@@ -41,10 +41,8 @@ class TaskStore(models.Model):
     }
 
     user = models.ForeignKey(User, related_name='task_stores')
-    local_path = models.FilePathField(
-        path=settings.TASK_STORAGE_PATH,
-        allow_files=False,
-        allow_folders=True,
+    local_path = models.CharField(
+        max_length=255,
         blank=True,
     )
     twilio_auth_token = models.CharField(max_length=32, blank=True)
@@ -239,6 +237,7 @@ class TaskStore(models.Model):
                 os.mkdir(self.local_path)
             with open(os.path.join(self.local_path, '.gitignore'), 'w') as out:
                 out.write('.lock\n')
+            self.create_git_repository()
 
         if not self.secret_id:
             self.secret_id = str(uuid.uuid4())
