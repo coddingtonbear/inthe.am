@@ -15,6 +15,7 @@ var controller = Ember.Controller.extend({
     tos_accept: '/api/v1/user/tos-accept/',
     clear_task_data: '/api/v1/user/clear-task-data/',
     set_colorscheme: '/api/v1/user/colorscheme/',
+    enable_sync: '/api/v1/user/enable-sync/',
     status_feed: '/status/',
     sms_url: null,
     pebble_card_url: null,
@@ -214,6 +215,8 @@ var controller = Ember.Controller.extend({
     },
     'heartbeat': function(evt) {
       this.set('statusUpdaterHeartbeat', new Date());
+      var heartbeat_data = JSON.parse(evt.data);
+      this.set('user.sync_enabled', heartbeat_data.sync_enabled);
     }
   },
   isSmallScreen: function() {

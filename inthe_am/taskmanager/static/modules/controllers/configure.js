@@ -289,6 +289,22 @@ var controller = Ember.Controller.extend({
           );
         }
       });
+    },
+    enable_sync: function() {
+      var url  = this.get('controllers.application').urls.enable_sync;
+      $.ajax({
+        url: url,
+        type: 'POST',
+        success: function() {
+          this.set('controllers.application.user.sync_enabled', true);
+          self.success_message("Sync re-enabled!");
+        },
+        error: function() {
+          self.error_message(
+            "An error was encountered while setting your colorscheme."
+          );
+        }
+      });
     }
   }
 });

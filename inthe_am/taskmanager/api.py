@@ -118,6 +118,12 @@ class UserResource(resources.ModelResource):
                 ),
                 self.wrap_view('colorscheme')
             ),
+            url(
+                r"^(?P<resource_name>%s)/enable-sync/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('enable_sync')
+            ),
         ]
 
     def _send_file(self, out, content_type=None, **kwargs):
@@ -196,6 +202,16 @@ class UserResource(resources.ModelResource):
         # Write files from form to user directory
         store.log_message("Taskd settings changed.")
         store.taskrc.update(taskd_data)
+
+        return HttpResponse('OK')
+
+    def enable_sync(self, request, **kwargs):
+        if request.method != 'POST':
+            raise HttpResponseNotAllowed(request.method)
+
+        store = models.TaskStore.get_for_user(request.user)
+        store.sync_enabled = True
+        store.save()
 
         return HttpResponse('OK')
 
@@ -343,7 +359,8 @@ class UserResource(resources.ModelResource):
                         'resource_name': 'task',
                         'secret_id': store.secret_id,
                     }
-                )
+                ),
+                'sync_enabled': store.sync_enabled,
             }
         else:
             user_data = {

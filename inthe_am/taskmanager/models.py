@@ -52,6 +52,7 @@ class TaskStore(models.Model):
     sms_whitelist = models.TextField(blank=True)
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)
+    sync_enabled = models.BooleanField(default=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -329,6 +330,9 @@ class TaskStore(models.Model):
         )
 
     def sync(self, async=True):
+        if not self.sync_enabled:
+            return False
+
         if async:
             sync_repository.apply_async(args=(self.pk, ))
         else:
@@ -337,7 +341,9 @@ class TaskStore(models.Model):
                     self.client.sync()
             except TaskwarriorError as e:
                 self.log_error(
-                    "Error while syncing tasks! "
+                    "An error was encountered while synchronizing your tasks "
+                    "with the taskd server; please reconfigure your "
+                    "synchronization settings and re-enable synchronization."
                     "Err. Code: %s; "
                     "Std. Error: %s; "
                     "Std. Out: %s.",
@@ -345,6 +351,10 @@ class TaskStore(models.Model):
                     e.stderr,
                     e.stdout,
                 )
+                self.sync_enabled = False
+                self.save()
+                return False
+        return True
 
     def reset_taskd_configuration(self):
         self.taskrc.update({

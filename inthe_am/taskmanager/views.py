@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 import os
 import re
@@ -80,6 +81,7 @@ class Status(BaseSseView):
         taskd_mtime = self.get_taskd_mtime(store)
         head = self.request.GET.get('head', store.repository.head())
         while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
+            synced = False
             entries = TaskStoreActivityLog.objects.filter(
                 last_seen__gt=last_checked,
                 error=True,
@@ -103,18 +105,27 @@ class Status(BaseSseView):
                 ):
                     taskd_mtime = new_mtime
                     last_sync = time.time()
-                    store.sync(async=False)
+                    synced = store.sync(async=False)
                     head = self.check_head(head)
             else:
                 if time.time() - last_sync > (
                     settings.EVENT_STREAM_POLLING_INTERVAL
                 ):
                     last_sync = time.time()
-                    store.sync(async=False)
+                    synced = store.sync(async=False)
 
                 head = self.check_head(head)
 
-            self.sse.add_message("heartbeat", str(time.time()))
+            self.sse.add_message(
+                "heartbeat",
+                json.dumps(
+                    {
+                        'timestamp': datetime.datetime.now().isoformat(),
+                        'synced': synced,
+                        'sync_enabled': store.sync_enabled,
+                    }
+                )
+            )
 
             yield
 
