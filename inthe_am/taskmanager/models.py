@@ -4,7 +4,6 @@ import hashlib
 import logging
 import os
 import re
-import subprocess
 import tempfile
 import uuid
 
@@ -15,6 +14,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 from dulwich.repo import Repo
+import subprocess32 as subprocess
 from tastypie.models import create_api_key, ApiKey
 
 from .context_managers import git_checkpoint
@@ -388,17 +388,20 @@ class TaskStore(models.Model):
                     pass
 
             # Create a new user username
+            env = os.environ.copy()
+            env['TASKDDATA'] = settings.TASKD_DATA
+            command = [
+                settings.TASKD_BINARY,
+                'add',
+                'user',
+                settings.TASKD_ORG,
+                self.user.username,
+            ]
             key_proc = subprocess.Popen(
-                [
-                    settings.TASKD_BINARY,
-                    'add',
-                    '--data',
-                    settings.TASKD_DATA,
-                    'user',
-                    settings.TASKD_ORG,
-                    self.user.username,
-                ],
-                stdout=subprocess.PIPE
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env=env,
             )
             key_proc_output = key_proc.communicate()[0].split('\n')
             taskd_user_key = key_proc_output[0].split(':')[1].strip()
@@ -741,5 +744,9 @@ def autoconfigure_taskd_for_user(sender, instance, **kwargs):
         store.log_error(message)
 
 
-models.signals.post_save.connect(create_api_key, sender=User)
-models.signals.post_save.connect(autoconfigure_taskd_for_user, sender=User)
+models.signals.post_save.connect(
+    create_api_key, sender=User, dispatch_uid="generate_api_key"
+)
+models.signals.post_save.connect(
+    autoconfigure_taskd_for_user, sender=User, dispatch_uid="generate_taskd"
+)

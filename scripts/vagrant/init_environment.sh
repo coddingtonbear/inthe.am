@@ -17,6 +17,7 @@ if [ ! -L /var/www/twweb/bin ]; then
 fi
 
 source /var/www/twweb/environment_variables.sh
+mkdir -p /var/www/twweb/task_data
 
 # Install Taskd and setup certificates
 if [ ! -d $TWWEB_TASKD_DATA ]; then
@@ -39,6 +40,7 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     cd $TWWEB_TASKD_DATA
     export TASKDDATA=$TWWEB_TASKD_DATA
     taskd init
+    taskd add org inthe_am
     cp /var/www/twweb/scripts/vagrant/simple_taskd_upstart.conf /etc/init/taskd.conf
 
     service taskd stop
@@ -52,9 +54,12 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     cp server.key.pem $TASKDDATA
     cp server.crl.pem $TASKDDATA
     cp ca.cert.pem $TASKDDATA
+    cp ca.key.pem $TASKDDATA
 
     cp /var/www/twweb/scripts/vagrant/simple_taskd_configuration.conf /var/taskd/config
     cp /var/www/twweb/scripts/vagrant/certificate_signing_template.template /var/taskd/cert.template
+
+    sudo chown -R vagrant:vagrant $TASKDDATA
 
     service taskd start
 fi
@@ -73,3 +78,6 @@ fi
 # Install requirements
 source /var/www/envs/twweb/bin/activate
 pip install --download-cache=/tmp/pip_cache -r /var/www/twweb/requirements.txt
+pip install ipdb
+python /var/www/twweb/manage.py syncdb --noinput
+python /var/www/twweb/manage.py migrate --noinput
