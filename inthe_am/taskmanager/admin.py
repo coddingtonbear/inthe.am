@@ -9,7 +9,7 @@ class TaskStoreAdmin(admin.ModelAdmin):
     list_filter = ('configured', )
 
     def twilio_enabled(self, obj):
-        return obj.twilio_auth_token
+        return bool(obj.twilio_auth_token)
 
 admin.site.register(TaskStore, TaskStoreAdmin)
 
