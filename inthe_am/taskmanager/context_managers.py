@@ -66,6 +66,14 @@ def git_checkpoint(
                         dangling_sha,
                     )
                     store.git_reset(pre_work_sha)
+                else:
+                    logger.exception(
+                        "An error occured that did not require rolling-back "
+                        "the git repository at %s (at %s)",
+                        store.local_path,
+                        pre_work_sha
+                    )
+                raise
     except LockTimeout:
         lockfile_created = datetime.datetime.fromtimestamp(
             os.path.getctime(lockfile_path)
