@@ -5,9 +5,11 @@ from .models import TaskStore, TaskStoreActivityLog, UserMetadata
 
 class TaskStoreAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'local_path', 'taskrc_extras', )
-    list_display = ('user', 'local_path', 'configured', )
+    list_display = ('user', 'created', 'sync_enabled', 'twilio_enabled')
     list_filter = ('configured', )
 
+    def twilio_enabled(self, obj):
+        return obj.twilio_auth_token
 
 admin.site.register(TaskStore, TaskStoreAdmin)
 
