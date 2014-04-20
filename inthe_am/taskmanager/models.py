@@ -329,6 +329,8 @@ class TaskStore(models.Model):
         )
 
     def sync(self, async=True):
+        if 'TRAVIS' in os.environ:
+            return False
         if not self.sync_enabled:
             return False
 
