@@ -415,7 +415,8 @@ class TaskStore(models.Model):
                     'certtool',
                     '--generate-privkey',
                 ],
-                stdout=subprocess.PIPE
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
             )
             private_key = private_key_proc.communicate()[0]
             private_key_filename = os.path.join(
@@ -439,7 +440,8 @@ class TaskStore(models.Model):
                     '--template',
                     settings.TASKD_SIGNING_TEMPLATE,
                 ],
-                stdout=subprocess.PIPE
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
             )
             cert = cert_proc.communicate()[0]
             cert_filename = os.path.join(
