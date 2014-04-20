@@ -23,8 +23,6 @@ services:
 - redis-server
 script:
 - bash scripts/travis/run_tests.sh
-notifications:
-  email: true
 env:
   global:
   - ARTIFACTS_S3_BUCKET=inthe-am-travis-artifacts
