@@ -19,6 +19,10 @@ def git_checkpoint(
 ):
     lockfile_path = os.path.join(store.local_path, '.lock')
     pre_work_sha = None
+    logger.info(
+        "Creating git checkpoint on repository at %s",
+        store.local_path
+    )
     try:
         with PIDLockFile(lockfile_path, timeout=10):
             #store.create_git_repository()
@@ -30,7 +34,6 @@ def git_checkpoint(
                 kwargs=kwargs,
                 pre_operation=True
             )
-            pre_work_sha = store.repository.head()
             yield
             store.create_git_checkpoint(
                 message,
