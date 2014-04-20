@@ -42,17 +42,20 @@ def after_scenario(context, step):
 
 def after_step(context, step):
     global TEST_COUNTERS
-    if context.failed:
-        name = '-'.join([
-            context.scenario.name.replace(' ', '_'),
-        ])
+    if 'TRAVIS' in os.environ:
+        if context.failed:
+            name = '-'.join([
+                context.scenario.name.replace(' ', '_'),
+            ])
 
-        if name not in TEST_COUNTERS:
-            TEST_COUNTERS[name] = 0
-        TEST_COUNTERS[name] += 1
+            if name not in TEST_COUNTERS:
+                TEST_COUNTERS[name] = 0
+            TEST_COUNTERS[name] += 1
 
-        name = name + '_%s_' % TEST_COUNTERS[name]
+            name = name + '_%s_' % TEST_COUNTERS[name]
 
-        context.browser.screenshot(name)
-        with open(os.path.join('/tmp', name + '.html'), 'w') as out:
-            out.write(context.browser.html.encode('utf-8'))
+            context.browser.screenshot(name)
+            with open(os.path.join('/tmp', name + '.html'), 'w') as out:
+                out.write(context.browser.html.encode('utf-8'))
+        else:
+            time.sleep(15)
