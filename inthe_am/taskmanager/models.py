@@ -122,6 +122,8 @@ class TaskStore(models.Model):
             user=user,
         )
         upgrade_taskstore(store)
+        if created:
+            store.save()
         return store
 
     @property
@@ -254,7 +256,8 @@ class TaskStore(models.Model):
         result = self._simple_git_command('status')
         if result != 0:
             self._simple_git_command('init')
-            self.create_git_checkpoint('Initial Commit')
+            self._simple_git_command('add', '-A')
+            self._simple_git_command('commit', '-m', 'Initial Commit')
             return True
         return False
 
