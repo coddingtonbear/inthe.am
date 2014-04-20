@@ -1,7 +1,7 @@
 Inthe.AM
 ========
 
-.. .. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=master
+.. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=master
    :target: https://travis-ci.org/coddingtonbear/inthe.am
 
 This is the source upon which http://inthe.am/ runs.
