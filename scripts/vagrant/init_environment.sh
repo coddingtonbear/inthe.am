@@ -17,23 +17,26 @@ if [ -z "$TRAVIS" ]; then
         ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/share/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/bin/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/bin/phantomjs
     fi
     cd $STARTING_DIR
+
+    # Set up virtual environment
+    mkdir -p /var/www/envs
+    if [ ! -d /var/www/envs/twweb ]; then
+        wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+        python get-pip.py
+        pip install virtualenv
+        virtualenv /var/www/envs/twweb
+        printf "\n\nsource $MAIN_DIR/environment_variables.sh\n" >> /var/www/envs/twweb/bin/activate
+        cp $MAIN_DIR/scripts/vagrant/environment_variables.sh $MAIN_DIR
+    fi
+    if [ ! -L $MAIN_DIR/bin ]; then
+        ln -s /var/www/envs/twweb/bin $MAIN_DIR/bin
+    fi
+    source $MAIN_DIR/environment_variables.sh
+    source /var/www/envs/twweb/bin/activate
+else
+    source $MAIN_DIR/scripts/vagrant/environment_variables.sh
 fi
 
-# Set up virtual environment
-mkdir -p /var/www/envs
-if [ ! -d /var/www/envs/twweb ]; then
-    wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
-    python get-pip.py
-    pip install virtualenv
-    virtualenv /var/www/envs/twweb
-    printf "\n\nsource $MAIN_DIR/environment_variables.sh\n" >> /var/www/envs/twweb/bin/activate
-    cp $MAIN_DIR/scripts/vagrant/environment_variables.sh $MAIN_DIR
-fi
-if [ ! -L $MAIN_DIR/bin ]; then
-    ln -s /var/www/envs/twweb/bin $MAIN_DIR/bin
-fi
-
-source $MAIN_DIR/environment_variables.sh
 mkdir -p $MAIN_DIR/task_data
 mkdir -p $MAIN_DIR/logs
 
@@ -79,7 +82,9 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
 
     sudo chown -R vagrant:vagrant $TASKDDATA
 
-    service taskd start
+    if [ -z "$TRAVIS" ]; then
+        service taskd start
+    fi
 fi
 
 which task
@@ -94,7 +99,6 @@ if [ $? -ne 0 ]; then
 fi
 
 # Install requirements
-source /var/www/envs/twweb/bin/activate
 pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements.txt
 
 if [ -z "$TRAVIS" ]; then
