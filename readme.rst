@@ -20,7 +20,37 @@ Development
 2. Enter the virtual machine: ``vagrant ssh``
 3. Switch to the project directory: ``cd /var/www/twweb/``
 4. Enter the virtual environment: ``source bin/activate``
+5. `Compile the Templates, CSS, and Javascript Modules`_.
 5. Start the ``runserver`` by running ``python manage.py runserver 0.0.0.0:8000``
+
+
+Compile the Templates, CSS, and Javascript Modules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Templates and Javascript modules are managed by `Grunt <http://gruntjs.com/>`_.
+You have two options for compiling templates -- one for situations in which
+you really only need to compile things once, and one for situations in which
+you'll be actively developing a feature, and would like the templates and
+modules to recompile automatically.  *Both* situations require that you run
+the following two steps from the project directory:
+
+1. Install ``grunt-cli`` globally: ``npm install -g grunt-cli``.
+2. Install other necessary packages: ``npm install``.
+
+For situations in which you really just need to compile the templates once
+(for example, when running tests), you can compile the templates by
+running::
+
+    grunt ember_handlebars sass browserify
+
+But in situations where you are actively hacking on a project, it makes a lot
+more sense to open up a new shell, and running::
+
+    grunt watch
+
+When using ``grunt watch``, your filesystem will be monitored for changes,
+and templates, css, and javascript modules will be compiled whenever changes
+are seen.
 
 
 Development Environment Notes
