@@ -254,6 +254,7 @@ class TaskStore(models.Model):
         result = self._simple_git_command('status')
         if result != 0:
             self._simple_git_command('init')
+            self.create_git_checkpoint('Initial Commit')
             return True
         return False
 
