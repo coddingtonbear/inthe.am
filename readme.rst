@@ -21,7 +21,7 @@ Development
 3. Switch to the project directory: ``cd /var/www/twweb/``
 4. Enter the virtual environment: ``source bin/activate``
 5. `Compile the Templates, CSS, and Javascript Modules`_.
-5. Start the ``runserver`` by running ``python manage.py runserver 0.0.0.0:8000``
+6. Start the ``runserver`` by running ``python manage.py runserver 0.0.0.0:8000``
 
 
 Compile the Templates, CSS, and Javascript Modules
