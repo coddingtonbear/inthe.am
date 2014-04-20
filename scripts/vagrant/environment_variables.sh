@@ -1,4 +1,4 @@
-if [ ! -z "$TRAVIS" ]; then
+if [ -z "$TRAVIS" ]; then
     # You *must* generate a pair of google oauth keys in order to
     # handle log-in correctly
     export TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=enter your key

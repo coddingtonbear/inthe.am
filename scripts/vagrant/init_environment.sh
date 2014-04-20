@@ -1,10 +1,14 @@
 STARTING_DIR=$(pwd)
+MAIN_DIR=/var/www/twweb
+if [ ! -z "$TRAVIS" ]; then
+    MAIN_DIR=$STARTING_DIR
+fi
 
 # Install necessary packages
 apt-get update
 apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev
 
-if [ ! -z "$TRAVIS" ]; then
+if [ -z "$TRAVIS" ]; then
     PHANTOMJS=phantomjs-1.9.7-linux-i686
     cd /usr/local/share/
     if [ ! -d $PHANTOMJS ]; then
@@ -22,15 +26,16 @@ if [ ! -d /var/www/envs/twweb ]; then
     python get-pip.py
     pip install virtualenv
     virtualenv /var/www/envs/twweb
-    printf "\n\nsource /var/www/twweb/environment_variables.sh\n" >> /var/www/envs/twweb/bin/activate
-    cp /var/www/twweb/scripts/vagrant/environment_variables.sh /var/www/twweb/
+    printf "\n\nsource $MAIN_DIR/environment_variables.sh\n" >> /var/www/envs/twweb/bin/activate
+    cp $MAIN_DIR/scripts/vagrant/environment_variables.sh $MAIN_DIR
 fi
-if [ ! -L /var/www/twweb/bin ]; then
-    ln -s /var/www/envs/twweb/bin /var/www/twweb/bin
+if [ ! -L $MAIN_DIR/bin ]; then
+    ln -s /var/www/envs/twweb/bin $MAIN_DIR/bin
 fi
 
-source /var/www/twweb/environment_variables.sh
-mkdir -p /var/www/twweb/task_data
+source $MAIN_DIR/environment_variables.sh
+mkdir -p $MAIN_DIR/task_data
+mkdir -p $MAIN_DIR/logs
 
 # Install Taskd and setup certificates
 if [ ! -d $TWWEB_TASKD_DATA ]; then
@@ -54,7 +59,7 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     export TASKDDATA=$TWWEB_TASKD_DATA
     taskd init
     taskd add org inthe_am
-    cp /var/www/twweb/scripts/vagrant/simple_taskd_upstart.conf /etc/init/taskd.conf
+    cp $MAIN_DIR/scripts/vagrant/simple_taskd_upstart.conf /etc/init/taskd.conf
 
     service taskd stop
 
@@ -69,8 +74,8 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     cp ca.cert.pem $TASKDDATA
     cp ca.key.pem $TASKDDATA
 
-    cp /var/www/twweb/scripts/vagrant/simple_taskd_configuration.conf /var/taskd/config
-    cp /var/www/twweb/scripts/vagrant/certificate_signing_template.template /var/taskd/cert.template
+    cp $MAIN_DIR/scripts/vagrant/simple_taskd_configuration.conf /var/taskd/config
+    cp $MAIN_DIR/scripts/vagrant/certificate_signing_template.template /var/taskd/cert.template
 
     sudo chown -R vagrant:vagrant $TASKDDATA
 
@@ -90,15 +95,15 @@ fi
 
 # Install requirements
 source /var/www/envs/twweb/bin/activate
-pip install --download-cache=/tmp/pip_cache -r /var/www/twweb/requirements.txt
+pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements.txt
 
-if [ ! -z "$TRAVIS" ]; then
+if [ -z "$TRAVIS" ]; then
     pip install ipdb
-    python /var/www/twweb/manage.py syncdb --noinput
-    python /var/www/twweb/manage.py migrate --noinput
+    python $MAIN_DIR/manage.py syncdb --noinput
+    python $MAIN_DIR/manage.py migrate --noinput
 
     if [ ! -f /etc/init/taskd-celery.conf ]; then
-        cp /var/www/twweb/scripts/vagrant/simple_celery_upstart.conf /etc/init/taskd-celery.conf
+        cp $MAIN_DIR/scripts/vagrant/simple_celery_upstart.conf /etc/init/taskd-celery.conf
         service taskd-celery start
     fi
 
