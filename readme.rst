@@ -16,11 +16,10 @@ Development
    :target: https://travis-ci.org/coddingtonbear/inthe.am
 
 1. Create the virtual machine ``vagrant up``
-2. Provision the environment: ``vagrant provision``
-3. Enter the virtual machine: ``vagrant ssh``
-4. Switch to the project directory: ``cd /var/www/twweb/``
-5. Enter the virtual environment: ``source bin/activate``
-6. Start the ``runserver`` by running ``python manage.py runserver 0.0.0.0:8000``
+2. Enter the virtual machine: ``vagrant ssh``
+3. Switch to the project directory: ``cd /var/www/twweb/``
+4. Enter the virtual environment: ``source bin/activate``
+5. Start the ``runserver`` by running ``python manage.py runserver 0.0.0.0:8000``
 
 
 Development Environment Notes
