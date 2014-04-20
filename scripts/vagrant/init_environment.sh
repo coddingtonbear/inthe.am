@@ -6,7 +6,10 @@ fi
 
 # Install necessary packages
 apt-get update
-apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev
+apt-get install -y python-software-properties
+apt-add-repository -y ppa:chris-lea/node.js
+apt-get update
+apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs
 
 if [ -z "$TRAVIS" ]; then
     PHANTOMJS=phantomjs-1.9.7-linux-i686
@@ -98,6 +101,10 @@ if [ $? -ne 0 ]; then
     make
     make install
 fi
+
+cd $MAIN_DIR
+npm install -g grunt-cli
+npm install
 
 # Install requirements
 pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements.txt
