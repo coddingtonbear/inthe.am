@@ -1,6 +1,9 @@
 Inthe.AM
 ========
 
+.. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=master
+   :target: https://travis-ci.org/coddingtonbear/inthe.am
+
 This is the source upon which http://inthe.am/ runs.
 
 Feel free to post a pull request here to fix a bug or add a new feature.  I often hang out on freenode as @coddingtonbear.
@@ -8,6 +11,9 @@ Feel free to post a pull request here to fix a bug or add a new feature.  I ofte
 
 Development
 -----------
+
+.. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=development
+   :target: https://travis-ci.org/coddingtonbear/inthe.am
 
 1. Create the virtual machine ``vagrant up``
 2. Provision the environment: ``vagrant provision``
