@@ -56,4 +56,4 @@ def after_step(context, step):
 
         context.browser.screenshot(name)
         with open(os.path.join('/tmp', name + '.html'), 'w') as out:
-            out.write(context.browser.html)
+            out.write(context.browser.html.encode('utf-8'))
