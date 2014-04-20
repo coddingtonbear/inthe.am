@@ -9,6 +9,9 @@ before_script:
 after_script:
 - "travis-artifacts upload --path logs/twweb.log"
 - "travis-artifacts upload --path logs/twweb.error.log"
+services:
+  - memcached
+  - redis-server
 script:
 - python manage.py test taskmanager
 notifications:
