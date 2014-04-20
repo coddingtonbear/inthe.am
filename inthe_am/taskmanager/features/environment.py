@@ -1,4 +1,5 @@
 import os
+import time
 from urlparse import urljoin
 
 from django.conf import settings
@@ -22,6 +23,11 @@ def before_all(context):
 def after_all(context):
     context.browser.quit()
     context.browser = None
+
+
+def before_step(context, step):
+    if 'TRAVIS' in os.environ:
+        time.sleep(5)
 
 
 def before_scenario(context, step):
