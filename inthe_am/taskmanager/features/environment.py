@@ -11,7 +11,7 @@ from inthe_am.taskmanager import models
 
 TEST_COUNTERS = {
     'following': {},
-    'after': {}
+    'before': {}
 }
 
 
