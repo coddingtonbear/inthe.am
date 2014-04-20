@@ -68,7 +68,9 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     taskd add org inthe_am
     cp $MAIN_DIR/scripts/vagrant/simple_taskd_upstart.conf /etc/init/taskd.conf
 
-    service taskd stop
+    if [ -z "$TRAVIS" ]; then
+        service taskd stop
+    fi
 
     # generate certificates
     cd $TWWEB_TASKD_DATA/src/taskd-1.0.0/pki
@@ -120,4 +122,5 @@ if [ -z "$TRAVIS" ]; then
     fi
 
     service taskd-celery restart
+    service taskd restart
 fi

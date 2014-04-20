@@ -34,7 +34,7 @@ you'll be actively developing a feature, and would like the templates and
 modules to recompile automatically.  *Both* situations require that you run
 the following two steps from the project directory:
 
-1. Install ``grunt-cli`` globally: ``npm install -g grunt-cli``.
+1. Install ``grunt-cli`` globally: ``sudo npm install -g grunt-cli``.
 2. Install other necessary packages: ``npm install``.
 
 For situations in which you really just need to compile the templates once

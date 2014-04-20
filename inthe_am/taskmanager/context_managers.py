@@ -18,7 +18,7 @@ def git_checkpoint(
     store, message, function=None, args=None, kwargs=None, sync=False
 ):
     lockfile_path = os.path.join(store.local_path, '.lock')
-    pre_work_sha = None
+    pre_work_sha = store.repository.head()
     try:
         with PIDLockFile(lockfile_path, timeout=10):
             store.create_git_repository()
@@ -30,7 +30,6 @@ def git_checkpoint(
                     kwargs=kwargs,
                     pre_operation=True
                 )
-                pre_work_sha = store.repository.head()
                 yield
                 store.create_git_checkpoint(
                     message,
@@ -46,10 +45,7 @@ def git_checkpoint(
                     kwargs=kwargs,
                     rollback=True
                 )
-                try:
-                    dangling_sha = store.repository.head()
-                except KeyError:
-                    dangling_sha = None
+                dangling_sha = store.repository.head()
                 changes_were_stored = (
                     dangling_sha and dangling_sha != pre_work_sha
                 )
