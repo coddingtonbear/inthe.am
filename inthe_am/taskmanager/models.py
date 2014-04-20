@@ -279,6 +279,19 @@ class TaskStore(models.Model):
     def _simple_git_command(self, *args):
         proc = self._git_command(*args)
         stdout, stderr = proc.communicate()
+        logger.error(
+            "Executed git command %s on repository at %s; result:  %s",
+            repr(args),
+            self.local_path,
+            proc.returncode,
+            extra={
+                'stack': True,
+                'data': {
+                    'stderr': stderr,
+                    'stdout': stdout,
+                }
+            }
+        )
         return proc.returncode
 
     def git_reset(self, to_sha):
