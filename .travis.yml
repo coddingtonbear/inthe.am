@@ -7,14 +7,14 @@ install:
 - sudo chmod -R 777 ./
 - sudo chmod -R 777 /var/taskd
 before_script:
-- "gem install travis-artifacts"
+- gem install travis-artifacts
 after_script:
-- "travis-artifacts upload --path logs/twweb.log"
-- "travis-artifacts upload --path logs/twweb.error.log"
+- travis-artifacts upload --path logs/twweb.log
+- travis-artifacts upload --path logs/twweb.error.log
 - bash scripts/travis/upload_screenshots.sh
 services:
-  - memcached
-  - redis-server
+- memcached
+- redis-server
 script:
 - bash scripts/travis/run_tests.sh
 notifications:
@@ -28,3 +28,4 @@ env:
   - secure: jBOlkGEC3JaAzEf7+tYLrbfTDjwrx9MbDWadEOrpbl5b9Ue8n2KF23IBUZm/1LcmZIyWWcaFORNPLox3kXx2wyHrpqE96NYSW2XVzsPalNO2wlbrlVlnebTivulgu7nMQ/UgF1yFzYPHwBh3Olf35EzPnWVUpOrWE1qJgM7PcEg=
   - secure: WXqmIfL4/8uy6daZxQ1iuLTi1r7/cQ9+fIbqRkds+MgYBQyfjfokTiyRx+4G7CS0ScDfmmz2s6r2SHlSsO+fAcaJihguKT0u1fmtHiHD6t0TtagqBpcOd4ZjBGf7AnjQQkFj82ei7ydYQAdzlooymPS2U+LP2dZ6OE/n2G/EUq8=
   - secure: YrXxu+iCZDLeVtBP6VGA9QB0/aIPiXd/a42ncN32MZxgCuj5lzKauM2BVNdfhY28YsDyn5ss+FP1ZAujrO4thrVnacfh+79G01JDhJb2++vPeo0R9Atz0hgO24ImKSV5lltk/OMTvKga9D9+x39RlHfeid7ShR7qBvn9wbyBf6w=
+  - secure: XZfSZv21G5E2EPqiIqCKMvrJnd+0tzfHqP961pBRUxST9y7A/QuJI/oOCuOCjCOyXEhc0S5D3PL+9Uo+v9EIuHN06eYcS935sQ9SZsPOGo8EiPStBL0NIoNEqXmcrrBNnwNaYh3UHql5qV5/4Qlg+t4krKMuQrw/hWEHbx+mAkU=
