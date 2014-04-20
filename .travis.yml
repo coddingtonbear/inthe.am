@@ -6,7 +6,7 @@ before_install:
 - "sh -e /etc/init.d/xvfb start"
 install:
 - sudo bash scripts/vagrant/init_environment.sh
-- bash scripts/travis/start_taskd.sh &
+- sudo /usr/local/bin/taskd server --data /var/taskd --daemon
 - sudo chmod -R 777 ./
 - sudo chmod -R 777 /var/taskd
 before_script:
