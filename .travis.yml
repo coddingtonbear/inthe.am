@@ -9,6 +9,7 @@ before_script:
 after_script:
 - "travis-artifacts upload --path logs/twweb.log"
 - "travis-artifacts upload --path logs/twweb.error.log"
+- bash scripts/travis/upload_screenshots.sh
 services:
   - memcached
   - redis-server
