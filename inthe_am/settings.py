@@ -174,6 +174,11 @@ LOGGING = {
             'handlers': ['null'],
             'level': 'INFO',
             'propagate': True,
+        },
+        'selenium': {
+            'handlers': ['null'],
+            'level': 'INFO',
+            'propagate': True,
         }
     }
 }
