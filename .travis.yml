@@ -4,6 +4,7 @@ python:
 before_install:
 - "export DISPLAY=:99.0"
 - "sh -e /etc/init.d/xvfb start"
+- bash scripts/travis/start_taskd.sh &
 install:
 - sudo bash scripts/vagrant/init_environment.sh
 - sudo chmod -R 777 ./
