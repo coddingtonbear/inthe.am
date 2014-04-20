@@ -26,8 +26,7 @@ def after_all(context):
 
 
 def before_step(context, step):
-    if 'TRAVIS' in os.environ:
-        time.sleep(5)
+    pass
 
 
 def before_scenario(context, step):
