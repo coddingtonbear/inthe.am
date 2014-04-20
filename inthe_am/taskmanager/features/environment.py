@@ -24,6 +24,7 @@ def before_scenario(context, step):
     models.User.objects.filter(
         email=settings.TESTING_LOGIN_USER
     ).delete()
+    context.browser.driver.set_window_size(1024, 768)
 
 
 def after_scenario(context, step):
