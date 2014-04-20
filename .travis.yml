@@ -3,8 +3,7 @@ python:
 - '2.7'
 install:
 - sudo bash scripts/vagrant/init_environment.sh
-- sudo chmod -R 777 logs
-- sudo chmod -R 777 task_data
+- sudo chmod -R 777 ./
 before_script:
 - "gem install travis-artifacts"
 after_script:
