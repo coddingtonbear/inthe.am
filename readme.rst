@@ -11,10 +11,10 @@ Development
 
 1. Create the virtual machine ``vagrant up``
 2. Provision the environment: ``vagrant provision``
-2. Enter the virtual machine: ``vagrant ssh``.
-3. Switch to the project directory: ``cd /var/www/twweb/``
-4. Enter the virtual environment: ``source bin/activate``
-4. Start the ``runserver`` by running ``python manage.py runserver 0.0.0.0:8000``
+3. Enter the virtual machine: ``vagrant ssh``
+4. Switch to the project directory: ``cd /var/www/twweb/``
+5. Enter the virtual environment: ``source bin/activate``
+6. Start the ``runserver`` by running ``python manage.py runserver 0.0.0.0:8000``
 
 
 Development Environment Notes
@@ -27,6 +27,15 @@ Development Environment Notes
   * ``TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY``
   * ``TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET``
 
+* When trying to start ``runserver``, you get a message reading
+  "Error: That port is already in use.".
+
+  * While a browser window is open, one connection is persistently
+    held open for streaming data from the server to the client as
+    it has changed; this process will not close until it lost its
+    connection with the browser.  Either close your browser tab
+    showing that window or find the PID of the still-running process
+    using ``ps -f``, and killing the running process with ``kill <that pid>``.
 
 Google OAuth Keys
 ~~~~~~~~~~~~~~~~~
