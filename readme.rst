@@ -6,7 +6,8 @@ Inthe.AM
 
 This is the source upon which http://inthe.am/ runs.
 
-Feel free to post a pull request here to fix a bug or add a new feature.  I often hang out on freenode as @coddingtonbear.
+Feel free to post a pull request here to fix a bug or add a new feature.
+I often hang out on freenode as @coddingtonbear.
 
 
 Development
@@ -26,14 +27,15 @@ Development Environment Notes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * Various environment variables are set in ``environment_variables.sh``,
-  and you will need to set *at least* need to set the following two to
-  use the site; see `Google OAuth Keys`_:
+  and you will need to set *at least* the following two environment variables
+  to use the site; see `Google OAuth Keys`_ for details regarding what you
+  should set these variables to:
 
   * ``TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY``
   * ``TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET``
 
-* When trying to start ``runserver``, you get a message reading
-  "Error: That port is already in use.".
+* "When trying to start ``runserver``, I get a message reading
+  'Error: That port is already in use.'".
 
   * While a browser window is open, one connection is persistently
     held open for streaming data from the server to the client as
@@ -44,6 +46,10 @@ Development Environment Notes
 
 Google OAuth Keys
 ~~~~~~~~~~~~~~~~~
+
+Follow the following steps to generate Google OAuth credentials to use for
+development and testing.  These are used for the log-in process, and are
+functionally essential for doing much of anything with Inthe.AM.
 
 1. Go to `Google's developer console <https://console.developers.google.com/project>`_.
 2. Create a new project.
