@@ -1,6 +1,5 @@
 Feature: User can manipulate tasks
 
-    @wip
     Scenario: User can create a task
         Given the user is logged-in
         When the user clicks the link "New"

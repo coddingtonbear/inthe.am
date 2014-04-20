@@ -4,7 +4,6 @@ Feature: Basic Use
         Given the user accesses the url "/"
         Then the page contains the heading "Inthe.AM"
 
-    @wip
     Scenario: User is able to generate new account
         Given the user accesses the url "/"
         And the test account user does not exist
