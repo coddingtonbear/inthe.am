@@ -279,10 +279,11 @@ class TaskStore(models.Model):
         proc = self._git_command(*args)
         stdout, stderr = proc.communicate()
         logger.error(
-            "Executed git command %s on repository at %s; result:  %s",
-            repr(args),
-            self.local_path,
-            proc.returncode,
+            "Executed git command %s on repository at %s; result:  %s" % (
+                repr(args),
+                self.local_path,
+                proc.returncode,
+            ),
             extra={
                 'stack': True,
                 'data': {
