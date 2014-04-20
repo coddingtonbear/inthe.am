@@ -12,7 +12,11 @@ TEST_COUNTERS = {}
 
 
 def before_all(context):
-    context.browser = Browser('phantomjs')
+    if 'TRAVIS' in os.environ:
+        engine = 'firefox'
+    else:
+        engine = 'phantomjs'
+    context.browser = Browser(engine)
 
 
 def after_all(context):
