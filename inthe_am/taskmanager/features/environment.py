@@ -9,7 +9,32 @@ from splinter.browser import Browser
 from inthe_am.taskmanager import models
 
 
-TEST_COUNTERS = {}
+TEST_COUNTERS = {
+    'before': {},
+    'after': {}
+}
+
+
+def save_screenshot(context, prefix):
+    global TEST_COUNTERS
+    if 'TRAVIS' in os.environ:
+        if context.failed:
+            name = '-'.join([
+                context.scenario.name.replace(' ', '_'),
+            ])
+
+            if name not in TEST_COUNTERS[prefix]:
+                TEST_COUNTERS[prefix][name] = 0
+            TEST_COUNTERS[prefix][name] += 1
+
+            name = name + '_%s_%s_' % (
+                prefix,
+                TEST_COUNTERS[prefix][name]
+            )
+
+            context.browser.screenshot(name)
+            with open(os.path.join('/tmp', name + '.html'), 'w') as out:
+                out.write(context.browser.html.encode('utf-8'))
 
 
 def before_all(context):
@@ -26,7 +51,11 @@ def after_all(context):
 
 
 def before_step(context, step):
-    pass
+    save_screenshot(context, 'before')
+
+
+def after_step(context, step):
+    save_screenshot(context, 'after')
 
 
 def before_scenario(context, step):
@@ -38,24 +67,3 @@ def before_scenario(context, step):
 
 def after_scenario(context, step):
     context.browser.visit(urljoin(context.config.server_url, '/logout/'))
-
-
-def after_step(context, step):
-    global TEST_COUNTERS
-    if 'TRAVIS' in os.environ:
-        if context.failed:
-            name = '-'.join([
-                context.scenario.name.replace(' ', '_'),
-            ])
-
-            if name not in TEST_COUNTERS:
-                TEST_COUNTERS[name] = 0
-            TEST_COUNTERS[name] += 1
-
-            name = name + '_%s_' % TEST_COUNTERS[name]
-
-            context.browser.screenshot(name)
-            with open(os.path.join('/tmp', name + '.html'), 'w') as out:
-                out.write(context.browser.html.encode('utf-8'))
-        else:
-            time.sleep(15)
