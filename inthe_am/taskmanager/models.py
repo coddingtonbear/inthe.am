@@ -256,8 +256,7 @@ class TaskStore(models.Model):
         result = self._simple_git_command('status')
         if result != 0:
             self._simple_git_command('init')
-            self._simple_git_command('add', '-A')
-            self._simple_git_command('commit', '-m', 'Initial Commit')
+            self.create_git_checkpoint('Initial Commit')
             return True
         return False
 
@@ -316,6 +315,8 @@ class TaskStore(models.Model):
         )
         self._simple_git_command(
             'commit',
+            '--author',
+            'Inthe.AM Git Bot <gitbot@inthe.am>',
             '-m',
             commit_message
         )
