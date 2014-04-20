@@ -1,12 +1,14 @@
-# You *must* generate a pair of google oauth keys in order to
-# handle log-in correctly
-export TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=enter your key
-export TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=enter your secret
+if [ ! -z "$TRAVIS" ]; then
+    # You *must* generate a pair of google oauth keys in order to
+    # handle log-in correctly
+    export TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=enter your key
+    export TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=enter your secret
 
-# If you would like to be able to run integration tests, you'll need
-# to create a dummy google account, too
-export TWWEB_TESTING_LOGIN_USER=enter your testing account username
-export TWWEB_TESTING_LOGIN_PASSWORD=enter your testing account password
+    # If you would like to be able to run integration tests, you'll need
+    # to create a dummy google account, too
+    export TWWEB_TESTING_LOGIN_USER=enter your testing account username
+    export TWWEB_TESTING_LOGIN_PASSWORD=enter your testing account password
+fi
 
 # The below settings are unlikely to need to be changed for testing.
 export TWWEB_TASKD_BINARY=/usr/local/bin/taskd

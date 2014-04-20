@@ -1,16 +1,19 @@
+STARTING_DIR=$(pwd)
+
 # Install necessary packages
 apt-get update
 apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev
 
-PHANTOMJS=phantomjs-1.9.7-linux-i686
-cd /usr/local/share/
-if [ ! -d $PHANTOMJS ]; then
-    wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOMJS.tar.bz2
-    tar -xjf $PHANTOMJS.tar.bz2
-    ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/share/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/bin/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/bin/phantomjs
+if [ ! -z "$TRAVIS" ]; then
+    PHANTOMJS=phantomjs-1.9.7-linux-i686
+    cd /usr/local/share/
+    if [ ! -d $PHANTOMJS ]; then
+        wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOMJS.tar.bz2
+        tar -xjf $PHANTOMJS.tar.bz2
+        ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/share/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/bin/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/bin/phantomjs
+    fi
+    cd $STARTING_DIR
 fi
-
-cd ~
 
 # Set up virtual environment
 mkdir -p /var/www/envs
@@ -88,13 +91,16 @@ fi
 # Install requirements
 source /var/www/envs/twweb/bin/activate
 pip install --download-cache=/tmp/pip_cache -r /var/www/twweb/requirements.txt
-pip install ipdb
-python /var/www/twweb/manage.py syncdb --noinput
-python /var/www/twweb/manage.py migrate --noinput
 
-if [ ! -f /etc/init/taskd-celery.conf ]; then
-    cp /var/www/twweb/scripts/vagrant/simple_celery_upstart.conf /etc/init/taskd-celery.conf
-    service taskd-celery start
+if [ ! -z "$TRAVIS" ]; then
+    pip install ipdb
+    python /var/www/twweb/manage.py syncdb --noinput
+    python /var/www/twweb/manage.py migrate --noinput
+
+    if [ ! -f /etc/init/taskd-celery.conf ]; then
+        cp /var/www/twweb/scripts/vagrant/simple_celery_upstart.conf /etc/init/taskd-celery.conf
+        service taskd-celery start
+    fi
+
+    service taskd-celery restart
 fi
-
-service taskd-celery restart
