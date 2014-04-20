@@ -2,7 +2,9 @@ import time
 from urlparse import urljoin
 
 from behave import given, when, then, step
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import (
+    StaleElementReferenceException,
+)
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -15,7 +17,7 @@ def user_accesses_the_url(context, url):
     context.browser.execute_script(
         u"window.localStorage.setItem('disable_ticket_stream', 'yes');"
     )
-    time.sleep(1)
+    time.sleep(2)
 
 
 @given(u'the user is logged-in')
@@ -33,13 +35,10 @@ def user_is_logged_in(context):
 
 @given(u'the test account user does not exist')
 def test_account_user_does_not_exist(context):
-    assert(
-        User.objects.filter(
-            email=settings.TESTING_LOGIN_USER
-        ).count(),
-        0,
-        "Test account user does appear to exist."
-    )
+    count = User.objects.filter(
+        email=settings.TESTING_LOGIN_USER
+    ).count()
+    assert count == 0, "Test account user does appear to exist."
 
 
 @given(u'the user waits for {num} seconds')
@@ -55,9 +54,13 @@ def clicks_link(context, anchor_text):
         try:
             if match.visible:
                 match.click()
+                return
         except StaleElementReferenceException:
             pass
-    assert(False, "No anchors with text %s are visible." % anchor_text)
+    assert False, "Of %s anchors with text %s, none were clickable." % (
+        len(matches),
+        anchor_text,
+    )
 
 
 @when(u'the user enters the text "{text}" into the field named "{field}"')
@@ -70,7 +73,8 @@ def user_clicks_button_labeled(context, label):
     for button in context.browser.find_by_tag("button"):
         if button.visible and button.text == label:
             button.click()
-    assert(False, "No button with label %s could be clicked" % label)
+            return
+    assert False, "No button with label %s could be clicked" % label
 
 
 @when(u'the user enters his credentials if necessary')
@@ -93,26 +97,21 @@ def user_enters_credentials(context):
 
 @then(u'a new account will be created using the test e-mail address')
 def testing_account_created(context):
-    assert(
-        User.objects.filter(
-            email=settings.TESTING_LOGIN_USER
-        ).count(),
-        1,
-        "Test account user does not exist."
-    )
+    count = User.objects.filter(
+        email=settings.TESTING_LOGIN_USER
+    ).count()
+    assert count == 1, "Test account user does not exist."
 
 
 @step(u'the page contains the heading "{heading}"')
 def page_contains_heading(context, heading):
-    page_h1 = context.browser.find_by_tag('h1')
-    page_h2 = context.browser.find_by_tag('h2')
-    if page_h1:
-        assert(
-            heading == page_h1.first.text,
-            "Page should contain h1 '%s', has '%s'" % (heading, page_h1.first.text)
-        )
-    elif page_h2:
-        assert(
-            heading == page_h2.first.text,
-            "Page should contain '%s', has '%s'" % (heading, page_h2.first.text)
+    all_headings = []
+    for tag in ['h1', 'h2', 'h3']:
+        these_headings = [e.text for e in context.browser.find_by_tag(tag)]
+        if heading in these_headings:
+            return
+        all_headings.extend(these_headings)
+    assert False, \
+        "Page should contain '%s', has '%s'" % (
+            heading, all_headings
         )

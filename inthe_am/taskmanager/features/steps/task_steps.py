@@ -15,4 +15,6 @@ def task_with_field_exists(context, field, value):
     matches = store.client.filter_tasks({
         field: value
     })
-    assert(matches)
+    assert len(matches) > 0, "No task found with %s == %s" % (
+        field, value
+    )
