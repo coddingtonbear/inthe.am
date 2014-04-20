@@ -8,7 +8,7 @@ from inthe_am.taskmanager import models
 
 
 def before_all(context):
-    context.browser = Browser()
+    context.browser = Browser('phantomjs')
 
 
 def after_all(context):

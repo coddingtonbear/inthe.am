@@ -20,3 +20,4 @@ etc/*
 bin
 bin/*
 environment_variables.sh
+ghostdriver.log
