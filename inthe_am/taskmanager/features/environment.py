@@ -1,4 +1,5 @@
 import os
+import string
 from urlparse import urljoin
 
 from django.conf import settings
@@ -14,22 +15,34 @@ TEST_COUNTERS = {
 }
 
 
-def save_page_details(context, prefix):
+def sanitize_name(name):
+    acceptable_letters = []
+    for char in name:
+        if char in string.letters:
+            acceptable_letters.append(char)
+        if char == ' ':
+            acceptable_letters.append('_')
+    return ''.join(acceptable_letters)
+
+
+def save_page_details(context, step, prefix):
     global TEST_COUNTERS
-    name = '-'.join([
-        context.scenario.name.replace(' ', '_'),
-    ])
+
+    scenario_name = sanitize_name(context.scenario.name)
+    step_name = sanitize_name(step.name)
 
     status = 'FAIL' if context.failed else 'OK'
 
-    if name not in TEST_COUNTERS[prefix]:
-        TEST_COUNTERS[prefix][name] = 0
-    TEST_COUNTERS[prefix][name] += 1
+    if scenario_name not in TEST_COUNTERS[prefix]:
+        TEST_COUNTERS[prefix][scenario_name] = 0
+    TEST_COUNTERS[prefix][scenario_name] += 1
 
-    name = name + '_%s_%s_%s_' % (
-        TEST_COUNTERS[prefix][name],
-        prefix,
-        status
+    name = '{scenario}_{num}_{step}_{prefix}_{status}'.format(
+        scenario=scenario_name,
+        num=TEST_COUNTERS[prefix][scenario_name],
+        step=step_name,
+        prefix=prefix,
+        status=status,
     )
 
     context.browser.screenshot(name)
@@ -52,12 +65,12 @@ def after_all(context):
 
 def before_step(context, step):
     if 'TRAVIS' in os.environ:
-        save_page_details(context, 'before')
+        save_page_details(context, step, 'before')
 
 
 def after_step(context, step):
     if 'TRAVIS' in os.environ:
-        save_page_details(context, 'following')
+        save_page_details(context, step, 'following')
 
 
 def before_scenario(context, step):

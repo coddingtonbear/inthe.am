@@ -26,8 +26,13 @@ def user_is_logged_in(context):
         when the user accesses the url "/"
         and the user accesses the url "/login/google-oauth2/"
         and the user enters his credentials if necessary
-        and the user waits for 2 seconds
+        and the user accepts the terms and conditions
     ''')
+
+
+@step(u'the user accepts the terms and conditions')
+def user_accepts_terms_and_conditions(context):
+    time.sleep(1)
     page_h2 = context.browser.find_by_tag('h2')
     if page_h2.first.text == "Terms and Conditions of Use of Inthe.AM":
         context.browser.find_by_id("accept-terms").first.click()
@@ -41,8 +46,7 @@ def test_account_user_does_not_exist(context):
     assert count == 0, "Test account user does appear to exist."
 
 
-@given(u'the user waits for {num} seconds')
-@when(u'the user waits for {num} seconds')
+@step(u'the user waits for {num} seconds')
 def wait_for_a_bit(context, num):
     time.sleep(int(num))
 

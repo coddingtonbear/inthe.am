@@ -11,3 +11,7 @@ Feature: Basic Use
         And the user enters his credentials if necessary
         Then a new account will be created using the test e-mail address
         And the page contains the heading "Terms and Conditions of Use of Inthe.AM"
+        And the user accepts the terms and conditions
+        When the user accesses the url "/logout/"
+        And the user clicks the link "Log In with Google"
+        Then the page contains the heading "Let's get started"
