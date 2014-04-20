@@ -35,6 +35,7 @@ if [ -z "$TRAVIS" ]; then
     source /var/www/envs/twweb/bin/activate
 else
     source $MAIN_DIR/scripts/vagrant/environment_variables.sh
+    source ~/virtualenv/python2.7/bin/activate
 fi
 
 mkdir -p $MAIN_DIR/task_data
