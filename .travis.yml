@@ -2,7 +2,7 @@ language: python
 python:
 - '2.7'
 install:
-- sudo scripts/vagrant/init_environment.sh
+- sudo bash scripts/vagrant/init_environment.sh
 script:
 - python manage.py test taskmanager
 notifications:
