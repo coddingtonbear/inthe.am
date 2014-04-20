@@ -40,6 +40,9 @@ def save_screenshot(context, prefix):
 def before_all(context):
     engine = 'phantomjs'
     context.browser = Browser(engine)
+    context.browser.driver.set_window_size(1024, 768)
+    context.browser.driver.implicitly_wait(30)
+    context.browser.driver.set_page_load_timeout(60)
 
 
 def after_all(context):
@@ -59,7 +62,6 @@ def before_scenario(context, step):
     models.User.objects.filter(
         email=settings.TESTING_LOGIN_USER
     ).delete()
-    context.browser.driver.set_window_size(1024, 768)
 
 
 def after_scenario(context, step):
