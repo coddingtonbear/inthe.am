@@ -4,6 +4,7 @@ python:
 install:
 - sudo bash scripts/vagrant/init_environment.sh
 - sudo chmod -R 777 logs
+- sudo chmod -R 777 task_data
 before_script:
 - "gem install travis-artifacts"
 after_script:
