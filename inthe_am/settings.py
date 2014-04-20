@@ -177,10 +177,6 @@ LOGGING = {
         }
     }
 }
-if TRAVIS or DEBUG:
-    LOGGING['loggers']['']['handlers'] = ['console']
-    del LOGGING['handlers']['exception_log']
-    del LOGGING['handlers']['store']
 
 CACHES = {
     'default': {
