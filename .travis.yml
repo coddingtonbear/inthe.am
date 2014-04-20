@@ -17,6 +17,8 @@ services:
   - memcached
   - redis-server
 script:
+- bash scripts/travis/run_tests.sh
+- source ./environment_variables.sh
 - python manage.py test taskmanager
 notifications:
   email: true
