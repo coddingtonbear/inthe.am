@@ -1,6 +1,6 @@
 # Install necessary packages
 apt-get update
-apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server firefox chrpath git-core libssl-dev libfontconfig1-dev
+apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev
 
 PHANTOMJS=phantomjs-1.9.7-linux-i686
 cd /usr/local/share/
