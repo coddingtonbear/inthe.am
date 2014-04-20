@@ -1,6 +1,6 @@
 # Install necessary packages
 apt-get update
-apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached
+apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server
 
 # Set up virtual environment
 mkdir -p /var/www/envs
@@ -81,3 +81,10 @@ pip install --download-cache=/tmp/pip_cache -r /var/www/twweb/requirements.txt
 pip install ipdb
 python /var/www/twweb/manage.py syncdb --noinput
 python /var/www/twweb/manage.py migrate --noinput
+
+if [ ! -f /etc/init/taskd-celery.conf ]; then
+    cp /var/www/twweb/scripts/vagrant/simple_celery_upstart.conf /etc/init/taskd-celery.conf
+    service taskd-celery start
+fi
+
+service taskd-celery restart
