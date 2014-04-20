@@ -10,7 +10,7 @@ from inthe_am.taskmanager import models
 
 
 TEST_COUNTERS = {
-    'before': {},
+    'following': {},
     'after': {}
 }
 
@@ -28,8 +28,8 @@ def save_screenshot(context, prefix):
             TEST_COUNTERS[prefix][name] += 1
 
             name = name + '_%s_%s_' % (
+                TEST_COUNTERS[prefix][name],
                 prefix,
-                TEST_COUNTERS[prefix][name]
             )
 
             context.browser.screenshot(name)
@@ -38,10 +38,7 @@ def save_screenshot(context, prefix):
 
 
 def before_all(context):
-    if 'TRAVIS' in os.environ:
-        engine = 'firefox'
-    else:
-        engine = 'phantomjs'
+    engine = 'phantomjs'
     context.browser = Browser(engine)
 
 
@@ -55,7 +52,7 @@ def before_step(context, step):
 
 
 def after_step(context, step):
-    save_screenshot(context, 'after')
+    save_screenshot(context, 'following')
 
 
 def before_scenario(context, step):
