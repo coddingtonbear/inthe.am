@@ -1,5 +1,5 @@
+import json
 import os
-import time
 from urlparse import urljoin
 
 from django.conf import settings
@@ -15,26 +15,39 @@ TEST_COUNTERS = {
 }
 
 
-def save_screenshot(context, prefix):
+def save_page_details(context, prefix):
     global TEST_COUNTERS
-    if 'TRAVIS' in os.environ:
-        if context.failed:
-            name = '-'.join([
-                context.scenario.name.replace(' ', '_'),
-            ])
+    name = '-'.join([
+        context.scenario.name.replace(' ', '_'),
+    ])
 
-            if name not in TEST_COUNTERS[prefix]:
-                TEST_COUNTERS[prefix][name] = 0
-            TEST_COUNTERS[prefix][name] += 1
+    status = 'FAIL' if context.failed else 'OK'
 
-            name = name + '_%s_%s_' % (
-                TEST_COUNTERS[prefix][name],
-                prefix,
+    if name not in TEST_COUNTERS[prefix]:
+        TEST_COUNTERS[prefix][name] = 0
+    TEST_COUNTERS[prefix][name] += 1
+
+    name = name + '_%s_%s_%s_' % (
+        TEST_COUNTERS[prefix][name],
+        prefix,
+        status
+    )
+
+    context.browser.screenshot(name)
+    with open(os.path.join('/tmp', name + '.html'), 'w') as out:
+        out.write(context.browser.html.encode('utf-8'))
+    with open(os.path.join('/tmp', name + '.html.errors.log'), 'w') as out:
+        try:
+            result = context.browser.evaluate_script(
+                'JSON.stringify(window.javascript_errors);'
             )
-
-            context.browser.screenshot(name)
-            with open(os.path.join('/tmp', name + '.html'), 'w') as out:
-                out.write(context.browser.html.encode('utf-8'))
+        except Exception as e:
+            out.write(str(e))
+            result = None
+        if result:
+            loaded = json.loads(result)
+            out.write('%s messages recorded.\n\n' % len(loaded))
+            out.write('\n'.join(loaded))
 
 
 def before_all(context):
@@ -51,11 +64,13 @@ def after_all(context):
 
 
 def before_step(context, step):
-    save_screenshot(context, 'before')
+    if 'TRAVIS' in os.environ:
+        save_page_details(context, 'before')
 
 
 def after_step(context, step):
-    save_screenshot(context, 'following')
+    if 'TRAVIS' in os.environ:
+        save_page_details(context, 'following')
 
 
 def before_scenario(context, step):
