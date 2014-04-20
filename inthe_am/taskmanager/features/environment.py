@@ -1,4 +1,3 @@
-import json
 import os
 from urlparse import urljoin
 
@@ -36,18 +35,6 @@ def save_page_details(context, prefix):
     context.browser.screenshot(name)
     with open(os.path.join('/tmp', name + '.html'), 'w') as out:
         out.write(context.browser.html.encode('utf-8'))
-    with open(os.path.join('/tmp', name + '.html.errors.log'), 'w') as out:
-        try:
-            result = context.browser.evaluate_script(
-                'JSON.stringify(window.javascript_errors);'
-            )
-        except Exception as e:
-            out.write(str(e))
-            result = None
-        if result:
-            loaded = json.loads(result)
-            out.write('%s messages recorded.\n\n' % len(loaded))
-            out.write('\n'.join(loaded))
 
 
 def before_all(context):

@@ -122,8 +122,6 @@ class TaskStore(models.Model):
             user=user,
         )
         upgrade_taskstore(store)
-        if created:
-            store.save()
         return store
 
     @property

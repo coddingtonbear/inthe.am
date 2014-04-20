@@ -57,10 +57,6 @@
         }
         Raven.captureException(error);
       }
-      window.javascript_errors = [];
-      window.onerror = function(ErrMsg) {
-        window.javascript_errors[window.javascript_errors.length] = ErrMsg;
-      }
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="{% static "jquery.datetimepicker.js" %}"></script>
