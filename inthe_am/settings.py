@@ -53,6 +53,7 @@ INSTALLED_APPS = (
     'tastypie',
     'django_extensions',
     'raven.contrib.django.raven_compat',
+    'django_behave',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -205,6 +206,8 @@ EVENT_STREAM_TIMEOUT = 240
 EVENT_STREAM_LOOP_INTERVAL = 5
 EVENT_STREAM_POLLING_INTERVAL = 60
 LOCKFILE_TIMEOUT_SECONDS = 120
+
+TEST_RUNNER='django_behave.runner.DjangoBehaveTestSuiteRunner'
 
 BROKER_URL = 'redis://localhost:6379/1'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'

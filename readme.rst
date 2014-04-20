@@ -49,10 +49,12 @@ Google OAuth Keys
 5. Enter the following for 'Authorized Javascript Origins'::
 
     http://127.0.0.1
+    http://localhost
 
 6. Enter the following for 'Authorized Redirect URI'::
 
     http://127.0.0.1:8000/complete/google-oauth2/
+    http://localhost:8081/complete/google-oauth2/
 
 7. Save
 8. You will be presented with your newly-generated client ID.

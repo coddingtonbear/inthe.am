@@ -1,6 +1,6 @@
 # Install necessary packages
 apt-get update
-apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server
+apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server firefox
 
 # Set up virtual environment
 mkdir -p /var/www/envs
