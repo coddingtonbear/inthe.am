@@ -53,3 +53,27 @@ def task_with_description_visible_main(context, value):
         selector='h1.title',
         value=value
     ))
+
+
+@when(u'the user creates a new task with the description "{value}"')
+def task_with_new_description(context, value):
+    context.execute_steps(u'''
+        When the user clicks the link "New"
+        And the user waits for 1 seconds
+        And the user enters the text "{val}" into the field named "description"
+        And the user clicks the button labeled "Save"
+        And the user waits for 1 seconds
+    '''.format(
+        val=value
+    ))
+
+
+@given(u'the user is viewing an existing task with the {field} "{value}"')
+def logged_in_and_viewing_task(context, field, value):
+    context.execute_steps(u'''
+        Given the user is logged-in
+        And an existing task with the {field} "{value}"
+    '''.format(
+        field=field,
+        value=value,
+    ))

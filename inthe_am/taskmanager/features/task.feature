@@ -10,8 +10,13 @@ Feature: User can manipulate tasks
         Then a task with the description "Test" will exist
 
     Scenario: User can view existing task
-        Given the user is logged-in
-        And an existing task with the description "Alpha"
+        Given the user is viewing an existing task with the description "Alpha"
         When the user accesses the url "/"
         Then a task named "Alpha" is visible in the task list
         And a task named "Alpha" is the opened task
+
+    Scenario: User's view switches to new task upon creation
+        Given the user is viewing an existing task with the description "Alpha"
+        When the user accesses the url "/"
+        And the user creates a new task with the description "Beta"
+        Then a task named "Beta" is the opened task
