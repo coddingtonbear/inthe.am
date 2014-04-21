@@ -20,5 +20,4 @@ Feature: User can manipulate tasks
         Given the user is viewing an existing task with the description "Alpha"
         When the user accesses the url "/"
         And the user creates a new task with the description "Beta"
-        And the user waits for 2 seconds
         Then a task named "Beta" is the opened task
