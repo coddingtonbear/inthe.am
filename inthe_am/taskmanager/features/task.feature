@@ -8,3 +8,10 @@ Feature: User can manipulate tasks
         And the user clicks the button labeled "Save"
         And the user waits for 1 seconds
         Then a task with the description "Test" will exist
+
+    Scenario: User can view existing task
+        Given the user is logged-in
+        And an existing task with the description "Alpha"
+        When the user accesses the url "/"
+        Then a task named "Alpha" is visible in the task list
+        And a task named "Alpha" is the opened task

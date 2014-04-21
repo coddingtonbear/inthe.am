@@ -205,6 +205,16 @@ def page_contains_heading(context, heading):
         )
 
 
+@then(u'the element at CSS selector "{selector}" has text "{text}"')
+def element_at_selector_has_value(context, selector, text):
+    actual = context.browser.find_by_css(selector).text
+    assert actual == text, "%s's value is '%s' not '%s'" % (
+        selector,
+        actual,
+        text
+    )
+
+
 @step(u'debugger')
 def launch_debugger(context):
     ipdb.set_trace()
