@@ -14,6 +14,7 @@ TEST_COUNTERS = {
     'following': Counter(),
     'before': Counter()
 }
+ABSOLUTE_COUNTER = 0
 
 
 def sanitize_name(name):
@@ -27,17 +28,21 @@ def sanitize_name(name):
 
 
 def save_page_details(context, step, prefix):
-    global TEST_COUNTERS
+    global TEST_COUNTERS, ABSOLUTE_COUNTER
+    ABSOLUTE_COUNTER += 1
+
+    this_absolute_counter = ABSOLUTE_COUNTER
 
     scenario_name = sanitize_name(context.scenario.name)
     step_name = sanitize_name(step.name)
 
     status = 'FAIL' if context.failed else 'OK'
 
-    this_counter = TEST_COUNTERS[prefix][scenario_name]
     TEST_COUNTERS[prefix][scenario_name] += 1
+    this_counter = TEST_COUNTERS[prefix][scenario_name]
 
-    name = '{scenario}_{num}_{step}_{prefix}_{status}'.format(
+    name = '{absolute}_{scenario}_{num}_{step}_{prefix}_{status}'.format(
+        absolute=this_absolute_counter,
         scenario=scenario_name,
         num=this_counter,
         step=step_name,
