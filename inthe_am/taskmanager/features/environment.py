@@ -1,5 +1,6 @@
 import os
 import string
+import time
 from urlparse import urljoin
 
 from django.conf import settings
@@ -71,6 +72,7 @@ def before_step(context, step):
 def after_step(context, step):
     if 'TRAVIS' in os.environ:
         save_page_details(context, step, 'following')
+        time.sleep(2)
 
 
 def before_scenario(context, step):
