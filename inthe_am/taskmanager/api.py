@@ -500,9 +500,13 @@ class TaskResource(resources.Resource):
         )
 
         response = {
-            'content': pending_tasks[0]['description'],
+            'content': None,
             'refresh_frequency': 15
         }
+        try:
+            response['content'] = pending_tasks[0]['description']
+        except IndexError:
+            response['content'] = 'No tasks exist'
 
         return HttpResponse(
             json.dumps(response),
