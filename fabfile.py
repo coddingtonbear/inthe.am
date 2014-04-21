@@ -18,6 +18,7 @@ def virtualenv(command, user=None):
 
 @task
 def deploy():
+    local('git checkout master')
     local('git push origin master')
     with cd('/var/www/twweb'):
         run('git pull')
