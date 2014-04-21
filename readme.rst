@@ -4,14 +4,10 @@ Inthe.AM
 .. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=master
    :target: https://travis-ci.org/coddingtonbear/inthe.am
 
-This is the source upon which http://inthe.am/ runs.
+Released under the `GPLv3 <http://www.gnu.org/licenses/gpl-3.0-standalone.html>`_ license.
 
-Feel free to post a pull request here to fix a bug or add a new feature.
-I often hang out on freenode as @coddingtonbear.
-
-
-Development
------------
+Setting up a Development Environment
+------------------------------------
 
 .. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=development
    :target: https://travis-ci.org/coddingtonbear/inthe.am
