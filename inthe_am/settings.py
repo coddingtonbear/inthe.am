@@ -218,6 +218,9 @@ TEST_RUNNER='django_behave.runner.DjangoBehaveTestSuiteRunner'
 BROKER_URL = 'redis://localhost:6379/1'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 
+if TRAVIS:
+    CELERY_ALWAYS_EAGER=True
+
 # Sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
