@@ -1,6 +1,6 @@
+from collections import Counter
 import os
 import string
-import time
 from urlparse import urljoin
 
 from django.conf import settings
@@ -11,8 +11,8 @@ from inthe_am.taskmanager import models
 
 
 TEST_COUNTERS = {
-    'following': {},
-    'before': {}
+    'following': Counter(),
+    'before': Counter()
 }
 
 
@@ -34,10 +34,8 @@ def save_page_details(context, step, prefix):
 
     status = 'FAIL' if context.failed else 'OK'
 
-    if scenario_name not in TEST_COUNTERS[prefix]:
-        TEST_COUNTERS[prefix][scenario_name] = 0
-    TEST_COUNTERS[prefix][scenario_name] += 1
     this_counter = TEST_COUNTERS[prefix][scenario_name]
+    TEST_COUNTERS[prefix][scenario_name] += 1
 
     name = '{scenario}_{num}_{step}_{prefix}_{status}'.format(
         scenario=scenario_name,
