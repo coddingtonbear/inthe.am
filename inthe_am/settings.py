@@ -113,7 +113,10 @@ LOGGING = {
     'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': (
+                '%(levelname)s:%(name)s:%(asctime)s %(module)s %(process)d '
+                '%(thread)d %(message)s'
+            )
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
@@ -213,13 +216,13 @@ EVENT_STREAM_LOOP_INTERVAL = 5
 EVENT_STREAM_POLLING_INTERVAL = 60
 LOCKFILE_TIMEOUT_SECONDS = 120
 
-TEST_RUNNER='django_behave.runner.DjangoBehaveTestSuiteRunner'
+TEST_RUNNER = 'django_behave.runner.DjangoBehaveTestSuiteRunner'
 
 BROKER_URL = 'redis://localhost:6379/1'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 
 if TRAVIS:
-    CELERY_ALWAYS_EAGER=True
+    CELERY_ALWAYS_EAGER = True
 
 # Sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
