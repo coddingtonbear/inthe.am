@@ -1,13 +1,75 @@
+from importlib import import_module
+from io import BytesIO
 import time
 from urlparse import urljoin
 
 from behave import given, when, then, step
+import ipdb
 from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.handlers.wsgi import WSGIRequest
+from django.http import SimpleCookie
+from django.utils.timezone import now
+from django.middleware import csrf
+
+from inthe_am.taskmanager.models import TaskStore, UserMetadata
+
+
+def login(context, **credentials):
+    from django.contrib.auth import authenticate, login
+
+    cookies = SimpleCookie()
+
+    user = authenticate(**credentials)
+    engine = import_module(settings.SESSION_ENGINE)
+
+    # Create a fake request that goes through request middleware
+    request = WSGIRequest(
+        {
+            'HTTP_COOKIE': cookies.output(header='', sep=';'),
+            'PATH_INFO': str('/'),
+            'REMOTE_ADDR': str('127.0.0.1'),
+            'REQUEST_METHOD': str('GET'),
+            'SCRIPT_NAME': str(''),
+            'SERVER_NAME': str('testserver'),
+            'SERVER_PORT': str('80'),
+            'SERVER_PROTOCOL': str('HTTP/1.1'),
+            'wsgi.version': (1, 0),
+            'wsgi.url_scheme': str('http'),
+            'wsgi.input': BytesIO(),
+            'wsgi.errors': BytesIO(),
+            'wsgi.multiprocess': True,
+            'wsgi.multithread': False,
+            'wsgi.run_once': False,
+        }
+    )
+    request.session = engine.SessionStore()
+    login(request, user)
+
+    # Save the session values.
+    request.session.save()
+
+    # Set the cookie to represent the session.
+    session_cookie = settings.SESSION_COOKIE_NAME
+    cookies[session_cookie] = request.session.session_key
+    cookie_data = {
+        'max-age': None,
+        'path': '/',
+        'domain': settings.SESSION_COOKIE_DOMAIN,
+        'secure': settings.SESSION_COOKIE_SECURE or None,
+        'expires': None,
+    }
+    cookies[session_cookie].update(cookie_data)
+    context.browser.cookies.add(
+        {
+            session_cookie: cookies[session_cookie].value,
+            settings.CSRF_COOKIE_NAME: csrf._get_new_csrf_key(),
+        }
+    )
 
 
 @step(u'the user accesses the url "{url}"')
@@ -24,9 +86,31 @@ def user_accesses_the_url(context, url):
 def user_is_logged_in(context):
     context.execute_steps(u'''
         when the user accesses the url "/"
-        and the user accesses the url "/login/google-oauth2/"
-        and the user enters his credentials if necessary
-        and the user accepts the terms and conditions
+    ''')
+    u = User.objects.create(
+        username='integration-test',
+        email=settings.TESTING_LOGIN_USER
+    )
+    u.set_password(settings.TESTING_LOGIN_PASSWORD)
+    u.save()
+
+    store = TaskStore.get_for_user(u)
+    if not store.configured:
+        store.autoconfigure_taskd()
+
+    meta = UserMetadata.get_for_user(u)
+    meta.tos_version = settings.TOS_VERSION
+    meta.tos_accepted = now()
+    meta.save()
+
+    login(
+        context,
+        username=u.username,
+        password=settings.TESTING_LOGIN_PASSWORD
+    )
+    context.execute_steps(u'''
+        when the user accesses the url "/"
+        then the page contains the heading "Let's get started"
     ''')
 
 
@@ -119,3 +203,8 @@ def page_contains_heading(context, heading):
         "Page should contain '%s', has '%s'" % (
             heading, all_headings
         )
+
+
+@step(u'debugger')
+def launch_debugger(context):
+    ipdb.set_trace()
