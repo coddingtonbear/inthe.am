@@ -42,7 +42,7 @@ def save_page_details(context, step, prefix):
     this_counter = TEST_COUNTERS[prefix][scenario_name]
 
     name = '{absolute}_{scenario}_{num}_{step}_{prefix}_{status}'.format(
-        absolute=this_absolute_counter,
+        absolute=str(this_absolute_counter).zfill(5),
         scenario=scenario_name,
         num=this_counter,
         step=step_name,
