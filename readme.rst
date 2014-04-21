@@ -4,7 +4,7 @@ Inthe.AM
 .. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=master
    :target: https://travis-ci.org/coddingtonbear/inthe.am
 
-Released under the `GPLv3 <http://www.gnu.org/licenses/gpl-3.0-standalone.html>`_ license.
+Released under the `GNU AFFERO GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/agpl-3.0-standalone.html>`_.
 
 Setting up a Development Environment
 ------------------------------------
