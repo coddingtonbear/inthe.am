@@ -37,10 +37,11 @@ def save_page_details(context, step, prefix):
     if scenario_name not in TEST_COUNTERS[prefix]:
         TEST_COUNTERS[prefix][scenario_name] = 0
     TEST_COUNTERS[prefix][scenario_name] += 1
+    this_counter = TEST_COUNTERS[prefix][scenario_name]
 
     name = '{scenario}_{num}_{step}_{prefix}_{status}'.format(
         scenario=scenario_name,
-        num=TEST_COUNTERS[prefix][scenario_name],
+        num=this_counter,
         step=step_name,
         prefix=prefix,
         status=status,
