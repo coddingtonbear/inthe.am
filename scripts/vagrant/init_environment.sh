@@ -34,6 +34,14 @@ if [ -z "$TRAVIS" ]; then
     if [ ! -L $MAIN_DIR/bin ]; then
         ln -s /var/www/envs/twweb/bin $MAIN_DIR/bin
     fi
+
+    # Install the grunt watcher
+    cp $MAIN_DIR/scripts/vagrant/simple_grunt_watcher.conf /etc/init/taskd-grunt.conf
+    service taskd-grunt restart
+
+    # Copy bash profile into place
+    cp $MAIN_DIR/scripts/vagrant/bash_profile /home/vagrant/.profile
+
     source $MAIN_DIR/environment_variables.sh
     source /var/www/envs/twweb/bin/activate
 else

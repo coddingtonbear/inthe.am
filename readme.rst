@@ -15,38 +15,36 @@ Setting up a Development Environment
 1. Create the virtual machine ``vagrant up``
 2. Enter the virtual machine: ``vagrant ssh``
 3. Switch to the project directory: ``cd /var/www/twweb/``
-4. Enter the virtual environment: ``source bin/activate``
-5. `Compile the Templates, CSS, and Javascript Modules`_.
-6. Start the ``runserver`` by running ``python manage.py runserver 0.0.0.0:8000``
+4. Start the ``runserver`` by running ``python manage.py runserver 0.0.0.0:8000``
 
 
 Compile the Templates, CSS, and Javascript Modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Templates and Javascript modules are managed by `Grunt <http://gruntjs.com/>`_.
-You have two options for compiling templates -- one for situations in which
-you really only need to compile things once, and one for situations in which
-you'll be actively developing a feature, and would like the templates and
-modules to recompile automatically.  *Both* situations require that you run
-the following two steps from the project directory:
+Templates and Javascript modules are managed by `Grunt <http://gruntjs.com/>`_,
+and in the development environment, changes you make to the Handlebars
+templates (``handlebars_templates/*.hbs``), Javascript modules
+(``ember_modules/**/*.js``), and SCSS files
+(``inthe_am/taskmanager/static/colorschemes/*.scss`` and 
+``inthe_am/taskmanager/static/foundation/scss/*.scss``) are compiled into their
+respective web-native formats automatically by a service named ``taskd-grunt``.
 
-1. Install ``grunt-cli`` globally: ``sudo npm install -g grunt-cli``.
-2. Install other necessary packages: ``npm install``.
-
-For situations in which you really just need to compile the templates once
-(for example, when running tests), you can compile the templates by
-running::
+If you by chance would like to compile the templates manually, you can run
+the command::
 
     grunt ember_handlebars sass browserify
 
-But in situations where you are actively hacking on a project, it makes a lot
-more sense to open up a new shell, and running::
+That having been said, you may want to stop the ``taskd-grunt`` service first
+by running::
 
-    grunt watch
+    sudo service taskd-grunt stop
 
-When using ``grunt watch``, your filesystem will be monitored for changes,
-and templates, css, and javascript modules will be compiled whenever changes
-are seen.
+.. note::
+
+   For best results, it is recommended that you run the grunt watcher
+   on the host environment.  Filesystem accesses from your guest OS
+   to the templates are not terribly fast, and compilations can take
+   20-30 seconds in some cases.
 
 
 Development Environment Notes
