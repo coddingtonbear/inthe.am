@@ -48,9 +48,14 @@ var model = DS.Model.extend({
       value = 'blocking';
     } else if (moment(this.get('due')).isBefore(moment())) {
       value = 'overdue';
-    } else if (moment().add('hours', 24).isAfter(this.get('due'))) {
+    } else if (moment().format('L') === moment(this.get('due')).format('L')) {
       value = 'due__today';
-    } else if (moment().add('days', 7).isAfter(this.get('due'))) {
+    } else if ( // Truncate date to date only
+        moment(
+          moment().format('YYYYMMDD'),
+          'YYYYMMDD'
+        ).add('days', 7).isAfter(this.get('due'))
+    ) {
       value = 'due';
     } else if (this.get('imask')) {
       value = 'recurring';
