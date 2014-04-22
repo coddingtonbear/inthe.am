@@ -18,7 +18,9 @@ def virtualenv(command, user=None):
 
 @task
 def deploy():
+    local('git push origin development')
     local('git checkout master')
+    local('git merge development')
     local('git push origin master')
     with cd('/var/www/twweb'):
         run('git fetch origin')
@@ -30,3 +32,4 @@ def deploy():
         sudo('service twweb restart')
         sudo('service twweb-status restart')
         sudo('service twweb-celery restart')
+    local('git checkout development')
