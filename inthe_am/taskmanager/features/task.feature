@@ -15,7 +15,6 @@ Feature: User can manipulate tasks
         Then a task named "Alpha" is visible in the task list
         And a task named "Alpha" is the opened task
 
-    @wip
     Scenario: User's view switches to new task upon creation
         Given the user is viewing an existing task with the description "Alpha"
         When the user accesses the url "/"
