@@ -338,24 +338,25 @@ class TaskStore(models.Model):
         if async:
             sync_repository.apply_async(args=(self.pk, ))
         else:
-            try:
-                with git_checkpoint(self, 'Synchronization'):
+            with git_checkpoint(self, 'Synchronization'):
+                try:
                     self.client.sync()
-            except TaskwarriorError as e:
-                self.log_error(
-                    "An error was encountered while synchronizing your tasks "
-                    "with the taskd server; please reconfigure your "
-                    "synchronization settings and re-enable synchronization."
-                    "Err. Code: %s; "
-                    "Std. Error: %s; "
-                    "Std. Out: %s.",
-                    e.code,
-                    e.stderr,
-                    e.stdout,
-                )
-                self.sync_enabled = False
-                self.save()
-                return False
+                except TaskwarriorError as e:
+                    self.log_error(
+                        "An error was encountered while synchronizing your "
+                        "tasks with the taskd server; please reconfigure your "
+                        "synchronization settings and re-enable "
+                        "synchronization."
+                        "Err. Code: %s; "
+                        "Std. Error: %s; "
+                        "Std. Out: %s.",
+                        e.code,
+                        e.stderr,
+                        e.stdout,
+                    )
+                    self.sync_enabled = False
+                    self.save()
+                    return False
         return True
 
     def reset_taskd_configuration(self):
