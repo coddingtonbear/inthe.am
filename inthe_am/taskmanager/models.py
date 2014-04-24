@@ -371,13 +371,6 @@ class TaskStore(models.Model):
             ):
                 try:
                     self.client.sync()
-                    # It looks like the process that's responsible for
-                    # moving tasks from pending to completed is forked,
-                    # so we need to do something here to cause us to
-                    # wait until the tasks have moved from pending to
-                    # completed.  Let's just get tasks, and ignore the
-                    # result.  Weird, I know.
-                    self.client.filter_tasks({'status': 'pending'})
                 except TaskwarriorError as e:
                     self.log_error(
                         "An error was encountered while synchronizing your "

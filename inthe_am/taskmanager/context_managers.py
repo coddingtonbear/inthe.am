@@ -16,7 +16,8 @@ logger = logging.getLogger(__name__)
 
 @contextmanager
 def git_checkpoint(
-    store, message, function=None, args=None, kwargs=None, sync=False
+    store, message, function=None, args=None, kwargs=None,
+    sync=False, gc=True,
 ):
     lockfile_path = os.path.join(store.local_path, '.lock')
     pre_work_sha = store.repository.head()
@@ -34,6 +35,12 @@ def git_checkpoint(
                     checkpoint_id=checkpoint_id,
                 )
                 yield
+                # We need to force taskw to garbage collect after engaging
+                # in operations that might alter the task ID#s, otherwise
+                # they'll hang out as uncommitted changes until the next
+                # writing operation.
+                if gc:
+                    store.client.filter_tasks({'status': 'pending'})
                 store.create_git_checkpoint(
                     message,
                     function=function,

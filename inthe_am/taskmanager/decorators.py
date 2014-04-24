@@ -24,7 +24,7 @@ def requires_task_store(f):
     return wrapper
 
 
-def git_managed(message, sync=False):
+def git_managed(message, sync=False, gc=True):
     def git_sync(f):
         @wraps(f)
         def wrapper(self, *args, **kwargs):
@@ -36,7 +36,7 @@ def git_managed(message, sync=False):
             store = models.TaskStore.get_for_user(user)
             kwargs['store'] = store
             with git_checkpoint(
-                store, message, f.__name__, args[1:], kwargs, sync=sync
+                store, message, f.__name__, args[1:], kwargs, sync=sync, gc=gc
             ):
                 result = f(self, *args, **kwargs)
             return result

@@ -142,7 +142,7 @@ class UserResource(resources.ModelResource):
             )
             return response
 
-    @git_managed("Reset taskd configuration")
+    @git_managed("Reset taskd configuration", gc=False)
     def reset_taskd_configuration(self, request, store=None, **kwargs):
         if request.method != 'POST':
             raise HttpResponseNotAllowed(request.method)
@@ -150,7 +150,7 @@ class UserResource(resources.ModelResource):
         store.log_message("Taskd settings reset to default.")
         return HttpResponse('OK')
 
-    @git_managed("Configuring taskd server")
+    @git_managed("Configuring taskd server", gc=False)
     def configure_taskd(self, request, store=None, **kwargs):
         if request.method != 'POST':
             raise HttpResponseNotAllowed(request.method)
@@ -247,7 +247,7 @@ class UserResource(resources.ModelResource):
         ts.save()
         return HttpResponse('OK')
 
-    @git_managed("Clearing task data")
+    @git_managed("Clearing task data", gc=False)
     def clear_task_data(self, request, **kwargs):
         if request.method != 'POST':
             raise HttpResponseNotAllowed(request.method)
@@ -291,7 +291,7 @@ class UserResource(resources.ModelResource):
             content_type='application/x-pem-file',
         )
 
-    @git_managed("Updating custom taskrc configuration")
+    @git_managed("Updating custom taskrc configuration", gc=False)
     def taskrc_extras(self, request, **kwargs):
         if request.method == 'GET':
             ts = models.TaskStore.get_for_user(request.user)
