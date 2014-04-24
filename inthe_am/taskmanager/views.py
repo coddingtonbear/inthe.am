@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 
 class Status(BaseSseView):
-    UUID_MATCHER = re.compile(r'uuid:"([0-9a-zA-Z-]+)"')
 
     def get_store(self, cached=True):
         if not cached or getattr(self, '_store', None) is None:
@@ -32,31 +31,12 @@ class Status(BaseSseView):
 
         return self._store
 
-    def get_changed_ids(self, store, head1, head2):
-        proc = store._git_command(
-            'diff', head1, head2
-        )
-        stdout, stderr = proc.communicate()
-
-        changed_tickets = set()
-        for raw_line in stdout.split('\n'):
-            line = raw_line.strip()
-            if not line or line[0] not in ('+', '-'):
-                continue
-            matched = self.UUID_MATCHER.search(line)
-            if matched:
-                changed_tickets.add(
-                    matched.group(1)
-                )
-
-        return changed_tickets
-
     def check_head(self, head):
         store = self.get_store()
         new_head = store.repository.head()
         if head != new_head:
             logger.info('Found new repository head -- %s' % new_head)
-            ids = self.get_changed_ids(store, head, new_head)
+            ids = store.get_changed_task_ids(head, new_head)
             for id in ids:
                 self.sse.add_message("task_changed", id)
             head = new_head

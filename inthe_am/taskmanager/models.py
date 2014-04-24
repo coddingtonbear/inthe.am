@@ -250,6 +250,27 @@ class TaskStore(models.Model):
 
     #  Git-related methods
 
+    def get_changed_task_ids(self, head, start=None):
+        uuid_matcher = re.compile(r'uuid:"([0-9a-zA-Z-]+)"')
+        if not start:
+            start = self.repository.head()
+        proc = self._git_command(
+            'diff', head, start
+        )
+        stdout, stderr = proc.communicate()
+        changed_tickets = set()
+        for raw_line in stdout.split('\n'):
+            line = raw_line.strip()
+            if not line or line[0] not in ('+', '-'):
+                continue
+            matched = uuid_matcher.search(line)
+            if matched:
+                changed_tickets.add(
+                    matched.group(1)
+                )
+
+        return changed_tickets
+
     def create_git_repository(self):
         result = self._simple_git_command('status')
         if result != 0:
