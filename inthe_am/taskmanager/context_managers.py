@@ -2,6 +2,7 @@ from contextlib import contextmanager
 import datetime
 import logging
 import os
+import uuid
 
 from django.conf import settings
 from django.utils.timezone import now, utc
@@ -19,6 +20,7 @@ def git_checkpoint(
 ):
     lockfile_path = os.path.join(store.local_path, '.lock')
     pre_work_sha = store.repository.head()
+    checkpoint_id = uuid.uuid4()
     try:
         with PIDLockFile(lockfile_path, timeout=10):
             store.create_git_repository()
@@ -28,14 +30,16 @@ def git_checkpoint(
                     function=function,
                     args=args,
                     kwargs=kwargs,
-                    pre_operation=True
+                    pre_operation=True,
+                    checkpoint_id=checkpoint_id,
                 )
                 yield
                 store.create_git_checkpoint(
                     message,
                     function=function,
                     args=args,
-                    kwargs=kwargs
+                    kwargs=kwargs,
+                    checkpoint_id=checkpoint_id,
                 )
             except Exception as e:
                 store.create_git_checkpoint(

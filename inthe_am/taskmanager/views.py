@@ -55,7 +55,13 @@ class Status(BaseSseView):
         store = self.get_store()
         if not store:
             return
-        store.sync(async=False)
+        kwargs = {
+            'async': False,
+            'function': (
+                'views.Status.iterator'
+            )
+        }
+        store.sync(msg='Iterator initialization', **kwargs)
         created = time.time()
         last_sync = time.time()
         taskd_mtime = self.get_taskd_mtime(store)
@@ -85,14 +91,14 @@ class Status(BaseSseView):
                 ):
                     taskd_mtime = new_mtime
                     last_sync = time.time()
-                    synced = store.sync(async=False)
+                    store.sync(msg='Local mtime sync', **kwargs)
                     head = self.check_head(head)
             else:
                 if time.time() - last_sync > (
                     settings.EVENT_STREAM_POLLING_INTERVAL
                 ):
                     last_sync = time.time()
-                    synced = store.sync(async=False)
+                    store.sync(msg='Remote polling sync', **kwargs)
 
                 head = self.check_head(head)
 

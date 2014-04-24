@@ -305,7 +305,7 @@ class TaskStore(models.Model):
     def create_git_checkpoint(
         self, message, function=None,
         args=None, kwargs=None, pre_operation=False,
-        rollback=False,
+        rollback=False, checkpoint_id=None
     ):
         self._simple_git_command('add', '-A')
         commit_message = render_to_string(
@@ -317,6 +317,7 @@ class TaskStore(models.Model):
                 'kwargs': kwargs,
                 'preop': pre_operation,
                 'rollback': rollback,
+                'checkpoint_id': checkpoint_id,
             }
         )
         self._simple_git_command(
@@ -352,14 +353,22 @@ class TaskStore(models.Model):
             'tx.data'
         )
 
-    def sync(self, async=True):
+    def sync(
+        self, function=None, args=None, kwargs=None, async=True, msg=None
+    ):
         if not self.sync_enabled:
             return False
 
         if async:
             sync_repository.apply_async(args=(self.pk, ))
         else:
-            with git_checkpoint(self, 'Synchronization'):
+            checkpoint_msg = 'Synchronization'
+            if msg:
+                checkpoint_msg = '%s: %s' % (checkpoint_msg, msg)
+            with git_checkpoint(
+                self, checkpoint_msg, function=function,
+                args=args, kwargs=kwargs,
+            ):
                 try:
                     self.client.sync()
                 except TaskwarriorError as e:
