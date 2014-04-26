@@ -11,6 +11,7 @@ html, body {
     >.ember-view {
       height: 100%;
     }
+    background-color: #F0F0F0;
   }
 }
 
@@ -35,6 +36,16 @@ i.fa {
 i.fa:before {
   display: inline-block;
   width: 18px;
+}
+
+ul#features {
+  span.headline {
+    font-weight: 700;
+    font-size: 1.1em;
+  }
+  li {
+    margin-bottom: 10px;
+  }
 }
 
 label[for] {
@@ -75,11 +86,11 @@ div.row {
 
   p {
     font-size: 0.95rem;
-    line-height: 0.95rem;
+    line-height: 1.25rem;
   }
   li {
     font-size: 0.95rem;
-    line-height: 0.95rem;
+    line-height: 1.25rem;
   }
 
   &.full-width {
@@ -101,6 +112,7 @@ div.row {
       text-align: center;
     }
   }
+  &::-webkit-scrollbar { width: 0 !important }
 }
 
 #list, #mobile-list {
