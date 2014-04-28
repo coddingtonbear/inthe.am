@@ -5,15 +5,10 @@ Feature: User can navigate between pages
         When the user clicks the link "Sync"
         Then the page contains the heading "Synchronizing with Taskwarrior"
 
-    Scenario: User can navigate to SMS page
-        Given the user is logged-in
-        When the user clicks the link "SMS"
-        Then the page contains the heading "Adding tasks via SMS"
-
     Scenario: User can navigate to API page
         Given the user is logged-in
-        When the user clicks the link "API"
-        Then the page contains the heading "API Key"
+        When the user clicks the link "Access"
+        Then the page contains the heading "API Access"
 
     Scenario: User can navigate to Log page
         Given the user is logged-in
