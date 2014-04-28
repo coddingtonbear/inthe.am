@@ -26,6 +26,18 @@
 
     <h2>Pebble Cards Access</h2>
 
+    {{#unless controllers.application.user.pebble_cards_enabled}}
+        <div class="block warning">
+            <p>
+                For your security, your Pebble Cards URL is disabled
+                by default.  Although your Pebble Cards URL is unique
+                and randomly generated, due to limitations in Pebble
+                Cards, no authentication is used.
+                <a href="" {{action "enable_pebble_cards"}}>Enable your Pebble Cards URL</a>.
+            </p>
+        </div>
+    {{/unless}}
+
     <p> 
         <a href="http://keanulee.com/pebblecards/">Pebble Cards</a> is a
         <a href="https://getpebble.com/">Pebble</a> application

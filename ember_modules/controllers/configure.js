@@ -8,6 +8,14 @@ var controller = Ember.Controller.extend({
     {short: 'no', long: 'Disabled'},
     {short: 'yes', long: 'Enabled'},
   ],
+  pebbleCardsEnabled: [
+    {short: 'no', long: 'Disabled'},
+    {short: 'yes', long: 'Enabled'},
+  ],
+  feedEnabled: [
+    {short: 'no', long: 'Disabled'},
+    {short: 'yes', long: 'Enabled'},
+  ],
   themeOptions: [
     {file: 'light-16.theme', name: 'Light (4-bit)'},
     {file: 'dark-16.theme', name: 'Dark (4-bit)'},
@@ -22,6 +30,20 @@ var controller = Ember.Controller.extend({
     {file: 'solarized-dark-256.theme', name: 'Solarized Dark'},
     {file: 'solarized-light-256.theme', name: 'Solarized Light'},
   ],
+  pebbleCardsEnabledUI: function() {
+    if(this.get('controllers.application.user.pebble_cards_enabled')) {
+      return 'yes';
+    } else {
+      return 'no';
+    }
+  }.property(),
+  feedEnabledUI: function() {
+    if(this.get('controllers.application.user.feed_enabled')) {
+      return 'yes';
+    } else {
+      return 'no';
+    }
+  }.property(),
   taskUpdateStreamEnabledUI: function() {
     if(this.get('taskUpdateStreamEnabled')) {
       return 'yes';
@@ -290,6 +312,65 @@ var controller = Ember.Controller.extend({
         }
       });
     },
+    save_feed: function() {
+      var url  = this.get('controllers.application').urls.configure_feed;
+      var enabled = 0;
+      if($("#id_feed_config").val() === 'yes') {
+        enabled = 1;
+      }
+      var self = this;
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: {
+          enabled: enabled,
+        },
+        success: function() {
+          self.set('controllers.application.user.feed_enabled', enabled);
+          if(enabled) {
+            self.success_message("Feed enabled!");
+          } else {
+            self.success_message("Feed disabled!");
+          }
+        },
+        error: function() {
+          self.error_message(
+            "An error was encountered while enabling your feed."
+          );
+        }
+      });
+    },
+    save_pebble_cards: function(value) {
+      var url  = this.get('controllers.application').urls.configure_pebble_cards;
+      var enabled = 0;
+      if(typeof(value) != 'undefined') {
+        enabled = value;
+      }
+      else if($("#id_pebble_cards_config").val() === 'yes') {
+        enabled = 1;
+      }
+      var self = this;
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: {
+          enabled: enabled,
+        },
+        success: function() {
+          self.set('controllers.application.user.pebble_cards_enabled', enabled);
+          if(enabled) {
+            self.success_message("Pebble Cards URL enabled!");
+          } else {
+            self.success_message("Pebble Cards URL disabled!");
+          }
+        },
+        error: function() {
+          self.error_message(
+            "An error was encountered while enabling your Pebble Cards URL."
+          );
+        }
+      });
+    },
     enable_sync: function() {
       var url  = this.get('controllers.application').urls.enable_sync;
       var self = this;
@@ -302,7 +383,7 @@ var controller = Ember.Controller.extend({
         },
         error: function() {
           self.error_message(
-            "An error was encountered while setting your colorscheme."
+            "An error was encountered while enabling sync."
           );
         }
       });

@@ -14,7 +14,6 @@ from twilio.twiml import Response
 from twilio.util import RequestValidator
 from lockfile import LockTimeout
 
-from django.conf import settings
 from django.conf.urls import url
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -124,6 +123,18 @@ class UserResource(resources.ModelResource):
                 ),
                 self.wrap_view('enable_sync')
             ),
+            url(
+                r"^(?P<resource_name>%s)/pebble-cards-config/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('configure_pebble_cards')
+            ),
+            url(
+                r"^(?P<resource_name>%s)/feed-config/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('configure_feed')
+            ),
         ]
 
     def _send_file(self, out, content_type=None, **kwargs):
@@ -202,6 +213,36 @@ class UserResource(resources.ModelResource):
         # Write files from form to user directory
         store.log_message("Taskd settings changed.")
         store.taskrc.update(taskd_data)
+
+        return HttpResponse('OK')
+
+    def configure_pebble_cards(self, request, **kwargs):
+        if request.method != 'POST':
+            raise HttpResponseNotAllowed(request.method)
+
+        try:
+            enabled = int(request.POST.get('enabled', 0))
+        except (TypeError, ValueError):
+            return HttpResponseBadRequest()
+
+        store = models.TaskStore.get_for_user(request.user)
+        store.pebble_cards_enabled = True if enabled else False
+        store.save()
+
+        return HttpResponse('OK')
+
+    def configure_feed(self, request, **kwargs):
+        if request.method != 'POST':
+            raise HttpResponseNotAllowed(request.method)
+
+        try:
+            enabled = int(request.POST.get('enabled', 0))
+        except (TypeError, ValueError):
+            return HttpResponseBadRequest()
+
+        store = models.TaskStore.get_for_user(request.user)
+        store.feed_enabled = True if enabled else False
+        store.save()
 
         return HttpResponse('OK')
 
@@ -361,6 +402,8 @@ class UserResource(resources.ModelResource):
                     }
                 ),
                 'sync_enabled': store.sync_enabled,
+                'pebble_cards_enabled': store.pebble_cards_enabled,
+                'feed_enabled': store.feed_enabled,
             }
         else:
             user_data = {
@@ -490,6 +533,9 @@ class TaskResource(resources.Resource):
         try:
             store = models.TaskStore.objects.get(secret_id=secret_id)
         except:
+            return HttpResponseNotFound()
+
+        if not store.pebble_cards_enabled:
             return HttpResponseNotFound()
 
         pending_tasks = store.client.filter_tasks({'status': self.TASK_TYPE})

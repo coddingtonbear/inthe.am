@@ -51,6 +51,8 @@ class TaskStore(models.Model):
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)
     sync_enabled = models.BooleanField(default=True)
+    pebble_cards_enabled = models.BooleanField(default=False)
+    feed_enabled = models.BooleanField(default=False)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

@@ -71,6 +71,26 @@
             </div>
         </dd>
         <dd>
+            <a href="#rss_feeds">RSS Feed</a>
+            <div id="rss_feeds" class="content">
+                <div class="row">
+                    <label>RSS Task Feed</label>
+                    {{view Ember.Select value=feedEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=feedEnabled id="id_feed_config"}}
+                </div>
+                <a href="" class="button radius" {{action "save_feed"}}>Save Settings</a>
+            </div>
+        </dd>
+        <dd>
+            <a href="#pebble_cards">Pebble Cards</a>
+            <div id="pebble_cards" class="content">
+                <div class="row">
+                    <label>Pebble Cards URL</label>
+                    {{view Ember.Select value=pebbleCardsEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=pebbleCardsEnabled id="id_pebble_cards_config"}}
+                </div>
+                <a href="" class="button radius" {{action "save_pebble_cards"}}>Save Settings</a>
+            </div>
+        </dd>
+        <dd>
             <a href="#custom_colors">Task Colors</a>
             <div id="custom_colors" class="content">
                 <div class="row">

@@ -16,6 +16,8 @@ var controller = Ember.Controller.extend({
     clear_task_data: '/api/v1/user/clear-task-data/',
     set_colorscheme: '/api/v1/user/colorscheme/',
     enable_sync: '/api/v1/user/enable-sync/',
+    configure_pebble_cards: '/api/v1/user/pebble-cards-config/',
+    configure_feed: '/api/v1/user/feed-config/',
     status_feed: '/status/',
     sms_url: null,
     pebble_card_url: null,

@@ -305,6 +305,16 @@ div.block.error {
   border-radius: 10px;
   padding: 25px 25px 15px 25px;
 }
+div.block.warning {
+  background-color: #FFFFAA;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+
+  p:last-child {
+    margin-bottom: 0px;
+  }
+}
 
 div.alert-box.error {
   background-color: #AA0000;
