@@ -148,7 +148,13 @@ class TaskFeed(Feed):
         return '/tasks/{uuid}'.format(uuid=item.get('uuid'))
 
     def items(self, store):
-        return store.client.filter_tasks({'status': 'pending'})[0:100]
+        tasks = store.client.filter_tasks({'status': 'pending'})[0:100]
+        tasks = sorted(
+            tasks,
+            key=lambda d: float(d['urgency']),
+            reverse=True
+        )
+        return tasks
 
     def description(self, store):
         return (
