@@ -80,11 +80,11 @@ var controller = Ember.Controller.extend({
       }
     });
 
-    Hammer($('body')[0]).on('swiperight', function(evt) {
+    /*Hammer($('body')[0]).on('swiperight', function(evt) {
       if(self.isSmallScreen()) {
         self.transitionToRoute('mobileTasks');
       }
-    });
+    });*/
 
     // Set up the event stream
     if(this.get('taskUpdateStreamEnabled')) {
