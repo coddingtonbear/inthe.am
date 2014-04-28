@@ -383,6 +383,12 @@ class UserResource(resources.ModelResource):
                 'taskrc_extras': store.taskrc_extras,
                 'api_key': store.api_key.key,
                 'tos_up_to_date': meta.tos_up_to_date,
+                'feed_url': reverse(
+                    'feed',
+                    kwargs={
+                        'uuid': store.secret_id,
+                    }
+                ),
                 'sms_url': reverse(
                     'incoming_sms',
                     kwargs={

@@ -6,7 +6,7 @@ from .api import (
     UserResource, TaskResource, CompletedTaskResource,
     ActivityLogResource
 )
-from .views import home, Status
+from .views import home, Status, TaskFeed
 
 api = Api(api_name='v1')
 api.register(UserResource())
@@ -17,6 +17,7 @@ api.register(ActivityLogResource())
 
 urlpatterns = patterns('inthe_am.taskmanager.views',
     url('^api/', include(api.urls)),
-    url('^status/', Status.as_view()),
+    url('^status/', Status.as_view(), name='status'),
+    url('^(?P<uuid>[^/]+)/feed/', TaskFeed(), name='feed'),
     url('^', home, name='home'),
 )

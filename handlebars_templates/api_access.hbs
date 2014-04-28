@@ -1,5 +1,30 @@
 <div class="row standalone">
-    <h2>API Key</h2>
+    <h2>RSS Feed</h2>
+
+    {{#unless controllers.application.user.feed_enabled}}
+        <div class="block warning">
+            <p>
+                For your security, your feed is disabled
+                by default.  Although your feed's URL is unique
+                and randomly generated, no authentication is used
+                to improve compatibility with RSS feed readers.
+                <a href="" {{action "enable_feed"}}>Enable your RSS Feed</a>.
+            </p>
+        </div>
+    {{/unless}}
+
+    <table class="pure-table pure-table-horizontal">
+        <tr>
+            <th>
+                Feed URL
+            </th>
+            <td>
+                https://inthe.am{{ controllers.application.urls.feed_url }}
+            </td>
+        </tr>
+    </table>
+
+    <h2>API Access</h2>
 
     <p>
         Your Taskwarrior tasks are accessible via a RESTful API; you can
@@ -23,20 +48,9 @@
         {{#link-to "apiDocs"}}API Documentation{{/link-to}}.
     </p>
 
-    <h2>Adding tasks via SMS</h2>
+    <h2>SMS Access</h2>
 
-    {{#if controllers.application.user.twilio_auth_token}}
-        <table class="pure-table pure-table-horizontal">
-            <tr>
-                <th>
-                    Twilio Messaging Request URL <strong>(POST)</strong>
-                </th>
-                <td>
-                    https://inthe.am{{ controllers.application.urls.sms_url }}
-                </td>
-            </tr>
-        </table>
-    {{else}}
+    {{#unless controllers.application.user.twilio_auth_token}}
         <div class="block warning">
             <p>
                 For your security, the ability to send task messages via
@@ -51,7 +65,18 @@
                 {{#link-to "configure"}}Enable SMS access from your settings{{/link-to}}.
             </p>
         </div>
-    {{/if}}
+    {{/unless}}
+
+    <table class="pure-table pure-table-horizontal">
+        <tr>
+            <th>
+                Twilio Messaging Request URL <strong>(POST)</strong>
+            </th>
+            <td>
+                https://inthe.am{{ controllers.application.urls.sms_url }}
+            </td>
+        </tr>
+    </table>
 
     <h3>Setup Instructions</h3>
 

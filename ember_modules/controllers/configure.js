@@ -312,10 +312,12 @@ var controller = Ember.Controller.extend({
         }
       });
     },
-    save_feed: function() {
+    save_feed: function(value) {
       var url  = this.get('controllers.application').urls.configure_feed;
       var enabled = 0;
-      if($("#id_feed_config").val() === 'yes') {
+      if(typeof(value) != 'undefined') {
+        enabled = value;
+      } else if($("#id_feed_config").val() === 'yes') {
         enabled = 1;
       }
       var self = this;

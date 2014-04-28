@@ -2,13 +2,15 @@ import datetime
 import json
 import logging
 import os
-import re
 import time
 
+from django_sse.views import BaseSseView
 import pytz
 
 from django.conf import settings
-from django_sse.views import BaseSseView
+from django.contrib.syndication.views import Feed
+from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.template.response import TemplateResponse
 
 from .models import TaskStore, TaskStoreActivityLog
@@ -117,6 +119,56 @@ class Status(BaseSseView):
             yield
 
             time.sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
+
+
+class TaskFeed(Feed):
+    def get_object(self, request, uuid):
+        try:
+            store = TaskStore.objects.get(
+                secret_id=uuid
+            )
+        except TaskStore.NotFound:
+            raise Http404()
+
+        if not store.feed_enabled:
+            raise Http404()
+
+        return store
+
+    def item_title(self, item):
+        return item.get('description')
+
+    def item_description(self, item):
+        lines = []
+        for k, v in item.items():
+            lines.append('{k}: {v}'.format(k=k, v=v))
+        return '\n'.join(lines)
+
+    def item_link(self, item):
+        return '/tasks/{uuid}'.format(uuid=item.get('uuid'))
+
+    def items(self, store):
+        return store.client.filter_tasks({'status': 'pending'})[0:100]
+
+    def description(self, store):
+        return (
+            "Highest urgency tasks on {first_name} {last_name}'s "
+            "task list.".format(
+                first_name=store.user.first_name,
+                last_name=store.user.last_name
+            )
+        )
+
+    def link(self, store):
+        return reverse(
+            'feed', kwargs={'uuid': store.secret_id}
+        )
+
+    def title(self, store):
+        return "{first_name} {last_name}'s tasks".format(
+            first_name=store.user.first_name,
+            last_name=store.user.last_name
+        )
 
 
 def home(request):

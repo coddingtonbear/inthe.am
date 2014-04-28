@@ -19,6 +19,7 @@ var controller = Ember.Controller.extend({
     configure_pebble_cards: '/api/v1/user/pebble-cards-config/',
     configure_feed: '/api/v1/user/feed-config/',
     status_feed: '/status/',
+    feed_url: null,
     sms_url: null,
     pebble_card_url: null,
   },
@@ -48,6 +49,7 @@ var controller = Ember.Controller.extend({
     } else {
       Raven.setUser();
     }
+    this.set('urls.feed_url', this.get('user').feed_url);
     this.set('urls.sms_url', this.get('user').sms_url);
     this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
     this.set('statusUpdaterHead', this.get('user').repository_head);

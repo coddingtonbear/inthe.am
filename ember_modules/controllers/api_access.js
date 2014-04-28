@@ -5,7 +5,7 @@ var controller = Ember.Controller.extend({
       this.get('controllers.configure').send('save_pebble_cards', 1);
     },
     enable_feed: function() {
-      this.get('controllers.configure').send('save_feed', 0);
+      this.get('controllers.configure').send('save_feed', 1);
     }
   }
 });
