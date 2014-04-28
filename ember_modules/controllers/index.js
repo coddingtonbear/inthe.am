@@ -11,7 +11,6 @@ App.ApiAccessController = require("./api_access");
 App.ApiDocsController = require("./apiDocs");
 App.SynchronizationController = require("./synchronization");
 App.ConfigureController = require("./configure");
-App.SmsController = require("./sms");
 App.EditTaskController = require("./editTask");
 App.CreateTaskController = require("./createTask");
 App.CreateTaskModalController = require("./editTask");

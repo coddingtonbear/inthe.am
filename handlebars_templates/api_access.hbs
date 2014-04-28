@@ -23,6 +23,72 @@
         {{#link-to "apiDocs"}}API Documentation{{/link-to}}.
     </p>
 
+    <h2>Adding tasks via SMS</h2>
+
+    {{#if controllers.application.user.twilio_auth_token}}
+        <table class="pure-table pure-table-horizontal">
+            <tr>
+                <th>
+                    Twilio Messaging Request URL <strong>(POST)</strong>
+                </th>
+                <td>
+                    https://inthe.am{{ controllers.application.urls.sms_url }}
+                </td>
+            </tr>
+        </table>
+    {{else}}
+        <div class="block warning">
+            <p>
+                For your security, the ability to send task messages via
+                SMS is currently disabled for your account since you
+                have not yet entered your Twilio auth token.
+            </p>
+            <p>
+                This token is necessary for verifying that incoming messages
+                were sent to Inthe.AM by Twilio from your account.
+            </p>
+            <p>
+                {{#link-to "configure"}}Enable SMS access from your settings{{/link-to}}.
+            </p>
+        </div>
+    {{/if}}
+
+    <h3>Setup Instructions</h3>
+
+    <p>
+        Inthe.AM can receive and add items to your task list via SMS, but
+        it requires a little bit of configuration on your part.
+    </p>
+    <ol>
+        <li>Sign up for a <a href="https://www.twilio.com/try-twilio">Twilio account</a>.</li>
+        <li>
+            Add funds to your Twilio account. At the time of writing,  Twilio charges
+            around $0.01 for each incoming or outgoing SMS message (incoming messages are slightly cheaper),
+            and each phone number costs $1.00/month.
+        </li>
+        <li>
+            <a href="https://www.twilio.com/user/account/phone-numbers/available/local">Buy a phone number</a>.
+        </li>
+        <li>
+            From your phone number's configuration screen, set the field "Messaging Request URL" to
+            your personal incoming SMS URL: <code>https://inthe.am{{ controllers.application.urls.sms_url }}</code>.
+        </li>
+        <li>
+            Press save.
+        </li>
+    </ol>
+    <p>
+        After you have configured the above, you can send SMS messages to your
+        Twilio phone number.  Currently, the only command implemented is 'add',
+        but in the future additional commands may be added.
+    </p>
+    <p>
+        As an example, you could add a task to the project "birthday" with a due
+        date of tomorrow and high priority by sending an SMS message with the following
+        contents:
+        <pre>add project:birthday due:tomorrow priority:h It's my birthday</pre>
+    </p>
+
 
     <h2>Pebble Cards Access</h2>
 
