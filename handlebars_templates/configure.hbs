@@ -28,7 +28,7 @@
     <dl class="accordion" data-accordion>
         <dd>
             <a href="#custom_taskd">Synchronization Settings</a>
-            <div id="custom_taskd" class="content active">
+            <div id="custom_taskd" class="content">
                 <div class="row">
                     <div class="large-12 columns">
                         <p>
@@ -231,7 +231,7 @@
                                     by default.  Although your feed's URL is unique
                                     and randomly generated, no authentication is used
                                     to improve compatibility with RSS feed readers.
-                                    <a href="" {{action "save_feed" 1}}>Enable your RSS Feed</a>.
+                                    <a href="" {{action "save_feed" true}}>Enable your RSS Feed</a>.
                                 </p>
                             </div>
                         {{else}}
@@ -247,7 +247,7 @@
                             </table>
                         {{/unless}}
                         <label>RSS Task Feed</label>
-                        {{view Ember.Select value=feedEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=feedEnabled id="id_feed_config"}}
+                        {{view Ember.Select value=controllers.application.user.feed_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI id="id_feed_config"}}
                         <a href="" class="button radius" {{action "save_feed"}}>Save Settings</a>
                     </div>
                 </div>
@@ -269,7 +269,7 @@
                                     by default.  Although your Pebble Cards URL is unique
                                     and randomly generated, due to limitations in Pebble
                                     Cards, no authentication is used.
-                                    <a href="" {{action "save_pebble_cards" 1}}>Enable your Pebble Cards URL</a>.
+                                    <a href="" {{action "save_pebble_cards" true}}>Enable your Pebble Cards URL</a>.
                                 </p>
                             </div>
                         {{else}}
@@ -285,7 +285,7 @@
                             </table>
                         {{/unless}}
                         <label>Pebble Cards URL</label>
-                        {{view Ember.Select value=pebbleCardsEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=pebbleCardsEnabled id="id_pebble_cards_config"}}
+                        {{view Ember.Select value=controllers.application.user.pebble_cards_enabled optionValuePath="content.value" optionLabelPath="content.human" content=pebbleCardsEnabledUI id="id_pebble_cards_config"}}
                         <a href="" class="button radius" {{action "save_pebble_cards"}}>Save Settings</a>
                     </div>
                 </div>

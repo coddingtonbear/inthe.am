@@ -8,13 +8,13 @@ var controller = Ember.Controller.extend({
     {short: 'no', long: 'Disabled'},
     {short: 'yes', long: 'Enabled'},
   ],
-  pebbleCardsEnabled: [
-    {short: 'no', long: 'Disabled'},
-    {short: 'yes', long: 'Enabled'},
+  pebbleCardsEnabledUI: [
+    {value: false, human: 'Disabled'},
+    {value: true, human: 'Enabled'},
   ],
-  feedEnabled: [
-    {short: 'no', long: 'Disabled'},
-    {short: 'yes', long: 'Enabled'},
+  feedEnabledUI: [
+    {value: false, human: 'Disabled'},
+    {value: true, human: 'Enabled'},
   ],
   themeOptions: [
     {file: 'light-16.theme', name: 'Light (4-bit)'},
@@ -30,20 +30,6 @@ var controller = Ember.Controller.extend({
     {file: 'solarized-dark-256.theme', name: 'Solarized Dark'},
     {file: 'solarized-light-256.theme', name: 'Solarized Light'},
   ],
-  pebbleCardsEnabledUI: function() {
-    if(this.get('controllers.application.user.pebble_cards_enabled')) {
-      return 'yes';
-    } else {
-      return 'no';
-    }
-  }.property(),
-  feedEnabledUI: function() {
-    if(this.get('controllers.application.user.feed_enabled')) {
-      return 'yes';
-    } else {
-      return 'no';
-    }
-  }.property(),
   taskUpdateStreamEnabledUI: function() {
     if(this.get('taskUpdateStreamEnabled')) {
       return 'yes';
@@ -314,18 +300,18 @@ var controller = Ember.Controller.extend({
     },
     save_feed: function(value) {
       var url  = this.get('controllers.application').urls.configure_feed;
-      var enabled = 0;
+      var enabled = false;
       if(typeof(value) != 'undefined') {
         enabled = value;
-      } else if($("#id_feed_config").val() === 'yes') {
-        enabled = 1;
+      } else if($("#id_feed_config").val() === true) {
+        enabled = true;
       }
       var self = this;
       $.ajax({
         url: url,
         type: 'POST',
         data: {
-          enabled: enabled,
+          enabled: enabled ? 1 : 0,
         },
         success: function() {
           self.set('controllers.application.user.feed_enabled', enabled);
@@ -344,19 +330,19 @@ var controller = Ember.Controller.extend({
     },
     save_pebble_cards: function(value) {
       var url  = this.get('controllers.application').urls.configure_pebble_cards;
-      var enabled = 0;
+      var enabled = false;
       if(typeof(value) != 'undefined') {
         enabled = value;
       }
-      else if($("#id_pebble_cards_config").val() === 'yes') {
-        enabled = 1;
+      else if($("#id_pebble_cards_config").val() === true) {
+        enabled = true;
       }
       var self = this;
       $.ajax({
         url: url,
         type: 'POST',
         data: {
-          enabled: enabled,
+          enabled: enabled ? 1 : 0,
         },
         success: function() {
           self.set('controllers.application.user.pebble_cards_enabled', enabled);
