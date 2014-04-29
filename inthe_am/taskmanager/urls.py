@@ -15,9 +15,10 @@ api.register(CompletedTaskResource())
 api.register(ActivityLogResource())
 
 
-urlpatterns = patterns('inthe_am.taskmanager.views',
+urlpatterns = patterns(
+    '',
+    url('^api/v1/task/feed/(?P<uuid>[^/]+)/', TaskFeed(), name='feed'),
     url('^api/', include(api.urls)),
     url('^status/', Status.as_view(), name='status'),
-    url('^(?P<uuid>[^/]+)/feed/', TaskFeed(), name='feed'),
     url('^', home, name='home'),
 )
