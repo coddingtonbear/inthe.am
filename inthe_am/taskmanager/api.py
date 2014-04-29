@@ -295,13 +295,18 @@ class UserResource(resources.ModelResource):
 
         ts = models.TaskStore.get_for_user(request.user)
 
-        os.rename(
-            ts.taskd_data_path,
-            (
-                ts.taskd_data_path
-                + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        try:
+            os.rename(
+                ts.taskd_data_path,
+                (
+                    ts.taskd_data_path
+                    + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                )
             )
-        )
+        except OSError:
+            logger.exception(
+                "OSError encountered while removing taskd data."
+            )
 
         for path in os.listdir(ts.local_path):
             if os.path.splitext(path)[1] == '.data':
