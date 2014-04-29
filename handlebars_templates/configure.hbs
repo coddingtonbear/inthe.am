@@ -1,5 +1,5 @@
 <div class="row standalone">
-    <h2>Settings</h2>
+    <h2>Configuration &amp; Settings</h2>
     <div id="settings_alerts">
     </div>
 
@@ -27,9 +27,77 @@
 
     <dl class="accordion" data-accordion>
         <dd>
-            <a href="#custom_taskd">Taskd Server Synchronization</a>
+            <a href="#custom_taskd">Synchronization Settings</a>
             <div id="custom_taskd" class="content active">
                 <div class="row">
+                    <div class="large-12 columns">
+                        <p>
+                            Inthe.AM provides a built-in Task Server for you
+                            to synchronize your tasks with; follow the
+                            instructions in "Use the built-in Task Server"
+                            for setting up your local taskwarrior client to
+                            synchronize with Inthe.AM.
+                            But, should you have an outside Task Server
+                            that you already synchronize with, 
+                            you can also configure Inthe.AM to synchronize
+                            with your server in "Use a custom Task Server".
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h3 id="built_in_task_server">Use the built-in Task Server</h3>
+                        <table class="pure-table pure-table-horizontal">
+                            <tr>
+                                <th>
+                                    Your Certificate
+                                </th>
+                                <td>
+                                    <a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                   Your Key 
+                                </th>
+                                <td>
+                                    <a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <p>
+                            Add the following settings to your Taskwarrior configuration file (<code>~/.taskrc</code>).
+                        </p>
+
+                        <code class="para">taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a><br />
+                            taskd.key=/path/to/<a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a><br />
+                            taskd.trust=yes<br />
+                            taskd.server={{ controllers.application.user.taskd_server }}<br />
+                            taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
+                        </code>
+
+                        <p>
+                            Synchronizing for the first time is as easy as running <code>task sync init</code> 
+                            &mdash; running that command will instruct Taskwarrior to send all of its tasks to Inthe.AM.
+                            After the initial synchronization, you can synchronize with Inthe.AM by running <code>task sync</code>.
+                        </p>
+                        <p>
+                            If you are using a modern browser other than Internet Explorer, 
+                            entries displayed on Inthe.AM will be automatically updated within 30
+                            seconds of synchronization, but those using an older browser need
+                            only click the refresh button (<i class="fa fa-refresh"></i>) to
+                            fetch new changes.  Note: the refresh button will <strong>not</strong>
+                            be visible if your browser is modern enough to support the
+                            <a href="https://developer.mozilla.org/en-US/docs/Web/API/EventSource">API used
+                            by Inthe.AM for dynamically updating displayed tasks</a>.
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h3 id="custom_task_server">Use a custom Task Server</h3>
+                    </div>
                     <div class="large-12 columns">
                         <label>Taskd Server</label>
                         {{input type="text" id="id_server" name="server" value=controllers.application.user.taskd_server}}
@@ -65,51 +133,231 @@
                             {{controllers.application.user.taskd_files.taskd_ca}}
                         </p>
                     </div>
-                </div>
-                <a href="" class="button radius" {{action "save_taskd"}}>Save Settings</a>
-                <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset to Default</a>
-            </div>
-        </dd>
-        <dd>
-            <a href="#rss_feeds">RSS Feed</a>
-            <div id="rss_feeds" class="content">
-                <div class="row">
                     <div class="large-12 columns">
-                        <label>RSS Task Feed</label>
-                        {{view Ember.Select value=feedEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=feedEnabled id="id_feed_config"}}
+                        <a href="" class="button radius" {{action "save_taskd"}}>Save Settings</a>
+                        <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset to Default</a>
                     </div>
                 </div>
-                <a href="" class="button radius" {{action "save_feed"}}>Save Settings</a>
             </div>
         </dd>
         <dd>
-            <a href="#pebble_cards">Pebble Cards</a>
-            <div id="pebble_cards" class="content">
+            <a href="#interface">Interface &amp; Customizations</a>
+            <div id="interface" class="content">
                 <div class="row">
                     <div class="large-12 columns">
-                        <label>Pebble Cards URL</label>
-                        {{view Ember.Select value=pebbleCardsEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=pebbleCardsEnabled id="id_pebble_cards_config"}}
-                    </div>
-                </div>
-                <a href="" class="button radius" {{action "save_pebble_cards"}}>Save Settings</a>
-            </div>
-        </dd>
-        <dd>
-            <a href="#custom_colors">Task Colors</a>
-            <div id="custom_colors" class="content">
-                <div class="row">
-                    <div class="large-12 columns">
+                        <h3>Color Scheme</h3>
                         <label>Color Scheme</label>
                         {{view Ember.Select value=controllers.application.user.colorscheme optionValuePath="content.file" optionLabelPath="content.name" content=themeOptions id="id_theme"}}
+                        <a href="" class="button radius" {{action "save_colorscheme"}}>Save Color Scheme</a>
                     </div>
                 </div>
-                <a href="" class="button radius" {{action "save_colorscheme"}}>Save Colorscheme</a>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h3>Custom <span class="code">.taskrc</span></h3>
+                        {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
+                        <p class="input-note">
+                            Only configuration values relating to urgency or UDA definitions
+                            will have an effect,
+                            but entering your entire local <span class="code">.taskrc</span>
+                            is both safe and encouraged.
+                        </p>
+                        <a href="" class="button radius" {{action "save_taskrc"}}>Save Settings</a>
+                    </div>
+                </div>
+                {{#if taskUpdateStreamCompatible}}
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Streaming Ticket Updates</h3>
+                            {{view Ember.Select value=taskUpdateStreamEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=taskUpdateStringSettings id="id_update_stream"}}
+                            <p class="input-note">
+                                Task updates are streamed directly to your browser
+                                by default, but can be disabled if you are trying
+                                to reduce the amount of data used, or the amount
+                                battery consumed.
+                            </p>
+                            <p class="input-note">
+                                <strong>Note:</strong> Your page will refresh upon
+                                saving this change.
+                            </p>
+                            <a href="" class="button radius" {{action "save_streaming"}}>Save Settings</a>
+                        </div>
+                    </div>
+                {{/if}}
             </div>
         </dd>
         <dd>
-            <a href="#twilio">Twilio SMS Integration</a>
+            <a href="#api">API Access</a>
+            <div id="api" class="content">
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h3>Add, create or modify your tasks using the REST API</h3>
+                        <p>
+                            Your Taskwarrior tasks are accessible via a RESTful API; you can
+                            use this to query, create, complete, or change
+                            tasks in your task list.
+                        </p>
+                        <table class="pure-table pure-table-horizontal">
+                            <tr>
+                                <th>
+                                    API Key
+                                </th>
+                                <td>
+                                    {{ controllers.application.user.username }}:{{ controllers.application.user.api_key }}
+                                </td>
+                            </tr>
+                        </table>
+                        <p>
+                            For details regarding how to access and use this API, please consult the
+                            {{#link-to "apiDocs"}}API Documentation{{/link-to}}.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </dd>
+        <dd>
+            <a href="#feeds">RSS &amp; Pebble Feeds</a>
+            <div id="feeds" class="content">
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h3>RSS Feed</h3>
+                        <p>
+                            Turn this feature on to gain access to an RSS feed
+                            listing your most urgent tasks.
+                        </p>
+                        {{#unless controllers.application.user.feed_enabled}}
+                            <div class="block warning">
+                                <p>
+                                    For your security, your feed is disabled
+                                    by default.  Although your feed's URL is unique
+                                    and randomly generated, no authentication is used
+                                    to improve compatibility with RSS feed readers.
+                                    <a href="" {{action "save_feed" 1}}>Enable your RSS Feed</a>.
+                                </p>
+                            </div>
+                        {{else}}
+                            <table class="pure-table pure-table-horizontal">
+                                <tr>
+                                    <th>
+                                        Feed URL
+                                    </th>
+                                    <td>
+                                        https://inthe.am{{ controllers.application.urls.feed_url }}
+                                    </td>
+                                </tr>
+                            </table>
+                        {{/unless}}
+                        <label>RSS Task Feed</label>
+                        {{view Ember.Select value=feedEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=feedEnabled id="id_feed_config"}}
+                        <a href="" class="button radius" {{action "save_feed"}}>Save Settings</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h3>Pebble Cards URL</h3>
+                        <p> 
+                            <a href="http://keanulee.com/pebblecards/">Pebble Cards</a> is a
+                            <a href="https://getpebble.com/">Pebble</a> application
+                            allowing one quick access to information like
+                            one's upcoming appointments, the local weather, and when the
+                            sun will set today.  Inthe.AM provides a URL you can use with
+                            Pebble Cards for displaying your current highest priority task.
+                        </p>
+                        {{#unless controllers.application.user.pebble_cards_enabled}}
+                            <div class="block warning">
+                                <p>
+                                    For your security, your Pebble Cards URL is disabled
+                                    by default.  Although your Pebble Cards URL is unique
+                                    and randomly generated, due to limitations in Pebble
+                                    Cards, no authentication is used.
+                                    <a href="" {{action "save_pebble_cards" 1}}>Enable your Pebble Cards URL</a>.
+                                </p>
+                            </div>
+                        {{else}}
+                            <table class="pure-table pure-table-horizontal">
+                                <tr>
+                                    <th>
+                                        Pebble Cards URL
+                                    </th>
+                                    <td>
+                                        https://inthe.am{{ controllers.application.urls.pebble_card_url }}
+                                    </td>
+                                </tr>
+                            </table>
+                        {{/unless}}
+                        <label>Pebble Cards URL</label>
+                        {{view Ember.Select value=pebbleCardsEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=pebbleCardsEnabled id="id_pebble_cards_config"}}
+                        <a href="" class="button radius" {{action "save_pebble_cards"}}>Save Settings</a>
+                    </div>
+                </div>
+            </div>
+        </dd>
+        <dd>
+            <a href="#twilio">SMS Access</a>
             <div id="twilio" class="content">
                 <div class="row">
+                    <div class="large-12 columns">
+                        <h3>Create new tasks via text message</h3>
+                        <p>
+                            Inthe.AM can receive and add items to your task list via SMS, but
+                            it requires a little bit of configuration on your part.
+                        </p>
+                        <ol>
+                            <li>Sign up for a <a href="https://www.twilio.com/try-twilio">Twilio account</a>.</li>
+                            <li>
+                                Add funds to your Twilio account. At the time of writing,  Twilio charges
+                                around $0.01 for each incoming or outgoing SMS message (incoming messages are slightly cheaper),
+                                and each phone number costs $1.00/month.
+                            </li>
+                            <li>
+                                <a href="https://www.twilio.com/user/account/phone-numbers/available/local">Buy a phone number</a>.
+                            </li>
+                            <li>
+                                From your phone number's configuration screen, set the field "Messaging Request URL" to
+                                your personal incoming SMS URL: <code>https://inthe.am{{ controllers.application.urls.sms_url }}</code>.
+                            </li>
+                            <li>
+                                Press save.
+                            </li>
+                        </ol>
+                        <p>
+                            After you have configured the above, you can send SMS messages to your
+                            Twilio phone number.  Currently, the only command implemented is 'add',
+                            but in the future additional commands may be added.
+                        </p>
+                        <p>
+                            As an example, you could add a task to the project "birthday" with a due
+                            date of tomorrow and high priority by sending an SMS message with the following
+                            contents:
+                            <pre>add project:birthday due:tomorrow priority:h It's my birthday</pre>
+                        </p>
+                        {{#unless controllers.application.user.twilio_auth_token}}
+                            <div class="block warning">
+                                <p>
+                                    For your security, the ability to send task messages via
+                                    SMS is currently disabled for your account since you
+                                    have not yet entered your Twilio auth token.
+                                </p>
+                                <p>
+                                    This token is necessary for verifying that incoming messages
+                                    were sent to Inthe.AM by Twilio from your account.
+                                </p>
+                                <p>
+                                    Enable SMS access by filling in the below information.
+                                </p>
+                            </div>
+                        {{else}}
+                            <table class="pure-table pure-table-horizontal">
+                                <tr>
+                                    <th>
+                                        Twilio Messaging Request URL <strong>(POST)</strong>
+                                    </th>
+                                    <td>
+                                        https://inthe.am{{ controllers.application.urls.sms_url }}
+                                    </td>
+                                </tr>
+                            </table>
+                        {{/unless}}
+                    </div>
                     <div class="large-12 columns">
                         <label>Twilio Auth Token</label>
                         {{input type="text" id="id_twilio_auth_token" name="twilio_auth_token" value=controllers.application.user.twilio_auth_token}}
@@ -126,50 +374,11 @@
             </div>
         </dd>
         <dd>
-            <a href="#custom_taskrc">Custom <span class="code">.taskrc</span></a>
-            <div id="custom_taskrc" class="content">
-                <div class="row">
-                    <div class="large-12 columns">
-                        {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
-                        <p class="input-note">
-                            Only configuration values relating to urgency or UDA definitions
-                            will have an effect,
-                            but entering your entire local <span class="code">.taskrc</span>
-                            is both safe and encouraged.
-                        </p>
-                    </div>
-                </div>
-                <a href="" class="button radius" {{action "save_taskrc"}}>Save Settings</a>
-            </div>
-        </dd>
-        {{#if taskUpdateStreamCompatible}}
-            <dd>
-                <a href="#ticket_update_stream">Streaming Ticket Updates</a>
-                <div id="ticket_update_stream" class="content">
-                    <div class="row">
-                        <div class="large-12 columns">
-                            {{view Ember.Select value=taskUpdateStreamEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=taskUpdateStringSettings id="id_update_stream"}}
-                            <p class="input-note">
-                                Task updates are streamed directly to your browser
-                                by default, but can be disabled if you are trying
-                                to reduce the amount of data used, or the amount
-                                battery consumed.
-                            </p>
-                            <p class="input-note">
-                                <strong>Note:</strong> Your page will refresh upon
-                                saving this change.
-                            </p>
-                        </div>
-                    </div>
-                    <a href="" class="button radius" {{action "save_streaming"}}>Save Settings</a>
-                </div>
-            </dd>
-        {{/if}}
-        <dd>
             <a href="#dangerous">Danger Zone</a>
             <div id="dangerous" class="content">
                 <div class="row">
                     <div class="large-12 columns">
+                        <h3>Delete your account information</h3>
                         <p>
                             Pressing this button will delete both any task information
                             currently stored in your task list on Inthe.AM, as well as

@@ -9,17 +9,11 @@
         <section class="top-bar-section">
             <!-- Right Nav Section -->
             <ul class="right">
-                <li class="non-essential">
+                <li>
                     {{#link-to "activityLog"}}<i class="fa fa-list">Log</i>{{/link-to}}
                 </li>
-                <li class="non-essential">
-                    {{#link-to "synchronization"}}<i class="fa fa-cloud-upload">Sync</i>{{/link-to}}
-                </li>
-                <li class="non-essential">
-                    {{#link-to "api_access"}}<i class="fa fa-gears">Access</i>{{/link-to}}
-                </li>
                 <li>
-                    {{#link-to "configure"}}<i class="fa fa-wrench">Settings</i>{{/link-to}}
+                    {{#link-to "configure"}}<i class="fa fa-wrench">Configuration</i>{{/link-to}}
                 </li>
                 <li>
                     <a href="#" {{action "logout"}}><i class="fa fa-sign-out">Log Out</i></a>

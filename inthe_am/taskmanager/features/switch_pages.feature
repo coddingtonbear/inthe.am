@@ -1,15 +1,5 @@
 Feature: User can navigate between pages
 
-    Scenario: User can navigate to Sync page
-        Given the user is logged-in
-        When the user clicks the link "Sync"
-        Then the page contains the heading "Synchronizing with Taskwarrior"
-
-    Scenario: User can navigate to API page
-        Given the user is logged-in
-        When the user clicks the link "Access"
-        Then the page contains the heading "API Access"
-
     Scenario: User can navigate to Log page
         Given the user is logged-in
         When the user clicks the link "Log"
@@ -17,5 +7,5 @@ Feature: User can navigate between pages
 
     Scenario: User can navigate to Settings page
         Given the user is logged-in
-        When the user clicks the link "Settings"
-        Then the page contains the heading "Settings"
+        When the user clicks the link "Configuration"
+        Then the page contains the heading "Configuration & Settings"

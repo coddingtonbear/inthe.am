@@ -316,6 +316,17 @@ div.block.warning {
   }
 }
 
+code {
+  color: #111111;
+  font-size: 0.9em;
+  line-height: 0.9em;
+}
+code.para {
+  display: block;
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
 div.alert-box.error {
   background-color: #AA0000;
   border-color: #AA0000;

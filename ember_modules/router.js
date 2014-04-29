@@ -15,11 +15,8 @@ App.Router.map(function(){
   this.resource("activityLog", {path: "/activity-log"});
   this.route("unconfigurable", {path: "/no-tasks"});
   this.route("apiDocs", {path: "/api-documentation"});
-  this.route("api_access", {path: "/api-access"});
-  this.route("synchronization", {path: "/synchronization"});
   this.route("configure", {path: "/configure"});
   this.route("getting_started", {path: "/getting-started"});
-  this.route("sms", {path: "/sms"});
   this.route("termsOfService", {path: "/terms-of-service"});
 });
 
