@@ -9,8 +9,9 @@ import pytz
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
+from django.core.exceptions import SuspiciousOperation
 from django.core.urlresolvers import reverse
-from django.http import Http404
+from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
 from django.template.response import TemplateResponse
 
 from .models import TaskStore, TaskStoreActivityLog
@@ -190,3 +191,24 @@ def home(request):
             'DEBUG': settings.DEBUG,
         }
     )
+
+
+def debug_login(request):
+    from inthe_am.taskmanager.debug_utils import artificial_login
+
+    if not settings.DEBUG:
+        raise SuspiciousOperation(
+            "Artificial login attempted while not in debug mode!"
+        )
+
+    try:
+        cookies = artificial_login(
+            username=request.GET['username'],
+            password=request.GET['password'],
+        )
+    except AttributeError:
+        return HttpResponseBadRequest()
+    response = HttpResponseRedirect('/')
+    for name, value in cookies.items():
+        response.set_cookie(name, value)
+    return response

@@ -1,5 +1,3 @@
-from importlib import import_module
-from io import BytesIO
 import time
 from urlparse import urljoin
 
@@ -11,65 +9,10 @@ from selenium.common.exceptions import (
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.handlers.wsgi import WSGIRequest
-from django.http import SimpleCookie
 from django.utils.timezone import now
-from django.middleware import csrf
 
 from inthe_am.taskmanager.models import TaskStore, UserMetadata
-
-
-def login(context, **credentials):
-    from django.contrib.auth import authenticate, login
-
-    cookies = SimpleCookie()
-
-    user = authenticate(**credentials)
-    engine = import_module(settings.SESSION_ENGINE)
-
-    # Create a fake request that goes through request middleware
-    request = WSGIRequest(
-        {
-            'HTTP_COOKIE': cookies.output(header='', sep=';'),
-            'PATH_INFO': str('/'),
-            'REMOTE_ADDR': str('127.0.0.1'),
-            'REQUEST_METHOD': str('GET'),
-            'SCRIPT_NAME': str(''),
-            'SERVER_NAME': str('testserver'),
-            'SERVER_PORT': str('80'),
-            'SERVER_PROTOCOL': str('HTTP/1.1'),
-            'wsgi.version': (1, 0),
-            'wsgi.url_scheme': str('http'),
-            'wsgi.input': BytesIO(),
-            'wsgi.errors': BytesIO(),
-            'wsgi.multiprocess': True,
-            'wsgi.multithread': False,
-            'wsgi.run_once': False,
-        }
-    )
-    request.session = engine.SessionStore()
-    login(request, user)
-
-    # Save the session values.
-    request.session.save()
-
-    # Set the cookie to represent the session.
-    session_cookie = settings.SESSION_COOKIE_NAME
-    cookies[session_cookie] = request.session.session_key
-    cookie_data = {
-        'max-age': None,
-        'path': '/',
-        'domain': settings.SESSION_COOKIE_DOMAIN,
-        'secure': settings.SESSION_COOKIE_SECURE or None,
-        'expires': None,
-    }
-    cookies[session_cookie].update(cookie_data)
-    context.browser.cookies.add(
-        {
-            session_cookie: cookies[session_cookie].value,
-            settings.CSRF_COOKIE_NAME: csrf._get_new_csrf_key(),
-        }
-    )
+from inthe_am.taskmanager.debug_utils import artificial_login
 
 
 @step(u'the user accesses the url "{url}"')
@@ -103,11 +46,12 @@ def user_is_logged_in(context):
     meta.tos_accepted = now()
     meta.save()
 
-    login(
-        context,
+    cookies = artificial_login(
         username=u.username,
         password=settings.TESTING_LOGIN_PASSWORD
     )
+    context.browser.cookies.add(cookies)
+
     context.execute_steps(u'''
         when the user accesses the url "/"
         then the page contains the heading "Let's get started"
