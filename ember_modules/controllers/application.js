@@ -82,6 +82,11 @@ var controller = Ember.Controller.extend({
       }
     });
 
+    // Adding FastClick
+    window.addEventListener('load', function() {
+      FastClick.attach(document.body);
+    }, false);
+
     // Set up the event stream
     if(this.get('taskUpdateStreamEnabled')) {
       this.set('statusUpdaterLog', []);
