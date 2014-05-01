@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-
-from eventlet.patcher import monkey_patch
-monkey_patch()
-
 import os
+
+if os.environ.get('EVENTLET'):
+    from eventlet.patcher import monkey_patch
+    monkey_patch()
+
 import sys
 
 if __name__ == "__main__":
