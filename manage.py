@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+from eventlet.patcher import monkey_patch
+monkey_patch()
+
 import os
 import sys
 
