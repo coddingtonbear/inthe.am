@@ -78,7 +78,6 @@ class Status(BaseSseView):
         store.sync(msg='Iterator initialization', **kwargs)
         created = time.time()
         last_sync = time.time()
-        last_heartbeat = 0
         taskd_mtime = self.get_taskd_mtime(store)
         head = self.request.GET.get('head', store.repository.head())
         self.beat_heart(store)
@@ -96,38 +95,35 @@ class Status(BaseSseView):
                 )
             last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
 
-            # If we haven't had a heartbeat recently, let's check the stores
-            heartbeat_recency = time.time() - last_heartbeat
-            if heartbeat_recency > settings.EVENT_STREAM_LOOP_INTERVAL:
-                last_heartbeat = time.time()
+            # See if our head has changed, and queue messages if so
+            head = self.check_head(head)
 
-                # See if our head has changed, and queue messages if so
-                head = self.check_head(head)
+            if store.using_local_taskd:
+                new_mtime = self.get_taskd_mtime(store)
+                if (
+                    new_mtime != taskd_mtime
+                    or (
+                        (time.time() - last_sync)
+                        > settings.EVENT_STREAM_POLLING_INTERVAL
+                    )
+                ):
+                    taskd_mtime = new_mtime
+                    last_sync = time.time()
+                    store.sync(msg='Local mtime sync', **kwargs)
+            else:
+                if time.time() - last_sync > (
+                    settings.EVENT_STREAM_POLLING_INTERVAL
+                ):
+                    last_sync = time.time()
+                    store.sync(msg='Remote polling sync', **kwargs)
 
-                if store.using_local_taskd:
-                    new_mtime = self.get_taskd_mtime(store)
-                    if (
-                        new_mtime != taskd_mtime
-                        or (
-                            (time.time() - last_sync)
-                            > settings.EVENT_STREAM_POLLING_INTERVAL
-                        )
-                    ):
-                        taskd_mtime = new_mtime
-                        last_sync = time.time()
-                        store.sync(msg='Local mtime sync', **kwargs)
-                else:
-                    if time.time() - last_sync > (
-                        settings.EVENT_STREAM_POLLING_INTERVAL
-                    ):
-                        last_sync = time.time()
-                        store.sync(msg='Remote polling sync', **kwargs)
-
-                store = self.get_store(cached=False)
+            store = self.get_store(cached=False)
 
             self.beat_heart(store)
 
             yield
+
+            time.sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
 
 
 class TaskFeed(Feed):
