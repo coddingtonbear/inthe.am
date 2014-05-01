@@ -59,7 +59,7 @@ class Status(BaseSseView):
         if not store:
             return
         kwargs = {
-            'async': False,
+            'async': True,
             'function': (
                 'views.Status.iterator'
             )
@@ -67,59 +67,65 @@ class Status(BaseSseView):
         store.sync(msg='Iterator initialization', **kwargs)
         created = time.time()
         last_sync = time.time()
+        last_heartbeat = 0
         taskd_mtime = self.get_taskd_mtime(store)
         head = self.request.GET.get('head', store.repository.head())
         while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
             synced = False
+
+            # Get Error/Log Messages
             entries = TaskStoreActivityLog.objects.filter(
                 last_seen__gt=last_checked,
                 error=True,
                 store=store,
             )
-            last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
             for entry in entries:
                 self.sse.add_message(
                     'error_logged',
                     entry.message
                 )
+            last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
 
-            if store.using_local_taskd:
-                new_mtime = self.get_taskd_mtime(store)
-                if (
-                    new_mtime != taskd_mtime
-                    or (
-                        (time.time() - last_sync)
-                        > settings.EVENT_STREAM_POLLING_INTERVAL
-                    )
-                ):
-                    taskd_mtime = new_mtime
-                    last_sync = time.time()
-                    store.sync(msg='Local mtime sync', **kwargs)
-                    head = self.check_head(head)
-            else:
-                if time.time() - last_sync > (
-                    settings.EVENT_STREAM_POLLING_INTERVAL
-                ):
-                    last_sync = time.time()
-                    store.sync(msg='Remote polling sync', **kwargs)
+            # If we haven't had a heartbeat recently, let's check the stores
+            heartbeat_recency = time.time() - last_heartbeat
+            if heartbeat_recency > settings.EVENT_STREAM_LOOP_INTERVAL:
+                last_heartbeat = time.time()
 
+                # See if our head has changed, and queue messages if so
                 head = self.check_head(head)
 
-            store = self.get_store(cached=False)
-            self.sse.add_message(
-                "heartbeat",
-                json.dumps(
-                    {
-                        'timestamp': datetime.datetime.now().isoformat(),
-                        'synced': synced,
-                        'sync_enabled': store.sync_enabled,
-                    }
+                if store.using_local_taskd:
+                    new_mtime = self.get_taskd_mtime(store)
+                    if (
+                        new_mtime != taskd_mtime
+                        or (
+                            (time.time() - last_sync)
+                            > settings.EVENT_STREAM_POLLING_INTERVAL
+                        )
+                    ):
+                        taskd_mtime = new_mtime
+                        last_sync = time.time()
+                        store.sync(msg='Local mtime sync', **kwargs)
+                else:
+                    if time.time() - last_sync > (
+                        settings.EVENT_STREAM_POLLING_INTERVAL
+                    ):
+                        last_sync = time.time()
+                        store.sync(msg='Remote polling sync', **kwargs)
+
+                store = self.get_store(cached=False)
+                self.sse.add_message(
+                    "heartbeat",
+                    json.dumps(
+                        {
+                            'timestamp': datetime.datetime.now().isoformat(),
+                            'synced': synced,
+                            'sync_enabled': store.sync_enabled,
+                        }
+                    )
                 )
-            )
 
             yield
-
-            time.sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
 
 
 class TaskFeed(Feed):
