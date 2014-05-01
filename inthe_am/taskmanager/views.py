@@ -53,6 +53,17 @@ class Status(BaseSseView):
             taskd_mtime = 0
         return taskd_mtime
 
+    def beat_heart(self, store):
+        self.sse.add_message(
+            "heartbeat",
+            json.dumps(
+                {
+                    'timestamp': datetime.datetime.now().isoformat(),
+                    'sync_enabled': store.sync_enabled,
+                }
+            )
+        )
+
     def iterator(self):
         last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
         store = self.get_store()
@@ -70,9 +81,8 @@ class Status(BaseSseView):
         last_heartbeat = 0
         taskd_mtime = self.get_taskd_mtime(store)
         head = self.request.GET.get('head', store.repository.head())
+        self.beat_heart()
         while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
-            synced = False
-
             # Get Error/Log Messages
             entries = TaskStoreActivityLog.objects.filter(
                 last_seen__gt=last_checked,
@@ -114,16 +124,8 @@ class Status(BaseSseView):
                         store.sync(msg='Remote polling sync', **kwargs)
 
                 store = self.get_store(cached=False)
-                self.sse.add_message(
-                    "heartbeat",
-                    json.dumps(
-                        {
-                            'timestamp': datetime.datetime.now().isoformat(),
-                            'synced': synced,
-                            'sync_enabled': store.sync_enabled,
-                        }
-                    )
-                )
+
+            self.beat_heart()
 
             yield
 
