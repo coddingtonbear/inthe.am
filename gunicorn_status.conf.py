@@ -5,5 +5,4 @@ workers = 5
 loglevel = 'debug'
 bind = '127.0.0.1:8041'
 timeout = 300
-worker_class = 'eventlet'
 worker_connections = 1000
