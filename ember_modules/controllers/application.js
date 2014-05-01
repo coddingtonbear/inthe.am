@@ -103,7 +103,7 @@ var controller = Ember.Controller.extend({
       lastRefresh = new Date();
       this.set('pollingRefresh', lastRefresh);
     }
-    var interval = 60 * 2.5; // 2.5 mins
+    var interval = 60 * 2.5 * 1000; // 2.5 mins
     if((new Date() - Math.max(lastRefresh, lastHeartbeat | null)) > interval) {
       this.set('pollingRefresh', new Date());
       this.send('refresh');
