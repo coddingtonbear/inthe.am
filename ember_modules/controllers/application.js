@@ -98,6 +98,10 @@ var controller = Ember.Controller.extend({
     var statusUpdater = this.get('statusUpdater');
     var connected = this.get('taskUpdateStreamConnected');
     var lastHeartbeat = this.get('statusUpdaterHeartbeat');
+    if (!lastHeartbeat) {
+      lastHeartbeat = new Date();
+      this.set('statusUpdaterHeartbeat', lastHeartbeat);
+    }
     if (
       statusUpdater &&
       (statusUpdater.readyState != window.EventSource.OPEN)
@@ -105,7 +109,11 @@ var controller = Ember.Controller.extend({
       if(connected) {
         this.set('taskUpdateStreamConnected', false);
       }
-      if (statusUpdater.readyState == window.EventSource.CLOSED) {
+      if (
+        (statusUpdater.readyState == window.EventSource.CLOSED) || 
+        ((new Date() - lastHeartbeat) > 19000)
+      ) {
+        statusUpdater.close();
         this.set('statusUpdaterErrorred', true);
         var since = this.get('taskUpdateStreamConnectionLost');
         if (! since) {
@@ -133,19 +141,6 @@ var controller = Ember.Controller.extend({
       if (errorKnown) {
         this.set('statusUpdaterErrorred', false);
       }
-    } else if (
-      statusUpdater &&
-      (statusUpdater.readyState == window.EventSource.OPEN) &&
-      (lastHeartbeat && ((new Date() - lastHeartbeat) > 19000))
-    ) {
-      // The EventSource instance has died somehow, but never updated
-      // its metadata.  Weird, I know, but that is definitely what's
-      // happening in Chrome 34 sometimes.
-      statusUpdater.close();
-      var log = this.get('statusUpdaterLog');
-      log.pushObject(
-          [new Date(), 'Connection has flatlined; unplugging.']
-      );
     }
   },
   startEventStream: function() {
