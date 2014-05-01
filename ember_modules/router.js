@@ -18,6 +18,7 @@ App.Router.map(function(){
   this.route("configure", {path: "/configure"});
   this.route("getting_started", {path: "/getting-started"});
   this.route("termsOfService", {path: "/terms-of-service"});
+  this.route("fourOhFour", {path: "*path"});
 });
 
 App.Router.reopen({
