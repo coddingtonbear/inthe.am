@@ -81,6 +81,8 @@ WSGI_APPLICATION = 'inthe_am.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
+CONN_MAX_AGE = None
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -258,3 +260,4 @@ DATABASES = {
         'PORT': DATABASE_PORT
     }
 }
+
