@@ -18,6 +18,7 @@ var controller = Ember.Controller.extend({
     enable_sync: '/api/v1/user/enable-sync/',
     configure_pebble_cards: '/api/v1/user/pebble-cards-config/',
     configure_feed: '/api/v1/user/feed-config/',
+    refresh: '/api/v1/task/refresh/',
     status_feed: '/status/',
     feed_url: null,
     sms_url: null,
@@ -92,6 +93,20 @@ var controller = Ember.Controller.extend({
       this.set('statusUpdaterLog', []);
       this.startEventStream();
       setInterval(this.checkStatusUpdater.bind(this), 500);
+    }
+    setInterval(this.checkLastUpdated.bind(this), 2000);
+  },
+  checkLastUpdated: function() {
+    var lastHeartbeat = this.get('statusUpdaterHeartbeat');
+    var lastRefresh = this.get('pollingRefresh');
+    if (!lastRefresh) {
+      lastRefresh = new Date();
+      this.set('pollingRefresh', lastRefresh);
+    }
+    var interval = 60 * 2.5; // 2.5 mins
+    if((new Date() - Math.max(lastRefresh, lastHeartbeat | null)) > interval) {
+      this.set('pollingRefresh', new Date());
+      this.send('refresh');
     }
   },
   checkStatusUpdater: function() {
@@ -194,9 +209,12 @@ var controller = Ember.Controller.extend({
       });
     },
     'head_changed': function(evt) {
-      this.get('statusUpdater').close();
+      var statusUpdater = this.get('statusUpdater');
+      if (statusUpdater) {
+        statusUpdater.close();
+        this.get('startEventStream').bind(this)();
+      }
       this.set('statusUpdaterHead', evt.data);
-      this.get('startEventStream').bind(this)();
       try {
         this.store.find('activityLog').update();
       } catch(e) {
@@ -235,7 +253,20 @@ var controller = Ember.Controller.extend({
   },
   actions: {
     refresh: function(){
-      this.get('controllers.tasks').refresh();
+      var self = this;
+      $.ajax({
+        url: this.get('urls.refresh'),
+        dataType: 'json',
+        data: {
+          head: this.get('statusUpdaterHead'),
+        },
+        success: function(data) {
+          for(var i = 0; i < data.messages.length; i++) {
+            var msg = data.messages[i];
+            self.get('statusActions')[msg.action].bind(self)({data: msg.body});
+          }
+        }
+      });
     },
     home: function(){
       window.location = '/';

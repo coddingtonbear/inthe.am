@@ -506,6 +506,13 @@ class TaskResource(resources.Resource):
                 self.wrap_view('pebble_card'),
                 name='pebble_card_url',
             ),
+            url(
+                r"^(?P<resource_name>%s)/refresh/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('refresh_tasks'),
+                name='refresh_tasks',
+            )
         ]
 
     def manage_lock(self, request, **kwargs):
@@ -537,6 +544,45 @@ class TaskResource(resources.Resource):
                 status=404
             )
         raise HttpResponseNotAllowed(request.method)
+
+    @requires_task_store
+    def refresh_tasks(self, request, store, **kwargs):
+        if request.method != 'GET':
+            return HttpResponseNotAllowed(request.method)
+        try:
+            head = request.GET['head']
+        except KeyError:
+            return HttpResponseBadRequest()
+
+        store.sync(async=False)
+
+        changes = []
+
+        new_head = store.repository.head()
+        for id in store.get_changed_task_ids(head, new_head):
+            changes.append(
+                {
+                    'action': 'task_changed',
+                    'body': id,
+                }
+            )
+
+        if new_head != head:
+            changes.append(
+                {
+                    'action': 'head_changed',
+                    'body': new_head
+                }
+            )
+
+        response = {
+            'messages': changes,
+        }
+
+        return HttpResponse(
+            json.dumps(response),
+            content_type='application/json',
+        )
 
     def pebble_card(self, request, secret_id, **kwargs):
         if request.method != 'GET':

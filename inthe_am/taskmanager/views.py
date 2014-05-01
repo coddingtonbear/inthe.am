@@ -81,7 +81,7 @@ class Status(BaseSseView):
         last_heartbeat = 0
         taskd_mtime = self.get_taskd_mtime(store)
         head = self.request.GET.get('head', store.repository.head())
-        self.beat_heart()
+        self.beat_heart(store)
         while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
             # Get Error/Log Messages
             entries = TaskStoreActivityLog.objects.filter(
@@ -125,7 +125,7 @@ class Status(BaseSseView):
 
                 store = self.get_store(cached=False)
 
-            self.beat_heart()
+            self.beat_heart(store)
 
             yield
 
