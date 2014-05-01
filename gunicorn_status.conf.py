@@ -1,3 +1,6 @@
+from gevent.monkey import patch_all
+patch_all()
+
 user = 'www-data'
 group = 'www-data'
 logfile = '/var/www/twweb/logs/gunicorn-status.log'
