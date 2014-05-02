@@ -112,50 +112,42 @@ var controller = Ember.Controller.extend({
   checkStatusUpdater: function() {
     var statusUpdater = this.get('statusUpdater');
     var connected = this.get('taskUpdateStreamConnected');
+    var now = new Date();
     var lastHeartbeat = this.get('statusUpdaterHeartbeat');
+    var flatineDelay = 19 * 1000; // 19 seconds
+    var postDisconnectDelay = 5 * 1000;  // 5 seconds
+    if (!statusUpdater) {
+      return;
+    }
     if (!lastHeartbeat) {
-      lastHeartbeat = new Date();
+      lastHeartbeat = now;
       this.set('statusUpdaterHeartbeat', lastHeartbeat);
     }
     if (
-      statusUpdater &&
-      (statusUpdater.readyState != window.EventSource.OPEN)
+      (statusUpdater.readyState != window.EventSource.OPEN) ||
+      ((now - lastHeartbeat) > flatlineDelay)
     ) {
-      if(connected) {
-        this.set('taskUpdateStreamConnected', false);
-      }
-      if (
-        (statusUpdater.readyState == window.EventSource.CLOSED) || 
-        ((new Date() - lastHeartbeat) > 19000)
-      ) {
+      this.set('taskUpdateStreamConnected', false);
+      this.set('statusUpdaterErrorred', true);
+      var since = this.get('taskUpdateStreamConnectionLost');
+      if (! since) {
+        this.set('taskUpdateStreamConnectionLost', now);
+      } else if(now - since > postDisconnectDelay) {
         statusUpdater.close();
+        var log = this.get('statusUpdaterLog');
+        log.pushObject(
+            [now, 'Connection appears to be disconnected']
+        );
         this.set('statusUpdaterErrorred', true);
-        var since = this.get('taskUpdateStreamConnectionLost');
-        if (! since) {
-          this.set('taskUpdateStreamConnectionLost', new Date());
-        } else {
-          var now = new Date();
-          if(now - since > 5000) { // 5 Seconds
-            var log = this.get('statusUpdaterLog');
-            log.pushObject(
-                [new Date(), 'Connection appears to be disconnected']
-            );
-            this.set('statusUpdaterErrorred', true);
-            this.set('taskUpdateStreamConnectionLost', null);
-            this.get('startEventStream').bind(this)();
-          }
-        }
+        this.set('taskUpdateStreamConnectionLost', null);
+        this.get('startEventStream').bind(this)();
       }
     } else if (
-      statusUpdater &&
       (statusUpdater.readyState == window.EventSource.OPEN) &&
       !connected
     ) {
       this.set('taskUpdateStreamConnected', true);
-      var errorKnown = this.get('statusUpdaterErrorred');
-      if (errorKnown) {
-        this.set('statusUpdaterErrorred', false);
-      }
+      this.set('statusUpdaterErrorred', false);
     }
   },
   startEventStream: function() {
