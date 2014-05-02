@@ -114,7 +114,7 @@ var controller = Ember.Controller.extend({
     var connected = this.get('taskUpdateStreamConnected');
     var now = new Date();
     var lastHeartbeat = this.get('statusUpdaterHeartbeat');
-    var flatineDelay = 19 * 1000; // 19 seconds
+    var flatlineDelay = 19 * 1000; // 19 seconds
     var postDisconnectDelay = 5 * 1000;  // 5 seconds
     if (!statusUpdater) {
       return;
