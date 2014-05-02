@@ -95,6 +95,15 @@ var controller = Ember.Controller.extend({
       setInterval(this.checkStatusUpdater.bind(this), 500);
     }
     setInterval(this.checkLastUpdated.bind(this), 2000);
+    $("body").touchwipe({
+      wipeRight: function() {
+        if (self.isSmallScreen()) {
+          self.transitionToRoute('mobileTasks');
+        }
+      },
+      min_move_x: 100,
+      preventDefaultEvents: false
+    });
   },
   checkLastUpdated: function() {
     var lastHeartbeat = this.get('statusUpdaterHeartbeat');
