@@ -372,6 +372,23 @@ div.alert-box.error {
     padding-right: 0px;
     padding-left: 0px;
   }
+  #mobile-list {
+    .task {
+      .task-item {
+        position: relative;
+
+        div.task-list-icon {
+          position: absolute;
+          top: 14.4px;
+          left: 16px;
+        }
+        div.task-list-item {
+          width: auto;
+          margin-left: 50px;
+        }
+      }
+    }
+  }
   // Make buttons a little less padding-filled
   button {
     padding: 10px;
