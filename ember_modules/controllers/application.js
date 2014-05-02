@@ -226,7 +226,7 @@ var controller = Ember.Controller.extend({
     }
   },
   isSmallScreen: function() {
-    return $(document).width() <= 700;
+    return $(document).width() <= 800;
   },
   getCookie: function(name) {
     var cookieValue = null;

@@ -178,6 +178,18 @@ div.row {
   }
 }
 
+#mobile-list {
+  width: 100%;
+
+  .task {
+    .task-item {
+      .task-list-item {
+        width: auto;
+      }
+    }
+  }
+}
+
 #task-details {
   overflow-x: hidden;
   overflow-y: auto;
@@ -342,23 +354,6 @@ div.alert-box.error {
 }
 
 @media screen and (max-width: 800px) {
-  nav, #task-details {
-    i.fa {
-      font-size: 0px;
-      &::before {
-        font-size: 15px;
-      }
-    }
-    i.fa.fa-tag {
-      font-size: 15px;
-      &::before {
-        font-size: 15px;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 700px) {
   // Hide text content of buttons
   html, body {
     overflow: hidden;
@@ -416,22 +411,6 @@ div.alert-box.error {
       padding-right: 0px;
     }
   }
-  #mobile-list {
-    width: 100%;
-  }
-  nav {
-    .top-bar-section {
-      li.desktop-only {
-        display: none;
-      }
-      li.mobile-only {
-        display: list-item;
-      }
-    }
-    button#show-task-list {
-      display: inline-block;
-    }
-  }
   td {
     word-break: break-all;
   }
@@ -446,8 +425,37 @@ div.alert-box.error {
     margin: 0px;
     padding: 5px;
   }
+  nav {
+    .top-bar-section {
+      li.desktop-only {
+        display: none;
+      }
+      li.mobile-only {
+        display: list-item;
+      }
+    }
+    button#show-task-list {
+      display: inline-block;
+    }
+  }
 }
 
+@media screen and (max-width: 700px) {
+  nav, #task-details {
+    i.fa {
+      font-size: 0px;
+      &::before {
+        font-size: 15px;
+      }
+    }
+    i.fa.fa-tag {
+      font-size: 15px;
+      &::before {
+        font-size: 15px;
+      }
+    }
+  }
+}
 
 @media screen and (max-width: 550px) {
   nav {
