@@ -26,30 +26,39 @@ Compile the Templates, CSS, and Javascript Modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Templates and Javascript modules are managed by `Grunt <http://gruntjs.com/>`_,
-and in the development environment, changes you make to the Handlebars
+and changes you make to the Handlebars
 templates (``handlebars_templates/*.hbs``), Javascript modules
 (``ember_modules/**/*.js``), and SCSS files
 (``inthe_am/taskmanager/static/colorschemes/*.scss`` and 
-``inthe_am/taskmanager/static/foundation/scss/*.scss``) are compiled into their
-respective web-native formats automatically by a service named ``taskd-grunt``.
+``inthe_am/taskmanager/static/foundation/scss/*.scss``) will not be visible
+until you have first compiled them into their web-native formats, and, in the
+case of Javscript files, concatenated together into a single file for
+delivery to the browser.
 
-If you by chance would like to compile the templates manually, you can run
-the command::
+Luckily, you do not need to do this manually; Grunt can run in the background
+while you perform your edits so that you need not manually compile the templates
+after each modification.  You can do that by first installing grunt and the
+relevant modules from the *host* *enviroment*::
 
-    grunt ember_handlebars sass browserify
+    npm install
+    npm install -g grunt-cli
 
-That having been said, you may want to stop the ``taskd-grunt`` service first
-by running::
+Once the above have installed successfully, you can run the grunt watcher
+by simply running::
 
-    sudo service taskd-grunt stop
+    grunt watch
 
 .. note::
 
-   For best results, it is recommended that you run the grunt watcher
-   on the host environment.  Filesystem accesses from your guest OS
-   to the templates are not terribly fast, and compilations can take
-   20-30 seconds in some cases.
+   You should run `grunt watch` from the host environment rather than installing
+   and running grunt from within your VM.  The functionality used by grunt
+   for determining if files have changed is much less efficient when run
+   within the VM due to the way files are shared between the host and VM.
 
+If you by chance would like to compile the templates and Javascript files just
+once, you can run the command::
+
+    grunt ember_handlebars sass browserify concat
 
 Development Environment Notes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
