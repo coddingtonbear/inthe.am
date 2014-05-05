@@ -6,7 +6,6 @@ before_install:
 - sh -e /etc/init.d/xvfb start
 install:
 - sudo bash scripts/vagrant/init_environment.sh
-- grunt ember_handlebars sass browserify
 - sudo /usr/local/bin/taskd server --data /var/taskd --daemon
 - sudo chmod -R 777 ./
 - sudo chmod -R 777 /var/taskd
