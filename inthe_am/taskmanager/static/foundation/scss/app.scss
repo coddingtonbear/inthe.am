@@ -180,6 +180,7 @@ div.row {
 
 #mobile-list {
   width: 100%;
+  min-width: inherit;
 
   .task {
     .task-item {
