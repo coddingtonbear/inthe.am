@@ -33,7 +33,11 @@
       ga('create', 'UA-3711530-3', 'inthe.am');
       ga('send', 'pageview');
     </script>
-    <script src="{% static "raven.min.js" %}"></script>
+    {% if DEBUG %}
+      <script src="{% static "compiled-devel.js" %}></script>
+    {% else %}
+      <script src="{% static "compiled.js" %}></script>
+    {% endif %}
     <script type="text/javascript">
       Raven.config(
         'http://9b0ea040d8414b2180548e304cac5018@sentry.adamcoddington.net/2',
@@ -59,24 +63,5 @@
         Raven.captureException(error);
       }
     </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="{% static "jquery.datetimepicker.js" %}"></script>
-    <script src="{% static "jquery.growl.js" %}"></script>
-    <script src="{% static "jquery.touchwipe.min.js" %}"></script>
-    <script src="{% static "fastclick.js" %}"></script>
-    <script src="{% static "moment.min.js" %}"></script>
-    <script src="{% static "markdown.min.js" %}"></script>
-    <script src="{% static "handlebars-v1.3.0.js" %}"></script>
-    {% if DEBUG %}
-      <script src="{% static "ember.js" %}"></script>
-      <script src="{% static "ember-data.js" %}"></script>
-    {% else %}
-      <script src="{% static "ember.min.js" %}"></script>
-      <script src="{% static "ember-data.min.js" %}"></script>
-    {% endif %}
-    <script src="{% static "tastypie_adapter.js" %}"></script>
-    <script src="{% static "templates.js" %}"></script>
-    <script src="{% static "task_manager.js" %}"></script>
-    <script src="{% static "foundation.min.js" %}"></script>
   </body>
 </html>
