@@ -112,6 +112,7 @@ cd $MAIN_DIR
 npm install -g grunt-cli
 npm install
 
+sudo chown -R $USER inthe_am/taskmanager/static
 grunt sass browserify ember_handlebars concat
 
 # Install requirements
