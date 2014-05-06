@@ -10,7 +10,6 @@ Feature: User can navigate between pages
         When the user clicks the link "Configuration"
         Then the page contains the heading "Configuration & Settings"
 
-    @wip
     Scenario: User is notified when arriving at unknown URL
         Given the user is logged-in
         When the user accesses the url "/does-not-exist/"

@@ -100,6 +100,11 @@ def user_enters_text_into_field(context, text, field):
     context.browser.find_by_name(field).type(text)
 
 
+@when(u'the user selects the option "{text}" from the field named "{field}"')
+def user_selects_option_from_field(context, text, field):
+    context.browser.find_by_name(field).select(text)
+
+
 @when(u'the user clicks the button labeled "{label}"')
 def user_clicks_button_labeled(context, label):
     for button in context.browser.find_by_tag("button"):

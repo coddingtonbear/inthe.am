@@ -81,6 +81,13 @@ Development Environment Notes
     showing that window or find the PID of the still-running process
     using ``ps -f``, and killing the running process with ``kill <that pid>``.
 
+* "When running tests with ``python manage.py test taskmanager``, it isn't
+  seeing changes I've made."
+
+  * Tests are ran against production (read: uglified) assets rather than
+    the assets that are simply concatenated.  Make sure that you have ran
+    ``grunt uglify`` before running tests.
+
 Google OAuth Keys
 ~~~~~~~~~~~~~~~~~
 

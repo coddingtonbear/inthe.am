@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 
 from behave import given, when, then, step
@@ -18,6 +20,22 @@ def task_with_field_exists(context, field, value):
     assert len(matches) > 0, "No task found with %s == %s" % (
         field, value
     )
+
+
+@then(u'a single {status} task with the following details will exist')
+def task_with_details(context, status):
+    store = get_store()
+    tasks = store.client.filter_tasks({'status': status})
+    assert len(tasks) == 1, "Asserted single task to be found, found %s" % (
+        len(tasks)
+    )
+    task = tasks[0]
+    for key, value in context.table.rows:
+        assert task[key] == json.loads(value), "Task field %s's value is %s, not %s" % (
+            key,
+            task[key],
+            value,
+        )
 
 
 @given(u'an existing task with the {field} "{value}"')
