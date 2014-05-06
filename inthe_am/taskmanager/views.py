@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import time
+import uuid
 
 from django_sse.views import BaseSseView
 import pytz
@@ -193,6 +194,9 @@ def home(request):
         'home.html',
         {
             'DEBUG': settings.DEBUG,
+            'VERSION': (
+                str(uuid.uuid4()) if settings.DEBUG else settings.VERSION
+            )
         }
     )
 

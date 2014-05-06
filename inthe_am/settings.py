@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from subprocess32 import check_output
 import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -223,6 +224,8 @@ TEST_RUNNER = 'django_behave.runner.DjangoBehaveTestSuiteRunner'
 BROKER_URL = 'redis://localhost:6379/1'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 
+VERSION = check_output(['git', 'rev-parse', 'HEAD']).strip()
+
 if TRAVIS:
     CELERY_ALWAYS_EAGER = True
 
@@ -260,4 +263,3 @@ DATABASES = {
         'PORT': DATABASE_PORT
     }
 }
-
