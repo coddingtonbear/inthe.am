@@ -34,7 +34,7 @@ if os.uname()[1] == "eugene.adamcoddington.net":
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [
-    'inthe.am'
+    'inthe.am',
 ]
 
 
