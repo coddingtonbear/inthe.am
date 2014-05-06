@@ -25,6 +25,7 @@ def deploy():
     with cd('/var/www/twweb'):
         run('git fetch origin')
         run('git merge origin/master')
+        sudo('chmod -R 777 /var/www/twweb/inthe_am/taskmanager/static')
         run('grunt ember_handlebars sass browserify uglify')
         virtualenv('pip install -r /var/www/twweb/requirements.txt')
         virtualenv('python manage.py collectstatic --noinput', user='www-data')
