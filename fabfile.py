@@ -25,12 +25,12 @@ def deploy():
     with cd('/var/www/twweb'):
         run('git fetch origin')
         run('git merge origin/master')
-        sudo('chmod -R 777 /var/www/twweb/inthe_am/taskmanager/static')
         sudo('npm install')
         sudo('grunt ember_handlebars sass browserify uglify')
         virtualenv('pip install -r /var/www/twweb/requirements.txt')
         virtualenv('python manage.py collectstatic --noinput', user='www-data')
         virtualenv('python manage.py migrate', user='www-data')
+        sudo('chown -R www-data:www-data /var/www/twweb/logs')
         sudo('service twweb restart')
         sudo('service twweb-status restart')
         sudo('service twweb-celery restart')
