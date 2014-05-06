@@ -11,8 +11,8 @@ assets/icon.xcf.tmp.png
 inthe_am/taskmanager/static/app.css
 inthe_am/taskmanager/static/task_manager.js
 inthe_am/taskmanager/static/templates.js
-inthe_am/taskmanager/static/compiled.js
-inthe_am/taskmanager/static/compiled-devel.js
+inthe_am/taskmanager/static/compiled.min.js
+inthe_am/taskmanager/static/compiled.dev.js
 bin/*
 lib/*
 include/*

@@ -34,9 +34,9 @@
       ga('send', 'pageview');
     </script>
     {% if DEBUG %}
-      <script src="{% static "compiled-devel.js" %}"></script>
+      <script src="{% static "compiled.dev.js" %}"></script>
     {% else %}
-      <script src="{% static "compiled.js" %}"></script>
+      <script src="{% static "compiled.min.js" %}"></script>
     {% endif %}
     <script type="text/javascript">
       Raven.config(

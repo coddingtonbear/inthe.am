@@ -25,7 +25,7 @@ def deploy():
     with cd('/var/www/twweb'):
         run('git fetch origin')
         run('git merge origin/master')
-        run('grunt ember_handlebars sass browserify concat')
+        run('grunt ember_handlebars sass browserify uglify')
         virtualenv('pip install -r /var/www/twweb/requirements.txt')
         virtualenv('python manage.py collectstatic --noinput', user='www-data')
         virtualenv('python manage.py migrate', user='www-data')

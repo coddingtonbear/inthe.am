@@ -62,29 +62,6 @@ module.exports = function(grunt){
       options: {
         separator: ';',
       },
-      dist: {
-        src: [
-          STATIC_ROOT + 'raven.min.js',
-          STATIC_ROOT + 'jquery.min.js',
-          STATIC_ROOT + 'jquery.datetimepicker.js',
-          STATIC_ROOT + 'jquery.growl.js',
-          STATIC_ROOT + 'jquery.touchwipe.min.js',
-          STATIC_ROOT + 'fastclick.js',
-          STATIC_ROOT + 'moment.min.js',
-          STATIC_ROOT + 'markdown.min.js',
-          STATIC_ROOT + 'handlebars-v1.3.0.js',
-
-          STATIC_ROOT + 'ember.min.js',
-          STATIC_ROOT + 'ember-data.min.js',
-
-          STATIC_ROOT + 'tastypie_adapter.js',
-          STATIC_ROOT + 'templates.js',
-          STATIC_ROOT + 'task_manager.js',
-          STATIC_ROOT + 'foundation.min.js',
-        ],
-        dest: STATIC_ROOT + '../compiled.js',
-        nonull: true,
-      },
       devel: {
         src: [
           STATIC_ROOT + 'raven.min.js',
@@ -105,8 +82,37 @@ module.exports = function(grunt){
           STATIC_ROOT + 'task_manager.js',
           STATIC_ROOT + 'foundation.min.js',
         ],
-        dest: STATIC_ROOT + '../compiled-devel.js',
+        dest: STATIC_ROOT + '../compiled.dev.js',
         nonull: true,
+      }
+    },
+    uglify: {
+      options: {
+        mangle: false,
+        sourceMap: true,
+      },
+      dist: {
+        files: {
+          '../compiled.min.js': [
+            STATIC_ROOT + 'raven.min.js',
+            STATIC_ROOT + 'jquery.min.js',
+            STATIC_ROOT + 'jquery.datetimepicker.js',
+            STATIC_ROOT + 'jquery.growl.js',
+            STATIC_ROOT + 'jquery.touchwipe.min.js',
+            STATIC_ROOT + 'fastclick.js',
+            STATIC_ROOT + 'moment.min.js',
+            STATIC_ROOT + 'markdown.min.js',
+            STATIC_ROOT + 'handlebars-v1.3.0.js',
+
+            STATIC_ROOT + 'ember.min.js',
+            STATIC_ROOT + 'ember-data.min.js',
+
+            STATIC_ROOT + 'tastypie_adapter.js',
+            STATIC_ROOT + 'templates.js',
+            STATIC_ROOT + 'task_manager.js',
+            STATIC_ROOT + 'foundation.min.js',
+          ],
+        }
       },
     },
     watch: {
@@ -135,7 +141,7 @@ module.exports = function(grunt){
           'ember_handlebars',
         ]
       },
-      concatenation: {
+      concat: {
         files: [
           STATIC_ROOT + '*.js'
         ],
@@ -151,4 +157,5 @@ module.exports = function(grunt){
   grunt.loadNpmTasks('grunt-ember-handlebars');
   grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 };

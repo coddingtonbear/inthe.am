@@ -113,7 +113,7 @@ npm install -g grunt-cli
 npm install
 
 sudo chown -R $USER inthe_am/taskmanager/static
-grunt sass browserify ember_handlebars concat
+grunt sass browserify ember_handlebars uglify concat
 
 # Install requirements
 pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements.txt
