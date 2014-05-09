@@ -111,7 +111,6 @@ var controller = Ember.Controller.extend({
 
     // Every 3-7 minutes
     var totalRefreshInterval = 60 * ((Math.random() * 4) + 3) * 1000;
-    console.log("Scheduling next refresh in " + (totalRefreshInterval/1000/60) + " minutes");
     setTimeout(this.doTotalRefresh.bind(this), totalRefreshInterval);
   },
   checkLastUpdated: function() {
@@ -131,7 +130,6 @@ var controller = Ember.Controller.extend({
         now - Math.max(lastIncrementalRefresh, lastHeartbeat | null)
       ) > incrementalRefreshInterval
     ) {
-      console.log("Incremental Refresh at " + (incrementalRefreshInterval/1000/60) + " minutes");
       this.set('pollingIncrementalRefresh', now);
       this.send('refresh');
     }
