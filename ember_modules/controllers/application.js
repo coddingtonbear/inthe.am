@@ -95,6 +95,7 @@ var controller = Ember.Controller.extend({
       setInterval(this.checkStatusUpdater.bind(this), 500);
     }
     setInterval(this.checkLastUpdated.bind(this), 2000);
+    setTimeout(this.doTotalRefresh.bind(this), 60 * 5 * 1000);
     $("body").touchwipe({
       wipeRight: function() {
         if (self.isSmallScreen()) {
@@ -105,37 +106,34 @@ var controller = Ember.Controller.extend({
       preventDefaultEvents: false
     });
   },
+  doTotalRefresh: function() {
+    this.get('controllers.tasks').refresh();
+
+    // Every 3-7 minutes
+    var totalRefreshInterval = 60 * ((Math.random() * 4) + 3) * 1000;
+    console.log("Scheduling next refresh in " + (totalRefreshInterval/1000/60) + " minutes");
+    setTimeout(this.doTotalRefresh.bind(this), totalRefreshInterval);
+  },
   checkLastUpdated: function() {
     var now = new Date();
     var lastHeartbeat = this.get('statusUpdaterHeartbeat');
     var lastIncrementalRefresh = this.get('pollingIncrementalRefresh');
-    var lastTotalRefresh = this.get('pollingTotalRefresh');
-    if (!lastIncrementalRefresh || !lastTotalRefresh) {
+    if (!lastIncrementalRefresh) {
       this.set('pollingIncrementalRefresh', now);
-      this.set('pollingTotalRefresh', now);
     }
 
     // Just check-in to see if anything interesting has happened
     // recently.
-    // Refresh every 1-3 minutes.
-    var incrementalRefreshInterval = 60 * ((Math.random() * 2) + 1) * 1000;
+    // Refresh every 2 minutes.
+    var incrementalRefreshInterval = 60 * 2 * 1000;
     if(
       (
         now - Math.max(lastIncrementalRefresh, lastHeartbeat | null)
       ) > incrementalRefreshInterval
     ) {
+      console.log("Incremental Refresh at " + (incrementalRefreshInterval/1000/60) + " minutes");
       this.set('pollingIncrementalRefresh', now);
       this.send('refresh');
-    }
-
-    // We need to periodically refresh the whole thing to make sure
-    // that we task update colors, etc, as time marches closer to due
-    // dates, tasks become blocked or unblocked, etc.
-    // Refresh every 3-7 minutes.
-    var totalRefreshInterval = 60 * ((Math.random() * 4) + 3) * 1000;
-    if((now - lastTotalRefresh) > totalRefreshInterval) {
-      this.set('pollingTotalRefresh', now);
-      this.get('controllers.tasks').refresh();
     }
   },
   checkStatusUpdater: function() {
