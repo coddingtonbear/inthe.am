@@ -106,16 +106,36 @@ var controller = Ember.Controller.extend({
     });
   },
   checkLastUpdated: function() {
+    var now = new Date();
     var lastHeartbeat = this.get('statusUpdaterHeartbeat');
-    var lastRefresh = this.get('pollingRefresh');
-    if (!lastRefresh) {
-      lastRefresh = new Date();
-      this.set('pollingRefresh', lastRefresh);
+    var lastIncrementalRefresh = this.get('pollingIncrementalRefresh');
+    var lastTotalRefresh = this.get('pollingTotalRefresh');
+    if (!lastIncrementalRefresh || !lastTotalRefresh) {
+      this.set('pollingIncrementalRefresh', now);
+      this.set('pollingTotalRefresh', now);
     }
-    var interval = 60 * 2.5 * 1000; // 2.5 mins
-    if((new Date() - Math.max(lastRefresh, lastHeartbeat | null)) > interval) {
-      this.set('pollingRefresh', new Date());
+
+    // Just check-in to see if anything interesting has happened
+    // recently.
+    // Refresh every 1-3 minutes.
+    var incrementalRefreshInterval = 60 * ((Math.random() * 2) + 1) * 1000;
+    if(
+      (
+        now - Math.max(lastIncrementalRefresh, lastHeartbeat | null)
+      ) > incrementalRefreshInterval
+    ) {
+      this.set('pollingIncrementalRefresh', now);
       this.send('refresh');
+    }
+
+    // We need to periodically refresh the whole thing to make sure
+    // that we task update colors, etc, as time marches closer to due
+    // dates, tasks become blocked or unblocked, etc.
+    // Refresh every 3-7 minutes.
+    var totalRefreshInterval = 60 * ((Math.random() * 4) + 3) * 1000;
+    if((now - lastTotalRefresh) > totalRefreshInterval) {
+      this.set('pollingTotalRefresh', now);
+      this.get('controllers.tasks').refresh();
     }
   },
   checkStatusUpdater: function() {
