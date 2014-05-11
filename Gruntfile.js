@@ -5,6 +5,7 @@ var STATIC_FILES = [
   'jquery.datetimepicker.js',
   'jquery.growl.js',
   'jquery.touchwipe.min.js',
+  'jquery.mousewheel.min.js',
   'fastclick.js',
   'moment.min.js',
   'markdown.min.js',

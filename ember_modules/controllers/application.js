@@ -105,6 +105,19 @@ var controller = Ember.Controller.extend({
       min_move_x: 100,
       preventDefaultEvents: false
     });
+    $("body").on('mousewheel', function(evt) {
+      if($(evt.srcElement).parent()[0].tagName == "BODY") {
+        var contentDiv = $("div.row.standalone");
+        var value = (
+          evt.deltaFactor * evt.deltaY * (
+            window.navigator.platform === "MacIntel" ? -1 : 1
+          )
+        ) + contentDiv.scrollTop();
+        contentDiv.scrollTop(value);
+        evt.preventDefault();
+        evt.stopPropagation();
+      }
+    });
   },
   doTotalRefresh: function() {
     this.get('controllers.tasks').refresh();
