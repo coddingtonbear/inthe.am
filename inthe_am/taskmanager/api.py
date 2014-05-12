@@ -156,7 +156,7 @@ class UserResource(resources.ModelResource):
     @git_managed("Reset taskd configuration", gc=False)
     def reset_taskd_configuration(self, request, store=None, **kwargs):
         if request.method != 'POST':
-            raise HttpResponseNotAllowed(request.method)
+            return HttpResponseNotAllowed(request.method)
         store.reset_taskd_configuration()
         store.log_message("Taskd settings reset to default.")
         return HttpResponse('OK')
@@ -164,7 +164,7 @@ class UserResource(resources.ModelResource):
     @git_managed("Configuring taskd server", gc=False)
     def configure_taskd(self, request, store=None, **kwargs):
         if request.method != 'POST':
-            raise HttpResponseNotAllowed(request.method)
+            return HttpResponseNotAllowed(request.method)
 
         form = forms.TaskdConfigurationForm(request.POST)
         if not form.is_valid():
@@ -218,7 +218,7 @@ class UserResource(resources.ModelResource):
 
     def configure_pebble_cards(self, request, **kwargs):
         if request.method != 'POST':
-            raise HttpResponseNotAllowed(request.method)
+            return HttpResponseNotAllowed(request.method)
 
         try:
             enabled = int(request.POST.get('enabled', 0))
@@ -233,7 +233,7 @@ class UserResource(resources.ModelResource):
 
     def configure_feed(self, request, **kwargs):
         if request.method != 'POST':
-            raise HttpResponseNotAllowed(request.method)
+            return HttpResponseNotAllowed(request.method)
 
         try:
             enabled = int(request.POST.get('enabled', 0))
@@ -248,7 +248,7 @@ class UserResource(resources.ModelResource):
 
     def enable_sync(self, request, **kwargs):
         if request.method != 'POST':
-            raise HttpResponseNotAllowed(request.method)
+            return HttpResponseNotAllowed(request.method)
 
         store = models.TaskStore.get_for_user(request.user)
         store.sync_enabled = True
@@ -264,11 +264,11 @@ class UserResource(resources.ModelResource):
             return HttpResponse('OK')
         elif request.method == 'GET':
             return HttpResponse(meta.colorscheme)
-        raise HttpResponseNotAllowed(request.method)
+        return HttpResponseNotAllowed(request.method)
 
     def tos_accept(self, request, **kwargs):
         if request.method != 'POST':
-            raise HttpResponseNotAllowed(request.method)
+            return HttpResponseNotAllowed(request.method)
 
         meta = models.UserMetadata.get_for_user(request.user)
         meta.tos_version = request.POST['version']
@@ -279,7 +279,7 @@ class UserResource(resources.ModelResource):
 
     def twilio_integration(self, request, **kwargs):
         if request.method != 'POST':
-            raise HttpResponseNotAllowed(request.method)
+            return HttpResponseNotAllowed(request.method)
 
         ts = models.TaskStore.get_for_user(request.user)
         ts.twilio_auth_token = request.POST.get('twilio_auth_token', '')
@@ -291,7 +291,7 @@ class UserResource(resources.ModelResource):
     @git_managed("Clearing task data", gc=False)
     def clear_task_data(self, request, **kwargs):
         if request.method != 'POST':
-            raise HttpResponseNotAllowed(request.method)
+            return HttpResponseNotAllowed(request.method)
 
         ts = models.TaskStore.get_for_user(request.user)
 
@@ -321,7 +321,7 @@ class UserResource(resources.ModelResource):
 
     def my_certificate(self, request, **kwargs):
         if request.method != 'GET':
-            raise HttpResponseNotAllowed(request.method)
+            return HttpResponseNotAllowed(request.method)
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
             ts.taskrc.get('taskd.certificate'),
@@ -330,7 +330,7 @@ class UserResource(resources.ModelResource):
 
     def my_key(self, request, **kwargs):
         if request.method != 'GET':
-            raise HttpResponseNotAllowed(request.method)
+            return HttpResponseNotAllowed(request.method)
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
             ts.taskrc.get('taskd.key'),
@@ -543,7 +543,7 @@ class TaskResource(resources.Resource):
                 '',
                 status=404
             )
-        raise HttpResponseNotAllowed(request.method)
+        return HttpResponseNotAllowed(request.method)
 
     @requires_task_store
     def refresh_tasks(self, request, store, **kwargs):
