@@ -116,33 +116,32 @@ var model = DS.Model.extend({
     return value;
   }.property('udas'),
 
-  _string_field_to_data: function(field_name) {
-    var value = this.get(field_name);
-    var values = [];
+  ticketIdsToObjects: function(value) {
+    var promises = [];
     if (value) {
       var ticket_ids = value.split(',');
-      var pushed = 0;
-      var add_value_to_values = function(value) {
-        values.pushObject(value);
-      };
       for (var i = 0; i < ticket_ids.length; i++) {
-        this.store.find('task', ticket_ids[i]).then(
-          add_value_to_values.bind(this)
+        promises.pushObject(
+          this.store.find('task', ticket_ids[i])
         );
       }
     }
-    return values;
+    return Ember.RSVP.Promise.all(promises);
   },
 
   dependent_tickets: function(){
     return DS.PromiseArray.create({
-      promise: this._string_field_to_data('depends')
+      promise: this.ticketIdsToObjects(
+        this.get('depends')
+      )
     });
   }.property('depends'),
 
   blocked_tickets: function(){
     return DS.PromiseArray.create({
-      promise: this._string_field_to_data('blocks')
+      promise: this.ticketIdsToObjects(
+        this.get('blocks')
+      )
     });
   }.property('blocks'),
 
