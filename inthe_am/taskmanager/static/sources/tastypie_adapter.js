@@ -42,13 +42,15 @@ DS.DjangoTastypieSerializer = DS.RESTSerializer.extend({
   sideload: function(loader, type, json, root) {
   },
 
-  resourceUriToId: function (resourceUri){
+  resourceUriToId: function (resourceUri) {
     return resourceUri.split('/').reverse()[1];
   },
 
   normalizeId: function (hash) {
-    hash.id = this.resourceUriToId(hash.resource_uri);
-    delete hash.resource_uri;
+    if (hash.resource_uri) {
+      hash.id = this.resourceUriToId(hash.resource_uri);
+      delete hash.resource_uri;
+    }
   },
 
   normalizeRelationships: function (type, hash) {
@@ -74,25 +76,6 @@ DS.DjangoTastypieSerializer = DS.RESTSerializer.extend({
         }
       }
     }, this);
-  },
-
-  // DELETE ME
-  // This shouldn't be necessary when Beta6 is released
-  normalizeUsingDeclaredMapping: function(type, hash) {
-    var attrs = get(this, 'attrs'), payloadKey, key;
-
-    if (attrs) {
-      for (key in attrs) {
-        payloadKey = attrs[key];
-        if (payloadKey && payloadKey.key) {
-          payloadKey = payloadKey.key;
-        }
-        if (typeof payloadKey === 'string') {
-          hash[key] = hash[payloadKey];
-          delete hash[payloadKey];
-        }
-      }
-    }
   },
 
   extractArray: function(store, primaryType, payload) {
@@ -218,6 +201,11 @@ DS.DjangoTastypieSerializer = DS.RESTSerializer.extend({
       if (this.isEmbedded(config)) {
         json[key] = get(record, key).map(function (relation) {
           var data = relation.serialize();
+
+          // Embedded objects need the ID for update operations
+          var id = relation.get('id');
+          if (!!id) { data.id = id; }
+
           return data;
         });
       } else {
@@ -284,6 +272,12 @@ DS.DjangoTastypieAdapter = DS.RESTAdapter.extend({
 
     return url;
   },
+
+  findMany: function(store, type, ids) {
+    return this.ajax('%@set/%@/'.fmt(this.buildURL(type.typeKey), ids.join(';')),
+                     'GET');
+  },
+
 
   /**
      The actual nextUrl is being stored. The offset must be extracted from

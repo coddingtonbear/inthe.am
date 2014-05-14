@@ -10,8 +10,8 @@ var STATIC_FILES = [
   'moment.min.js',
   'markdown.min.js',
   'handlebars-v1.3.0.js',
-  'ember.min.js',  // Will be replaced by ember.js in dev
-  'ember-data.min.js',  // Will be replaced by ember-data.js in dev
+  'ember.prod.js',  // Will be replaced by ember.js in dev
+  'ember-data.prod.js',  // Will be replaced by ember-data.js in dev
   'tastypie_adapter.js',
   'templates.js',
   'task_manager.js',
@@ -25,7 +25,7 @@ var getStaticFiles = function(dev) {
   for(var i=0; i<STATIC_FILES.length; i++) {
     var filename = STATIC_FILES[i];
     if(dev && filename.indexOf('ember') > -1) {
-      filename = filename.replace('.min', '');
+      filename = filename.replace('.prod', '');
     }
     actual_files.push(
       STATIC_ROOT + filename
