@@ -116,39 +116,35 @@ var model = DS.Model.extend({
     return value;
   }.property('udas'),
 
-  _string_field_to_data: function(field_name, for_property) {
-    var cached_value = this.get('_' + field_name);
-    var value = this.get(field_name);
-    var values = [];
-    if (cached_value !== undefined) {
-      return cached_value;
-    } else {
-      this.set('_' + field_name, values);
-    }
-    if (value) {
-      var ticket_ids = value.split(',');
-      var add_value_to_values = function(value) {
-        var _for_property = for_property;
-        values.pushObject(value);
-        this.propertyDidChange(_for_property);
-      };
-      for (var i = 0; i < ticket_ids.length; i++) {
-        this.store.find('task', ticket_ids[i]).then(
-          add_value_to_values.bind(this)
-        );
-      }
-      return values;
-    } else {
-      return [];
+  get_values_async: function(value, values) {
+    var ticket_ids = value.split(',');
+    var add_value_to_values = function(value) {
+      values.pushObject(value);
+    };
+    for (var i = 0; i < ticket_ids.length; i++) {
+      this.store.find('task', ticket_ids[i]).then(
+        add_value_to_values.bind(this)
+      );
     }
   },
 
+  _string_field_to_data: function(field_name) {
+    var value = this.get(field_name);
+    var values = [];
+    if (value) {
+      Ember.run.scheduleOnce(
+        'afterRender', this, 'get_values_async', value, values
+      );
+    }
+    return values;
+  },
+
   dependent_tickets: function(){
-    return this._string_field_to_data('depends', 'dependent_tickets');
+    return this._string_field_to_data('depends');
   }.property('depends'),
 
   blocked_tickets: function(){
-    return this._string_field_to_data('blocks', 'blocked_tickets');
+    return this._string_field_to_data('blocks');
   }.property('blocks'),
 
   as_json: function() {
