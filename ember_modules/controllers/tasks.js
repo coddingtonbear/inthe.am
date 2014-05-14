@@ -2,7 +2,11 @@ var controller = Ember.ArrayController.extend({
   sortProperties: ['urgency'],
   sortAscending: false,
   refresh: function(){
-    this.get('content').update();
+    try {
+      this.get('content').update();
+    } catch(e) {
+      // Pass
+    }
   },
   pendingTasks: function() {
     var result = this.get('model').filterProperty('status', 'pending');
