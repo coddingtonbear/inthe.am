@@ -39,12 +39,14 @@ var model = DS.Model.extend({
   }.property('status', 'start', 'due'),
 
   taskwarrior_class: function() {
+    this.get('calculateIsBlocked').bind(this)();
+    this.get('calculateIsBlocking').bind(this)();
     var value = '';
     if (this.get('start')) {
       value = 'active';
-    } else if (this.get('is_blocked')) {
+    } else if (this.get('is_blocked') === true) {
       value = 'blocked';
-    } else if (this.get('is_blocking')) {
+    } else if (this.get('is_blocking') === true) {
       value = 'blocking';
     } else if (moment(this.get('due')).isBefore(moment())) {
       value = 'overdue';
@@ -71,27 +73,31 @@ var model = DS.Model.extend({
     return value;
   }.property('status', 'urgency', 'start', 'due', 'is_blocked', 'is_blocking'),
 
-  is_blocked: function() {
-    return this.get('dependent_tickets').any(
-      function(item, idx, enumerable) {
+  calculateIsBlocked: function() {
+    var self = this;
+    this.get('dependent_tickets').then(function(tix){
+      var result = tix.any(function(item, idx, enumerable) {
         if ($.inArray(item.get('status'), ['completed', 'deleted']) > -1) {
           return false;
         }
         return true;
-      }
-    );
-  }.property('dependent_tickets'),
+      });
+      self.set('is_blocked', result);
+    });
+  },
 
-  is_blocking: function() {
-    return this.get('blocked_tickets').any(
-      function(item, idx, enumerable) {
+  calculateIsBlocking: function() {
+    var self = this;
+    this.get('blocked_tickets').then(function(tix){
+      var result = tix.any(function(item, idx, enumerable) {
         if ($.inArray(item.get('status'), ['completed', 'deleted']) > -1) {
           return false;
         }
         return true;
-      }
-    );
-  }.property('blocked_tickets'),
+      });
+      self.set('is_blocking', result);
+    });
+  },
 
   processed_annotations: function() {
     var value = this.get('annotations');
@@ -126,23 +132,18 @@ var model = DS.Model.extend({
         );
       }
     }
-    return Ember.RSVP.Promise.all(promises);
+    return DS.PromiseArray.create({
+      promise: Ember.RSVP.Promise.all(promises, 'TicketIDs ' + value + ' to Objects')
+    });
   },
 
   dependent_tickets: function(){
-    return DS.PromiseArray.create({
-      promise: this.ticketIdsToObjects(
-        this.get('depends')
-      )
-    });
+    var self = this;
+    return this.ticketIdsToObjects(this.get('depends'));
   }.property('depends'),
 
   blocked_tickets: function(){
-    return DS.PromiseArray.create({
-      promise: this.ticketIdsToObjects(
-        this.get('blocks')
-      )
-    });
+    return this.ticketIdsToObjects(this.get('blocks'));
   }.property('blocks'),
 
   as_json: function() {
