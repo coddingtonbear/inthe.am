@@ -157,9 +157,11 @@
         <ul class='annotation_list'>
             {{#each processed_annotations}}
                 <li>
-                    <a {{action "delete_annotation" this.description }}>&#215;</a>
-                    {{calendar this.entry}}:
-                    {{this.description}}
+                    <span>
+                        <a {{action "delete_annotation" this.description }}>&#215;</a>
+                        {{calendar this.entry}}:
+                    </span>
+                    {{markdown this.description}}
                 </li>
             {{/each}}
         </ul>
