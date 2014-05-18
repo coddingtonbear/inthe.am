@@ -10,6 +10,7 @@ var STATIC_FILES = [
   'moment.min.js',
   'markdown.min.js',
   'handlebars-v1.3.0.js',
+  'ba-linkify.min.js',
   'ember.prod.js',  // Will be replaced by ember.js in dev
   'ember-data.prod.js',  // Will be replaced by ember-data.js in dev
   'tastypie_adapter.js',

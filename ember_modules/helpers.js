@@ -26,5 +26,5 @@ Ember.Handlebars.helper('fromnow', function(date, options) {
 });
 
 Ember.Handlebars.helper('markdown', function(html) {
-  return new Handlebars.SafeString(markdown.toHTML(html));
+  return new Handlebars.SafeString(linkify(markdown.toHTML(html)));
 });
