@@ -43,3 +43,16 @@ Feature: User can manipulate tasks
         When the user accesses the url "/"
         And the user creates a new task with the description "Beta"
         Then a task named "Beta" is the opened task
+
+    Scenario: User can update existing task
+        Given the user is viewing an existing task with the description "Alpha"
+        When the user accesses the url "/"
+        And the user clicks the link "Edit"
+        And the user waits for 1 seconds
+        And the user clears the text field named "description"
+        And the user enters the text "Beta" into the field named "description"
+        And the user clicks the button labeled "Save"
+        And the user waits for 1 seconds
+        Then a single pending task with the following details will exist
+            | Key         | Value  |
+            | description | "Beta" |
