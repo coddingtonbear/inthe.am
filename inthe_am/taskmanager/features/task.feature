@@ -56,3 +56,13 @@ Feature: User can manipulate tasks
         Then a single pending task with the following details will exist
             | Key         | Value  |
             | description | "Beta" |
+
+    Scenario: User can delete existing task
+        Given the user is viewing an existing task with the description "Alpha"
+        When the user accesses the url "/"
+        And confirmation dialogs are disabled
+        And the user clicks the link "Delete"
+        And the user waits for 1 seconds
+        Then a single deleted task with the following details will exist
+            | Key              | Value   |
+            | description      | "Alpha" |

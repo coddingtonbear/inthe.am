@@ -160,6 +160,14 @@ def page_contains_heading(context, heading):
         )
 
 
+@step(u'confirmation dialogs are disabled')
+def disable_confirmation_dialog(context):
+    context.browser.execute_script(
+        'window.confirm = function(message) '
+        '{ lastConfirmationMessage = message; return true; }'
+    )
+
+
 @then(u'the element at CSS selector "{selector}" has text "{text}"')
 def element_at_selector_has_value(context, selector, text):
     actual = context.browser.find_by_css(selector).text
