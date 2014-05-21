@@ -76,3 +76,15 @@ Feature: User can manipulate tasks
         Then a single completed task with the following details will exist
             | Key              | Value   |
             | description      | "Alpha" |
+
+    @wip
+    Scenario: User can start existing task
+        Given the user is viewing an existing task with the description "Alpha"
+        When the user accesses the url "/"
+        And confirmation dialogs are disabled
+        And the user clicks the link "Start"
+        And the user waits for 1 seconds
+        Then a single pending task with the following details will exist
+            | Key              | Value   |
+            | description      | "Alpha" |
+        And a single pending task will have its "start" field set
