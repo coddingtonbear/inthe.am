@@ -48,6 +48,17 @@ def task_non_null_field(context, status, field):
     assert task.get(field)
 
 
+@then(u'a single {status} task will not have its "{field}" field set')
+def task_non_null_field(context, status, field):
+    store = get_store()
+    tasks = store.client.filter_tasks({'status': status})
+    assert len(tasks) == 1, "Asserted single task to be found, found %s" % (
+        len(tasks)
+    )
+    task = tasks[0]
+    assert not task.get(field)
+
+
 @given(u'an existing task with the {field} "{value}"')
 def task_existing_with_value(context, field, value):
     store = get_store()
