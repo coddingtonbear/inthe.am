@@ -2,7 +2,7 @@ import json
 
 from django.conf import settings
 
-from behave import given, when, then, step
+from behave import given, when, then
 
 from inthe_am.taskmanager.models import TaskStore
 
@@ -31,11 +31,14 @@ def task_with_details(context, status):
     )
     task = tasks[0]
     for key, value in context.table.rows:
-        assert task[key] == json.loads(value), "Task field %s's value is %s, not %s" % (
-            key,
-            task[key],
-            value,
+        assert task[key] == json.loads(value), (
+            "Task field %s's value is %s, not %s" % (
+                key,
+                task[key],
+                value,
+            )
         )
+
 
 @then(u'a single {status} task will have its "{field}" field set')
 def task_non_null_field(context, status, field):
@@ -49,7 +52,7 @@ def task_non_null_field(context, status, field):
 
 
 @then(u'a single {status} task will not have its "{field}" field set')
-def task_non_null_field(context, status, field):
+def task_null_field(context, status, field):
     store = get_store()
     tasks = store.client.filter_tasks({'status': status})
     assert len(tasks) == 1, "Asserted single task to be found, found %s" % (
