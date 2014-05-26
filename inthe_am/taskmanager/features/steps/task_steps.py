@@ -119,3 +119,30 @@ def logged_in_and_viewing_task(context, field, value):
         field=field,
         value=value,
     ))
+
+@given(u'a task with the following details exists')
+def existing_task_with_details(context):
+    task = {
+        'description': 'Untitled'
+    }
+    for key, value in context.table.rows:
+        task[key] = json.loads(value)
+
+    store = get_store()
+    description = task.pop('description')
+    store.client.task_add(description, **task)
+
+@then(u"the following values are visible in the task's details")
+def following_values_visible_details(context):
+    visible_data = {}
+    for row in context.browser.find_by_xpath("//table[@class='details']//tr"):
+        key = row.find_by_tag('th')[0].text
+        value = row.find_by_tag('td')[0].text
+        visible_data[key] = value
+
+    for key, value in context.table.rows:
+        actual_value = visible_data.get(key, None)
+        assert actual_value == value, "%s != %s" % (
+            actual_value,
+            value,
+        )

@@ -33,10 +33,18 @@ Feature: User can manipulate tasks
             | wait        | "20180302T120000Z" |
 
     Scenario: User can view existing task
-        Given the user is viewing an existing task with the description "Alpha"
+        Given the user is logged-in
+        And a task with the following details exists
+            | Key         | Value              |
+            | description | "Beta"             |
+            | due         | "20200302T120000Z" |
         When the user accesses the url "/"
-        Then a task named "Alpha" is visible in the task list
-        And a task named "Alpha" is the opened task
+        Then a task named "Beta" is visible in the task list
+        And a task named "Beta" is the opened task
+        And the following values are visible in the task's details
+            | Key         | Value      |
+            | Description | Beta       |
+            | Due         | 03/02/2020 |
 
     Scenario: User's view switches to new task upon creation
         Given the user is viewing an existing task with the description "Alpha"
