@@ -54,6 +54,23 @@ var controller = Ember.Controller.extend({
     this.set('urls.sms_url', this.get('user').sms_url);
     this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
     this.set('statusUpdaterHead', this.get('user').repository_head);
+
+    // Re-open the model class to append the known UDAs
+    var uda_fields = {};
+    for(var i = 0; i < this.get('user').udas.length; i++) {
+      var this_uda = this.get('user').udas[i];
+      var attr_type = 'string';
+      if(this_uda.type === 'DateField') {
+        attr_type = 'date';
+      } else if(this_uda.type === 'NumericField') {
+        attr_type = 'number';
+      }
+      uda_fields[this_uda.field] = DS.attr(attr_type);
+    }
+    App.Task.reopen(uda_fields);
+    App.Task.reopen({
+      udas: this.get('user').udas
+    });
   },
   handleError: function(reason, tsn) {
     if (reason.status == 401) {

@@ -20,6 +20,9 @@ class TaskwarriorError(Exception):
 
 
 class TaskwarriorClient(TaskWarriorShellout):
+    def __init__(self, *args, **kwargs):
+        super(TaskwarriorClient, self).__init__(*args, marshal=True, **kwargs)
+
     def _get_acceptable_properties(self):
         return list(
             set(Task.KNOWN_FIELDS) - set(Task.READ_ONLY_FIELDS)

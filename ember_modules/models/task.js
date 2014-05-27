@@ -13,11 +13,10 @@ var model = DS.Model.extend({
   'status': DS.attr('string'),
   urgency: DS.attr('number'),
   uuid: DS.attr('string'),
-  depends: DS.attr('string'),
-  blocks: DS.attr('string'),
+  depends: DS.attr(),
+  blocks: DS.attr(),
   project: DS.attr('string'),
   imask: DS.attr('number'),
-  udas: DS.attr(),
 
   editable: function(){
     if (this.get('status') == 'pending') {
@@ -37,6 +36,24 @@ var model = DS.Model.extend({
       return 'fa-circle-o';
     }
   }.property('status', 'start', 'due'),
+
+  definedUDAs: function() {
+    var fields = [];
+    for(var i = 0; i < this.udas.length; i++) {
+      var this_uda = this.udas[i];
+      var value = this.get(this_uda.field);
+      if(value) {
+        fields.push({
+          label: this_uda.label,
+          field: this_uda.field,
+          type: this_uda.type,
+          value: value,
+          processedValue: value,
+        });
+      }
+    }
+    return fields;
+  }.property().volatile(),
 
   taskwarrior_class: function() {
     this.get('calculateIsBlocked').bind(this)();
@@ -99,36 +116,12 @@ var model = DS.Model.extend({
     });
   },
 
-  processed_annotations: function() {
-    var value = this.get('annotations');
-    if (value) {
-      for (var i = 0; i < value.length; i++) {
-        value[i] = {
-          entry: new Date(Ember.Date.parse(value[i].entry)),
-          description: value[i].description
-        };
-      }
-    } else {
-      return [];
-    }
-    return value;
-  }.property('annotations'),
-
-  processed_udas: function() {
-    var value = [];
-    for(var v in this.get('udas')) {
-      value.push(this.get('udas')[v]);
-    }
-    return value;
-  }.property('udas'),
-
   ticketIdsToObjects: function(value) {
     var promises = [];
     if (value) {
-      var ticket_ids = value.split(',');
-      for (var i = 0; i < ticket_ids.length; i++) {
+      for (var i = 0; i < value.length; i++) {
         promises.pushObject(
-          this.store.find('task', ticket_ids[i])
+          this.store.find('task', value[i])
         );
       }
     }

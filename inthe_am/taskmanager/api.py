@@ -415,6 +415,13 @@ class UserResource(resources.ModelResource):
                 'sync_enabled': store.sync_enabled,
                 'pebble_cards_enabled': store.pebble_cards_enabled,
                 'feed_enabled': store.feed_enabled,
+                'udas': [
+                    {
+                        'field': k,
+                        'label': v.label,
+                        'type': v.__class__.__name__
+                    } for k, v in store.client.config.get_udas().items()
+                ]
             }
         else:
             user_data = {
@@ -453,12 +460,11 @@ class TaskResource(resources.Resource):
     start = fields.DateTimeField(attribute='start', null=True)
     wait = fields.DateTimeField(attribute='wait', null=True)
     scheduled = fields.DateTimeField(attribute='scheduled', null=True)
-    depends = fields.CharField(attribute='depends', null=True)
-    blocks = fields.CharField(attribute='blocks', null=True)
+    depends = fields.ListField(attribute='depends', null=True)
+    blocks = fields.ListField(attribute='blocks', null=True)
     annotations = fields.ListField(attribute='annotations', null=True)
     tags = fields.ListField(attribute='tags', null=True)
     imask = fields.IntegerField(attribute='imask', null=True)
-    udas = fields.DictField(attribute='udas', null=True)
 
     def prepend_urls(self):
         return [
@@ -514,6 +520,21 @@ class TaskResource(resources.Resource):
                 name='refresh_tasks',
             )
         ]
+
+    def dehydrate(self, bundle):
+        store = models.TaskStore.get_for_user(bundle.request.user)
+        for key, data in store.client.config.get_udas().items():
+            value = getattr(bundle.obj, key, None)
+            bundle.data[key] = value
+        return bundle
+
+    def hydrate(self, bundle):
+        store = models.TaskStore.get_for_user(bundle.request.user)
+        for key, data in store.client.config.get_udas().items():
+            value = bundle.data.get(key, None)
+            if value:
+                setattr(bundle.obj, key, value)
+        return bundle
 
     def manage_lock(self, request, **kwargs):
         store = models.TaskStore.get_for_user(request.user)
@@ -843,7 +864,7 @@ class TaskResource(resources.Resource):
 
         objects = []
         for task_json in store.client.filter_tasks({'status': self.TASK_TYPE}):
-            task = Task(task_json, store.taskrc, store=store)
+            task = Task(task_json, store=store)
             if self.passes_filters(task, filters):
                 objects.append(task)
 
@@ -854,7 +875,6 @@ class TaskResource(resources.Resource):
         try:
             return Task(
                 store.client.get_task(uuid=kwargs['pk'])[1],
-                store.taskrc,
                 store=store,
             )
         except ValueError:
@@ -870,7 +890,6 @@ class TaskResource(resources.Resource):
             safe_json = Task.from_serialized(bundle.data).get_safe_json()
             bundle.obj = Task(
                 store.client.task_add(**safe_json),
-                store.taskrc,
                 store=store,
             )
             store.log_message(
@@ -901,7 +920,6 @@ class TaskResource(resources.Resource):
             )
             bundle.obj = Task(
                 store.client.get_task(uuid=kwargs['pk'])[1],
-                store.taskrc,
                 store=store,
             )
             return bundle

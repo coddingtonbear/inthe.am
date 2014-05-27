@@ -28,3 +28,17 @@ Ember.Handlebars.helper('fromnow', function(date, options) {
 Ember.Handlebars.helper('markdown', function(html) {
   return new Handlebars.SafeString(linkify(markdown.toHTML(html)));
 });
+
+
+Ember.Handlebars.helper('renderUDAValue', function(uda) {
+  if(uda.type == 'DateField') {
+    if (uda.value) {
+      return new Handlebars.SafeString(
+        '<span class="calendar date" title="' + moment(uda.value).format('LLLL') + '">' + moment(uda.value).calendar() + "</span>"
+      );
+    }
+  } else if (uda.type == 'StringField') {
+    return new Handlebars.SafeString(linkify(markdown.toHTML(uda.value)));
+  }
+  return uda.value;
+});

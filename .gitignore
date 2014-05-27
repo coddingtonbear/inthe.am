@@ -9,6 +9,7 @@ taskd/
 tasks/*
 assets/icon.xcf.tmp.png
 inthe_am/taskmanager/static/app.css
+inthe_am/taskmanager/static/colorschemes/*.css
 inthe_am/taskmanager/static/sources/task_manager.js
 inthe_am/taskmanager/static/sources/templates.js
 inthe_am/taskmanager/static/compiled.min.js

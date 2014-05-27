@@ -144,10 +144,10 @@
                     <th>UUID</th>
                     <td><span class="uuid">{{uuid}}</span></td>
                 </tr>
-                {{#each processed_udas}}
+                {{#each definedUDAs}}
                     <tr>
-                        <th>{{this.label}}</th>
-                        <td>{{markdown this.value}}</td>
+                        <th>{{label}}</th>
+                        <td>{{renderUDAValue this}}</td>
                     </tr>
                 {{/each}}
             </tbody>
@@ -155,13 +155,12 @@
     </div>
     <div class="medium-6 columns annotations_list">
         <ul class='annotation_list'>
-            {{#each processed_annotations}}
+            {{#each annotations}}
                 <li>
-                    <span>
-                        <a {{action "delete_annotation" this.description }}>&#215;</a>
-                        {{calendar this.entry}}:
+                    <span class="annotation_tools">
+                        <a {{action "delete_annotation" this}}>&#215;</a>
                     </span>
-                    {{markdown this.description}}
+                    {{markdown this}}
                 </li>
             {{/each}}
         </ul>
