@@ -9,3 +9,4 @@ def set_custom_configuration(context):
     store.taskrc_extras = context.text
     store.apply_extras()
     store.save()
+    context.browser.reload()

@@ -22,8 +22,8 @@ Feature: User can view task UDA details
         Then a task named "Delta" is visible in the task list
         And a task named "Delta" is the opened task
         And the following values are visible in the task's details
-            | Key                | Value            |
-            | Description        | Delta            |
-            | User Username      | One              |
-            | Thanked            | 24               |
-            | Encouragement Date | 20100405T140000Z |
+            | Key                | Value      |
+            | Description        | Delta      |
+            | User Username      | One        |
+            | Thanked            | 24         |
+            | Encouragement Date | 04/05/2010 |
