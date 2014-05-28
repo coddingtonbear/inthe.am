@@ -10,6 +10,7 @@ import uuid
 from tastypie import (
     authentication, authorization, bundle, exceptions, fields, resources
 )
+from taskw.task import Task as TaskwTask
 from twilio.twiml import Response
 from twilio.util import RequestValidator
 from lockfile import LockTimeout
@@ -26,6 +27,7 @@ from django.utils.timezone import now
 
 from . import models
 from . import forms
+from .api_fields import UUIDField
 from .context_managers import git_checkpoint
 from .decorators import requires_task_store, git_managed
 from .task import Task
@@ -446,9 +448,12 @@ class UserResource(resources.ModelResource):
 
 class TaskResource(resources.Resource):
     TASK_TYPE = 'pending'
+    SYNTHETIC_FIELDS = [
+        'blocks',
+    ]
 
     id = fields.IntegerField(attribute='id', null=True)
-    uuid = fields.CharField(attribute='uuid')
+    uuid = UUIDField(attribute='uuid')
     status = fields.CharField(attribute='status')
     urgency = fields.FloatField(attribute='urgency')
     description = fields.CharField(attribute='description')
@@ -887,9 +892,21 @@ class TaskResource(resources.Resource):
                 raise exceptions.BadRequest(
                     "You must specify a description for each task."
                 )
-            safe_json = Task.from_serialized(bundle.data).get_safe_json()
+            bundle = self.full_hydrate(bundle)
+            data = bundle.obj.get_json()
+
+            for k in self.SYNTHETIC_FIELDS:
+                if k in data:
+                    data.pop(k, None)
+            for k, v in TaskwTask.FIELDS.items():
+                if k in data and v.read_only:
+                    data.pop(k, None)
+            for k, v in data.items():
+                if not v:
+                    data.pop(k)
+
             bundle.obj = Task(
-                store.client.task_add(**safe_json),
+                store.client.task_add(**data),
                 store=store,
             )
             store.log_message(
@@ -909,14 +926,28 @@ class TaskResource(resources.Resource):
                 raise exceptions.BadRequest(
                     "You must specify a description for each task."
                 )
-            bundle.data.pop('id', None)
-            serialized = Task.from_serialized(bundle.data).get_safe_json()
-            serialized['uuid'] = kwargs['pk']
-            store.client.task_update(serialized)
+            original = store.client.get_task(uuid=kwargs['pk'])[1]
+            if not original:
+                raise exceptions.NotFound()
+            bundle = self.full_hydrate(bundle)
+
+            for k, v in bundle.obj.get_json().items():
+                if (
+                    (
+                        k in original.FIELDS
+                        and original.FIELDS[k].read_only
+                    ) or k in self.SYNTHETIC_FIELDS
+                ):
+                    continue
+                original[k] = v
+
+            changes = original.get_changes(keep=True)
+
+            store.client.task_update(original)
             store.log_message(
                 "Task %s updated: %s.",
                 kwargs['pk'],
-                serialized
+                changes,
             )
             bundle.obj = Task(
                 store.client.get_task(uuid=kwargs['pk'])[1],
@@ -998,6 +1029,7 @@ class TaskResource(resources.Resource):
         ]
         limit = 100
         max_limit = 400
+        object_class = Task
 
 
 class CompletedTaskResource(TaskResource):

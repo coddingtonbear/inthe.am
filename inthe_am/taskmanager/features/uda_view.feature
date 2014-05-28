@@ -1,6 +1,5 @@
 Feature: User can view task UDA details
 
-    @wip
     Scenario: User can view task having specified UDAs
         Given the user is logged-in
         And the user has the following custom configuration

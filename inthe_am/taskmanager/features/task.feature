@@ -23,21 +23,21 @@ Feature: User can manipulate tasks
         And the user clicks the button labeled "Save"
         And the user waits for 1 seconds
         Then a single waiting task with the following details will exist
-            | Key         | Value              |
-            | description | "My Description"   |
-            | project     | "Alpha"            |
-            | priority    | "L"                |
-            | tags        | ["Magic"]          |
-            | due         | "20200302T120000Z" |
-            | scheduled   | "20190302T120000Z" |
-            | wait        | "20180302T120000Z" |
+            | Key         | Value            |
+            | description | "My Description" |
+            | project     | "Alpha"          |
+            | priority    | "L"              |
+            | tags        | ["Magic"]        |
+            | due         | 20200302T120000Z |
+            | scheduled   | 20190302T120000Z |
+            | wait        | 20180302T120000Z |
 
     Scenario: User can view existing task
         Given the user is logged-in
         And a task with the following details exists
-            | Key         | Value              |
-            | description | "Beta"             |
-            | due         | "20200302T120000Z" |
+            | Key         | Value            |
+            | description | "Beta"           |
+            | due         | 20200302T120000Z |
         When the user accesses the url "/"
         Then a task named "Beta" is visible in the task list
         And a task named "Beta" is the opened task

@@ -1,14 +1,26 @@
+import datetime
 import json
-
-from django.conf import settings
+import re
 
 from behave import given, when, then
+import pytz
+
+from django.conf import settings
 
 from inthe_am.taskmanager.models import TaskStore
 
 
 def get_store():
     return TaskStore.objects.get(user__email=settings.TESTING_LOGIN_USER)
+
+
+def get_json_value(value):
+    if re.match(r'^\d{8}T\d{6}Z$', value):
+        return datetime.datetime.strptime(
+            value,
+            '%Y%m%dT%H%M%SZ'
+        ).replace(tzinfo=pytz.UTC)
+    return json.loads(value)
 
 
 @then(u'a task with the {field} "{value}" will exist')
@@ -31,7 +43,7 @@ def task_with_details(context, status):
     )
     task = tasks[0]
     for key, value in context.table.rows:
-        assert task[key] == json.loads(value), (
+        assert task[key] == get_json_value(value), (
             "Task field %s's value is %s, not %s" % (
                 key,
                 task[key],
@@ -126,7 +138,7 @@ def existing_task_with_details(context):
         'description': 'Untitled'
     }
     for key, value in context.table.rows:
-        task[key] = json.loads(value)
+        task[key] = get_json_value(value)
 
     store = get_store()
     description = task.pop('description')
