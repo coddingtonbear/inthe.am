@@ -22,7 +22,6 @@ def user_accesses_the_url(context, url):
     context.browser.execute_script(
         u"window.localStorage.setItem('disable_ticket_stream', 'yes');"
     )
-    time.sleep(1)
 
 
 @given(u'the user is logged-in')
@@ -86,6 +85,7 @@ def clicks_link(context, anchor_text):
         try:
             if match.visible:
                 match.click()
+                time.sleep(1)
                 return
         except StaleElementReferenceException:
             pass
@@ -116,6 +116,7 @@ def user_clicks_button_labeled(context, label):
     for button in context.browser.find_by_tag("button"):
         if button.visible and button.text == label:
             button.click()
+            time.sleep(1)
             return
     assert False, "No button with label %s could be clicked" % label
 

@@ -1,6 +1,7 @@
 import datetime
 import json
 import re
+from urlparse import urljoin
 
 from behave import given, when, then
 import pytz
@@ -74,7 +75,7 @@ def task_null_field(context, status, field):
     assert not task.get(field)
 
 
-@given(u'an existing task with the {field} "{value}"')
+@given(u'a task with the {field} "{value}" exists')
 def task_existing_with_value(context, field, value):
     store = get_store()
     basic_task = {
@@ -126,11 +127,16 @@ def task_with_new_description(context, value):
 def logged_in_and_viewing_task(context, field, value):
     context.execute_steps(u'''
         Given the user is logged-in
-        And an existing task with the {field} "{value}"
+        And a task with the {field} "{value}" exists
     '''.format(
         field=field,
         value=value,
     ))
+    url = urljoin(
+        context.config.server_url, '/tasks/%s' % context.created_task_id
+    )
+    context.browser.visit(url)
+
 
 @given(u'a task with the following details exists')
 def existing_task_with_details(context):
@@ -143,6 +149,7 @@ def existing_task_with_details(context):
     store = get_store()
     description = task.pop('description')
     store.client.task_add(description, **task)
+
 
 @then(u"the following values are visible in the task's details")
 def following_values_visible_details(context):
