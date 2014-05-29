@@ -7,7 +7,7 @@ var model = DS.Model.extend({
   count: DS.attr('number'),
 
   task_uuids: function() {
-    var taskMatcher = /[a-f0-9-]{36}/gi;
+    var taskMatcher = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
     var match;
     var matches = Ember.ArrayProxy.create({content: []});
     while(match = taskMatcher.exec(this.get('message'))) {
