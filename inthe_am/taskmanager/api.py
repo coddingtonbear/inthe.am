@@ -7,10 +7,13 @@ import re
 import shlex
 import uuid
 
+from dateutil.parser import parse
 from tastypie import (
     authentication, authorization, bundle, exceptions, fields, resources
 )
+from tastypie.bundle import Bundle
 from taskw.task import Task as TaskwTask
+from taskw.fields import DateField
 from twilio.twiml import Response
 from twilio.util import RequestValidator
 from lockfile import LockTimeout
@@ -511,7 +514,8 @@ class TaskResource(resources.Resource):
                 self.wrap_view('manage_lock')
             ),
             url(
-                r"^(?P<resource_name>%s)/pebble-card/(?P<secret_id>[\w\d_.-]+)/?$" % (
+                r"^(?P<resource_name>%s)/pebble-card/"
+                r"(?P<secret_id>[\w\d_.-]+)/?$" % (
                     self._meta.resource_name
                 ),
                 self.wrap_view('pebble_card'),
@@ -535,9 +539,16 @@ class TaskResource(resources.Resource):
 
     def hydrate(self, bundle):
         store = models.TaskStore.get_for_user(bundle.request.user)
-        for key, data in store.client.config.get_udas().items():
+        for key, field_instance in store.client.config.get_udas().items():
             value = bundle.data.get(key, None)
-            if value:
+            if value and isinstance(field_instance, DateField):
+                try:
+                    setattr(bundle.obj, key, parse(value))
+                except (TypeError, ValueError):
+                    raise exceptions.BadRequest(
+                        "Invalid date provided for field %s" % key
+                    )
+            elif value:
                 setattr(bundle.obj, key, value)
         return bundle
 
@@ -892,6 +903,8 @@ class TaskResource(resources.Resource):
                 raise exceptions.BadRequest(
                     "You must specify a description for each task."
                 )
+
+            bundle.obj = self.get_empty_task(bundle.request)
             bundle = self.full_hydrate(bundle)
             data = bundle.obj.get_json()
 
@@ -929,6 +942,8 @@ class TaskResource(resources.Resource):
             original = store.client.get_task(uuid=kwargs['pk'])[1]
             if not original:
                 raise exceptions.NotFound()
+
+            bundle.obj = self.get_empty_task(bundle.request)
             bundle = self.full_hydrate(bundle)
 
             for k, v in bundle.obj.get_json().items():
@@ -1003,6 +1018,28 @@ class TaskResource(resources.Resource):
                 ),
                 status=409,
             )
+
+    def get_empty_task(self, request):
+        store = models.TaskStore.get_for_user(request.user)
+        return self._meta.object_class(store=store)
+
+    def build_bundle(
+        self, obj=None, data=None, request=None, objects_saved=None
+    ):
+        """ Builds the bundle!
+
+        Overridden only to properly build the `Task` entry with its object.
+
+        """
+        if obj is None and self._meta.object_class:
+            obj = self.get_empty_task(request)
+
+        return Bundle(
+            obj=obj,
+            data=data,
+            request=request,
+            objects_saved=objects_saved
+        )
 
     class Meta:
         always_return_data = True

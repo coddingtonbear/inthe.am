@@ -29,3 +29,4 @@ behave==1.2.3
 splinter==0.6.0
 -e git+https://github.com/coddingtonbear/django-behave.git#egg=django_behave
 ipdb==0.8
+python-dateutil>=2.2

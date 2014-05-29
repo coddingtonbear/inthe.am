@@ -4,7 +4,10 @@ from taskw.task import Task as TaskwTask
 class Task(object):
     def __init__(self, json=None, store=None):
         if json is None:
-            json = TaskwTask()
+            taskw_task_kwargs = {}
+            if store:
+                taskw_task_kwargs['udas'] = store.client.config.get_udas()
+            json = TaskwTask(**taskw_task_kwargs)
         self.__dict__['_json'] = json
         self.__dict__['_store'] = store
 
