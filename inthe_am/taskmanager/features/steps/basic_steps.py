@@ -22,7 +22,7 @@ def user_accesses_the_url(context, url):
     context.browser.execute_script(
         u"window.localStorage.setItem('disable_ticket_stream', 'yes');"
     )
-    time.sleep(2)
+    time.sleep(1)
 
 
 @given(u'the user is logged-in')
@@ -134,7 +134,7 @@ def user_enters_credentials(context):
 
     needs_approval = context.browser.find_by_id('submit_approve_access')
     if needs_approval:
-        time.sleep(2)
+        time.sleep(1)
         needs_approval.first.click()
 
 
