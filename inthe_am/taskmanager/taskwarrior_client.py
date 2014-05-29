@@ -4,8 +4,7 @@ import subprocess
 
 import six
 from taskw import TaskWarriorShellout
-
-from .task import Task
+from taskw.task import Task as TaskwTask
 
 
 logger = logging.getLogger(__name__)
@@ -24,9 +23,7 @@ class TaskwarriorClient(TaskWarriorShellout):
         super(TaskwarriorClient, self).__init__(*args, marshal=True, **kwargs)
 
     def _get_acceptable_properties(self):
-        return list(
-            set(Task.KNOWN_FIELDS) - set(Task.READ_ONLY_FIELDS)
-        ) + ['uuid']
+        return TaskwTask.FIELDS.keys()
 
     def _get_acceptable_prefix(self, command):
         if ' ' in command:
@@ -53,6 +50,8 @@ class TaskwarriorClient(TaskWarriorShellout):
                     )
                 else:
                     description_args.append(arg)
+            elif arg.startswith('+') or arg.startswith('-'):
+                final_args.append(arg)
             else:
                 description_args.append(arg)
 
