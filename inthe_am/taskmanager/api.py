@@ -904,13 +904,10 @@ class TaskResource(resources.Resource):
 
     @requires_task_store
     def obj_get(self, bundle, store, **kwargs):
-        try:
-            return Task(
-                store.client.get_task(uuid=kwargs['pk'])[1],
-                store=store,
-            )
-        except ValueError:
+        task = store.client.get_task(uuid=kwargs['pk'])[1]
+        if not task:
             raise exceptions.NotFound()
+        return Task(task, store=store)
 
     @requires_task_store
     def obj_create(self, bundle, store, **kwargs):
