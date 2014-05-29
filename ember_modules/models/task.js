@@ -84,7 +84,7 @@ var model = DS.Model.extend({
       value = 'pri__M';
     } else if (this.get('priority') == 'L') {
       value = 'pri__L';
-    } else if (this.get('tags')) {
+    } else if (this.get('tags').length > 0) {
       value = 'tagged';
     }
     return value;
