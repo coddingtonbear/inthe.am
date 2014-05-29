@@ -546,10 +546,26 @@ class TaskResource(resources.Resource):
                     setattr(bundle.obj, key, parse(value))
                 except (TypeError, ValueError):
                     raise exceptions.BadRequest(
-                        "Invalid date provided for field %s" % key
+                        "Invalid date provided for field %s: " % (
+                            key,
+                            value,
+                        )
                     )
             elif value:
                 setattr(bundle.obj, key, value)
+
+        try:
+            depends = []
+            for task_id in bundle.data.get('depends', []):
+                depends.append(uuid.UUID(task_id))
+            bundle.data['depends'] = depends
+        except (TypeError, ValueError):
+            raise exceptions.BadRequest(
+                "Invalid task IDs provided for field depends: %s" % (
+                    bundle.data.get('depends')
+                )
+            )
+
         return bundle
 
     def manage_lock(self, request, **kwargs):
