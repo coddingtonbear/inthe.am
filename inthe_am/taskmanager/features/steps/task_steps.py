@@ -128,10 +128,15 @@ def logged_in_and_viewing_task(context, field, value):
     context.execute_steps(u'''
         Given the user is logged-in
         And a task with the {field} "{value}" exists
+        And the user goes to the task's URL
     '''.format(
         field=field,
         value=value,
     ))
+
+
+@when(u'the user goes to the task\'s URL')
+def user_goes_to_tasks_url(context):
     url = urljoin(
         context.config.server_url, '/tasks/%s' % context.created_task_id
     )
@@ -148,7 +153,8 @@ def existing_task_with_details(context):
 
     store = get_store()
     description = task.pop('description')
-    store.client.task_add(description, **task)
+    task = store.client.task_add(description, **task)
+    context.created_task_id = task['uuid']
 
 
 @then(u"the following values are visible in the task's details")

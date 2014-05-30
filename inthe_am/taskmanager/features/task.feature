@@ -34,7 +34,7 @@ Feature: User can manipulate tasks
             | Key         | Value            |
             | description | "Beta"           |
             | due         | 20200302T120000Z |
-        When the user accesses the url "/"
+        When the user goes to the task's URL
         Then a task named "Beta" is visible in the task list
         And a task named "Beta" is the opened task
         And the following values are visible in the task's details
