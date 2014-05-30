@@ -3,7 +3,7 @@ import json
 import re
 from urlparse import urljoin
 
-from behave import given, when, then
+from behave import given, when, then, step
 import pytz
 
 from django.conf import settings
@@ -135,7 +135,7 @@ def logged_in_and_viewing_task(context, field, value):
     ))
 
 
-@when(u'the user goes to the task\'s URL')
+@step(u'the user goes to the task\'s URL')
 def user_goes_to_tasks_url(context):
     url = urljoin(
         context.config.server_url, '/tasks/%s' % context.created_task_id
