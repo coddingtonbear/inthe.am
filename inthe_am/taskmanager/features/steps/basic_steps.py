@@ -137,6 +137,7 @@ def user_enters_credentials(context):
     if needs_approval:
         time.sleep(1)
         needs_approval.first.click()
+    time.sleep(1)
 
 
 @then(u'a new account will be created using the test e-mail address')
