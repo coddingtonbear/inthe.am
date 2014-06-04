@@ -39,6 +39,7 @@ def user_is_logged_in(context):
     store = TaskStore.get_for_user(u)
     if not store.configured:
         store.autoconfigure_taskd()
+    context.store = store
 
     meta = UserMetadata.get_for_user(u)
     meta.tos_version = settings.TOS_VERSION

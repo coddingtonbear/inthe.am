@@ -224,6 +224,23 @@ TEST_RUNNER = 'django_behave.runner.DjangoBehaveTestSuiteRunner'
 BROKER_URL = 'redis://localhost:6379/1'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 
+TASKWARRIOR_CONFIG_OVERRIDES = {
+    'uda': {
+        'intheamattachments': {
+            'type': 'text',
+            'label': 'Inthe.AM Attachments',
+        },
+        'intheamoriginalemailsubject': {
+            'type': 'text',
+            'label': 'Inthe.AM Original E-mail Subject',
+        },
+        'intheamoriginalemailid': {
+            'type': 'numeric',
+            'label': 'Inthe.AM Origin E-mail ID',
+        }
+    }
+}
+
 VERSION = check_output(
     [
         'git',

@@ -15,7 +15,7 @@ from django.template.loader import render_to_string
 from django.utils.timezone import now
 from dulwich.repo import Repo
 import subprocess32 as subprocess
-from tastypie.models import create_api_key, ApiKey
+from tastypie.models import ApiKey
 
 from .context_managers import git_checkpoint
 from .taskwarrior_client import TaskwarriorClient, TaskwarriorError
@@ -130,7 +130,8 @@ class TaskStore(models.Model):
     def client(self):
         if not getattr(self, '_client', None):
             self._client = TaskwarriorClient(
-                self.taskrc.path
+                self.taskrc.path,
+                config_overrides=settings.TASKWARRIOR_CONFIG_OVERRIDES
             )
         return self._client
 
@@ -769,22 +770,8 @@ class TaskRc(object):
         return self.__unicode__().encode('utf-8', 'REPLACE')
 
 
-def autoconfigure_taskd_for_user(sender, instance, **kwargs):
-    store = TaskStore.get_for_user(instance)
-    try:
-        if not store.configured:
-            store.autoconfigure_taskd()
-    except:
-        if not settings.DEBUG:
-            raise
-        message = "Error encountered while configuring task store."
-        logger.exception(message)
-        store.log_error(message)
+# This *must* be at the bottom of *this* file for complicated reasons
+import signal_handlers
 
-
-models.signals.post_save.connect(
-    create_api_key, sender=User, dispatch_uid="generate_api_key"
-)
-models.signals.post_save.connect(
-    autoconfigure_taskd_for_user, sender=User, dispatch_uid="generate_taskd"
-)
+# This is just a noop here to make linters not complain:
+signal_handlers
