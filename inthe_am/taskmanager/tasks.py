@@ -34,16 +34,17 @@ def process_email_message(message_id):
                 secret_id=address.split('@')[0]
             )
             break
-        except TaskStore.DoesNotExist:
+        except (TaskStore.DoesNotExist, IndexError):
             pass
 
-    if not store:
+    if store is None:
         logger.error(
             "Could not find task store for e-mail message (ID %s) addressed "
             "to %s",
             message.pk,
             message.to_addresses
         )
+        return
 
     if (
         not message.subject
@@ -58,10 +59,6 @@ def process_email_message(message_id):
         ] + shlex.split(message.text)
 
         stdout, stderr = store.client._execute_safe(*task_args)
-
-        import ipdb
-        ipdb.set_trace()
-
 
         log_args = (
             "Added task %s via e-mail %s from %s." % (

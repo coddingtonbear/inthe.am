@@ -53,6 +53,14 @@ def task_with_details(context, status):
         )
 
 
+@given(u'the user\'s task store is configured with the following options')
+def store_configuration(context):
+    store = get_store()
+    for key, value in context.table.rows:
+        setattr(store, key, get_json_value(value))
+    store.save()
+
+
 @then(u'a single {status} task will have its "{field}" field set')
 def task_non_null_field(context, status, field):
     store = get_store()
