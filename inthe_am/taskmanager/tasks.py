@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import logging
+import re
 import shlex
 import uuid
 
@@ -25,13 +26,36 @@ def sync_repository(store_id):
 @shared_task
 def process_email_message(message_id):
     from .models import TaskStore
+
+    def get_secret_id_and_args(address):
+        inbox_id = address[0:36]
+        args = []
+
+        arg_string = address[36:]
+        for arg in re.split('__|\+', arg_string):
+            if not arg:
+                continue
+            if '=' in arg:
+                args.append(
+                    '%s:"%s"' % arg.split('=')
+                )
+            else:
+                args.append('+%s' % arg)
+
+        return inbox_id, args
+
     message = Message.objects.get(pk=message_id)
 
     store = None
+    additional_args = []
     for address in message.to_addresses:
         try:
+            inbox_id, additional_args = get_secret_id_and_args(
+                address.split('@')[0]
+            )
+
             store = TaskStore.objects.get(
-                secret_id=address.split('@')[0]
+                secret_id=inbox_id
             )
             break
         except (TaskStore.DoesNotExist, IndexError):
@@ -56,7 +80,7 @@ def process_email_message(message_id):
             'uuid:%s' % task_id,
             'intheamoriginalemailsubject:"%s"' % message.subject,
             'intheamoriginalemailid:%s' % message.pk,
-        ] + shlex.split(message.text)
+        ] + additional_args + shlex.split(message.text)
 
         stdout, stderr = store.client._execute_safe(*task_args)
 
