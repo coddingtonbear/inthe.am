@@ -37,7 +37,7 @@ def process_email_message(message_id):
                 continue
             if '=' in arg:
                 args.append(
-                    '%s:"%s"' % arg.split('=')
+                    '%s:"%s"' % tuple(arg.split('='))
                 )
             else:
                 args.append('+%s' % arg)
