@@ -227,11 +227,11 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 TASKWARRIOR_CONFIG_OVERRIDES = {
     'uda': {
         'intheamattachments': {
-            'type': 'text',
+            'type': 'string',
             'label': 'Inthe.AM Attachments',
         },
         'intheamoriginalemailsubject': {
-            'type': 'text',
+            'type': 'string',
             'label': 'Inthe.AM Original E-mail Subject',
         },
         'intheamoriginalemailid': {

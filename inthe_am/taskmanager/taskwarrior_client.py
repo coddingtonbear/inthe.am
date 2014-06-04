@@ -23,7 +23,7 @@ class TaskwarriorClient(TaskWarriorShellout):
         super(TaskwarriorClient, self).__init__(*args, marshal=True, **kwargs)
 
     def _get_acceptable_properties(self):
-        return TaskwTask.FIELDS.keys()
+        return TaskwTask.FIELDS.keys() + self.config.get_udas().keys()
 
     def _get_acceptable_prefix(self, command):
         if ' ' in command:
@@ -58,6 +58,8 @@ class TaskwarriorClient(TaskWarriorShellout):
         return final_args + ['--'] + description_args
 
     def _strip_unsafe_chars(self, incoming):
+        if isinstance(incoming, unicode):
+            incoming = incoming.encode('utf8')
         return ''.join(
             char for char in incoming if curses.ascii.isprint(char)
         )
@@ -73,21 +75,26 @@ class TaskwarriorClient(TaskWarriorShellout):
         Returns a 2-tuple of stdout and stderr (respectively).
 
         """
-        command = [
-            'task',
-            'rc:%s' % self.config_filename,
-            'rc.json.array=TRUE',
-            'rc.verbose=nothing',
-            'rc.confirmation=no',
-        ] + [
-            six.text_type(arg).encode('utf-8')
-            for arg in args
-        ]
+        command = (
+            [
+                'task',
+                'rc:%s' % self.config_filename,
+            ]
+            + self.get_configuration_override_args()
+            + [six.text_type(arg) for arg in args]
+        )
+
+        # subprocess is expecting bytestrings only, so nuke unicode if present
+        for i in range(len(command)):
+            if isinstance(command[i], six.text_type):
+                command[i] = command[i].encode('utf-8')
+
         proc = subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
+
         stdout, stderr = proc.communicate()
         if proc.returncode != 0:
             logger.error(
