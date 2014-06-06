@@ -165,6 +165,16 @@ def existing_task_with_details(context):
     context.created_task_id = task['uuid']
 
 
+@then(u'{count} {status} tasks exist in the user\'s task list')
+def task_count_matches(context, count, status):
+    count = int(count)
+
+    store = get_store()
+    tasks = store.client.filter_tasks({'status': status})
+
+    assert len(tasks) == count
+
+
 @then(u"the following values are visible in the task's details")
 def following_values_visible_details(context):
     visible_data = {}

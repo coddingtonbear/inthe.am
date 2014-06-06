@@ -3,8 +3,9 @@ Feature: User can receive incoming tasks via e-mail
     Scenario: User can receive task via e-mail
         Given the user is logged-in
         And the user's task store is configured with the following options
-            | Key       | Value                                  |
-            | secret_id | "3e196d2f-6947-42e5-8134-b954860c2c9c" |
+            | Key             | Value                                  |
+            | secret_id       | "3e196d2f-6947-42e5-8134-b954860c2c9c" |
+            | email_whitelist | "*"                                    |
         When the following incoming email is processed
             """
             From: alpha
@@ -23,8 +24,9 @@ Feature: User can receive incoming tasks via e-mail
     Scenario: User can specify tags in "to" header
         Given the user is logged-in
         And the user's task store is configured with the following options
-            | Key       | Value                                  |
-            | secret_id | "3e196d2f-6947-42e5-8134-b954860c2c9c" |
+            | Key             | Value                                  |
+            | secret_id       | "3e196d2f-6947-42e5-8134-b954860c2c9c" |
+            | email_whitelist | "*"                                    |
         When the following incoming email is processed
             """
             From: alpha
@@ -41,8 +43,9 @@ Feature: User can receive incoming tasks via e-mail
     Scenario: User can specify field values in "to" header
         Given the user is logged-in
         And the user's task store is configured with the following options
-            | Key       | Value                                  |
-            | secret_id | "3e196d2f-6947-42e5-8134-b954860c2c9c" |
+            | Key             | Value                                  |
+            | secret_id       | "3e196d2f-6947-42e5-8134-b954860c2c9c" |
+            | email_whitelist | "*"                                    |
         When the following incoming email is processed
             """
             From: alpha
@@ -56,3 +59,19 @@ Feature: User can receive incoming tasks via e-mail
             | description | "Do something important" |
             | project     | "biscuit"                |
             | priority    | "L"                      |
+
+    Scenario: E-mails from non-whitelisted addresses are rejected
+        Given the user is logged-in
+        And the user's task store is configured with the following options
+            | Key             | Value                                  |
+            | secret_id       | "3e196d2f-6947-42e5-8134-b954860c2c9c" |
+            | email_whitelist | "beta"                                 |
+        When the following incoming email is processed
+            """
+            From: alpha
+            To: 3e196d2f-6947-42e5-8134-b954860c2c9c@inthe.am
+            Subject: New
+
+            priority:H This is an important task +important project:alpha
+            """
+        Then 0 pending tasks exist in the user's task list

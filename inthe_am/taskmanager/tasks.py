@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+from fnmatch import fnmatch as glob
 import logging
 import re
 import shlex
@@ -68,6 +69,23 @@ def process_email_message(message_id):
             message.pk,
             message.to_addresses
         )
+        return
+
+    allowed = False
+    for address in store.email_whitelist.split('\n'):
+        if glob(message.from_address[0], address):
+            allowed = True
+
+    if not allowed:
+        log_args = (
+            "Incoming task creation e-mail (ID: %s) from '%s' "
+            "does not match email whitelist and was ignored." % (
+                message.pk,
+                message.from_address[0]
+            ),
+        )
+        logger.info(*log_args)
+        store.log_message(*log_args)
         return
 
     if (
