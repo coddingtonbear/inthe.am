@@ -11,6 +11,7 @@ var controller = Ember.Controller.extend({
     taskrc_extras: '/api/v1/user/taskrc/',
     taskd_settings: '/api/v1/user/configure-taskd/',
     taskd_reset: '/api/v1/user/reset-taskd-configuration/',
+    email_integration: '/api/v1/user/email-integration/',
     twilio_integration: '/api/v1/user/twilio-integration/',
     tos_accept: '/api/v1/user/tos-accept/',
     clear_task_data: '/api/v1/user/clear-task-data/',

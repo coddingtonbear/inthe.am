@@ -111,6 +111,12 @@ class UserResource(resources.ModelResource):
                 self.wrap_view('twilio_integration')
             ),
             url(
+                r"^(?P<resource_name>%s)/email-integration/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('email_integration')
+            ),
+            url(
                 r"^(?P<resource_name>%s)/clear-task-data/?$" % (
                     self._meta.resource_name
                 ),
@@ -282,6 +288,17 @@ class UserResource(resources.ModelResource):
 
         return HttpResponse('OK')
 
+    def email_integration(self, request, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(request.method)
+
+        ts = models.TaskStore.get_for_user(request.user)
+        ts.email_whitelist = request.POST.get('email_whitelist', '')
+        ts.log_message("Email integration settings changed.")
+        ts.save()
+
+        return HttpResponse("OK")
+
     def twilio_integration(self, request, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -390,6 +407,10 @@ class UserResource(resources.ModelResource):
                 'taskd_files': store.taskd_certificate_status,
                 'twilio_auth_token': store.twilio_auth_token,
                 'sms_whitelist': store.sms_whitelist,
+                'email_whitelist': store.email_whitelist,
+                'task_creation_email_address': '%s@inthe.am' % (
+                    store.secret_id
+                ),
                 'taskrc_extras': store.taskrc_extras,
                 'api_key': store.api_key.key,
                 'tos_up_to_date': meta.tos_up_to_date,

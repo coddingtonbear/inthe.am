@@ -42,3 +42,23 @@ Ember.Handlebars.helper('renderUDAValue', function(uda) {
   }
   return uda.value;
 });
+
+Ember.Handlebars.registerBoundHelper('mailto', function (emailAddress, label, option) {
+  if(typeof(label) == 'object') {
+    option = label;
+  }
+  if(option.hash.suffix) {
+    emailAddressParts = emailAddress.split('@');
+    emailAddress = [
+      emailAddressParts[0],
+      option.hash.suffix,
+      '@',
+      emailAddressParts[1],
+    ].join('');
+  }
+  emailAddress = Ember.Handlebars.Utils.escapeExpression(emailAddress);
+  label = (arguments.length == 2) ? emailAddress : Ember.Handlebars.Utils.escapeExpression(label);
+
+  var link = '<a href="mailto:' + emailAddress + '">' + label + '</a>';
+  return new Ember.Handlebars.SafeString(link);
+});

@@ -222,6 +222,30 @@ var controller = Ember.Controller.extend({
         ca_reader.readAsBinaryString(ca_file);
       }
     },
+    save_email: function() {
+      var data = {
+        'email_whitelist': document.getElementById('id_email_whitelist').value,
+      }
+      var url  = this.get('controllers.application').urls.email_integration;
+      var self = this;
+
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: function() {
+          self.success_message("Email settings saved.");
+        },
+        error: function() {
+          var response = JSON.parse(xhr.responseText);
+          for (var property in response) {
+            self.error_message(
+              "Error encountered: " + property + ": " + response[property]
+            );
+          }
+        }
+      });
+    },
     save_twilio: function() {
       var data = {
         'twilio_auth_token': document.getElementById('id_twilio_auth_token').value,
