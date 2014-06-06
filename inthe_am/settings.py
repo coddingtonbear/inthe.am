@@ -15,6 +15,7 @@ import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 TRAVIS = True if os.environ.get('TRAVIS') else False
+TESTING = ('test' in sys.argv) or TRAVIS
 
 ADMINS = (
     ('Adam Coddington', 'admin@inthe.am'),
@@ -251,7 +252,7 @@ VERSION = check_output(
     ]
 ).strip()
 
-if TRAVIS:
+if TESTING:
     CELERY_ALWAYS_EAGER = True
 
 # Sourced from environment:
