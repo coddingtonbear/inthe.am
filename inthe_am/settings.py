@@ -233,11 +233,11 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
         },
         'intheamoriginalemailsubject': {
             'type': 'string',
-            'label': 'Inthe.AM Original E-mail Subject',
+            'label': 'Inthe.AM E-mail Subject',
         },
         'intheamoriginalemailid': {
             'type': 'numeric',
-            'label': 'Inthe.AM Origin E-mail ID',
+            'label': 'Inthe.AM E-mail ID',
         }
     }
 }
