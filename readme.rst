@@ -84,9 +84,9 @@ Development Environment Notes
 * "When running tests with ``python manage.py test taskmanager``, it isn't
   seeing changes I've made."
 
-  * Tests are ran against production (read: uglified) assets rather than
-    the assets that are simply concatenated.  Make sure that you have ran
-    ``grunt uglify`` before running tests.
+  * Tests are ran against development (read: concatenated) assets rather
+    than the assets that are 'uglified' for production.  Make sure that
+    you have run ``grunt browserify concat`` before running tests.
 
 Google OAuth Keys
 ~~~~~~~~~~~~~~~~~

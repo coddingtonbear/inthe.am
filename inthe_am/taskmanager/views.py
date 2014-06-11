@@ -193,7 +193,7 @@ def home(request):
         request,
         'home.html',
         {
-            'DEBUG': settings.DEBUG,
+            'DEBUG': settings.DEBUG or settings.TESTING,
             'VERSION': (
                 str(uuid.uuid4()) if settings.DEBUG else settings.VERSION
             )
