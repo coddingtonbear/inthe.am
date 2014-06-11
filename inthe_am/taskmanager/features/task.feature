@@ -100,3 +100,14 @@ Feature: User can manipulate tasks
         Then a single pending task with the following details will exist
             | Key         | Value   |
             | annotations | ["Boo"] |
+
+    Scenario: User can delete annotation
+        Given the user is logged-in
+        And a task with the following details exists
+            | Key         | Value   |
+            | annotations | ["One"] |
+        When the user goes to the task's URL
+        And the user clicks the link "×"
+        Then a single pending task with the following details will exist
+            | Key         | Value   |
+            | annotations | [] |
