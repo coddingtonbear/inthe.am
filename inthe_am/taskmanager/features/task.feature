@@ -91,3 +91,12 @@ Feature: User can manipulate tasks
             | Key              | Value   |
             | description      | "Alpha" |
         And a single pending task will not have its "start" field set
+
+    Scenario: User can add annotation
+        Given the user is viewing an existing task with the description "Alpha"
+        When the user clicks the link "Add Annotation"
+        And the user enters the text "Boo" into the field named "annotation"
+        And the user clicks the button labeled "Save"
+        Then a single pending task with the following details will exist
+            | Key         | Value   |
+            | annotations | ["Boo"] |

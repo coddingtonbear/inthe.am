@@ -9,10 +9,7 @@ var controller = Ember.ObjectController.extend({
       if (annotations === null) {
         annotations = [];
       }
-      annotations.pushObject({
-        entry: new Date(),
-        description: field.val()
-      });
+      annotations.pushObject(field.val());
       model.set('annotations', annotations);
       model.save();
 
