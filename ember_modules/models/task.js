@@ -61,10 +61,10 @@ var model = DS.Model.extend({
     var value = '';
     if (this.get('start')) {
       value = 'active';
-    } else if (this.get('is_blocked') === true) {
-      value = 'blocked';
     } else if (this.get('is_blocking') === true) {
       value = 'blocking';
+    } else if (this.get('is_blocked') === true) {
+      value = 'blocked';
     } else if (moment(this.get('due')).isBefore(moment())) {
       value = 'overdue';
     } else if (moment().format('L') === moment(this.get('due')).format('L')) {
