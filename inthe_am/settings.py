@@ -149,7 +149,7 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'taskwarrior': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/twweb.taskwarrior.log'),
             'maxBytes': 1048576,
@@ -173,7 +173,7 @@ LOGGING = {
         '': {
             'handlers': ['exception_log', 'store', 'sentry'],
             'propagate': True,
-            'level': 'DEBUG',
+            'level': 'INFO',
         },
         'django': {
             'handlers': ['null'],
@@ -182,7 +182,7 @@ LOGGING = {
         },
         'django.request': {
             'handlers': ['mail_admins'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
         'gunicorn': {
@@ -197,7 +197,7 @@ LOGGING = {
         },
         'inthe_am.taskmanager.taskwarrior_client': {
             'handlers': ['taskwarrior'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True,
         }
     }

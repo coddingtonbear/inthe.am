@@ -114,5 +114,5 @@ class TaskwarriorClient(TaskWarriorShellout):
             )
             raise TaskwarriorError(stderr, stdout, proc.returncode)
 
-        logger.info("%s: %s", command, stdout)
+        logger.debug("%s: %s", command, stdout)
         return stdout, stderr
