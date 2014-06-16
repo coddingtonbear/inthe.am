@@ -67,7 +67,7 @@ class TaskwarriorClient(TaskWarriorShellout):
         )
 
     def _get_logger(self, cmd):
-        return logger.getLogger('%s.%s' % (__name__, cmd))
+        return logging.getLogger('%s.%s' % (__name__, cmd))
 
     def _execute(self, *args):
         """ Execute a given taskwarrior command with arguments
