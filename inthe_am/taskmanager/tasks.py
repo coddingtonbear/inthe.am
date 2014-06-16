@@ -9,6 +9,7 @@ import uuid
 from celery import shared_task
 from django_mailbox.models import Message
 
+from .context_managers import git_checkpoint
 
 logger = logging.getLogger(__name__)
 
@@ -93,12 +94,13 @@ def process_email_message(message_id):
         or message.subject.lower() in ['add', 'create', 'new'],
     ):
         task_id = str(uuid.uuid4())
-        task_args = [
-            'add',
-            'uuid:%s' % task_id,
-            'intheamoriginalemailsubject:"%s"' % message.subject,
-            'intheamoriginalemailid:%s' % message.pk,
-        ] + additional_args + shlex.split(message.text)
+        with git_checkpoint(store, 'Incoming E-mail'):
+            task_args = [
+                'add',
+                'uuid:%s' % task_id,
+                'intheamoriginalemailsubject:"%s"' % message.subject,
+                'intheamoriginalemailid:%s' % message.pk,
+            ] + additional_args + shlex.split(message.text)
 
         stdout, stderr = store.client._execute_safe(*task_args)
 
