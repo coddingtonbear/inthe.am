@@ -7,9 +7,6 @@ from taskw import TaskWarriorShellout
 from taskw.task import Task as TaskwTask
 
 
-logger = logging.getLogger(__name__)
-
-
 class TaskwarriorError(Exception):
     def __init__(self, stderr, stdout, code):
         self.stderr = stderr.strip()
@@ -69,12 +66,17 @@ class TaskwarriorClient(TaskWarriorShellout):
             *self._strip_unsafe_args(*args)
         )
 
+    def _get_logger(self, cmd):
+        return logger.getLogger('%s.%s' % (__name__, cmd))
+
     def _execute(self, *args):
         """ Execute a given taskwarrior command with arguments
 
         Returns a 2-tuple of stdout and stderr (respectively).
 
         """
+        logger = self._get_logger(args[0])
+
         command = (
             [
                 'task',

@@ -199,6 +199,16 @@ LOGGING = {
             'handlers': ['taskwarrior'],
             'level': 'DEBUG',
             'propagate': True,
+        },
+        'inthe_am.taskmanager.taskwarrior_client.export': {
+            'handlers': ['taskwarrior', 'sentry'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'inthe_am.taskmanager.taskwarrior_client.sync': {
+            'handlers': ['taskwarrior', 'sentry'],
+            'level': 'INFO',
+            'propagate': False,
         }
     }
 }
