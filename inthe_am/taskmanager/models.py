@@ -55,6 +55,7 @@ class TaskStore(models.Model):
     pebble_cards_enabled = models.BooleanField(default=False)
     feed_enabled = models.BooleanField(default=False)
 
+    last_synced = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -375,6 +376,8 @@ class TaskStore(models.Model):
             ):
                 try:
                     self.client.sync()
+                    self.last_synced = now()
+                    self.save()
                 except TaskwarriorError as e:
                     self.log_error(
                         "An error was encountered while synchronizing your "
