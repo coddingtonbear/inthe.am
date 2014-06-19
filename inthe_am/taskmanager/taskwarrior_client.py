@@ -1,6 +1,7 @@
 import curses.ascii
 import logging
 import subprocess
+import uuid
 
 import six
 from taskw import TaskWarriorShellout
@@ -67,7 +68,12 @@ class TaskwarriorClient(TaskWarriorShellout):
         )
 
     def _get_logger(self, cmd):
-        return logging.getLogger('%s.%s' % (__name__, cmd))
+        try:
+            uuid.UUID(cmd[0])
+            command = cmd[1]
+        except (ValueError, IndexError):
+            command = cmd[0]
+        return logging.getLogger('%s.%s' % (__name__, command))
 
     def _execute(self, *args):
         """ Execute a given taskwarrior command with arguments
@@ -75,7 +81,7 @@ class TaskwarriorClient(TaskWarriorShellout):
         Returns a 2-tuple of stdout and stderr (respectively).
 
         """
-        logger = self._get_logger(args[0])
+        logger = self._get_logger(args)
 
         command = (
             [
