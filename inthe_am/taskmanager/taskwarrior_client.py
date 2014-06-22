@@ -69,10 +69,10 @@ class TaskwarriorClient(TaskWarriorShellout):
 
     def _get_logger(self, cmd):
         try:
-            uuid.UUID(cmd[0])
-            command = cmd[1]
+            uuid.UUID(str(cmd[0]))
+            command = str(cmd[1])
         except (ValueError, IndexError):
-            command = cmd[0]
+            command = str(cmd[0])
         return logging.getLogger('%s.%s' % (__name__, command))
 
     def _execute(self, *args):
