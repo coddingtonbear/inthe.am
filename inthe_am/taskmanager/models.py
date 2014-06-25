@@ -379,20 +379,22 @@ class TaskStore(models.Model):
                     self.last_synced = now()
                     self.save()
                 except TaskwarriorError as e:
-                    self.log_error(
-                        "An error was encountered while synchronizing your "
-                        "tasks with the taskd server; please reconfigure your "
-                        "synchronization settings and re-enable "
-                        "synchronization."
-                        "Err. Code: %s; "
-                        "Std. Error: %s; "
-                        "Std. Out: %s.",
-                        e.code,
-                        e.stderr,
-                        e.stdout,
-                    )
-                    self.sync_enabled = False
-                    self.save()
+                    user_taskd_server = self.taskrc.get('taskd.server')
+                    if user_taskd_server != settings.TASKD_SERVER:
+                        self.log_error(
+                            "An error was encountered while synchronizing "
+                            "your tasks with the taskd server; please "
+                            "reconfigure your synchronization settings and "
+                            "re-enable synchronization."
+                            "Err. Code: %s; "
+                            "Std. Error: %s; "
+                            "Std. Out: %s.",
+                            e.code,
+                            e.stderr,
+                            e.stdout,
+                        )
+                        self.sync_enabled = False
+                        self.save()
                     return False
         return True
 
