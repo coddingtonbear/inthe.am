@@ -395,6 +395,11 @@ class TaskStore(models.Model):
                         )
                         self.sync_enabled = False
                         self.save()
+                    else:
+                        sync_repository.apply_async(
+                            countdown=30,
+                            args=(self.pk, )
+                        )
                     return False
         return True
 
