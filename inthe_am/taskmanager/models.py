@@ -372,7 +372,7 @@ class TaskStore(models.Model):
                 checkpoint_msg = '%s: %s' % (checkpoint_msg, msg)
             with git_checkpoint(
                 self, checkpoint_msg, function=function,
-                args=args, kwargs=kwargs,
+                args=args, kwargs=kwargs, notify_rollback=False
             ):
                 try:
                     self.client.sync()

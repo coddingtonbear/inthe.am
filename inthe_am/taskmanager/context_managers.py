@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 @contextmanager
 def git_checkpoint(
     store, message, function=None, args=None, kwargs=None,
-    sync=False, gc=True,
+    sync=False, gc=True, notify_rollback=True,
 ):
     lockfile_path = os.path.join(store.local_path, '.lock')
     pre_work_sha = store.repository.head()
@@ -68,16 +68,17 @@ def git_checkpoint(
                         dangling_sha,
                         pre_work_sha,
                     )
-                    store.log_error(
-                        "An error occurred while interacting with your task "
-                        "list, and your task list was recovered by "
-                        "rolling-back to the last known good state (%s).  "
-                        "Since your task list is synchronized with a taskd "
-                        "server, this will likely not have any negative "
-                        "effects.  Rollback ID: %s.",
-                        pre_work_sha,
-                        dangling_sha,
-                    )
+                    if notify_rollback:
+                        store.log_error(
+                            "An error occurred while interacting with your "
+                            "task list, and your task list was recovered by "
+                            "rolling-back to the last known good state (%s).  "
+                            "Since your task list is synchronized with a "
+                            "taskd server, this will likely not have any "
+                            "negative effects.  Rollback ID: %s.",
+                            pre_work_sha,
+                            dangling_sha,
+                        )
                     store.git_reset(pre_work_sha)
                 else:
                     logger.exception(
