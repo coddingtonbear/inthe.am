@@ -116,8 +116,6 @@ div.row {
 }
 
 #list, #mobile-list {
-  background-color: #202020;
-  color: #bbbbbb;
   width: 25%;
   min-width: 350px;
   letter-spacing: normal;
@@ -134,10 +132,6 @@ div.row {
   }
 
   .task {
-    &.active {
-      background-color: #181818;
-    }
-
     h5 {
       color: inherit;
       text-transform: uppercase;

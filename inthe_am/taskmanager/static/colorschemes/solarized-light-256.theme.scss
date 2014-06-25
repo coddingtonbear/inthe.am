@@ -1,3 +1,10 @@
+.task-list {
+	background-color: #DEDEDE;
+	color: #202020;
+}
+.task.active {
+	background-color: lighten(#DEDEDE, 5%);
+}
 .task .calendar__today {
 }
 .task .tagged {
@@ -28,7 +35,7 @@
 	background-color: #ffffff;
 }
 .task.active .alternate {
-	background-color: lighten(#ffffff, 10%)
+	background-color: lighten(#ffffff, 5%)
 }
 .task .due {
 }

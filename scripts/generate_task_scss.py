@@ -1,5 +1,6 @@
 import os.path
 import sys
+import textwrap
 
 import webcolors
 from fabulous.xterm256 import xterm_to_rgb
@@ -108,8 +109,23 @@ def process_directives(directives):
     return processed
 
 
-def get_stylesheet(directives):
-    lines = []
+def get_stylesheet(directives, bg, fg, modifier):
+    base_styles = """
+        .task-list {{
+        \tbackground-color: {bg};
+        \tcolor: {fg};
+        }}
+        .task.active {{
+        \tbackground-color: {modifier}({bg}, 5%);
+        }}
+    """
+    lines = textwrap.dedent(
+        base_styles.format(
+            fg=fg,
+            bg=bg,
+            modifier=modifier,
+        )
+    ).strip().split('\n')
     for selector, attributes in directives.items():
         lines.append('.task .%s {' % selector)
         for key, value in attributes.items():
@@ -123,7 +139,8 @@ def get_stylesheet(directives):
         if 'background-color' in attributes:
             lines.append('.task.active .%s {' % selector)
             lines.append(
-                '\tbackground-color: lighten(%s, 10%%)' % (
+                '\tbackground-color: %s(%s, 5%%)' % (
+                    modifier,
                     attributes['background-color']
                 )
             )
@@ -131,10 +148,18 @@ def get_stylesheet(directives):
     return lines
 
 
+def get_colors_and_active_modifier(filename):
+    base_filename = os.path.basename(filename)
+    if base_filename == 'solarized-light-256.theme':
+        return '#DEDEDE', '#202020', 'lighten'
+    return '#202020', '#DEDEDE', 'darken'
+
+
 def get_styles(filename):
     directives = get_directives(filename)
     processed = process_directives(directives)
-    return get_stylesheet(processed)
+    bg, fg, modifier = get_colors_and_active_modifier(filename)
+    return get_stylesheet(processed, bg, fg, modifier)
 
 
 def generate_all_styles(path_to_styles):

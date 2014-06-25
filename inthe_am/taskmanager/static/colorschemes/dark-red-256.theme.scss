@@ -1,8 +1,15 @@
+.task-list {
+	background-color: #202020;
+	color: #DEDEDE;
+}
+.task.active {
+	background-color: darken(#202020, 5%);
+}
 .task .calendar__today {
 	background-color: #ff5f5f;
 }
 .task.active .calendar__today {
-	background-color: lighten(#ff5f5f, 10%)
+	background-color: darken(#ff5f5f, 5%)
 }
 .task .tagged {
 }
@@ -13,7 +20,7 @@
 	background-color: #ff3737;
 }
 .task.active .history__delete {
-	background-color: lighten(#ff3737, 10%)
+	background-color: darken(#ff3737, 5%)
 }
 .task .sync__rejected {
 	color: #873737;
@@ -26,7 +33,7 @@
 	background-color: #5f3737;
 }
 .task.active .blocked {
-	background-color: lighten(#5f3737, 10%)
+	background-color: darken(#5f3737, 5%)
 }
 .task .due__today {
 }
@@ -43,7 +50,7 @@
 	background-color: #af3737;
 }
 .task.active .summary__bar {
-	background-color: lighten(#af3737, 10%)
+	background-color: darken(#af3737, 5%)
 }
 .task .sync__changed {
 	color: #d75f5f;
@@ -56,7 +63,7 @@
 	background-color: #d75f5f;
 }
 .task.active .burndown__started {
-	background-color: lighten(#d75f5f, 10%)
+	background-color: darken(#d75f5f, 5%)
 }
 .task .calendar__overdue {
 }
@@ -66,7 +73,7 @@
 	background-color: #af3737;
 }
 .task.active .history__done {
-	background-color: lighten(#af3737, 10%)
+	background-color: darken(#af3737, 5%)
 }
 .task .recurring {
 	color: #ff5f5f;
@@ -81,13 +88,13 @@
 	background-color: #af3737;
 }
 .task.active .calendar__holiday {
-	background-color: lighten(#af3737, 10%)
+	background-color: darken(#af3737, 5%)
 }
 .task .burndown__done {
 	background-color: #d2d2d2;
 }
 .task.active .burndown__done {
-	background-color: lighten(#d2d2d2, 10%)
+	background-color: darken(#d2d2d2, 5%)
 }
 .task .pri__M {
 	color: #d73737;
@@ -105,7 +112,7 @@
 	background-color: #5f3737;
 }
 .task.active .active {
-	background-color: lighten(#5f3737, 10%)
+	background-color: darken(#5f3737, 5%)
 }
 .task .undo__before {
 	color: #af375f;
@@ -115,13 +122,13 @@
 	background-color: #873737;
 }
 .task.active .blocking {
-	background-color: lighten(#873737, 10%)
+	background-color: darken(#873737, 5%)
 }
 .task .burndown__pending {
 	background-color: #873737;
 }
 .task.active .burndown__pending {
-	background-color: lighten(#873737, 10%)
+	background-color: darken(#873737, 5%)
 }
 .task .header {
 	color: #5f3737;
@@ -134,7 +141,7 @@
 	background-color: #5f3737;
 }
 .task.active .history__add {
-	background-color: lighten(#5f3737, 10%)
+	background-color: darken(#5f3737, 5%)
 }
 .task .error {
 	color: #5f3737;

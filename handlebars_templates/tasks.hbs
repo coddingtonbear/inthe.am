@@ -1,5 +1,5 @@
 <div class="row full-width">
-    <div id="list">
+    <div id="list" class="task-list">
         {{#each task in pendingTasks}}
             {{#link-to "task" task tagName="div" class="task"}}
                 <div {{bind-attr class=":task-item task.taskwarrior_class"}}>

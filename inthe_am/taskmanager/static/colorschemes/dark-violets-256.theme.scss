@@ -1,8 +1,15 @@
+.task-list {
+	background-color: #202020;
+	color: #DEDEDE;
+}
+.task.active {
+	background-color: darken(#202020, 5%);
+}
 .task .calendar__today {
 	background-color: #5f37af;
 }
 .task.active .calendar__today {
-	background-color: lighten(#5f37af, 10%)
+	background-color: darken(#5f37af, 5%)
 }
 .task .tagged {
 	color: #afafd7;
@@ -14,7 +21,7 @@
 	background-color: #af37ff;
 }
 .task.active .history__delete {
-	background-color: lighten(#af37ff, 10%)
+	background-color: darken(#af37ff, 5%)
 }
 .task .sync__rejected {
 	color: #5f37af;
@@ -27,7 +34,7 @@
 	background-color: #5f375f;
 }
 .task.active .blocked {
-	background-color: lighten(#5f375f, 10%)
+	background-color: darken(#5f375f, 5%)
 }
 .task .due__today {
 	color: #ffafaf;
@@ -45,7 +52,7 @@
 	background-color: #5f37af;
 }
 .task.active .summary__bar {
-	background-color: lighten(#5f37af, 10%)
+	background-color: darken(#5f37af, 5%)
 }
 .task .sync__changed {
 	color: #875fd7;
@@ -54,7 +61,7 @@
 	background-color: #e8e8e8;
 }
 .task.active .alternate {
-	background-color: lighten(#e8e8e8, 10%)
+	background-color: darken(#e8e8e8, 5%)
 }
 .task .due {
 	color: #37ffff;
@@ -63,7 +70,7 @@
 	background-color: #875fd7;
 }
 .task.active .burndown__started {
-	background-color: lighten(#875fd7, 10%)
+	background-color: darken(#875fd7, 5%)
 }
 .task .calendar__overdue {
 }
@@ -72,13 +79,13 @@
 	background-color: #dddddd;
 }
 .task.active .calendar__weekend {
-	background-color: lighten(#dddddd, 10%)
+	background-color: darken(#dddddd, 5%)
 }
 .task .history__done {
 	background-color: #8737ff;
 }
 .task.active .history__done {
-	background-color: lighten(#8737ff, 10%)
+	background-color: darken(#8737ff, 5%)
 }
 .task .recurring {
 	color: #5f5fff;
@@ -92,13 +99,13 @@
 	background-color: #378787;
 }
 .task.active .calendar__holiday {
-	background-color: lighten(#378787, 10%)
+	background-color: darken(#378787, 5%)
 }
 .task .burndown__done {
 	background-color: #d2d2d2;
 }
 .task.active .burndown__done {
-	background-color: lighten(#d2d2d2, 10%)
+	background-color: darken(#d2d2d2, 5%)
 }
 .task .pri__M {
 	color: #af37d7;
@@ -116,7 +123,7 @@
 	background-color: #875faf;
 }
 .task.active .active {
-	background-color: lighten(#875faf, 10%)
+	background-color: darken(#875faf, 5%)
 }
 .task .undo__before {
 	color: #5f37af;
@@ -126,13 +133,13 @@
 	background-color: #873787;
 }
 .task.active .blocking {
-	background-color: lighten(#873787, 10%)
+	background-color: darken(#873787, 5%)
 }
 .task .burndown__pending {
 	background-color: #5f37af;
 }
 .task.active .burndown__pending {
-	background-color: lighten(#5f37af, 10%)
+	background-color: darken(#5f37af, 5%)
 }
 .task .header {
 	color: #375faf;
@@ -141,19 +148,19 @@
 	background-color: #d737d7;
 }
 .task.active .calendar__due__today {
-	background-color: lighten(#d737d7, 10%)
+	background-color: darken(#d737d7, 5%)
 }
 .task .calendar__due {
 	background-color: #af87ff;
 }
 .task.active .calendar__due {
-	background-color: lighten(#af87ff, 10%)
+	background-color: darken(#af87ff, 5%)
 }
 .task .history__add {
 	background-color: #5f37ff;
 }
 .task.active .history__add {
-	background-color: lighten(#5f37ff, 10%)
+	background-color: darken(#5f37ff, 5%)
 }
 .task .error {
 	color: #375faf;
