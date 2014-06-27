@@ -69,6 +69,12 @@ class UserResource(resources.ModelResource):
                 self.wrap_view('account_status')
             ),
             url(
+                r"^(?P<resource_name>%s)/announcements/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('announcements')
+            ),
+            url(
                 r"^(?P<resource_name>%s)/my-certificate/?$" % (
                     self._meta.resource_name
                 ),
@@ -386,6 +392,13 @@ class UserResource(resources.ModelResource):
             )
         else:
             return HttpResponseNotAllowed(request.method)
+
+    def announcements(self, request, **kwargs):
+        announcements = []
+        return HttpResponse(
+            json.dumps(announcements),
+            content_type='application/json',
+        )
 
     def account_status(self, request, **kwargs):
         if request.user.is_authenticated():
