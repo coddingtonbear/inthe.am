@@ -7,6 +7,7 @@ import shlex
 import uuid
 
 from celery import shared_task
+from django.utils.timezone import now
 from django_mailbox.models import Message
 
 from .context_managers import git_checkpoint
@@ -47,6 +48,8 @@ def process_email_message(message_id):
         return inbox_id, args
 
     message = Message.objects.get(pk=message_id)
+    message.read = now()
+    message.save()
 
     store = None
     additional_args = []
