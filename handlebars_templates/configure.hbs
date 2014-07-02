@@ -1,489 +1,491 @@
 <div class="row standalone">
-    <h2>Configuration &amp; Settings</h2>
-    <div id="settings_alerts">
-    </div>
-
-    {{#unless controllers.application.user.sync_enabled}}
-        <div class="block error">
-            <p>
-                Inthe.AM encountered a problem synchronizing your tasks with
-                the Taskd sever your account is using, and synchronization has
-                been disabled for your account.
-            </p>
-            <p>
-                This can occur if either your Taskd synchronization settings
-                below are incorrect, or if the server you are synchronizing
-                with encountered a temporary outage.
-            </p>
-            <p>
-                Please take a moment to verify that you have entered the
-                correct settings, then re-enable synchronization.
-            </p>
-            <a href="" class="button radius alert" {{action "enable_sync"}}>
-                Re-enable Synchronization
-            </a>
+    <div class="standalone-content">
+        <h2>Configuration &amp; Settings</h2>
+        <div id="settings_alerts">
         </div>
-    {{/unless}}
 
-    <dl class="accordion" data-accordion>
-        <dd>
-            <a href="#custom_taskd">Synchronization Settings</a>
-            <div id="custom_taskd" class="content">
-                <div class="row">
-                    <div class="large-12 columns">
-                        <p>
-                            Inthe.AM provides a built-in Task Server for you
-                            to synchronize your tasks with; follow the
-                            instructions in "Use the built-in Task Server"
-                            for setting up your local taskwarrior client to
-                            synchronize with Inthe.AM.
-                            But, should you have an outside Task Server
-                            that you already synchronize with, 
-                            you can also configure Inthe.AM to synchronize
-                            with your server in "Use a custom Task Server".
-                        </p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h3 id="built_in_task_server">Use the built-in Task Server</h3>
-                        <table class="pure-table pure-table-horizontal">
-                            <tr>
-                                <th>
-                                    Your Certificate
-                                </th>
-                                <td>
-                                    <a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>
-                                   Your Key 
-                                </th>
-                                <td>
-                                    <a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
-                                </td>
-                            </tr>
-                        </table>
-                        
-                        <p>
-                            Add the following settings to your Taskwarrior configuration file (<code>~/.taskrc</code>).
-                        </p>
-
-                        <code class="para">taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a><br />
-                            taskd.key=/path/to/<a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a><br />
-                            taskd.trust=yes<br />
-                            taskd.server={{ controllers.application.user.taskd_server }}<br />
-                            taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
-                        </code>
-
-                        <p>
-                            Synchronizing for the first time is as easy as running <code>task sync init</code> 
-                            &mdash; running that command will instruct Taskwarrior to send all of its tasks to Inthe.AM.
-                            After the initial synchronization, you can synchronize with Inthe.AM by running <code>task sync</code>.
-                        </p>
-                        <p>
-                            If you are using a modern browser other than Internet Explorer, 
-                            entries displayed on Inthe.AM will be automatically updated within 30
-                            seconds of synchronization, but those using an older browser need
-                            only click the refresh button (<i class="fa fa-refresh"></i>) to
-                            fetch new changes.  Note: the refresh button will <strong>not</strong>
-                            be visible if your browser is modern enough to support the
-                            <a href="https://developer.mozilla.org/en-US/docs/Web/API/EventSource">API used
-                            by Inthe.AM for dynamically updating displayed tasks</a>.
-                        </p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h3 id="custom_task_server">Use a custom Task Server</h3>
-                    </div>
-                    <div class="large-12 columns">
-                        <label>Taskd Server</label>
-                        {{input type="text" id="id_server" name="server" value=controllers.application.user.taskd_server}}
-                    </div>
-                    <div class="large-12 columns">
-                        <label>Taskd Credentials</label>
-                        {{input type="text" id="id_credentials" name="credentials" value=controllers.application.user.taskd_credentials}}
-                    </div>
-                    <div class="large-12 columns">
-                        <label>Certificate</label>
-                        <input type="file" name="certificate" id="id_certificate">
-                        <p class="input-note">
-                            {{controllers.application.user.taskd_files.taskd_certificate}}
-                        </p>
-                    </div>
-                    <div class="large-12 columns">
-                        <label>Key</label>
-                        <input type="file" name="key" id="id_key">
-                        <p class="input-note">
-                            {{controllers.application.user.taskd_files.taskd_key}}
-                        </p>
-                    </div>
-                    <div class="large-12 columns">
-                        <label>CA Certificate</label>
-                        <p class="input-note">
-                            If you select to trust the taskd server, you need not upload a CA Certificate,
-                            but uploading a certificate and requesting that we validate the taskd server
-                            using that certificate is safer.
-                        </p>
-                        {{view Ember.Select value=controllers.application.user.taskd_files.taskd_trust optionValuePath="content.short" optionLabelPath="content.long" content=taskd_trust_settings id="id_trust"}}
-                        <input type="file" name="ca" id="id_ca">
-                        <p class="input-note">
-                            {{controllers.application.user.taskd_files.taskd_ca}}
-                        </p>
-                    </div>
-                    <div class="large-12 columns">
-                        <a href="" class="button radius" {{action "save_taskd"}}>Save Settings</a>
-                        <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset to Default</a>
-                    </div>
-                </div>
+        {{#unless controllers.application.user.sync_enabled}}
+            <div class="block error">
+                <p>
+                    Inthe.AM encountered a problem synchronizing your tasks with
+                    the Taskd sever your account is using, and synchronization has
+                    been disabled for your account.
+                </p>
+                <p>
+                    This can occur if either your Taskd synchronization settings
+                    below are incorrect, or if the server you are synchronizing
+                    with encountered a temporary outage.
+                </p>
+                <p>
+                    Please take a moment to verify that you have entered the
+                    correct settings, then re-enable synchronization.
+                </p>
+                <a href="" class="button radius alert" {{action "enable_sync"}}>
+                    Re-enable Synchronization
+                </a>
             </div>
-        </dd>
-        <dd>
-            <a href="#interface">Interface &amp; Customizations</a>
-            <div id="interface" class="content">
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h3>Color Scheme</h3>
-                        <label>Color Scheme</label>
-                        {{view Ember.Select value=controllers.application.user.colorscheme optionValuePath="content.file" optionLabelPath="content.name" content=themeOptions id="id_theme"}}
-                        <a href="" class="button radius" {{action "save_colorscheme"}}>Save Color Scheme</a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h3>Custom <span class="code">.taskrc</span></h3>
-                        {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
-                        <p class="input-note">
-                            Only configuration values relating to urgency or UDA definitions
-                            will have an effect,
-                            but entering your entire local <span class="code">.taskrc</span>
-                            is both safe and encouraged.
-                        </p>
-                        <a href="" class="button radius" {{action "save_taskrc"}}>Save Settings</a>
-                    </div>
-                </div>
-                {{#if taskUpdateStreamCompatible}}
+        {{/unless}}
+
+        <dl class="accordion" data-accordion>
+            <dd>
+                <a href="#custom_taskd">Synchronization Settings</a>
+                <div id="custom_taskd" class="content">
                     <div class="row">
                         <div class="large-12 columns">
-                            <h3>Streaming Ticket Updates</h3>
-                            {{view Ember.Select value=taskUpdateStreamEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=taskUpdateStringSettings id="id_update_stream"}}
-                            <p class="input-note">
-                                Task updates are streamed directly to your browser
-                                by default, but can be disabled if you are trying
-                                to reduce the amount of data used, or the amount
-                                battery consumed.
+                            <p>
+                                Inthe.AM provides a built-in Task Server for you
+                                to synchronize your tasks with; follow the
+                                instructions in "Use the built-in Task Server"
+                                for setting up your local taskwarrior client to
+                                synchronize with Inthe.AM.
+                                But, should you have an outside Task Server
+                                that you already synchronize with, 
+                                you can also configure Inthe.AM to synchronize
+                                with your server in "Use a custom Task Server".
                             </p>
-                            <p class="input-note">
-                                <strong>Note:</strong> Your page will refresh upon
-                                saving this change.
-                            </p>
-                            <a href="" class="button radius" {{action "save_streaming"}}>Save Settings</a>
                         </div>
                     </div>
-                {{/if}}
-            </div>
-        </dd>
-        <dd>
-            <a href="#api">API Access</a>
-            <div id="api" class="content">
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h3>Add, create or modify your tasks using the REST API</h3>
-                        <p>
-                            Your Taskwarrior tasks are accessible via a RESTful API; you can
-                            use this to query, create, complete, or change
-                            tasks in your task list.
-                        </p>
-                        <table class="pure-table pure-table-horizontal">
-                            <tr>
-                                <th>
-                                    API Key
-                                </th>
-                                <td>
-                                    {{ controllers.application.user.username }}:{{ controllers.application.user.api_key }}
-                                </td>
-                            </tr>
-                        </table>
-                        <p>
-                            For details regarding how to access and use this API, please consult the
-                            {{#link-to "apiDocs"}}API Documentation{{/link-to}}.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </dd>
-        <dd>
-            <a href="#feeds">RSS &amp; Pebble Feeds</a>
-            <div id="feeds" class="content">
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h3>RSS Feed</h3>
-                        <p>
-                            Turn this feature on to gain access to an RSS feed
-                            listing your most urgent tasks.
-                        </p>
-                        {{#unless controllers.application.user.feed_enabled}}
-                            <div class="block warning">
-                                <p>
-                                    For your security, your feed is disabled
-                                    by default.  Although your feed's URL is unique
-                                    and randomly generated, no authentication is used
-                                    to improve compatibility with RSS feed readers.
-                                    <a href="" {{action "save_feed" true}}>Enable your RSS Feed</a>.
-                                </p>
-                            </div>
-                        {{else}}
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3 id="built_in_task_server">Use the built-in Task Server</h3>
                             <table class="pure-table pure-table-horizontal">
                                 <tr>
                                     <th>
-                                        Feed URL
+                                        Your Certificate
                                     </th>
                                     <td>
-                                        https://inthe.am{{ controllers.application.urls.feed_url }}
+                                        <a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                       Your Key 
+                                    </th>
+                                    <td>
+                                        <a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
                                     </td>
                                 </tr>
                             </table>
-                        {{/unless}}
-                        <label>RSS Task Feed</label>
-                        {{view Ember.Select value=controllers.application.user.feed_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI id="id_feed_config"}}
-                        <a href="" class="button radius" {{action "save_feed"}}>Save Settings</a>
+                            
+                            <p>
+                                Add the following settings to your Taskwarrior configuration file (<code>~/.taskrc</code>).
+                            </p>
+
+                            <code class="para">taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a><br />
+                                taskd.key=/path/to/<a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a><br />
+                                taskd.trust=yes<br />
+                                taskd.server={{ controllers.application.user.taskd_server }}<br />
+                                taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
+                            </code>
+
+                            <p>
+                                Synchronizing for the first time is as easy as running <code>task sync init</code> 
+                                &mdash; running that command will instruct Taskwarrior to send all of its tasks to Inthe.AM.
+                                After the initial synchronization, you can synchronize with Inthe.AM by running <code>task sync</code>.
+                            </p>
+                            <p>
+                                If you are using a modern browser other than Internet Explorer, 
+                                entries displayed on Inthe.AM will be automatically updated within 30
+                                seconds of synchronization, but those using an older browser need
+                                only click the refresh button (<i class="fa fa-refresh"></i>) to
+                                fetch new changes.  Note: the refresh button will <strong>not</strong>
+                                be visible if your browser is modern enough to support the
+                                <a href="https://developer.mozilla.org/en-US/docs/Web/API/EventSource">API used
+                                by Inthe.AM for dynamically updating displayed tasks</a>.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3 id="custom_task_server">Use a custom Task Server</h3>
+                        </div>
+                        <div class="large-12 columns">
+                            <label>Taskd Server</label>
+                            {{input type="text" id="id_server" name="server" value=controllers.application.user.taskd_server}}
+                        </div>
+                        <div class="large-12 columns">
+                            <label>Taskd Credentials</label>
+                            {{input type="text" id="id_credentials" name="credentials" value=controllers.application.user.taskd_credentials}}
+                        </div>
+                        <div class="large-12 columns">
+                            <label>Certificate</label>
+                            <input type="file" name="certificate" id="id_certificate">
+                            <p class="input-note">
+                                {{controllers.application.user.taskd_files.taskd_certificate}}
+                            </p>
+                        </div>
+                        <div class="large-12 columns">
+                            <label>Key</label>
+                            <input type="file" name="key" id="id_key">
+                            <p class="input-note">
+                                {{controllers.application.user.taskd_files.taskd_key}}
+                            </p>
+                        </div>
+                        <div class="large-12 columns">
+                            <label>CA Certificate</label>
+                            <p class="input-note">
+                                If you select to trust the taskd server, you need not upload a CA Certificate,
+                                but uploading a certificate and requesting that we validate the taskd server
+                                using that certificate is safer.
+                            </p>
+                            {{view Ember.Select value=controllers.application.user.taskd_files.taskd_trust optionValuePath="content.short" optionLabelPath="content.long" content=taskd_trust_settings id="id_trust"}}
+                            <input type="file" name="ca" id="id_ca">
+                            <p class="input-note">
+                                {{controllers.application.user.taskd_files.taskd_ca}}
+                            </p>
+                        </div>
+                        <div class="large-12 columns">
+                            <a href="" class="button radius" {{action "save_taskd"}}>Save Settings</a>
+                            <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset to Default</a>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h3>Pebble Cards URL</h3>
-                        <p> 
-                            <a href="http://keanulee.com/pebblecards/">Pebble Cards</a> is a
-                            <a href="https://getpebble.com/">Pebble</a> application
-                            allowing one quick access to information like
-                            one's upcoming appointments, the local weather, and when the
-                            sun will set today.  Inthe.AM provides a URL you can use with
-                            Pebble Cards for displaying your current highest priority task.
-                        </p>
-                        {{#unless controllers.application.user.pebble_cards_enabled}}
-                            <div class="block warning">
-                                <p>
-                                    For your security, your Pebble Cards URL is disabled
-                                    by default.  Although your Pebble Cards URL is unique
-                                    and randomly generated, due to limitations in Pebble
-                                    Cards, no authentication is used.
-                                    <a href="" {{action "save_pebble_cards" true}}>Enable your Pebble Cards URL</a>.
+            </dd>
+            <dd>
+                <a href="#interface">Interface &amp; Customizations</a>
+                <div id="interface" class="content">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Color Scheme</h3>
+                            <label>Color Scheme</label>
+                            {{view Ember.Select value=controllers.application.user.colorscheme optionValuePath="content.file" optionLabelPath="content.name" content=themeOptions id="id_theme"}}
+                            <a href="" class="button radius" {{action "save_colorscheme"}}>Save Color Scheme</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Custom <span class="code">.taskrc</span></h3>
+                            {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
+                            <p class="input-note">
+                                Only configuration values relating to urgency or UDA definitions
+                                will have an effect,
+                                but entering your entire local <span class="code">.taskrc</span>
+                                is both safe and encouraged.
+                            </p>
+                            <a href="" class="button radius" {{action "save_taskrc"}}>Save Settings</a>
+                        </div>
+                    </div>
+                    {{#if taskUpdateStreamCompatible}}
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <h3>Streaming Ticket Updates</h3>
+                                {{view Ember.Select value=taskUpdateStreamEnabledUI optionValuePath="content.short" optionLabelPath="content.long" content=taskUpdateStringSettings id="id_update_stream"}}
+                                <p class="input-note">
+                                    Task updates are streamed directly to your browser
+                                    by default, but can be disabled if you are trying
+                                    to reduce the amount of data used, or the amount
+                                    battery consumed.
                                 </p>
+                                <p class="input-note">
+                                    <strong>Note:</strong> Your page will refresh upon
+                                    saving this change.
+                                </p>
+                                <a href="" class="button radius" {{action "save_streaming"}}>Save Settings</a>
                             </div>
-                        {{else}}
+                        </div>
+                    {{/if}}
+                </div>
+            </dd>
+            <dd>
+                <a href="#api">API Access</a>
+                <div id="api" class="content">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Add, create or modify your tasks using the REST API</h3>
+                            <p>
+                                Your Taskwarrior tasks are accessible via a RESTful API; you can
+                                use this to query, create, complete, or change
+                                tasks in your task list.
+                            </p>
                             <table class="pure-table pure-table-horizontal">
                                 <tr>
                                     <th>
-                                        Pebble Cards URL
+                                        API Key
                                     </th>
                                     <td>
-                                        https://inthe.am{{ controllers.application.urls.pebble_card_url }}
-                                    </td>
-                                </tr>
-                            </table>
-                        {{/unless}}
-                        <label>Pebble Cards URL</label>
-                        {{view Ember.Select value=controllers.application.user.pebble_cards_enabled optionValuePath="content.value" optionLabelPath="content.human" content=pebbleCardsEnabledUI id="id_pebble_cards_config"}}
-                        <a href="" class="button radius" {{action "save_pebble_cards"}}>Save Settings</a>
-                    </div>
-                </div>
-            </div>
-        </dd>
-        <dd>
-            <a href="#email">Email Access</a>
-            <div id="email" class="content">
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h3>Create new tasks by sending an email message</h3>
-                        <p>
-                            Inthe.AM can receive and add items to your task list via email.
-                        </p>
-                        {{#unless controllers.application.user.email_whitelist}}
-                            <div class="block warning">
-                                <p>
-                                    For your security, the ability to receive tasks via email
-                                    requires that you enter email addresses into the whitelist
-                                    below to prevent others from being able to add tasks to your
-                                    task list.
-                                </p>
-                            </div>
-                        {{else}}
-                            <table class="pure-table pure-table-horizontal">
-                                <tr>
-                                    <th>
-                                        Your Inthe.AM email address
-                                    </th>
-                                    <td>
-                                        {{mailto controllers.application.user.task_creation_email_address}}
+                                        {{ controllers.application.user.username }}:{{ controllers.application.user.api_key }}
                                     </td>
                                 </tr>
                             </table>
                             <p>
-                                Simply send an email to
-                                {{mailto controllers.application.user.task_creation_email_address}}
-                                with either an empty subject or the word <strong>New</strong>, and a
-                                body containing the text you would use on the command-line to create a task.
+                                For details regarding how to access and use this API, please consult the
+                                {{#link-to "apiDocs"}}API Documentation{{/link-to}}.
                             </p>
-                            <p>
-                                For example:
-                            </p>
-                            <blockquote>
-                                From: {{controllers.application.user.email}}<br />
-                                To: {{controllers.application.user.task_creation_email_address}}<br />
-                                Subject: New<br />
-                                <br />
-                                Find local source for flux capacitor parts.  project:time_machine priority:h +delorean
-                            </blockquote>
-                            <h4>Advanced Use</h4>
-                            <p>
-                                Although setting task attributes in the body of the email itself
-                                will work just fine, you can also specify task attributes or tags
-                                by adding suffixes to the email address itself.
-                            </p>
-                            <p>
-                                For example, to automatically add the tag "alpha" to an incoming
-                                task, you can send an email to
-                                {{mailto controllers.application.user.task_creation_email_address suffix="+alpha"}},
-                                or to set the project to "time_machine" you could send an email to
-                                {{mailto controllers.application.user.task_creation_email_address suffix="__project=time_machine"}}.
-                            </p>
-                            <p>
-                                Tags and task attributes can be assigned simultaneously for any task
-                                attribute including any UDAs you might have specified, and you may
-                                specify any number of them simultaneously (for example, this one sets priority,
-                                project and adds two tags:
-                                {{mailto controllers.application.user.task_creation_email_address suffix="+one__project=time_machine__priority=H+two"}}
-                                ) just be sure to
-                                follow the following format:
-                            </p>
-                            <table>
-                                <tr>
-                                    <th>Tags</th>
-                                    <td><code>+&lt;TAG&gt;</code></td>
-                                </tr>
-                                <tr>
-                                    <th>Attributes</th>
-                                    <td>
-                                        <code>__&lt;ATTRIBUTE&gt;=&lt;VALUE&gt;</code>
-                                        (Note: the &lt;ATTRIBUTE&gt; is prefixed with <strong>two</strong> underscores.)
-                                    </td>
-                                </tr>
-                            </table>
-                        {{/unless}}
-                    </div>
-                    <div class="large-12 columns">
-                        <label>Email Address Whitelist</label>
-                        {{textarea name="email_whitelist" id="id_email_whitelist" value=controllers.application.user.email_whitelist placeholder="me@somesite.com"}}
-                        <p class="input-note">
-                            Only email messages recieved from addresses matching one of the above whitelisted email addresses will be accepted.
-                            Please enter only one email address per line.
-                            You may use '*' and '?' for more sophisticated email matching.
-                        </p>
+                        </div>
                     </div>
                 </div>
-                <a href="" class="button radius" {{action "save_email"}}>Save Settings</a>
-            </div>
-        </dd>
-        <dd>
-            <a href="#twilio">SMS Access</a>
-            <div id="twilio" class="content">
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h3>Create new tasks via text message</h3>
-                        <p>
-                            Inthe.AM can receive and add items to your task list via SMS, but
-                            it requires a little bit of configuration on your part.
-                        </p>
-                        <ol>
-                            <li>Sign up for a <a href="https://www.twilio.com/try-twilio">Twilio account</a>.</li>
-                            <li>
-                                Add funds to your Twilio account. At the time of writing,  Twilio charges
-                                around $0.01 for each incoming or outgoing SMS message (incoming messages are slightly cheaper),
-                                and each phone number costs $1.00/month.
-                            </li>
-                            <li>
-                                <a href="https://www.twilio.com/user/account/phone-numbers/available/local">Buy a phone number</a>.
-                            </li>
-                            <li>
-                                From your phone number's configuration screen, set the field "Messaging Request URL" to
-                                your personal incoming SMS URL: <code>https://inthe.am{{ controllers.application.urls.sms_url }}</code>.
-                            </li>
-                            <li>
-                                Press save.
-                            </li>
-                        </ol>
-                        <p>
-                            After you have configured the above, you can send SMS messages to your
-                            Twilio phone number.  Currently, the only command implemented is 'add',
-                            but in the future additional commands may be added.
-                        </p>
-                        <p>
-                            As an example, you could add a task to the project "birthday" with a due
-                            date of tomorrow and high priority by sending an SMS message with the following
-                            contents:
-                            <pre>add project:birthday due:tomorrow priority:h It's my birthday</pre>
-                        </p>
-                        {{#unless controllers.application.user.twilio_auth_token}}
-                            <div class="block warning">
-                                <p>
-                                    For your security, the ability to send task messages via
-                                    SMS is currently disabled for your account since you
-                                    have not yet entered your Twilio auth token.
-                                </p>
-                                <p>
-                                    This token is necessary for verifying that incoming messages
-                                    were sent to Inthe.AM by Twilio from your account.
-                                </p>
-                                <p>
-                                    Enable SMS access by filling in the below information.
-                                </p>
-                            </div>
-                        {{else}}
-                            <table class="pure-table pure-table-horizontal">
-                                <tr>
-                                    <th>
-                                        Twilio Messaging Request URL <strong>(POST)</strong>
-                                    </th>
-                                    <td>
-                                        https://inthe.am{{ controllers.application.urls.sms_url }}
-                                    </td>
-                                </tr>
-                            </table>
-                        {{/unless}}
+            </dd>
+            <dd>
+                <a href="#feeds">RSS &amp; Pebble Feeds</a>
+                <div id="feeds" class="content">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>RSS Feed</h3>
+                            <p>
+                                Turn this feature on to gain access to an RSS feed
+                                listing your most urgent tasks.
+                            </p>
+                            {{#unless controllers.application.user.feed_enabled}}
+                                <div class="block warning">
+                                    <p>
+                                        For your security, your feed is disabled
+                                        by default.  Although your feed's URL is unique
+                                        and randomly generated, no authentication is used
+                                        to improve compatibility with RSS feed readers.
+                                        <a href="" {{action "save_feed" true}}>Enable your RSS Feed</a>.
+                                    </p>
+                                </div>
+                            {{else}}
+                                <table class="pure-table pure-table-horizontal">
+                                    <tr>
+                                        <th>
+                                            Feed URL
+                                        </th>
+                                        <td>
+                                            https://inthe.am{{ controllers.application.urls.feed_url }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            {{/unless}}
+                            <label>RSS Task Feed</label>
+                            {{view Ember.Select value=controllers.application.user.feed_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI id="id_feed_config"}}
+                            <a href="" class="button radius" {{action "save_feed"}}>Save Settings</a>
+                        </div>
                     </div>
-                    <div class="large-12 columns">
-                        <label>Twilio Auth Token</label>
-                        {{input type="text" id="id_twilio_auth_token" name="twilio_auth_token" value=controllers.application.user.twilio_auth_token}}
-                    </div>
-                    <div class="large-12 columns">
-                        <label>Phone Number Whitelist</label>
-                        {{textarea name="sms_whitelist" id="id_sms_whitelist" value=controllers.application.user.sms_whitelist placeholder="+15555555555"}}
-                        <p class='input-note'>
-                            One phone number per line.  Leave empty to allow messages from any phone number.
-                        </p>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Pebble Cards URL</h3>
+                            <p> 
+                                <a href="http://keanulee.com/pebblecards/">Pebble Cards</a> is a
+                                <a href="https://getpebble.com/">Pebble</a> application
+                                allowing one quick access to information like
+                                one's upcoming appointments, the local weather, and when the
+                                sun will set today.  Inthe.AM provides a URL you can use with
+                                Pebble Cards for displaying your current highest priority task.
+                            </p>
+                            {{#unless controllers.application.user.pebble_cards_enabled}}
+                                <div class="block warning">
+                                    <p>
+                                        For your security, your Pebble Cards URL is disabled
+                                        by default.  Although your Pebble Cards URL is unique
+                                        and randomly generated, due to limitations in Pebble
+                                        Cards, no authentication is used.
+                                        <a href="" {{action "save_pebble_cards" true}}>Enable your Pebble Cards URL</a>.
+                                    </p>
+                                </div>
+                            {{else}}
+                                <table class="pure-table pure-table-horizontal">
+                                    <tr>
+                                        <th>
+                                            Pebble Cards URL
+                                        </th>
+                                        <td>
+                                            https://inthe.am{{ controllers.application.urls.pebble_card_url }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            {{/unless}}
+                            <label>Pebble Cards URL</label>
+                            {{view Ember.Select value=controllers.application.user.pebble_cards_enabled optionValuePath="content.value" optionLabelPath="content.human" content=pebbleCardsEnabledUI id="id_pebble_cards_config"}}
+                            <a href="" class="button radius" {{action "save_pebble_cards"}}>Save Settings</a>
+                        </div>
                     </div>
                 </div>
-                <a href="" class="button radius" {{action "save_twilio"}}>Save Settings</a>
-            </div>
-        </dd>
-        <dd>
-            <a href="#dangerous">Danger Zone</a>
-            <div id="dangerous" class="content">
-                <div class="row">
-                    <div class="large-12 columns">
-                        <h3>Delete your account information</h3>
-                        <p>
-                            Pressing this button will delete both any task information
-                            currently stored in your task list on Inthe.AM, as well as
-                            clear any information stored in your Inthe.AM taskd account.
-                        </p>
+            </dd>
+            <dd>
+                <a href="#email">Email Access</a>
+                <div id="email" class="content">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Create new tasks by sending an email message</h3>
+                            <p>
+                                Inthe.AM can receive and add items to your task list via email.
+                            </p>
+                            {{#unless controllers.application.user.email_whitelist}}
+                                <div class="block warning">
+                                    <p>
+                                        For your security, the ability to receive tasks via email
+                                        requires that you enter email addresses into the whitelist
+                                        below to prevent others from being able to add tasks to your
+                                        task list.
+                                    </p>
+                                </div>
+                            {{else}}
+                                <table class="pure-table pure-table-horizontal">
+                                    <tr>
+                                        <th>
+                                            Your Inthe.AM email address
+                                        </th>
+                                        <td>
+                                            {{mailto controllers.application.user.task_creation_email_address}}
+                                        </td>
+                                    </tr>
+                                </table>
+                                <p>
+                                    Simply send an email to
+                                    {{mailto controllers.application.user.task_creation_email_address}}
+                                    with either an empty subject or the word <strong>New</strong>, and a
+                                    body containing the text you would use on the command-line to create a task.
+                                </p>
+                                <p>
+                                    For example:
+                                </p>
+                                <blockquote>
+                                    From: {{controllers.application.user.email}}<br />
+                                    To: {{controllers.application.user.task_creation_email_address}}<br />
+                                    Subject: New<br />
+                                    <br />
+                                    Find local source for flux capacitor parts.  project:time_machine priority:h +delorean
+                                </blockquote>
+                                <h4>Advanced Use</h4>
+                                <p>
+                                    Although setting task attributes in the body of the email itself
+                                    will work just fine, you can also specify task attributes or tags
+                                    by adding suffixes to the email address itself.
+                                </p>
+                                <p>
+                                    For example, to automatically add the tag "alpha" to an incoming
+                                    task, you can send an email to
+                                    {{mailto controllers.application.user.task_creation_email_address suffix="+alpha"}},
+                                    or to set the project to "time_machine" you could send an email to
+                                    {{mailto controllers.application.user.task_creation_email_address suffix="__project=time_machine"}}.
+                                </p>
+                                <p>
+                                    Tags and task attributes can be assigned simultaneously for any task
+                                    attribute including any UDAs you might have specified, and you may
+                                    specify any number of them simultaneously (for example, this one sets priority,
+                                    project and adds two tags:
+                                    {{mailto controllers.application.user.task_creation_email_address suffix="+one__project=time_machine__priority=H+two"}}
+                                    ) just be sure to
+                                    follow the following format:
+                                </p>
+                                <table>
+                                    <tr>
+                                        <th>Tags</th>
+                                        <td><code>+&lt;TAG&gt;</code></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Attributes</th>
+                                        <td>
+                                            <code>__&lt;ATTRIBUTE&gt;=&lt;VALUE&gt;</code>
+                                            (Note: the &lt;ATTRIBUTE&gt; is prefixed with <strong>two</strong> underscores.)
+                                        </td>
+                                    </tr>
+                                </table>
+                            {{/unless}}
+                        </div>
+                        <div class="large-12 columns">
+                            <label>Email Address Whitelist</label>
+                            {{textarea name="email_whitelist" id="id_email_whitelist" value=controllers.application.user.email_whitelist placeholder="me@somesite.com"}}
+                            <p class="input-note">
+                                Only email messages recieved from addresses matching one of the above whitelisted email addresses will be accepted.
+                                Please enter only one email address per line.
+                                You may use '*' and '?' for more sophisticated email matching.
+                            </p>
+                        </div>
                     </div>
+                    <a href="" class="button radius" {{action "save_email"}}>Save Settings</a>
                 </div>
-                <a href="" class="button radius alert" {{action "clear_task_data"}}>Clear Task Data</a>
-            </div>
-        </dd>
-    </dl>
-    {{partial "footer"}}
+            </dd>
+            <dd>
+                <a href="#twilio">SMS Access</a>
+                <div id="twilio" class="content">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Create new tasks via text message</h3>
+                            <p>
+                                Inthe.AM can receive and add items to your task list via SMS, but
+                                it requires a little bit of configuration on your part.
+                            </p>
+                            <ol>
+                                <li>Sign up for a <a href="https://www.twilio.com/try-twilio">Twilio account</a>.</li>
+                                <li>
+                                    Add funds to your Twilio account. At the time of writing,  Twilio charges
+                                    around $0.01 for each incoming or outgoing SMS message (incoming messages are slightly cheaper),
+                                    and each phone number costs $1.00/month.
+                                </li>
+                                <li>
+                                    <a href="https://www.twilio.com/user/account/phone-numbers/available/local">Buy a phone number</a>.
+                                </li>
+                                <li>
+                                    From your phone number's configuration screen, set the field "Messaging Request URL" to
+                                    your personal incoming SMS URL: <code>https://inthe.am{{ controllers.application.urls.sms_url }}</code>.
+                                </li>
+                                <li>
+                                    Press save.
+                                </li>
+                            </ol>
+                            <p>
+                                After you have configured the above, you can send SMS messages to your
+                                Twilio phone number.  Currently, the only command implemented is 'add',
+                                but in the future additional commands may be added.
+                            </p>
+                            <p>
+                                As an example, you could add a task to the project "birthday" with a due
+                                date of tomorrow and high priority by sending an SMS message with the following
+                                contents:
+                                <pre>add project:birthday due:tomorrow priority:h It's my birthday</pre>
+                            </p>
+                            {{#unless controllers.application.user.twilio_auth_token}}
+                                <div class="block warning">
+                                    <p>
+                                        For your security, the ability to send task messages via
+                                        SMS is currently disabled for your account since you
+                                        have not yet entered your Twilio auth token.
+                                    </p>
+                                    <p>
+                                        This token is necessary for verifying that incoming messages
+                                        were sent to Inthe.AM by Twilio from your account.
+                                    </p>
+                                    <p>
+                                        Enable SMS access by filling in the below information.
+                                    </p>
+                                </div>
+                            {{else}}
+                                <table class="pure-table pure-table-horizontal">
+                                    <tr>
+                                        <th>
+                                            Twilio Messaging Request URL <strong>(POST)</strong>
+                                        </th>
+                                        <td>
+                                            https://inthe.am{{ controllers.application.urls.sms_url }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            {{/unless}}
+                        </div>
+                        <div class="large-12 columns">
+                            <label>Twilio Auth Token</label>
+                            {{input type="text" id="id_twilio_auth_token" name="twilio_auth_token" value=controllers.application.user.twilio_auth_token}}
+                        </div>
+                        <div class="large-12 columns">
+                            <label>Phone Number Whitelist</label>
+                            {{textarea name="sms_whitelist" id="id_sms_whitelist" value=controllers.application.user.sms_whitelist placeholder="+15555555555"}}
+                            <p class='input-note'>
+                                One phone number per line.  Leave empty to allow messages from any phone number.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="" class="button radius" {{action "save_twilio"}}>Save Settings</a>
+                </div>
+            </dd>
+            <dd>
+                <a href="#dangerous">Danger Zone</a>
+                <div id="dangerous" class="content">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Delete your account information</h3>
+                            <p>
+                                Pressing this button will delete both any task information
+                                currently stored in your task list on Inthe.AM, as well as
+                                clear any information stored in your Inthe.AM taskd account.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="" class="button radius alert" {{action "clear_task_data"}}>Clear Task Data</a>
+                </div>
+            </dd>
+        </dl>
+        {{partial "footer"}}
+    </div>
 </div>

@@ -1,77 +1,79 @@
 <div class="row standalone">
-    <h1>Inthe.AM</h1>
-    <div class="medium-12">
-        <p>
-            Sometimes you need to access your 
-            <a href="http://taskwarrior.org/">taskwarrior</a>
-            tasks when you're not
-            nearby your keyboard; that is where Inthe.AM can help.
-            <a href="#" {{action "login"}}>
-                Log In with Google to get started.
-            </a>
-        </p>
+    <div class="standalone-content">
+        <h1>Inthe.AM</h1>
+        <div class="medium-12">
+            <p>
+                Sometimes you need to access your 
+                <a href="http://taskwarrior.org/">taskwarrior</a>
+                tasks when you're not
+                nearby your keyboard; that is where Inthe.AM can help.
+                <a href="#" {{action "login"}}>
+                    Log In with Google to get started.
+                </a>
+            </p>
+        </div>
+        <div class="medium-12">
+            <p>
+                <img {{bind-attr src=urls.web_ui}} />
+            </p>
+        </div>
+        <div class="medium-12">
+            <p>
+                Inthe.AM provides you with a modern web interface that you can
+                use for accessing your Taskwarrior tasks from any browser
+                connected to the internet &mdash; even your phone.
+            </p>
+            <h2>Features</h2>
+            <ul id='features'>
+                <li>
+                    <span class='headline'>Synchronization with Taskwarrior</span>:
+                    An automatically-configured synchronization server that
+                    you can set up your local Taskwarrior client to synchronize
+                    with (requires Taskwarrior 2.3 or later).
+                </li>
+                <li>
+                    <span class='headline'>Responsive, mobile-ready web UI</span>:
+                    A modern web interface that you can use for accessing
+                    your tasks from either a desktop browser or your phone
+                    &mdash; there's even a web-app mode usable for those
+                    of you with IOS devices.
+                </li>
+                <li>
+                    <span class="headline">Add tasks by sending an email message</span>:
+                    Easily add tasks to your task list by sending an e-mail to
+                    your own whitelist-controlled private e-mail address.
+                </li>
+                <li>
+                    <span class='headline'>Add tasks by sending a text message (SMS)</span>:
+                    Quickly add tasks to your task list while on-the-go by sending
+                    a text message from your mobile phone.
+                </li>
+                <li>
+                    <span class='headline'>Taskwarrior color scheme support</span>:
+                    Display your tasks using any of the built-in Taskwarrior
+                    color schemes.  The colors displayed will match those shown
+                    in your terminal!
+                </li>
+                <li>
+                    <span class='headline'>REST API</span>:
+                    Display your latest task entry on your Pebble using
+                    Wire-up <em>your</em> applications to create,
+                    modify, or complete your tasks programmatically using
+                    Inthe.AM's REST API.
+                </li>
+                <li>
+                    <span class='headline'>Pebble Cards Integration</span>:
+                    Display your latest task entry on your Pebble using
+                    Inthe.AM's Pebble Cards integration.
+                </li>
+            </ul>
+            <h2>Open Source</h2>
+            <p>
+                Inthe.AM is an open-source application relying upon open-source
+                libraries.  The features you want are just a pull-request
+                or a <a href="https://github.com/coddingtonbear/inthe.am/issues?page=1&state=open">bug-report</a> away!
+            </p>
+        </div>
+        {{partial "footer"}}
     </div>
-    <div class="medium-12">
-        <p>
-            <img {{bind-attr src=urls.web_ui}} />
-        </p>
-    </div>
-    <div class="medium-12">
-        <p>
-            Inthe.AM provides you with a modern web interface that you can
-            use for accessing your Taskwarrior tasks from any browser
-            connected to the internet &mdash; even your phone.
-        </p>
-        <h2>Features</h2>
-        <ul id='features'>
-            <li>
-                <span class='headline'>Synchronization with Taskwarrior</span>:
-                An automatically-configured synchronization server that
-                you can set up your local Taskwarrior client to synchronize
-                with (requires Taskwarrior 2.3 or later).
-            </li>
-            <li>
-                <span class='headline'>Responsive, mobile-ready web UI</span>:
-                A modern web interface that you can use for accessing
-                your tasks from either a desktop browser or your phone
-                &mdash; there's even a web-app mode usable for those
-                of you with IOS devices.
-            </li>
-            <li>
-                <span class="headline">Add tasks by sending an email message</span>:
-                Easily add tasks to your task list by sending an e-mail to
-                your own whitelist-controlled private e-mail address.
-            </li>
-            <li>
-                <span class='headline'>Add tasks by sending a text message (SMS)</span>:
-                Quickly add tasks to your task list while on-the-go by sending
-                a text message from your mobile phone.
-            </li>
-            <li>
-                <span class='headline'>Taskwarrior color scheme support</span>:
-                Display your tasks using any of the built-in Taskwarrior
-                color schemes.  The colors displayed will match those shown
-                in your terminal!
-            </li>
-            <li>
-                <span class='headline'>REST API</span>:
-                Display your latest task entry on your Pebble using
-                Wire-up <em>your</em> applications to create,
-                modify, or complete your tasks programmatically using
-                Inthe.AM's REST API.
-            </li>
-            <li>
-                <span class='headline'>Pebble Cards Integration</span>:
-                Display your latest task entry on your Pebble using
-                Inthe.AM's Pebble Cards integration.
-            </li>
-        </ul>
-        <h2>Open Source</h2>
-        <p>
-            Inthe.AM is an open-source application relying upon open-source
-            libraries.  The features you want are just a pull-request
-            or a <a href="https://github.com/coddingtonbear/inthe.am/issues?page=1&state=open">bug-report</a> away!
-        </p>
-    </div>
-    {{partial "footer"}}
 </div>
