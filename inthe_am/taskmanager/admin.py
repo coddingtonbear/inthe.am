@@ -1,3 +1,5 @@
+import urlparse
+
 from django.contrib import admin
 
 from .models import TaskStore, TaskStoreActivityLog, UserMetadata
@@ -5,16 +7,14 @@ from .models import TaskStore, TaskStoreActivityLog, UserMetadata
 
 class DefaultFilterMixIn(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
-        ref = request.META.get('HTTP_REFERER', '')
-        path = request.META.get('PATH_INFO', '')
-        if not ref.split(path)[-1].startswith('?'):
+        full_path = request.get_full_path()
+        path_info = urlparse.urlparse(full_path)
+        referrer = request.META.get('HTTP_REFERER', '')
+        if not path_info.path in referrer:
             q = request.GET.copy()
-            # use try/except in case default_filters isn't defined
             try:
-                for filter in self.default_filters:
-                    key = filter.split('=')[0]
-                    value = filter.split('=')[1]
-                    q[key] = value
+                for key, value in self.default_filters.items():
+                    q[key] = str(value)
                 request.GET = q
             except:
                 request.GET = q
@@ -55,7 +55,9 @@ class TaskStoreActivityLogAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     list_filter = ('error', 'created', 'last_seen', )
     list_select_related = True
     ordering = ('-last_seen', )
-    default_filters = ['error__exact=1']
+    default_filters = {
+        'error__exact': 1,
+    }
 
     def username(self, obj):
         return obj.store.user.username
