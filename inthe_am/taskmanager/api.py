@@ -5,6 +5,7 @@ import operator
 import os
 import re
 import shlex
+import textwrap
 import uuid
 
 from dateutil.parser import parse
@@ -395,6 +396,22 @@ class UserResource(resources.ModelResource):
 
     def announcements(self, request, **kwargs):
         announcements = []
+        if request.user.is_authenticated():
+            store = models.TaskStore.get_for_user(request.user)
+            if not store.sync_enabled:
+                announcements.append({
+                    'type': 'error',
+                    'title': 'Synchronization Disabled',
+                    'duration': 5 * 60 * 1000,
+                    'message': textwrap.dedent("""
+                        Synchronization is currently disabled for your account
+                        because we had trouble connecting to the Taskd server
+                        you've asked us to use.  To re-enable synchronization,
+                        please take a moment to verify the Taskd server
+                        settings you've entered into your
+                        <a href='/configure/'>configuration</a>.
+                    """).strip().replace('\n', ' '),
+                })
         return HttpResponse(
             json.dumps(announcements),
             content_type='application/json',

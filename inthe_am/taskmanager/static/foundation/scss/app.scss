@@ -297,6 +297,14 @@ div.reveal-modal {
   }
 }
 
+div.growl-message {
+  a {
+    color: inherit;
+    text-decoration: underline;
+    font-style: italic;
+  }
+}
+
 table.log {
   width: 100%;
 

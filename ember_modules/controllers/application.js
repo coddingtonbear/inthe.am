@@ -106,10 +106,11 @@ var controller = Ember.Controller.extend({
       url: this.get('urls.announcements'),
       dataType: 'json',
       success: function(data) {
-        $.each(data, function(announcement) {
-          $.growl[announcement.type]({
-            title: announcement.title,
-            message: announcement.message,
+        $.each(data, function(idx, announcement) {
+          $.growl[announcement.type || 'notice']({
+            title: announcement.title || 'Announcement',
+            message: announcement.message || '',
+            duration: announcement.duration || 15000,
           });
         });
       }
