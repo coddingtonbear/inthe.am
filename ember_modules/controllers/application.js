@@ -30,6 +30,9 @@ var controller = Ember.Controller.extend({
   taskUpdateStreamEnabled: function() {
     return this.get('controllers.configure.taskUpdateStreamEnabled');
   }.property(),
+  isHomePage: function() {
+    return this.get('currentPath') == "about";
+  }.property('currentPath'),
   update_user_info: function() {
     this.set(
       'user',

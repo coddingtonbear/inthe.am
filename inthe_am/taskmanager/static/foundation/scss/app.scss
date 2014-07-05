@@ -45,16 +45,6 @@ i.fa:before {
   width: 18px;
 }
 
-ul#features {
-  span.headline {
-    font-weight: 700;
-    font-size: 1.1em;
-  }
-  li {
-    margin-bottom: 10px;
-  }
-}
-
 label[for] {
   display: inline-block;
   margin-left: 0.44rem;
@@ -112,10 +102,53 @@ div.row {
     height: 100%;
     background-color: inherit;
 
+    &.homepage {
+      text-align: center;
+
+      #about_logo {
+        position: absolute;
+        width: 100px;
+        left: 300px;
+        top: 35px;
+      }
+
+      p {
+        font-size: 0.85rem;
+
+        &.tagline {
+          margin-top: 30px;
+        }
+      }
+
+      div.promo_cell {
+        display: inline-block;
+        width: 250px;
+        margin: 10px 20px;
+        vertical-align: top;
+        text-align: justify;
+
+        i.fa {
+          text-align: center;
+          font-size: 2em;
+          display: inline-block;
+          width: 100%;
+          margin-bottom: 20px;
+        }
+
+        span.headline {
+          font-weight: 700;
+          font-size: 1.1em;
+          display: block;
+          text-align: center;
+        }
+      }
+    }
+
     div.standalone-content {
       max-width: 950px;
       margin: 0 auto;
       padding: 45px 25px 0px 25px;
+      position: relative;
     }
 
     ul, ol {

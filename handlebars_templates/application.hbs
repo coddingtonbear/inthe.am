@@ -1,3 +1,4 @@
+{{#unless controller.isHomePage}}
 <nav class="top-bar" data-topbar>
     <ul class="title-area">
         <li class="name">
@@ -55,5 +56,6 @@
         </section>
     {{/if}}
 </nav>
+{{/unless}}
 {{outlet}}
 {{outlet modal}}
