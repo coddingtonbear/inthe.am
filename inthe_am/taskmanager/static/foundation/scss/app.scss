@@ -108,7 +108,7 @@ div.row {
       #about_logo {
         position: absolute;
         width: 100px;
-        left: 300px;
+        left: 31%;
         top: 35px;
       }
 
@@ -407,12 +407,22 @@ div.alert-box.error {
   div.annotations_list {
     width: 100%;
   }
+  #about_logo {
+    left: 25% !important;
+  }
 }
 
 @media screen and (max-width: 800px) {
   // Hide text content of buttons
   html, body {
     overflow: hidden;
+  }
+  #about_logo {
+    display: block;
+    margin: 0 auto;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
   }
   .row .row {
     width: 100%;
