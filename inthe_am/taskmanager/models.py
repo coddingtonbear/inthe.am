@@ -217,8 +217,8 @@ class TaskStore(models.Model):
                         applied[key] = value
                         applied_extras.write(
                             "%s=%s\n" % (
-                                key,
-                                value,
+                                key.encode('utf8'),
+                                value.encode('utf8'),
                             )
                         )
                     else:
@@ -619,11 +619,11 @@ class Metadata(dict):
             return self._init()
 
         with open(self.path, 'r') as config_file:
-            return json.loads(config_file.read())
+            return json.loads(config_file.read().decode('utf8'))
 
     def _write(self):
         with open(self.path, 'w') as config_file:
-            config_file.write(json.dumps(self.config))
+            config_file.write(json.dumps(self.config).encode('utf8'))
 
     def items(self):
         return self.config.items()
@@ -673,6 +673,7 @@ class TaskRc(object):
             return config, includes
         with open(path, 'r') as config_file:
             for line in config_file.readlines():
+                line = line.decode('utf8', 'replace')
                 if line.startswith('#'):
                     continue
                 if line.startswith('include '):
@@ -713,8 +714,8 @@ class TaskRc(object):
             for key, value in data.items():
                 config.write(
                     "%s=%s\n" % (
-                        key,
-                        value
+                        key.encode('utf8'),
+                        value.encode('utf8')
                     )
                 )
 
