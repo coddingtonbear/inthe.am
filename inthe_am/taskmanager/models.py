@@ -206,7 +206,7 @@ class TaskStore(models.Model):
         errored = {}
         self.taskrc.add_include(extras_path)
         with tempfile.NamedTemporaryFile() as temp_extras:
-            temp_extras.write(self.taskrc_extras)
+            temp_extras.write(self.taskrc_extras.encode('utf8'))
             temp_extras.flush()
             extras = TaskRc(temp_extras.name, read_only=True)
 
