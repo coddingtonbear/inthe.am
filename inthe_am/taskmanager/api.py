@@ -584,7 +584,7 @@ class TaskResource(resources.Resource):
     def dehydrate(self, bundle):
         store = models.TaskStore.get_for_user(bundle.request.user)
         for key, data in store.client.config.get_udas().items():
-            value = getattr(bundle.obj, key, None)
+            value = getattr(bundle.obj, key.encode('utf8'), None)
             bundle.data[key] = value
         return bundle
 
