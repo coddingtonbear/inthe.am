@@ -1,4 +1,3 @@
-import datetime
 import json
 import hashlib
 import logging
@@ -438,6 +437,7 @@ class TaskStore(models.Model):
             # Create a new user username
             env = os.environ.copy()
             env['TASKDDATA'] = settings.TASKD_DATA
+
             command = [
                 settings.TASKD_BINARY,
                 'add',

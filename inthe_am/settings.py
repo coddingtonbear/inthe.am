@@ -278,16 +278,16 @@ VERSION = check_output(
 if TESTING:
     CELERY_ALWAYS_EAGER = True
 
-# Sourced from environment:
+TASKD_BINARY = '/usr/local/bin/taskd'
+TASK_BINARY = '/usr/local/bin/task'
+TASKD_DATA = '/var/taskd'
+TASKD_SIGNING_TEMPLATE = '/var/taskd/cert.template'
+TASKD_SERVER = '127.0.0.1:53589'
+TASKD_ORG = 'testing'
+
+# Must be sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
-#  TASKD_BINARY
-#  TASKD_SERVER
-#  TASKD_ORG
-#  TASKD_DATA
-#  TASKD_SIGNING_TEMPLATE
-#  TASK_BINARY
-#  RAVEN_DSN
 this_module = sys.modules[__name__]
 for key, value in os.environ.items():
     if key.startswith(ENVIRONMENT_SETTING_PREFIX):

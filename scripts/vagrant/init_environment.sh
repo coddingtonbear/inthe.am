@@ -70,6 +70,7 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     export TASKDDATA=$TWWEB_TASKD_DATA
     taskd init
     taskd add org inthe_am
+    taskd add org testing
     cp $MAIN_DIR/scripts/vagrant/simple_taskd_upstart.conf /etc/init/taskd.conf
 
     if [ -z "$TRAVIS" ]; then
