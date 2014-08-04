@@ -132,6 +132,8 @@ var controller = Ember.Controller.extend({
     }
     setInterval(this.checkLastUpdated.bind(this), 2000);
     setTimeout(this.doTotalRefresh.bind(this), 60 * 5 * 1000);
+
+    // Set up left-right swipe for returning to the task list
     $("body").touchwipe({
       wipeRight: function() {
         if (self.isSmallScreen()) {
