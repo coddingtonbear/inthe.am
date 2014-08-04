@@ -17,6 +17,7 @@ inthe_am/taskmanager/static/compiled.min.map
 inthe_am/taskmanager/static/compiled.dev.js
 bin/*
 lib/*
+src/*
 include/*
 etc/*
 .Python
