@@ -61,7 +61,6 @@ var controller = Ember.Controller.extend({
     $.ajax({
       url: url,
       type: 'POST',
-      data: data,
       success: function(){
         self.get('controllers.application').update_user_info();
         self.success_message(
@@ -177,9 +176,12 @@ var controller = Ember.Controller.extend({
     },
     save_taskd_and_init: function() {
         var self = this;
-        this.save_taskd(function() {
+        this.send(
+          'save_taskd',
+          function() {
             self.sync_with_init();
-        });
+          }
+        );
     },
     save_taskd: function(after) {
       var data = {
