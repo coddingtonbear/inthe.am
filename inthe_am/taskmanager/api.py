@@ -578,6 +578,13 @@ class TaskResource(resources.Resource):
                 ),
                 self.wrap_view('refresh_tasks'),
                 name='refresh_tasks',
+            ),
+            url(
+                r"^(?P<resource_name>%s)/sync-init/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('sync_init'),
+                name='sync_init',
             )
         ]
 
@@ -648,6 +655,14 @@ class TaskResource(resources.Resource):
                 status=404
             )
         return HttpResponseNotAllowed(request.method)
+
+    @requires_task_store
+    def sync_init(self, request, store, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(request.method)
+
+        store.client.sync(init=True)
+        return HttpResponse('OK')
 
     @requires_task_store
     def refresh_tasks(self, request, store, **kwargs):

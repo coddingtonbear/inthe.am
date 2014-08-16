@@ -55,7 +55,27 @@ var controller = Ember.Controller.extend({
     }
     return true;
   }.property(),
-  submit_taskd: function(data) {
+  sync_with_init: function() {
+    var url = this.get('controllers.application').urls.sync_init;
+    var self = this;
+    $.ajax({
+      url: url,
+      type: 'POST',
+      data: data,
+      success: function(){
+        self.get('controllers.application').update_user_info();
+        self.success_message(
+            "Initial sync completed successfully."
+        );
+      },
+      error: function(xhr){
+        self.error_message(
+          "Error encountered while completing initial sync."
+        );
+      }
+    });
+  },
+  submit_taskd: function(data, after) {
     if (
       data.certificate === false || data.key === false || data.ca === false
     ) {
@@ -79,6 +99,9 @@ var controller = Ember.Controller.extend({
       success: function(){
         self.get('controllers.application').update_user_info();
         self.success_message("Taskd settings saved.");
+        if(after) {
+          after();
+        }
       },
       error: function(xhr){
         var response = JSON.parse(xhr.responseText);
@@ -152,7 +175,13 @@ var controller = Ember.Controller.extend({
         }
       });
     },
-    save_taskd: function() {
+    save_taskd_and_init: function() {
+        var self = this;
+        this.save_taskd(function() {
+            self.sync_with_init();
+        });
+    },
+    save_taskd: function(after) {
       var data = {
         server: document.getElementById('id_server').value,
         credentials: document.getElementById('id_credentials').value,
@@ -164,7 +193,7 @@ var controller = Ember.Controller.extend({
       var cert_reader = new FileReader();
       cert_reader.onload = function(evt){
         data.certificate = evt.target.result;
-        self.submit_taskd(data);
+        self.submit_taskd(data, after);
       };
       cert_reader.onerror = function(evt) {
         data.certificate = false;
@@ -184,7 +213,7 @@ var controller = Ember.Controller.extend({
       var key_reader = new FileReader();
       key_reader.onload = function(evt){
         data.key = evt.target.result;
-        self.submit_taskd(data);
+        self.submit_taskd(data, after);
       };
       key_reader.onerror = function(evt) {
         data.key = false;
@@ -205,7 +234,7 @@ var controller = Ember.Controller.extend({
         var ca_reader = new FileReader();
         ca_reader.onload = function(evt){
           data.ca = evt.target.result;
-          self.submit_taskd(data);
+          self.submit_taskd(data, after);
         };
         ca_reader.onerror = function(evt) {
           data.ca = false;
