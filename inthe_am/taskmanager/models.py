@@ -379,7 +379,7 @@ class TaskStore(models.Model):
         else:
             try:
                 expected_debounce_id = float(cache.get(debounce_key))
-            except ValueError:
+            except (ValueError, TypeError):
                 expected_debounce_id = None
             if (
                 expected_debounce_id and debounce_id
