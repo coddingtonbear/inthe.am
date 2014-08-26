@@ -195,11 +195,6 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'inthe_am.taskmanager.models': {
-            'handlers': ['store'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
         'inthe_am.taskmanager.taskwarrior_client': {
             'handlers': ['taskwarrior'],
             'level': 'DEBUG',
