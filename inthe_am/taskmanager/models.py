@@ -4,10 +4,12 @@ import logging
 import os
 import re
 import tempfile
+import time
 import uuid
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.template.loader import render_to_string
@@ -362,10 +364,42 @@ class TaskStore(models.Model):
     ):
         if not self.sync_enabled:
             return False
+        debounce_id = kwargs.get('debounce_id')
+        debounce_key = 'sync_debounce_%s' % self.pk,
 
         if async:
-            sync_repository.apply_async(args=(self.pk, ))
+            defined_debounce_id = str(time.time())
+            cache.set(debounce_key, defined_debounce_id)
+            sync_repository.apply_async(
+                args=(self.pk, ),
+                kwargs={
+                    'debounce_id': defined_debounce_id,
+                }
+            )
         else:
+            try:
+                expected_debounce_id = float(cache.get(debounce_key))
+            except ValueError:
+                expected_debounce_id = None
+            if (
+                expected_debounce_id and debounce_id
+                and (debounce_id < expected_debounce_id)
+            ):
+                logger.warning(
+                    "Debounce Failed: %s<%s; "
+                    "skipping synchronization for %s.",
+                    debounce_id,
+                    expected_debounce_id,
+                    self.pk,
+                )
+            elif expected_debounce_id and debounce_id:
+                logger.debug(
+                    "Debounce Succeeded: %s>=%s for %s.",
+                    debounce_id,
+                    expected_debounce_id,
+                    self.pk,
+                )
+
             checkpoint_msg = 'Synchronization'
             if msg:
                 checkpoint_msg = '%s: %s' % (checkpoint_msg, msg)

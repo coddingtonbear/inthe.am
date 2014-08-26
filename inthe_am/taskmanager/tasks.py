@@ -16,13 +16,14 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task
-def sync_repository(store_id):
+def sync_repository(store_id, debounce_id=None):
     from .models import TaskStore
     store = TaskStore.objects.get(pk=store_id)
     store.sync(
         async=False,
         function='tasks.sync_repository',
         args=(store_id, ),
+        kwargs={'debounce_id': debounce_id},
     )
 
 
