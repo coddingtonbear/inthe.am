@@ -364,7 +364,7 @@ class TaskStore(models.Model):
     ):
         if not self.sync_enabled:
             return False
-        debounce_id = kwargs.get('debounce_id')
+        debounce_id = kwargs.get('debounce_id') if kwargs else None
         debounce_key = 'sync_debounce_%s' % self.pk,
 
         if async:
