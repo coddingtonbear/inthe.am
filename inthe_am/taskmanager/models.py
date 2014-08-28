@@ -371,6 +371,8 @@ class TaskStore(models.Model):
             defined_debounce_id = str(time.time())
             cache.set(debounce_key, defined_debounce_id)
             sync_repository.apply_async(
+                countdown=15,
+                expires=3600,
                 args=(self.pk, ),
                 kwargs={
                     'debounce_id': defined_debounce_id,
@@ -431,6 +433,7 @@ class TaskStore(models.Model):
                     else:
                         sync_repository.apply_async(
                             countdown=30,
+                            expires=3600,
                             args=(self.pk, )
                         )
                     return False
