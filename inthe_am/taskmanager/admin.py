@@ -1,3 +1,4 @@
+import json
 import urlparse
 
 from django.contrib import admin
@@ -39,6 +40,26 @@ class TaskStoreAdmin(admin.ModelAdmin):
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
     )
     ordering = ('-last_synced', )
+    readonly_fields = (
+        'local_path',
+        'last_synced',
+        'metadata',
+        'taskrc',
+    )
+
+    def metadata(self, store):
+        return json.dumps(
+            store.metadata,
+            indent=4,
+            sort_keys=True,
+        )
+
+    def taskrc(self, store):
+        return json.dumps(
+            store.taskrc,
+            indent=4,
+            sort_keys=True,
+        )
 
 admin.site.register(TaskStore, TaskStoreAdmin)
 
