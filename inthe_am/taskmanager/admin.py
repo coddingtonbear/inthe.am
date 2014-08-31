@@ -1,8 +1,10 @@
+import datetime
 import json
 import urlparse
 
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from django.utils.timezone import now
 
 from .models import TaskStore, TaskStoreActivityLog, UserMetadata
 
@@ -26,7 +28,29 @@ class DefaultFilterMixIn(admin.ModelAdmin):
         )
 
 
-class TaskStoreAdmin(admin.ModelAdmin):
+class ActivityStatusListFilter(admin.SimpleListFilter):
+    title = 'activity status'
+    parameter_name = 'activity_status'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('7', '7 days'),
+            ('30', '30 days'),
+            ('90', '90 days'),
+        )
+
+    def queryset(self, request, queryset):
+        try:
+            value = int(self.value())
+        except (ValueError, TypeError):
+            return queryset
+
+        return queryset.filter(
+            last_synced__gte=now() - datetime.timedelta(days=value)
+        )
+
+
+class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     raw_id_fields = ('user', )
     search_fields = (
         'user__username', 'local_path', 'taskrc_extras',
@@ -37,6 +61,7 @@ class TaskStoreAdmin(admin.ModelAdmin):
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
     )
     list_filter = (
+        ActivityStatusListFilter,
         'created', 'last_synced',
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
     )
@@ -47,6 +72,9 @@ class TaskStoreAdmin(admin.ModelAdmin):
         'metadata',
         'taskrc',
     )
+    default_filters = {
+        'activity_status': '7',
+    }
 
     def _renderable(self, value):
         return mark_safe(
