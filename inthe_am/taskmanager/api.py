@@ -877,7 +877,8 @@ class TaskResource(resources.Resource):
                 r.sms("Added.")
 
                 log_args = (
-                    "Added task %s from %s; message '%s'; response: '%s'." % (
+                    "Added task %s via SMS from %s; message '%s'; "
+                    "response: '%s'." % (
                         task_uuid,
                         from_,
                         body,
