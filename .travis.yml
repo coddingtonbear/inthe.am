@@ -21,7 +21,7 @@ services:
 - memcached
 - redis-server
 script:
-- bash scripts/travis/run_tests.sh
+- travis_retry bash scripts/travis/run_tests.sh
 env:
   global:
   - ARTIFACTS_S3_BUCKET=inthe-am-travis-artifacts
