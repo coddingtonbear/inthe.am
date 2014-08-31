@@ -34,6 +34,9 @@ class ActivityStatusListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
+            ('1', '1 day'),
+            ('2', '2 days'),
+            ('3', '3 days'),
             ('7', '7 days'),
             ('30', '30 days'),
             ('90', '90 days'),
