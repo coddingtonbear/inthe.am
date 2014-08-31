@@ -2,6 +2,7 @@ import json
 import urlparse
 
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
 from .models import TaskStore, TaskStoreActivityLog, UserMetadata
 
@@ -47,19 +48,20 @@ class TaskStoreAdmin(admin.ModelAdmin):
         'taskrc',
     )
 
-    def metadata(self, store):
-        return json.dumps(
-            store.metadata,
-            indent=4,
-            sort_keys=True,
+    def _renderable(self, value):
+        return mark_safe(
+            json.dumps(
+                dict(value),
+                indent=4,
+                sort_keys=True
+            ).replace(' ', '&nbsp;')
         )
 
+    def metadata(self, store):
+        return self._renderable(store.metadata)
+
     def taskrc(self, store):
-        return json.dumps(
-            store.taskrc,
-            indent=4,
-            sort_keys=True,
-        )
+        return self._renderable(store.taskrc)
 
 admin.site.register(TaskStore, TaskStoreAdmin)
 

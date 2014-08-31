@@ -632,7 +632,7 @@ class UserMetadata(models.Model):
         return self.user.username
 
 
-class Metadata(dict):
+class Metadata(object):
     def __init__(self, store, path):
         self.path = path
         self.store = store
