@@ -53,6 +53,31 @@ class ActivityStatusListFilter(admin.SimpleListFilter):
         )
 
 
+class RegistrationRecency(admin.SimpleListFilter):
+    title = 'membership'
+    parameter_name = 'registration_recency'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', 'at least 1 days'),
+            ('2', 'at least 2 days'),
+            ('3', 'at least 3 days'),
+            ('7', 'at least 7 days'),
+            ('30', 'at least 30 days'),
+            ('90', 'at least 90 days'),
+        )
+
+    def queryset(self, request, queryset):
+        try:
+            value = int(self.value())
+        except (ValueError, TypeError):
+            return queryset
+
+        return queryset.filter(
+            created__lte=now() - datetime.timedelta(days=value)
+        )
+
+
 class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     raw_id_fields = ('user', )
     search_fields = (
@@ -65,6 +90,7 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     )
     list_filter = (
         ActivityStatusListFilter,
+        RegistrationRecency,
         'created', 'last_synced',
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
     )
