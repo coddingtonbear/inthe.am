@@ -179,12 +179,12 @@ def task_count_matches(context, count, status):
 def following_values_visible_details(context):
     visible_data = {}
     for row in context.browser.find_by_xpath("//table[@class='details']//tr"):
-        key = row.find_by_tag('th')[0].text
+        key = row.find_by_tag('th')[0].text.lower()
         value = row.find_by_tag('td')[0].text
         visible_data[key] = value
 
     for key, value in context.table.rows:
-        actual_value = visible_data.get(key, None)
+        actual_value = visible_data.get(key.lower(), None)
         assert actual_value == value, "%s != %s" % (
             actual_value,
             value,
