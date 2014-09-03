@@ -1,6 +1,6 @@
 <div class="row full-width">
     <div id="mobile-list" class="task-list">
-        <input placeholder="status:pending" results=5 autosave=intheamsearch type="search" class="filter-string-element" id="filter-string" />
+        <input results=5 autosave=intheamsearch type="search" class="filter-string-element" id="filter-string" />
         {{#each task in pendingTasks}}
             <div class="task">
                 {{#link-to "task" task }}
@@ -29,9 +29,6 @@
             <div class="task">
                 <div class="task-item">
                     <div class="task-list-item">
-                        <p class="description">
-                            No tasks currently exist
-                        </p>
                     </div>
                 </div>
             </div>
