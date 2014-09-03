@@ -49,7 +49,12 @@ var controller = Ember.ArrayController.extend({
       Object.getOwnPropertyNames(filters.fields).forEach(function(field) {
         var value = filters.fields[field];
 
-        if(!item.get(field) || item.get(field).indexOf(value) !== 0) {
+        try {
+            if(!item.get(field) || item.get(field).indexOf(value) !== 0) {
+                ok = false;
+            }
+        }catch(e) {
+            // This means we tried to filter a non-string value :-|
             ok = false;
         }
       });
