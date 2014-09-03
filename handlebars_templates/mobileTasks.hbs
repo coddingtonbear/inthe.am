@@ -1,5 +1,6 @@
 <div class="row full-width">
     <div id="mobile-list" class="task-list">
+        <input placeholder="status:pending" type="text" class="filter-string-element" id="filter-string" />
         {{#each task in pendingTasks}}
             <div class="task">
                 {{#link-to "task" task }}

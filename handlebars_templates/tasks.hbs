@@ -1,5 +1,6 @@
 <div class="row full-width">
     <div id="list" class="task-list">
+        <input placeholder="status:pending" type="text" class="filter-string-element" id="filter-string" />
         {{#each task in pendingTasks}}
             {{#link-to "task" task tagName="div" class="task"}}
                 <div {{bind-attr class=":task-item task.taskwarrior_class"}}>
