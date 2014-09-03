@@ -46,9 +46,9 @@ var controller = Ember.ArrayController.extend({
       var ok = true;
 
       Object.getOwnPropertyNames(filters.fields).forEach(function(field) {
-        var value = filters.fields[field].toLowerCase();
+        var value = filters.fields[field];
 
-        if(!item.get(field) || item.get(field).toLowerCase().indexOf(value) !== 0) {
+        if(!item.get(field) || item.get(field).indexOf(value) !== 0) {
             ok = false;
         }
       });
@@ -59,8 +59,8 @@ var controller = Ember.ArrayController.extend({
         }
       });
 
-      var description = filters.description.join('').toLowerCase();
-      if(description && item.get('description').toLowerCase().indexOf(description) < 0) {
+      var description = filters.description.join('');
+      if(description && item.get('description').indexOf(description) < 0) {
         ok = false;
       }
 
