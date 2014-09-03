@@ -80,10 +80,13 @@ var controller = Ember.ArrayController.extend({
   init: function() {
     Ember.run.next(this, function(){
       var self = this;
-      $('.filter-string-element').keyup(function() {
+      var handleChanged = function() {
         self.set('filterString', this.value);
         self.notifyPropertyChange('pendingTasks');
-      });
+      }
+      var element = $('.filter-string-element');
+      element.on('keyup', handleChanged);
+      element.on('search', handleChanged);
     });
   }
 });
