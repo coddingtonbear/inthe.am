@@ -15,7 +15,8 @@ var controller = Ember.ArrayController.extend({
       // Pass
     }
   },
-  getFilters: function(value) {
+  enteredFilters: function() {
+    var value = this.get('filterString');
     var filters = JSON.parse(
       JSON.stringify(this.defaultFilter)
     );
@@ -39,9 +40,9 @@ var controller = Ember.ArrayController.extend({
       }
     });
     return filters;
-  },
+  }.property('filterString'),
   pendingTasks: function() {
-    var filters = this.getFilters(this.get('filterString'));
+    var filters = this.get('enteredFilters');
     var result = this.get('model').filter(function(item, idx, enumerable) {
       var ok = true;
 
