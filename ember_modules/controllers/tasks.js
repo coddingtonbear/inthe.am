@@ -58,14 +58,20 @@ var controller = Ember.ArrayController.extend({
             ok = false;
         }
       });
+      if(!ok) {
+        return ok;
+      }
 
       filters.tags.forEach(function(tag) {
         if(item.get('tags').indexOf(tag) < 0) {
           ok = false;
         }
       });
+      if(!ok) {
+        return ok;
+      }
 
-      var description = filters.description.join('');
+      var description = filters.description.join(' ');
       if(description && item.get('description').indexOf(description) < 0) {
         ok = false;
       }
