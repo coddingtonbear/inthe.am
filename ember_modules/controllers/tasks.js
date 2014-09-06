@@ -47,10 +47,19 @@ var controller = Ember.ArrayController.extend({
       var ok = true;
 
       Object.getOwnPropertyNames(filters.fields).forEach(function(field) {
-        var value = filters.fields[field];
+        var filter_value = filters.fields[field];
+        var item_value = item.get(field);
+        if(item_value instanceof Date) {
+          item_value = moment(item_value).format('YYYY-MM-DDTHH:mm:ssZ')
+          if(filter_value == 'today') {
+            filter_value = moment().format('YYYY-MM-DD');
+          } else if(filter_value == 'tomorrow') {
+            filter_value = moment().add('days', 1).format('YYYY-MM-DD');
+          }
+        }
 
         try {
-            if(!item.get(field) || item.get(field).indexOf(value) !== 0) {
+            if(!item_value || item_value.indexOf(filter_value) !== 0) {
                 ok = false;
             }
         }catch(e) {

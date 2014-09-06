@@ -8,7 +8,9 @@ def get_tasks_from_sidebar(context):
 
     all_tasks = context.browser.find_by_css('#list .task')
     for task in all_tasks:
-        tasks.append(task.find_by_css('.description').value)
+        description = task.find_by_css('.description').value
+        if description:
+            tasks.append(description)
 
     return tasks
 
@@ -22,7 +24,7 @@ def supply_filter(context, value):
 @then(u'a task with the description "{description}" is visible in the sidebar')
 def task_is_visible_in_sidebar(context, description):
     tasks = get_tasks_from_sidebar(context)
-    assert description in tasks, tasks
+    assert description in tasks, "'%s' not in %s" % (description, tasks, )
 
 
 @then(
@@ -31,4 +33,4 @@ def task_is_visible_in_sidebar(context, description):
 )
 def task_is_not_visible_in_sidebar(context, description):
     tasks = get_tasks_from_sidebar(context)
-    assert description not in tasks, tasks
+    assert description not in tasks, "'%s' is in %s" % (description, tasks, )
