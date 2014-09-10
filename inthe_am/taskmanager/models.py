@@ -425,13 +425,16 @@ class TaskStore(models.Model):
                         and past_failure_count > 2
                     ):
                         self.log_error(
-                            "An error was encountered while synchronizing "
-                            "your tasks with the taskd server; please "
-                            "reconfigure your synchronization settings "
-                            "and re-enable synchronization."
+                            "Synchronization with the taskd server failed "
+                            "%s times during the last hour, and as a result "
+                            "synchronization was disabled for your account. "
+                            "Feel free to re-enable synchronization from "
+                            "your Inthe.AM configuration once you have "
+                            "verified that your settings are correct. "
                             "Err. Code: %s; "
                             "Std. Error: %s; "
                             "Std. Out: %s.",
+                            past_failure_count,
                             e.code,
                             e.stderr,
                             e.stdout,
