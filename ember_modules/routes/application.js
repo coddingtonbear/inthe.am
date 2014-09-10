@@ -18,7 +18,7 @@ var route = Ember.Route.extend({
         setTimeout(function(){$("input[name=description]").focus();}, 500);
       };
       Ember.run.scheduleOnce('afterRender', this, displayModal);
-      return rendered;
+      return true;
     }
   }
 });
