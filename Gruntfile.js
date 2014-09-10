@@ -7,7 +7,7 @@ var STATIC_FILES = [
   'jquery.touchwipe.js',
   'fastclick.js',
   'moment.js',
-  'markdown.js',
+  'markdown.min.js',
   'handlebars-v1.3.0.js',
   'ba-linkify.js',
   'ember.prod.js',  // Will be replaced by ember.js in dev
