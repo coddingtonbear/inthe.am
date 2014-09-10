@@ -1,21 +1,21 @@
 var STATIC_ROOT = 'inthe_am/taskmanager/static/sources/';
 var STATIC_FILES = [
-  'raven.min.js',
-  'jquery.min.js',
+  'raven.js',
+  'jquery.js',
   'jquery.datetimepicker.js',
   'jquery.growl.js',
-  'jquery.touchwipe.min.js',
+  'jquery.touchwipe.js',
   'fastclick.js',
-  'moment.min.js',
-  'markdown.min.js',
+  'moment.js',
+  'markdown.js',
   'handlebars-v1.3.0.js',
-  'ba-linkify.min.js',
+  'ba-linkify.js',
   'ember.prod.js',  // Will be replaced by ember.js in dev
   'ember-data.prod.js',  // Will be replaced by ember-data.js in dev
   'tastypie_adapter.js',
   'templates.js',
   'task_manager.js',
-  'foundation.min.js',
+  'foundation.js',
 ];
 var STATIC_COLLECTED_DEV = STATIC_ROOT + '../compiled.dev.js';
 var STATIC_COLLECTED_PROD = STATIC_ROOT + '../compiled.min.js';
