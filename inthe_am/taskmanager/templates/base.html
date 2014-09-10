@@ -53,7 +53,9 @@
           if (error.stack) {
             // this is a native JS error; yay!
           } else if (error.statusText) {
-            error = new Error(error.status + " " + error.statusText);
+            if(error.status != 404) {
+                error = new Error(error.status + " " + error.statusText);
+            }
           } else {
             error = new Error(JSON.stringify(error));
           }
