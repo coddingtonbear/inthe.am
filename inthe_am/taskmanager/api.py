@@ -973,7 +973,7 @@ class TaskResource(resources.Resource):
     def obj_get(self, bundle, store, **kwargs):
         task = store.client.get_task(uuid=kwargs['pk'])[1]
         if not task:
-            return HttpResponseNotFound()
+            raise exceptions.NotFound()
         return Task(task, store=store)
 
     @requires_task_store
