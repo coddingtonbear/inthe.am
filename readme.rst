@@ -5,7 +5,7 @@ Inthe.AM
    :target: https://travis-ci.org/coddingtonbear/inthe.am
 
 - Documentation for Inthe.AM is available on
-  `ReadTheDocs <http://inthe.am.readthedocs.org/>`_.
+  `ReadTheDocs <http://intheam.readthedocs.org/>`_.
 - Please post issues on
   `Github <http://github.com/coddingtonbear/inthe.am/issues>`_.
 - Test status available on
