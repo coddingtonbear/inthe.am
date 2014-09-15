@@ -19,6 +19,7 @@ Contents:
    development_environment_setup
    build_process
    google_oauth_keys
+   api/index
 
 `File issues and bug reports on Github <https://github.com/coddingtonbear/inthe.am/issues>`_.
 
