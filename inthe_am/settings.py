@@ -141,7 +141,7 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
         },
         'exception_log': {
-            'level': 'ERROR',
+            'level': 'WARNING',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/twweb.error.log'),
             'maxBytes': 1048576,

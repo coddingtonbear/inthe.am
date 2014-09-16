@@ -973,6 +973,21 @@ class TaskResource(resources.Resource):
     def obj_get(self, bundle, store, **kwargs):
         task = store.client.get_task(uuid=kwargs['pk'])[1]
         if not task:
+            repository_head = store.repository.head()
+            logger.warning(
+                'Unable to find task with ID %s in repository %s at %s',
+                kwargs['pk'],
+                store.local_path,
+                repository_head,
+                extra={
+                    'data': {
+                        'store': store,
+                        'local_path': store.local_path,
+                        'pk': kwargs['pk'],
+                        'head': repository_head
+                    }
+                }
+            )
             raise exceptions.NotFound()
         return Task(task, store=store)
 
