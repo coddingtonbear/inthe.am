@@ -88,6 +88,12 @@ class UserResource(resources.ModelResource):
                 self.wrap_view('my_key')
             ),
             url(
+                r"^(?P<resource_name>%s)/ca-certificate/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('ca_certificate')
+            ),
+            url(
                 r"^(?P<resource_name>%s)/taskrc/?$" % (
                     self._meta.resource_name
                 ),
@@ -363,6 +369,15 @@ class UserResource(resources.ModelResource):
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
             ts.taskrc.get('taskd.key'),
+            content_type='application/x-pem-file',
+        )
+
+    def ca_certificate(self, request, **kwargs):
+        if request.method != 'GET':
+            raise HttpResponseNotAllowed(request.method)
+        ts = models.TaskStore.get_for_user(request.user)
+        return self._send_file(
+            ts.taskrc.get('taskd.ca'),
             content_type='application/x-pem-file',
         )
 

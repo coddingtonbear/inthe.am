@@ -66,6 +66,14 @@
                                         <a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        Server Certificate
+                                    </th>
+                                    <td>
+                                        <a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a>
+                                    </td>
+                                </tr>
                             </table>
                             
                             <p>
@@ -74,7 +82,7 @@
 
                             <code class="para">taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a><br />
                                 taskd.key=/path/to/<a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a><br />
-                                taskd.trust=yes<br />
+                                taskd.ca=/path/to/<a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a><br />
                                 taskd.server={{ controllers.application.user.taskd_server }}<br />
                                 taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
                             </code>
