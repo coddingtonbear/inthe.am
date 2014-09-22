@@ -71,7 +71,11 @@
                                         Server Certificate
                                     </th>
                                     <td>
-                                        <a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a>
+                                        {{#if controllers.application.urls.ca_certificate}}
+                                            <a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a>
+                                        {{else}}
+                                            &mdash;
+                                        {{/if}}
                                     </td>
                                 </tr>
                             </table>
