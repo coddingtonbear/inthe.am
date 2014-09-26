@@ -15,7 +15,7 @@ from .context_managers import git_checkpoint
 logger = logging.getLogger(__name__)
 
 
-@shared_task
+@shared_task(soft_time_limit=30, time_limit=45)
 def sync_repository(store_id, debounce_id=None):
     from .models import TaskStore
     store = TaskStore.objects.get(pk=store_id)
@@ -27,7 +27,7 @@ def sync_repository(store_id, debounce_id=None):
     )
 
 
-@shared_task
+@shared_task(soft_time_limit=30, time_limit=45)
 def process_email_message(message_id):
     from .models import TaskStore
 
