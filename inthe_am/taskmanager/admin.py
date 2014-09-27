@@ -103,6 +103,7 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     )
     default_filters = {
         'activity_status': '7',
+        'registration_recency': '30',
     }
 
     def _renderable(self, value):
