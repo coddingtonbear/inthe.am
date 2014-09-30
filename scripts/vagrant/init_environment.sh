@@ -117,6 +117,7 @@ sudo chown -R $USER inthe_am/taskmanager/static
 grunt sass browserify ember_handlebars uglify concat
 
 # Install requirements
+source /var/www/envs/twweb/bin/activate
 pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements.txt
 
 if [ -z "$TRAVIS" ]; then

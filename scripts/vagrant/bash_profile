@@ -21,4 +21,4 @@ if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
 fi
 
-source /var/www/twweb/bin/activate
+source /var/www/envs/twweb/bin/activate
