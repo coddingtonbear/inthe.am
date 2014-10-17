@@ -15,20 +15,44 @@ from .context_managers import git_checkpoint
 logger = logging.getLogger(__name__)
 
 
-@shared_task(soft_time_limit=30, time_limit=45)
-def sync_repository(store_id, debounce_id=None):
+@shared_task(
+    bind=True,
+    soft_time_limit=30,
+    time_limit=45,
+    default_retry_delay=60,
+    max_retries=2,
+    ignore_result=True,
+)
+def sync_repository(self, store_id, debounce_id=None):
     from .models import TaskStore
     store = TaskStore.objects.get(pk=store_id)
-    store.sync(
-        async=False,
-        function='tasks.sync_repository',
-        args=(store_id, ),
-        kwargs={'debounce_id': debounce_id},
-    )
+    try:
+        store.sync(
+            async=False,
+            function='tasks.sync_repository',
+            args=(store_id, ),
+            kwargs={'debounce_id': debounce_id},
+        )
+    except:
+        if self.retries == 2:
+            store.log_error(
+                "An unexpected error was encountered while synchronizing "
+                "your tasks with the taskd server. Synchronization has been "
+                "temporarily disabled for your account, and an administrator "
+                "has been notified."
+            )
+            store.sync_enabled = False
+            store.save()
+        raise
 
 
-@shared_task(soft_time_limit=30, time_limit=45)
-def process_email_message(message_id):
+@shared_task(
+    bind=True,
+    soft_time_limit=30,
+    time_limit=45,
+    ignore_result=True,
+)
+def process_email_message(self, message_id):
     from .models import TaskStore
 
     def get_secret_id_and_args(address):
