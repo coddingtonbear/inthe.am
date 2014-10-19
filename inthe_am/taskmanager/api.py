@@ -291,7 +291,7 @@ class UserResource(resources.ModelResource):
         with open(store.taskrc['taskd.ca'], 'r') as fin:
             ca_cert = fin.read().strip()
 
-        username, org, user_key = store.taskrc['taskd.credentials'].split('/')
+        org, username, user_key = store.taskrc['taskd.credentials'].split('/')
         response = HttpResponse(
             render_to_string(
                 'mirakel_configuration.txt',
