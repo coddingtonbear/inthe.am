@@ -19,6 +19,7 @@ from twilio.twiml import Response
 from twilio.util import RequestValidator
 from lockfile import LockTimeout
 
+from django.conf import settings
 from django.conf.urls import url
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -27,6 +28,7 @@ from django.http import (
     HttpResponseNotAllowed, HttpResponseNotFound,
     HttpResponseForbidden,
 )
+from django.template.loader import render_to_string
 from django.utils.timezone import now
 
 from . import models
@@ -159,6 +161,12 @@ class UserResource(resources.ModelResource):
                 ),
                 self.wrap_view('configure_feed')
             ),
+            url(
+                r"^(?P<resource_name>%s)/mirakel-configuration/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('mirakel_configuration')
+            )
         ]
 
     def _send_file(self, out, content_type=None, **kwargs):
@@ -269,6 +277,40 @@ class UserResource(resources.ModelResource):
         store.save()
 
         return HttpResponse('OK')
+
+    def mirakel_configuration(self, request, **kwargs):
+        if request.method != 'GET':
+            raise HttpResponseBadRequest()
+
+        store = models.TaskStore.get_for_user(request.user)
+
+        with open(store.taskrc['taskd.certificate'], 'r') as fin:
+            client_cert = fin.read().strip()
+        with open(store.taskrc['taskd.key'], 'r') as fin:
+            client_key = fin.read().strip()
+        with open(store.taskrc['taskd.ca'], 'r') as fin:
+            ca_cert = fin.read().strip()
+
+        username, org, user_key = store.taskrc['taskd.credentials'].split('/')
+        response = HttpResponse(
+            render_to_string(
+                'mirakel_configuration.txt',
+                {
+                    'username': username,
+                    'org': org,
+                    'user_key': user_key,
+                    'taskd_server': store.taskrc['taskd.server'],
+                    'client_cert': client_cert,
+                    'client_key': client_key,
+                    'ca_cert': ca_cert,
+                }
+            ),
+            content_type='application/octet-stream'
+        )
+        response['Content-Disposition'] = 'attachment; filename="%s"' % (
+            "%s.mirakel.config" % store.user.username
+        )
+        return response
 
     def enable_sync(self, request, **kwargs):
         if request.method != 'POST':

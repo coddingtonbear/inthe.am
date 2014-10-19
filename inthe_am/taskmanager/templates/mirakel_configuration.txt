@@ -1,0 +1,10 @@
+username: {{ username }}
+org: {{ org }}
+user key: {{ user_key }}
+server: {{ taskd_server }}
+client.cert:
+{{ client_cert }}
+client.key:
+{{ client_key }}
+ca.cert:
+{{ ca_cert }}

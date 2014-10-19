@@ -17,6 +17,7 @@ var controller = Ember.Controller.extend({
     clear_task_data: '/api/v1/user/clear-task-data/',
     set_colorscheme: '/api/v1/user/colorscheme/',
     enable_sync: '/api/v1/user/enable-sync/',
+    mirakel_configuration: '/api/v1/user/mirakel-configuration/',
     configure_pebble_cards: '/api/v1/user/pebble-cards-config/',
     configure_feed: '/api/v1/user/feed-config/',
     user_status: '/api/v1/user/status/',
