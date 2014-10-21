@@ -209,7 +209,11 @@ var controller = Ember.Controller.extend({
       if (cert_file === undefined) {
         self.error_message("Please select a certificate");
       }
-      cert_reader.readAsBinaryString(cert_file);
+      try {
+        cert_reader.readAsBinaryString(cert_file);
+      } catch(e) {
+        self.error_message("An error was encountered while reading your certificate.");
+      }
 
       // Load Key
       var key_reader = new FileReader();
@@ -229,7 +233,11 @@ var controller = Ember.Controller.extend({
       if (key_file === undefined) {
         self.error_message("Please select a key");
       }
-      key_reader.readAsBinaryString(key_file);
+      try {
+        key_reader.readAsBinaryString(key_file);
+      } catch(e) {
+        self.error_message("An error was encountered while reading your key.");
+      }
 
       // Load CA Certificate
       if (data.trust === 'no') {
@@ -250,7 +258,11 @@ var controller = Ember.Controller.extend({
         if (ca_file === undefined) {
           self.error_message("Please select a CA Certificate");
         }
-        ca_reader.readAsBinaryString(ca_file);
+        try {
+          ca_reader.readAsBinaryString(ca_file);
+        }catch(e) {
+          self.error_message("An error was encountered while reading your CA Certificate.");
+        }
       }
     },
     save_email: function() {
