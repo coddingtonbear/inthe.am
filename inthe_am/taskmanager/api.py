@@ -56,6 +56,9 @@ def get_published_properties(user, store, meta):
         'configured': store.configured,
         'taskd_credentials': store.taskrc.get('taskd.credentials'),
         'taskd_server': store.taskrc.get('taskd.server'),
+        'taskd_server_is_default': (
+            store.taskrc.get('taskd.server') == settings.TASKD_SERVER
+        ),
         'taskd_files': store.taskd_certificate_status,
         'twilio_auth_token': store.twilio_auth_token,
         'sms_whitelist': store.sms_whitelist,
