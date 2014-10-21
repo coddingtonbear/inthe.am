@@ -42,6 +42,67 @@ from .task import Task
 logger = logging.getLogger(__name__)
 
 
+def get_published_properties(user, store, meta):
+    return {
+        'logged_in': True,
+        'uid': user.pk,
+        'username': user.username,
+        'name': (
+            user.first_name
+            if user.first_name
+            else user.username
+        ),
+        'email': user.email,
+        'configured': store.configured,
+        'taskd_credentials': store.taskrc.get('taskd.credentials'),
+        'taskd_server': store.taskrc.get('taskd.server'),
+        'taskd_files': store.taskd_certificate_status,
+        'twilio_auth_token': store.twilio_auth_token,
+        'sms_whitelist': store.sms_whitelist,
+        'email_whitelist': store.email_whitelist,
+        'task_creation_email_address': '%s@inthe.am' % (
+            store.secret_id
+        ),
+        'taskrc_extras': store.taskrc_extras,
+        'api_key': store.api_key.key,
+        'tos_up_to_date': meta.tos_up_to_date,
+        'feed_url': reverse(
+            'feed',
+            kwargs={
+                'uuid': store.secret_id,
+            }
+        ),
+        'sms_url': reverse(
+            'incoming_sms',
+            kwargs={
+                'api_name': 'v1',
+                'resource_name': 'task',
+                'username': user.username,
+            }
+        ),
+        'colorscheme': meta.colorscheme,
+        'repository_head': store.repository.head(),
+        'pebble_card_url': reverse(
+            'pebble_card_url',
+            kwargs={
+                'api_name': 'v1',
+                'resource_name': 'task',
+                'secret_id': store.secret_id,
+            }
+        ),
+        'sync_enabled': store.sync_enabled,
+        'pebble_cards_enabled': store.pebble_cards_enabled,
+        'feed_enabled': store.feed_enabled,
+        'udas': [
+            {
+                'field': k,
+                'label': v.label,
+                'type': v.__class__.__name__
+            } for k, v in store.client.config.get_udas().items()
+        ]
+    }
+
+
 class UserAuthorization(authorization.Authorization):
     def read_list(self, object_list, bundle):
         return object_list.filter(
@@ -478,64 +539,7 @@ class UserResource(resources.ModelResource):
         if request.user.is_authenticated():
             store = models.TaskStore.get_for_user(request.user)
             meta = models.UserMetadata.get_for_user(request.user)
-            user_data = {
-                'logged_in': True,
-                'uid': request.user.pk,
-                'username': request.user.username,
-                'name': (
-                    request.user.first_name
-                    if request.user.first_name
-                    else request.user.username
-                ),
-                'email': request.user.email,
-                'configured': store.configured,
-                'taskd_credentials': store.taskrc.get('taskd.credentials'),
-                'taskd_server': store.taskrc.get('taskd.server'),
-                'taskd_files': store.taskd_certificate_status,
-                'twilio_auth_token': store.twilio_auth_token,
-                'sms_whitelist': store.sms_whitelist,
-                'email_whitelist': store.email_whitelist,
-                'task_creation_email_address': '%s@inthe.am' % (
-                    store.secret_id
-                ),
-                'taskrc_extras': store.taskrc_extras,
-                'api_key': store.api_key.key,
-                'tos_up_to_date': meta.tos_up_to_date,
-                'feed_url': reverse(
-                    'feed',
-                    kwargs={
-                        'uuid': store.secret_id,
-                    }
-                ),
-                'sms_url': reverse(
-                    'incoming_sms',
-                    kwargs={
-                        'api_name': 'v1',
-                        'resource_name': 'task',
-                        'username': request.user.username,
-                    }
-                ),
-                'colorscheme': meta.colorscheme,
-                'repository_head': store.repository.head(),
-                'pebble_card_url': reverse(
-                    'pebble_card_url',
-                    kwargs={
-                        'api_name': 'v1',
-                        'resource_name': 'task',
-                        'secret_id': store.secret_id,
-                    }
-                ),
-                'sync_enabled': store.sync_enabled,
-                'pebble_cards_enabled': store.pebble_cards_enabled,
-                'feed_enabled': store.feed_enabled,
-                'udas': [
-                    {
-                        'field': k,
-                        'label': v.label,
-                        'type': v.__class__.__name__
-                    } for k, v in store.client.config.get_udas().items()
-                ]
-            }
+            user_data = get_published_properties(request.user, store, meta)
         else:
             user_data = {
                 'logged_in': False,
