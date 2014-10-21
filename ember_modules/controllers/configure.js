@@ -1,12 +1,16 @@
 var controller = Ember.Controller.extend({
   needs: ['application'],
   taskd_trust_settings: [
-    {short: 'no', long: 'Validate taskd server using an uploaded CA Certificate'},
-    {short: 'yes', long: 'Trust taskd server implicitly; do not validate using a CA Certificate'},
+    {short: 'no', long: 'Validate taskserver using an uploaded CA Certificate'},
+    {short: 'yes', long: 'Trust taskserver implicitly; do not validate using a CA Certificate'},
   ],
   taskUpdateStringSettings: [
     {short: 'no', long: 'Disabled'},
     {short: 'yes', long: 'Enabled'},
+  ],
+  taskd_server_settings: [
+    {value: true, human: "Use the built-in taskserver"},
+    {value: false, human: "Use a custom taskserver"},
   ],
   pebbleCardsEnabledUI: [
     {value: false, human: 'Disabled'},
@@ -97,7 +101,7 @@ var controller = Ember.Controller.extend({
       data: data,
       success: function(){
         self.get('controllers.application').update_user_info();
-        self.success_message("Taskd settings saved.");
+        self.success_message("Taskserver settings saved.");
         if(after) {
           after();
         }
@@ -165,11 +169,11 @@ var controller = Ember.Controller.extend({
         data: {},
         success: function(){
           self.get('controllers.application').update_user_info();
-          self.success_message("Taskd settings reset to default.");
+          self.success_message("Taskserver settings reset to default.");
         },
         error: function(xhr){
           self.error_message(
-            "Error encountered while resetting taskd settings to defaults."
+            "Error encountered while resetting taskserver settings to defaults."
           );
         }
       });

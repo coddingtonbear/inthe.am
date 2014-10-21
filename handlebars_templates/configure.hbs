@@ -8,11 +8,11 @@
             <div class="block error">
                 <p>
                     Inthe.AM encountered a problem synchronizing your tasks with
-                    the Taskd server you have asked us to use, and
+                    the taskserver you have asked us to use, and
                     synchronization has been disabled for your account.
                 </p>
                 <p>
-                    This can occur if either your Taskd synchronization settings
+                    This can occur if either your taskserver synchronization settings
                     below are incorrect, or if the server you are synchronizing
                     with encountered a temporary outage.
                 </p>
@@ -34,124 +34,141 @@
                     <div class="row">
                         <div class="large-12 columns">
                             <p>
-                                Inthe.AM provides a built-in Task Server for you
+                                Inthe.AM provides a built-in taskserver for you
                                 to synchronize your tasks with; follow the
-                                instructions in "Use the built-in Task Server"
-                                for setting up your local taskwarrior client to
-                                synchronize with Inthe.AM.
-                                But, should you have an outside Task Server
-                                that you already synchronize with, 
-                                you can also configure Inthe.AM to synchronize
-                                with your server in "Use a custom Task Server".
+                                instructions below for setting up your local
+                                taskwarrior client to synchronize with Inthe.AM.
+                            </p>
+                            <p>
+                                If you would prefer to use an outside taskserver
+                                you are also able to configure Inthe.AM to
+                                synchronize with that server instead by
+                                changing the below selector to
+                                "Use a custom taskserver" and supplying
+                                the necessary details.
                             </p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            <h3 id="built_in_task_server">Use the built-in Task Server</h3>
-                            <table class="pure-table pure-table-horizontal">
-                                <tr>
-                                    <th>
-                                        Your Certificate
-                                    </th>
-                                    <td>
-                                        <a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                       Your Key 
-                                    </th>
-                                    <td>
-                                        <a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Server Certificate
-                                    </th>
-                                    <td>
-                                        {{#if controllers.application.urls.ca_certificate}}
-                                            <a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a>
-                                        {{else}}
-                                            &mdash;
-                                        {{/if}}
-                                    </td>
-                                </tr>
-                            </table>
-                            
-                            <p>
-                                Add the following settings to your Taskwarrior configuration file (<code>~/.taskrc</code>).
-                            </p>
-
-                            <code class="para">taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a><br />
-                                taskd.key=/path/to/<a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a><br />
-                                taskd.ca=/path/to/<a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a><br />
-                                taskd.server={{ controllers.application.user.taskd_server }}<br />
-                                taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
-                            </code>
-
-                            <p>
-                                <strong>If you are using Taskwarrior version 2.4 or newer</strong>, you will also need to add the following line to your
-                                configuration file:
-                            </p>
-
-                            <code class="para">
-                                taskd.trust=ignore hostname<br />
-                            </code>
-
-                            <p>
-                                Synchronizing for the first time is as easy as running <code>task sync init</code> 
-                                &mdash; running that command will instruct Taskwarrior to send all of its tasks to Inthe.AM.
-                                After the initial synchronization, you can synchronize with Inthe.AM by running <code>task sync</code>.
-                            </p>
+                            {{view Ember.Select value=controllers.application.user.taskd_server_is_default optionValuePath="content.value" optionLabelPath="content.human" content=taskd_server_settings id="id_taskd_server_is_default"}}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="large-12 columns">
-                            <h3 id="custom_task_server">Use a custom Task Server</h3>
+                    {{#if controllers.application.user.taskd_server_is_default}}
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <h3 id="built_in_task_server">Using the built-in taskserver</h3>
+                                <table class="pure-table pure-table-horizontal">
+                                    <tr>
+                                        <th>
+                                            Your Certificate
+                                        </th>
+                                        <td>
+                                            <a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                           Your Key 
+                                        </th>
+                                        <td>
+                                            <a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            Server Certificate
+                                        </th>
+                                        <td>
+                                            {{#if controllers.application.urls.ca_certificate}}
+                                                <a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a>
+                                            {{else}}
+                                                &mdash;
+                                            {{/if}}
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                <p>
+                                    Add the following settings to your Taskwarrior configuration file (<code>~/.taskrc</code>).
+                                </p>
+
+                                <code class="para">taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a><br />
+                                    taskd.key=/path/to/<a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a><br />
+                                    taskd.ca=/path/to/<a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a><br />
+                                    taskd.server={{ controllers.application.user.taskd_server }}<br />
+                                    taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
+                                </code>
+
+                                <p>
+                                    <strong>If you are using Taskwarrior version 2.4 or newer</strong>, you will also need to add the following line to your
+                                    configuration file:
+                                </p>
+
+                                <code class="para">
+                                    taskd.trust=ignore hostname<br />
+                                </code>
+
+                                <p>
+                                    Synchronizing for the first time is as easy as running <code>task sync init</code> 
+                                    &mdash; running that command will instruct Taskwarrior to send all of its tasks to Inthe.AM.
+                                    After the initial synchronization, you can synchronize with Inthe.AM by running <code>task sync</code>.
+                                </p>
+                            </div>
+                            <div class="large-12 columns">
+                                <p class="input-note">
+                                    If you have previously configured Inthe.AM to use an external taskserver, you can click the below button to re-set your configuration such that it uses the built-in server.
+                                </p>
+                                <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset taskserver Settings to use the Built-In taskserver</a>
+                            </div>
                         </div>
-                        <div class="large-12 columns">
-                            <label>Taskd Server</label>
-                            {{input type="text" id="id_server" name="server" value=controllers.application.user.taskd_server}}
+                    {{/if}}
+                    {{#unless controllers.application.user.taskd_server_is_default}}
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <h3 id="custom_task_server">Use a custom taskserver</h3>
+                            </div>
+                            <div class="large-12 columns">
+                                <label>Taskserver</label>
+                                {{input type="text" id="id_server" name="server" value=controllers.application.user.taskd_server}}
+                            </div>
+                            <div class="large-12 columns">
+                                <label>Taskserver Credentials</label>
+                                {{input type="text" id="id_credentials" name="credentials" value=controllers.application.user.taskd_credentials}}
+                            </div>
+                            <div class="large-12 columns">
+                                <label>Certificate</label>
+                                <input type="file" name="certificate" id="id_certificate">
+                                <p class="input-note">
+                                    {{controllers.application.user.taskd_files.taskd_certificate}}
+                                </p>
+                            </div>
+                            <div class="large-12 columns">
+                                <label>Key</label>
+                                <input type="file" name="key" id="id_key">
+                                <p class="input-note">
+                                    {{controllers.application.user.taskd_files.taskd_key}}
+                                </p>
+                            </div>
+                            <div class="large-12 columns">
+                                <label>CA Certificate</label>
+                                <p class="input-note">
+                                    If you select to trust the taskserver, you need not upload a CA Certificate,
+                                    but uploading a certificate and requesting that we validate the taskserver
+                                    using that certificate is safer.
+                                </p>
+                                {{view Ember.Select value=controllers.application.user.taskd_files.taskd_trust optionValuePath="content.short" optionLabelPath="content.long" content=taskd_trust_settings id="id_trust"}}
+                                <input type="file" name="ca" id="id_ca">
+                                <p class="input-note">
+                                    {{controllers.application.user.taskd_files.taskd_ca}}
+                                </p>
+                            </div>
+                            <div class="large-12 columns">
+                                <a href="" class="button radius" {{action "save_taskd"}}>Save Settings and Pull Tasks</a>
+                                <a href="" class="button radius" {{action "save_taskd_and_init"}}>Save Settings and Push Existing Tasks</a>
+                            </div>
                         </div>
-                        <div class="large-12 columns">
-                            <label>Taskd Credentials</label>
-                            {{input type="text" id="id_credentials" name="credentials" value=controllers.application.user.taskd_credentials}}
-                        </div>
-                        <div class="large-12 columns">
-                            <label>Certificate</label>
-                            <input type="file" name="certificate" id="id_certificate">
-                            <p class="input-note">
-                                {{controllers.application.user.taskd_files.taskd_certificate}}
-                            </p>
-                        </div>
-                        <div class="large-12 columns">
-                            <label>Key</label>
-                            <input type="file" name="key" id="id_key">
-                            <p class="input-note">
-                                {{controllers.application.user.taskd_files.taskd_key}}
-                            </p>
-                        </div>
-                        <div class="large-12 columns">
-                            <label>CA Certificate</label>
-                            <p class="input-note">
-                                If you select to trust the taskd server, you need not upload a CA Certificate,
-                                but uploading a certificate and requesting that we validate the taskd server
-                                using that certificate is safer.
-                            </p>
-                            {{view Ember.Select value=controllers.application.user.taskd_files.taskd_trust optionValuePath="content.short" optionLabelPath="content.long" content=taskd_trust_settings id="id_trust"}}
-                            <input type="file" name="ca" id="id_ca">
-                            <p class="input-note">
-                                {{controllers.application.user.taskd_files.taskd_ca}}
-                            </p>
-                        </div>
-                        <div class="large-12 columns">
-                            <a href="" class="button radius" {{action "save_taskd"}}>Save Settings and Pull Tasks</a>
-                            <a href="" class="button radius" {{action "save_taskd_and_init"}}>Save Settings and Push Existing Tasks</a>
-                            <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset to Default</a>
-                        </div>
-                    </div>
+                    {{/unless}}
                 </div>
             </dd>
             <dd>
@@ -495,10 +512,10 @@
                             </p>
                             <p>
                                 <strong>Note:</strong> The generated configuration will configure Mirakel
-                                to synchronize with the Taskd server you've configured Inthe.AM to synchronize with.
+                                to synchronize with the taskserver you've configured Inthe.AM to synchronize with.
                                 If you have configured Inthe.AM to synchronize with a server other than the built-in
-                                taskd server, the configuration file will instruct your instance of Mirakel to
-                                synchronize with <em>that</em> server rather than the built-in Taskd server.
+                                taskserver, the configuration file will instruct your instance of Mirakel to
+                                synchronize with <em>that</em> server rather than the built-in taskserver.
                             </p>
                         </div>
                     </div>
@@ -514,7 +531,7 @@
                             <p>
                                 Pressing this button will delete both any task information
                                 currently stored in your task list on Inthe.AM, as well as
-                                clear any information stored in your Inthe.AM taskd account.
+                                clear any information stored in your Inthe.AM taskserver account.
                             </p>
                         </div>
                     </div>
