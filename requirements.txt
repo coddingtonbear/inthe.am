@@ -16,7 +16,6 @@ raven>=4.0.4
 mock>=1.0.1
 django-sse>=0.4.1
 sse>=1.2
-lockfile==0.9.1
 psycopg2>=2.5.2
 django-extensions>=1.3.3
 --allow-external fabulous==0.1.5
