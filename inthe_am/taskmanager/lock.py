@@ -26,7 +26,8 @@ def get_lock_name_for_store(store):
 def redis_lock(
     name,
     wait_timeout=settings.LOCKFILE_WAIT_TIMEOUT,
-    lock_timeout=settings.LOCKFILE_TIMEOUT_SECONDS
+    lock_timeout=settings.LOCKFILE_TIMEOUT_SECONDS,
+    lock_check_interval=settings.LOCKFILE_CHECK_INTERVAL,
 ):
     client = get_lock_redis()
     wait_expiry = time.time() + wait_timeout
@@ -49,7 +50,7 @@ def redis_lock(
         if float(original_timestamp) > time.time():
             # The timestamp isn't yet expired, let's wait a second
             # and try again.
-            time.sleep(1)
+            time.sleep(lock_check_interval)
             continue
 
         getset_timestamp = client.getset(name, str(lock_expiry))
@@ -65,7 +66,7 @@ def redis_lock(
         else:
             # Somebody else got it first, let's wait a second
             # and try again.
-            time.sleep(1)
+            time.sleep(lock_check_interval)
             continue
 
     raise LockTimeout("Unable to acquire lock %s" % name)
