@@ -25,14 +25,13 @@ def get_lock_name_for_store(store):
 @contextmanager
 def redis_lock(
     name,
-    wait_timeout=10,
+    wait_timeout=settings.LOCKFILE_WAIT_TIMEOUT,
     lock_timeout=settings.LOCKFILE_TIMEOUT_SECONDS
 ):
     client = get_lock_redis()
-    started = time.time()
-    wait_expiry = started + wait_timeout
+    wait_expiry = time.time() + wait_timeout
 
-    while(started < wait_expiry):
+    while(time.time() < wait_expiry):
         lock_expiry = time.time() + lock_timeout + 1
         result = client.setnx(name, str(lock_expiry))
         if result:
