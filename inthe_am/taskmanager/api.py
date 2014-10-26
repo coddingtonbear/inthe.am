@@ -17,7 +17,6 @@ from taskw.task import Task as TaskwTask
 from taskw.fields import DateField
 from twilio.twiml import Response
 from twilio.util import RequestValidator
-from lockfile import LockTimeout
 
 from django.conf import settings
 from django.conf.urls import url
@@ -36,6 +35,7 @@ from . import forms
 from .api_fields import UUIDField
 from .context_managers import git_checkpoint
 from .decorators import requires_task_store, git_managed
+from .lock import LockTimeout, get_lock_name_for_store, get_lock_redis
 from .task import Task
 
 
@@ -692,10 +692,12 @@ class TaskResource(resources.Resource):
 
     def manage_lock(self, request, **kwargs):
         store = models.TaskStore.get_for_user(request.user)
-        lockfile = os.path.join(store.local_path, '.lock')
+        lock_name = get_lock_name_for_store(store)
+        client = get_lock_redis()
+
         if request.method == 'DELETE':
-            if os.path.exists(lockfile):
-                os.unlink(lockfile)
+            value = client.delete(lock_name)
+            if value:
                 store.log_message("Lockfile deleted.")
                 return HttpResponse(
                     '',
@@ -709,9 +711,10 @@ class TaskResource(resources.Resource):
                 status=404
             )
         elif request.method == 'GET':
-            if os.path.exists(lockfile):
+            value = client.get(lock_name)
+            if value:
                 return HttpResponse(
-                    '',
+                    value,
                     status=200
                 )
             return HttpResponse(
