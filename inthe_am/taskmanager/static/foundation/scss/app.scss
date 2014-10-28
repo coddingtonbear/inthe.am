@@ -556,3 +556,28 @@ input#filter-string {
   height: 2em;
   border-radius: 15px;
 }
+
+.loading {
+  margin: 100px auto;
+  padding: 20px;
+  width: 200px;
+  position: relative;
+  background-color: #888888;
+  border-radius: 25px;
+
+  img {
+    height: 128px;
+    width: 128px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+  }
+  p {
+    color: #FFFFFF;
+    font-size: 2em;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0px;
+  }
+}
