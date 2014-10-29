@@ -22,6 +22,10 @@ def get_lock_redis():
     )
 
 
+def get_debounce_name_for_store(store):
+    return store.user.username + '.sync.debounce'
+
+
 def get_lock_name_for_store(store):
     return store.user.username + ".lock"
 

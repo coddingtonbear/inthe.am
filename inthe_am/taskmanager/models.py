@@ -22,6 +22,7 @@ from .context_managers import git_checkpoint
 from .taskwarrior_client import TaskwarriorClient, TaskwarriorError
 from .taskstore_migrations import upgrade as upgrade_taskstore
 from .tasks import sync_repository
+from .lock import get_debounce_name_for_store, get_lock_redis
 
 
 logger = logging.getLogger(__name__)
@@ -364,12 +365,13 @@ class TaskStore(models.Model):
     ):
         if not self.sync_enabled:
             return False
+        client = get_lock_redis()
         debounce_id = kwargs.get('debounce_id') if kwargs else None
-        debounce_key = 'sync_debounce_%s' % self.pk,
+        debounce_key = get_debounce_name_for_store(self)
 
         if async:
             defined_debounce_id = str(time.time())
-            cache.set(debounce_key, defined_debounce_id)
+            client.set(debounce_key, defined_debounce_id)
             sync_repository.apply_async(
                 countdown=15,
                 expires=3600,
@@ -380,12 +382,12 @@ class TaskStore(models.Model):
             )
         else:
             try:
-                expected_debounce_id = float(cache.get(debounce_key))
+                expected_debounce_id = client.get(debounce_key)
             except (ValueError, TypeError):
                 expected_debounce_id = None
             if (
                 expected_debounce_id and debounce_id
-                and (debounce_id < expected_debounce_id)
+                and (float(debounce_id) < float(expected_debounce_id))
             ):
                 logger.warning(
                     "Debounce Failed: %s<%s; "
@@ -395,6 +397,7 @@ class TaskStore(models.Model):
                     self.pk,
                 )
             elif expected_debounce_id and debounce_id:
+                client.delete(debounce_key)
                 logger.debug(
                     "Debounce Succeeded: %s>=%s for %s.",
                     debounce_id,
@@ -424,7 +427,7 @@ class TaskStore(models.Model):
                         user_taskd_server != settings.TASKD_SERVER
                         and past_failure_count > 2
                     ):
-                        self.log_error(
+                        error_message = (
                             "An error was encountered while synchronizing "
                             "your tasks with the taskd server; please "
                             "reconfigure your synchronization settings "
@@ -436,9 +439,12 @@ class TaskStore(models.Model):
                             e.stderr,
                             e.stdout,
                         )
+                        self.log_error(*error_message)
+                        logger.warning(*error_message)
                         self.sync_enabled = False
                         self.save()
                     else:
+                        defined_debounce_id = str(time.time())
                         cache.set(
                             failure_key,
                             past_failure_count + 1,
@@ -447,7 +453,10 @@ class TaskStore(models.Model):
                         sync_repository.apply_async(
                             countdown=30,
                             expires=3600,
-                            args=(self.pk, )
+                            args=(self.pk, ),
+                            kwargs={
+                                'debounce_id': defined_debounce_id,
+                            }
                         )
                     return False
         return True
