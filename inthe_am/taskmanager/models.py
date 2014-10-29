@@ -373,7 +373,7 @@ class TaskStore(models.Model):
             defined_debounce_id = str(time.time())
             client.set(debounce_key, defined_debounce_id)
             sync_repository.apply_async(
-                countdown=15,
+                countdown=5,
                 expires=3600,
                 args=(self.pk, ),
                 kwargs={
