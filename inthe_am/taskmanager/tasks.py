@@ -20,7 +20,6 @@ logger = logging.getLogger(__name__)
     soft_time_limit=30,
     time_limit=45,
     default_retry_delay=60,
-    max_retries=2,
     ignore_result=True,
 )
 def sync_repository(self, store_id, debounce_id=None):
@@ -33,8 +32,8 @@ def sync_repository(self, store_id, debounce_id=None):
             args=(store_id, ),
             kwargs={'debounce_id': debounce_id},
         )
-    except:
-        if self.retries == 2:
+    except Exception as e:
+        if self.retries >= 2:
             store.log_error(
                 "An unexpected error was encountered while synchronizing "
                 "your tasks with the taskd server. Synchronization has been "
@@ -43,7 +42,8 @@ def sync_repository(self, store_id, debounce_id=None):
             )
             store.sync_enabled = False
             store.save()
-        raise
+        else:
+            raise self.retry(exc=e)
 
 
 @shared_task(
