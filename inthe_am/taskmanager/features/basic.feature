@@ -10,5 +10,5 @@ Feature: Basic Use
         And the page contains the heading "Terms and Conditions of Use of Inthe.AM"
         And the user accepts the terms and conditions
         When the user accesses the url "/logout/"
-        And the user clicks the link "Log In with Google"
+        And the user clicks the link "Log In"
         Then the page contains the heading "Let's get started"
