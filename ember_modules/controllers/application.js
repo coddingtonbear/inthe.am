@@ -1,5 +1,7 @@
 var controller = Ember.Controller.extend({
   needs: ['tasks', 'activityLog', 'configure'],
+  logo: '',
+  applicationName: 'Local Installation',
   user: null,
   urls: {
     login: '/login/google-oauth2/',
@@ -93,6 +95,12 @@ var controller = Ember.Controller.extend({
   },
   init: function(){
     var self = this;
+
+    if(window.location.hostname == 'inthe.am') {
+        this.set('logo', '/static/logo.png');
+        this.set('applicationName', 'Inthe.AM');
+    }
+    document.title = this.get('applicationName');
 
     // Set up error reporting
     Ember.onerror = reportError;
