@@ -9,11 +9,18 @@ var controller = Ember.ArrayController.extend({
     tags: [],
   },
   refresh: function(){
-    try {
-      this.get('content').update();
-    } catch(e) {
-      // Pass
-    }
+    // Refresh each entry to see if it has been closed.
+    this.get('content').forEach(function(model){
+      try {
+        model.reload()
+      } catch(e) {
+        // pass
+      }
+    });
+
+    // Then, request a new list from the endpoint to make sure
+    // we gather any new tasks, too.
+    this.get('content').update();
   },
   enteredFilters: function() {
     var value = this.get('filterString');

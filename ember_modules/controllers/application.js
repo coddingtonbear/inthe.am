@@ -318,20 +318,7 @@ var controller = Ember.Controller.extend({
   },
   actions: {
     refresh: function(){
-      var self = this;
-      $.ajax({
-        url: this.get('urls.refresh'),
-        dataType: 'json',
-        data: {
-          head: this.get('statusUpdaterHead'),
-        },
-        success: function(data) {
-          for(var i = 0; i < data.messages.length; i++) {
-            var msg = data.messages[i];
-            self.get('statusActions')[msg.action].bind(self)({data: msg.body});
-          }
-        }
-      });
+      this.get('controllers.tasks').refresh();
     },
     home: function(){
       window.location = '/';

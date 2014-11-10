@@ -733,6 +733,14 @@ class TaskResource(resources.Resource):
 
     @requires_task_store
     def refresh_tasks(self, request, store, **kwargs):
+        """ Refreshes the task list manually.
+
+        .. warning::
+
+           This method is DEPRECATED, and will be removed
+           in a future version.
+
+        """
         if request.method != 'GET':
             return HttpResponseNotAllowed(request.method)
         try:
