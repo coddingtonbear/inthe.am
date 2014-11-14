@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 import logging
+import os
 import uuid
 
 from .lock import get_lock_name_for_store, redis_lock
@@ -17,6 +18,29 @@ def git_checkpoint(
     pre_work_sha = store.repository.head()
     checkpoint_id = uuid.uuid4()
     with redis_lock(lock_name):
+        git_index_lock_path = os.path.join(
+            store.local_path,
+            '.git/index.lock'
+        )
+        if os.path.exists(
+            os.path.join(
+                store.local_path,
+                '.git/index.lock'
+            )
+        ):
+            try:
+                os.remove(git_index_lock_path)
+                logger.warning(
+                    "Git repository at %s was found locked after acquiring "
+                    "task repository lock; removing lock.",
+                    store.local_path,
+                )
+            except:
+                logger.exception(
+                    "Error encountered while cleaning-up git index lock at %s",
+                    git_index_lock_path,
+                )
+
         store.create_git_repository()
         try:
             store.create_git_checkpoint(
