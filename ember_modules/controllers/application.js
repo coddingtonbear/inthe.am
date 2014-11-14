@@ -236,11 +236,15 @@ var controller = Ember.Controller.extend({
   statusActions: {
     'task_changed': function(evt) {
       Ember.run.once(this, function(){
-        this.store.find('task', evt.data).then(function(record){
-          if (record.get('isLoaded') && (!record.get('isDirty') && !record.get('isSaving'))) {
-            record.reload();
-          }
-        });
+        if (this.store.hasRecordForId('task', evt.data)) {
+          this.store.find('task', evt.data).then(function(record){
+            if (record.get('isLoaded') && (!record.get('isDirty') && !record.get('isSaving'))) {
+              record.reload();
+            }
+          });
+        } else {
+          this.store.find('task', evt.data)
+        }
       });
     },
     'head_changed': function(evt) {
