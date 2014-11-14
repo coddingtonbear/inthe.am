@@ -141,7 +141,6 @@ var controller = Ember.Controller.extend({
       setInterval(this.checkStatusUpdater.bind(this), 500);
     }
     setInterval(this.checkLastUpdated.bind(this), 2000);
-    setTimeout(this.doTotalRefresh.bind(this), 60 * 5 * 1000);
 
     // Set up left-right swipe for returning to the task list
     $("body").touchwipe({
@@ -153,13 +152,6 @@ var controller = Ember.Controller.extend({
       min_move_x: 100,
       preventDefaultEvents: false
     });
-  },
-  doTotalRefresh: function() {
-    this.get('controllers.tasks').refresh();
-
-    // Every 3-7 minutes
-    var totalRefreshInterval = 60 * ((Math.random() * 4) + 3) * 1000;
-    setTimeout(this.doTotalRefresh.bind(this), totalRefreshInterval);
   },
   checkLastUpdated: function() {
     var now = new Date();
