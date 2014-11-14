@@ -26,7 +26,6 @@ def deploy():
         virtualenv('pip install -r /var/www/twweb/requirements.txt')
         virtualenv('python manage.py collectstatic --noinput')
         virtualenv('python manage.py migrate')
-        sudo('chown -R www-data:www-data logs')
     sudo('/usr/sbin/service twweb restart', shell=False)
     sudo('/usr/sbin/service twweb-status restart', shell=False)
     sudo('/usr/sbin/service twweb-celery restart', shell=False)
