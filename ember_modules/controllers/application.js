@@ -140,7 +140,6 @@ var controller = Ember.Controller.extend({
       this.startEventStream();
       setInterval(this.checkStatusUpdater.bind(this), 500);
     }
-    setInterval(this.checkLastUpdated.bind(this), 2000);
 
     // Set up left-right swipe for returning to the task list
     $("body").touchwipe({
@@ -152,27 +151,6 @@ var controller = Ember.Controller.extend({
       min_move_x: 100,
       preventDefaultEvents: false
     });
-  },
-  checkLastUpdated: function() {
-    var now = new Date();
-    var lastHeartbeat = this.get('statusUpdaterHeartbeat');
-    var lastIncrementalRefresh = this.get('pollingIncrementalRefresh');
-    if (!lastIncrementalRefresh) {
-      this.set('pollingIncrementalRefresh', now);
-    }
-
-    // Just check-in to see if anything interesting has happened
-    // recently.
-    // Refresh every 2 minutes.
-    var incrementalRefreshInterval = 60 * 2 * 1000;
-    if(
-      (
-        now - Math.max(lastIncrementalRefresh, lastHeartbeat | null)
-      ) > incrementalRefreshInterval
-    ) {
-      this.set('pollingIncrementalRefresh', now);
-      this.send('refresh');
-    }
   },
   checkStatusUpdater: function() {
     var statusUpdater = this.get('statusUpdater');
