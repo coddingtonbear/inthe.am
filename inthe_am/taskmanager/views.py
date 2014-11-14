@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 
 
 class Status(BaseSseView):
-
     def get_store(self, cached=True):
         if not cached or getattr(self, '_store', None) is None:
             if not self.request.user.is_authenticated():
@@ -55,15 +54,25 @@ class Status(BaseSseView):
         return taskd_mtime
 
     def beat_heart(self, store):
-        self.sse.add_message(
-            "heartbeat",
-            json.dumps(
-                {
-                    'timestamp': datetime.datetime.now().isoformat(),
-                    'sync_enabled': store.sync_enabled,
-                }
-            )
+        heartbeat_interval = datetime.timedelta(
+            seconds=settings.EVENT_STREAM_HEARTBEAT_INTERVAL
         )
+        last_heartbeat = getattr(
+            self,
+            '_last_heartbeat',
+            datetime.datetime.now() - heartbeat_interval
+        )
+        if last_heartbeat + heartbeat_interval < datetime.datetime.now():
+            self.sse.add_message(
+                "heartbeat",
+                json.dumps(
+                    {
+                        'timestamp': datetime.datetime.now().isoformat(),
+                        'sync_enabled': store.sync_enabled,
+                    }
+                )
+            )
+            self._last_heartbeat = datetime.datetime.now()
 
     def iterator(self):
         last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
