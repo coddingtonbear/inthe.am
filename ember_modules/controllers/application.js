@@ -266,11 +266,6 @@ var controller = Ember.Controller.extend({
       });
     },
     'head_changed': function(evt) {
-      var statusUpdater = this.get('statusUpdater');
-      if (statusUpdater) {
-        statusUpdater.close();
-        this.get('startEventStream').bind(this)();
-      }
       this.set('statusUpdaterHead', evt.data);
       try {
         this.store.find('activityLog').update();
