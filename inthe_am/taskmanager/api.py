@@ -372,7 +372,7 @@ class UserResource(resources.ModelResource):
             content_type='application/octet-stream'
         )
         response['Content-Disposition'] = 'attachment; filename="%s"' % (
-            "%s.mirakel.config" % store.user.username
+            "%s.taskdconfig" % store.user.username
         )
         return response
 
