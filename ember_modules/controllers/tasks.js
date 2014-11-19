@@ -113,7 +113,7 @@ var controller = Ember.ArrayController.extend({
         self.notifyPropertyChange('pendingTasks');
       }
       var element = $('.filter-string-element');
-      element.on('keyup', handleChanged);
+      element.on('input', handleChanged);
       element.on('search', handleChanged);
     });
   }
