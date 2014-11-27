@@ -412,53 +412,9 @@ class TaskStore(models.Model):
                 self, checkpoint_msg, function=function,
                 args=args, kwargs=kwargs, notify_rollback=False
             ):
-                try:
-                    self.client.sync()
-                    self.last_synced = now()
-                    self.save()
-                except TaskwarriorError as e:
-                    user_taskd_server = self.taskrc.get('taskd.server')
-                    failure_key = 'sync_failure_%s' % self.pk
-                    try:
-                        past_failure_count = int(cache.get(failure_key))
-                    except (TypeError, ValueError):
-                        past_failure_count = 0
-                    if (
-                        user_taskd_server != settings.TASKD_SERVER
-                        and past_failure_count > 2
-                    ):
-                        error_message = (
-                            "An error was encountered while synchronizing "
-                            "your tasks with the taskd server; please "
-                            "reconfigure your synchronization settings "
-                            "and re-enable synchronization."
-                            "Err. Code: %s; "
-                            "Std. Error: %s; "
-                            "Std. Out: %s.",
-                            e.code,
-                            e.stderr,
-                            e.stdout,
-                        )
-                        self.log_error(*error_message)
-                        logger.warning(*error_message)
-                        self.sync_enabled = False
-                        self.save()
-                    else:
-                        defined_debounce_id = str(time.time())
-                        cache.set(
-                            failure_key,
-                            past_failure_count + 1,
-                            60 * 60  # 60 minutes
-                        )
-                        sync_repository.apply_async(
-                            countdown=30,
-                            expires=3600,
-                            args=(self.pk, ),
-                            kwargs={
-                                'debounce_id': defined_debounce_id,
-                            }
-                        )
-                    return False
+                self.client.sync()
+                self.last_synced = now()
+                self.save()
         return True
 
     def reset_taskd_configuration(self):
