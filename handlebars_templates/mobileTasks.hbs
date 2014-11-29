@@ -21,6 +21,13 @@
                                     <i class="fa fa-tag">{{this}}</i>
                                 {{/each}}
                             </p>
+                            <p class="duedatetime">
+                                {{#if task.due}}
+                                    <i class="fa fa-clock-o">
+                                        {{fromnow task.due}}
+                                    </i>
+                                {{/if}}
+                            </p>
                         </div>
                     </div>
                 {{/link-to}}
