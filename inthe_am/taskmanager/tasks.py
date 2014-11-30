@@ -188,15 +188,13 @@ def process_email_message(self, message_id):
 
         if attachment_urls:
             with git_checkpoint(store, 'Setting attachment details'):
-                logger.info(
-                    "Saving attachment details (%s // %s)...",
-                    task_id,
-                    attachment_urls,
-                )
-                store.client.task_update(
-                    uuid=task_id,
-                    intheamattachments='|'.join(attachment_urls)
-                )
+                try:
+                    store.client.task_update(
+                        uuid=task_id,
+                        intheamattachments='|'.join(attachment_urls)
+                    )
+                except:
+                    logger.exception("boom.")
 
         log_args = (
             "Added task %s via e-mail %s from %s." % (
