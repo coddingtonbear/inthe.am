@@ -186,7 +186,7 @@ def process_email_message(self, message_id):
                         task_id,
                         attachment.file.name,
                     ),
-                    attachment.document.file,
+                    attachment.file,
                 )
                 logger.info(
                     '%s-%s-%s' % (
