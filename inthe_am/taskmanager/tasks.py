@@ -139,7 +139,11 @@ def process_email_message(self, message_id):
                 'intheamoriginalemailid:%s' % message.pk,
             ] + additional_args + shlex.split(message.text)
             stdout, stderr = store.client._execute_safe(*task_args)
+            logger.info("Task created: %s", task_id)
             task = store.client.get_task(uuid=task_id)
+            logger.info("Fetched.")
+
+        logger.info("Checkpoint released.")
 
         attachment_urls_raw = task.get('intheamattachments')
         if not attachment_urls_raw:
