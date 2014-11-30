@@ -9,3 +9,12 @@ for name, details in LOGGING['handlers'].items():
             '.celery',
             os.path.splitext(details['filename'])[1]
         ])
+
+ANOTHER_SETTING = 'alpha'
+
+with open('/tmp/wtf2.log', 'w') as output:
+    import json
+    output.write(
+        json.dumps(LOGGING),
+        indent=4,
+    )

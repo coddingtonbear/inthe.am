@@ -62,6 +62,9 @@ def process_email_message(self, message_id):
                 indent=4
             )
         )
+        output.write(
+            getattr(settings, 'ANOTHER_SETTING', 'failed')
+        )
 
     def get_secret_id_and_args(address):
         inbox_id = address[0:36]
