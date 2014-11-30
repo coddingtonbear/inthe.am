@@ -185,10 +185,9 @@ def process_email_message(self, message_id):
                 attachment_urls.append(
                     document.document.url
                 )
-                attachment.delete()
 
             if attachment_urls:
-                task['intheamattachments'] = '|'.join(attachment_urls)
+                task['intheamattachments'] = ' , '.join(attachment_urls)
                 store.client.task_update(task)
 
         log_args = (
