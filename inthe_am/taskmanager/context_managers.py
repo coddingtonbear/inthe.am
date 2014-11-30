@@ -17,7 +17,7 @@ def git_checkpoint(
     lock_name = get_lock_name_for_store(store)
     pre_work_sha = store.repository.head()
     checkpoint_id = uuid.uuid4()
-    with redis_lock(lock_name):
+    with redis_lock(lock_name, message=message):
         git_index_lock_path = os.path.join(
             store.local_path,
             '.git/index.lock'

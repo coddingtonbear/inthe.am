@@ -36,6 +36,7 @@ def redis_lock(
     wait_timeout=settings.LOCKFILE_WAIT_TIMEOUT,
     lock_timeout=settings.LOCKFILE_TIMEOUT_SECONDS,
     lock_check_interval=settings.LOCKFILE_CHECK_INTERVAL,
+    message=''
 ):
     client = get_lock_redis()
     started = time.time()
@@ -119,8 +120,10 @@ def redis_lock(
             continue
 
     logger.warning(
-        "Unable to acquire lock %s (waited %s seconds); raising LockTimeout",
+        "Unable to acquire lock %s '%s' (waited %s seconds); "
+        "raising LockTimeout",
         name,
+        message,
         time.time() - started
     )
     raise LockTimeout("Unable to acquire lock %s" % name)
