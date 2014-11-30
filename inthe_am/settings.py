@@ -157,6 +157,14 @@ LOGGING = {
             'backupCount': 5,
             'formatter': 'verbose',
         },
+        'tasks': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/twweb.tasks.log'),
+            'maxBytes': 1048576,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
         'store': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -198,6 +206,11 @@ LOGGING = {
         },
         'inthe_am.taskmanager.taskwarrior_client': {
             'handlers': ['taskwarrior'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'inthe_am.taskmanager.tasks': {
+            'handlers': ['tasks'],
             'level': 'DEBUG',
             'propagate': True,
         },
