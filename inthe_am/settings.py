@@ -302,6 +302,7 @@ if TESTING:
 
 FILE_UPLOAD_MAXIMUM_BYTES = 5 * 2**20
 AWS_QUERYSTRING_AUTH = False
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 TASKD_BINARY = '/usr/local/bin/taskd'
 TASK_BINARY = '/usr/local/bin/task'
