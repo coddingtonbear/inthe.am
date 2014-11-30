@@ -30,3 +30,5 @@ splinter==0.6.0
 ipdb==0.8
 python-dateutil>=2.2
 sphinx>=1.2.3
+django-storages==1.1.8
+boto==2.34.0

@@ -6,7 +6,12 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 
-from .models import TaskStore, TaskStoreActivityLog, UserMetadata
+from .models import (
+    TaskAttachment,
+    TaskStore,
+    TaskStoreActivityLog,
+    UserMetadata
+)
 
 
 class DefaultFilterMixIn(admin.ModelAdmin):
@@ -122,6 +127,21 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
         return self._renderable(store.taskrc)
 
 admin.site.register(TaskStore, TaskStoreAdmin)
+
+
+class TaskAttachmentAdmin(admin.ModelAdmin):
+    raw_id_fields = ('store', )
+    search_fields = (
+        'store__user__username', 'task_id', 'name',
+    )
+    list_filter = (
+        'created',
+        'size',
+    )
+    ordering = ('-created', )
+
+
+admin.site.register(TaskAttachment, TaskAttachmentAdmin)
 
 
 class TaskStoreActivityLogAdmin(DefaultFilterMixIn, admin.ModelAdmin):

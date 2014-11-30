@@ -57,6 +57,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'raven.contrib.django.raven_compat',
     'django_behave',
+    'storages',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -285,6 +286,9 @@ VERSION = check_output(
 if TESTING:
     CELERY_ALWAYS_EAGER = True
 
+FILE_UPLOAD_MAXIMUM_BYTES = 5 * 2**20
+AWS_QUERYSTRING_AUTH = False
+
 TASKD_BINARY = '/usr/local/bin/taskd'
 TASK_BINARY = '/usr/local/bin/task'
 TASKD_DATA = '/var/taskd'
@@ -295,6 +299,9 @@ TASKD_ORG = 'testing'
 # Must be sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
+#  AWS_ACCESS_KEY_ID
+#  AWS_SECRET_ACCESS_KEY
+#  AWS_STORAGE_BUCKET_NAME
 this_module = sys.modules[__name__]
 for key, value in os.environ.items():
     if key.startswith(ENVIRONMENT_SETTING_PREFIX):

@@ -15,6 +15,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 from dulwich.repo import Repo
+from storages.backends.s3boto import S3BotoStorage
 import subprocess32 as subprocess
 from tastypie.models import ApiKey
 
@@ -560,6 +561,25 @@ class TaskStore(models.Model):
             message,
             True,
             *parameters
+        )
+
+
+class TaskAttachment(models.Model):
+    store = models.ForeignKey(TaskStore, related_name='attachments')
+    task_id = models.CharField(max_length=36)
+    name = models.CharField(max_length=256)
+    size = models.PositiveIntegerField()
+    document = models.FileField(
+        upload_to='attachments',
+        storage=S3BotoStorage(querystring_auth=False)
+    )
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return u"%s: %s (%s MB)" % (
+            self.task_id,
+            self.name,
+            round(float(self.size) / 2**20, 1)
         )
 
 
