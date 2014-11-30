@@ -187,14 +187,9 @@ def process_email_message(self, message_id):
                 )
                 attachment.delete()
 
-            try:
-                if attachment_urls:
-                    store.client.task_update(
-                        uuid=task_id,
-                        intheamattachments='|'.join(attachment_urls)
-                    )
-            except:
-                logger.exception("boom.")
+            if attachment_urls:
+                task['intheamattachments'] = '|'.join(attachment_urls)
+                store.client.task_update(task)
 
         log_args = (
             "Added task %s via e-mail %s from %s." % (
