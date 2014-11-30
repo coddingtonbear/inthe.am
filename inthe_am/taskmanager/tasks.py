@@ -130,10 +130,8 @@ def process_email_message(self, message_id):
                 'intheamoriginalemailsubject:"%s"' % message.subject,
                 'intheamoriginalemailid:%s' % message.pk,
             ] + additional_args + shlex.split(message.text)
-
-        stdout, stderr = store.client._execute_safe(*task_args)
-
-        task = store.client.get_task(uuid=task_id)
+            stdout, stderr = store.client._execute_safe(*task_args)
+            task = store.client.get_task(uuid=task_id)
 
         attachment_urls_raw = task.get('intheamattachments')
         if not attachment_urls_raw:
@@ -143,6 +141,11 @@ def process_email_message(self, message_id):
 
         for attachment in message.attachments.all():
             if attachment.file.size > settings.FILE_UPLOAD_MAXIMUM_BYTES:
+                logger.info(
+                    "File %s too large (%s bytes).",
+                    attachment.file.name,
+                    attachment.file.size,
+                )
                 store.log_message(
                     "Attachments must be smaller than %s bytes to be saved "
                     "to a task, but the attachment %s received for task ID %s "
@@ -155,6 +158,7 @@ def process_email_message(self, message_id):
                 )
                 attachment.delete()
                 continue
+            logger.info("Saving attachment %s...", attachment)
             document = TaskAttachment.objects.create(
                 store=store,
                 task_id=task_id,
@@ -169,16 +173,26 @@ def process_email_message(self, message_id):
                 ),
                 attachment.document.file,
             )
+            logger.info(
+                '%s-%s-%s' % (
+                    store.user.username,
+                    task_id,
+                    attachment.file.name,
+                ),
+            )
             attachment_urls.append(
                 document.document.url
             )
-            message.delete()
+            logger.info("Deleting attachment...")
+            attachment.delete()
 
         if attachment_urls:
-            store.client.task_update(
-                uuid=task_id,
-                intheamattachments='|'.join(attachment_urls)
-            )
+            with git_checkpoint(store, 'Setting attachment details'):
+                logger.info("Saving attachment details...")
+                store.client.task_update(
+                    uuid=task_id,
+                    intheamattachments='|'.join(attachment_urls)
+                )
 
         log_args = (
             "Added task %s via e-mail %s from %s." % (
