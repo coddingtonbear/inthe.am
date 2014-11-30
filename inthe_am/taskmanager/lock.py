@@ -124,6 +124,9 @@ def redis_lock(
         "raising LockTimeout",
         name,
         message,
-        time.time() - started
+        time.time() - started,
+        extra={
+            'stack': True,
+        }
     )
     raise LockTimeout("Unable to acquire lock %s" % name)
