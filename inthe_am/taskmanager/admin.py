@@ -136,7 +136,13 @@ class TaskAttachmentAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'created',
+    )
+    list_display = (
+        'store',
+        'task_id',
+        'name',
         'size',
+        'created',
     )
     ordering = ('-created', )
 
