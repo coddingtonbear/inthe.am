@@ -186,15 +186,15 @@ def process_email_message(self, message_id):
             )
             attachment.delete()
 
-        if attachment_urls:
-            with git_checkpoint(store, 'Setting attachment details'):
-                try:
+        try:
+            if attachment_urls:
+                with git_checkpoint(store, 'Setting attachment details'):
                     store.client.task_update(
                         uuid=task_id,
                         intheamattachments='|'.join(attachment_urls)
                     )
-                except:
-                    logger.exception("boom.")
+        except:
+            logger.exception("boom.")
 
         log_args = (
             "Added task %s via e-mail %s from %s." % (
