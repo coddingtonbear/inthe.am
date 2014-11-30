@@ -139,62 +139,62 @@ def process_email_message(self, message_id):
             stdout, stderr = store.client._execute_safe(*task_args)
             task = store.client.get_task(uuid=task_id)[1]
 
-        logger.info("Processing attachments...")
+            attachment_urls_raw = task.get('intheamattachments')
+            if not attachment_urls_raw:
+                attachment_urls = []
+            else:
+                attachment_urls = attachment_urls_raw.split('|')
 
-        attachment_urls_raw = task.get('intheamattachments')
-        if not attachment_urls_raw:
-            attachment_urls = []
-        else:
-            attachment_urls = attachment_urls_raw.split('|')
-
-        for record in message.attachments.all():
-            attachment = record.document
-            if attachment.file.size > settings.FILE_UPLOAD_MAXIMUM_BYTES:
-                logger.info(
-                    "File %s too large (%s bytes).",
-                    attachment.file.name,
-                    attachment.file.size,
-                )
-                store.log_message(
-                    "Attachments must be smaller than %s bytes to be saved "
-                    "to a task, but the attachment %s received for task ID %s "
-                    "is %s bytes in size and was not saved as a result." % (
-                        settings.FILE_UPLOAD_MAXIMUM_BYTES,
+            for record in message.attachments.all():
+                attachment = record.document
+                if attachment.file.size > settings.FILE_UPLOAD_MAXIMUM_BYTES:
+                    logger.info(
+                        "File %s too large (%s bytes).",
                         attachment.file.name,
-                        task_id,
                         attachment.file.size,
                     )
+                    store.log_message(
+                        "Attachments must be smaller than %s "
+                        "bytes to be saved to a task, but the "
+                        "attachment %s received for task ID %s "
+                        "is %s bytes in size and was not saved "
+                        "as a result." % (
+                            settings.FILE_UPLOAD_MAXIMUM_BYTES,
+                            attachment.file.name,
+                            task_id,
+                            attachment.file.size,
+                        )
+                    )
+                    attachment.delete()
+                    continue
+
+                document = TaskAttachment.objects.create(
+                    store=store,
+                    task_id=task_id,
+                    name=attachment.file.name,
+                    size=attachment.file.size,
+                )
+                document.document.save(
+                    '%s-%s-%s' % (
+                        store.user.username,
+                        task_id,
+                        attachment.file.name,
+                    ),
+                    attachment.file,
+                )
+                attachment_urls.append(
+                    document.document.url
                 )
                 attachment.delete()
-                continue
-            document = TaskAttachment.objects.create(
-                store=store,
-                task_id=task_id,
-                name=attachment.file.name,
-                size=attachment.file.size,
-            )
-            document.document.save(
-                '%s-%s-%s' % (
-                    store.user.username,
-                    task_id,
-                    attachment.file.name,
-                ),
-                attachment.file,
-            )
-            attachment_urls.append(
-                document.document.url
-            )
-            attachment.delete()
 
-        try:
-            if attachment_urls:
-                with git_checkpoint(store, 'Setting attachment details'):
+            try:
+                if attachment_urls:
                     store.client.task_update(
                         uuid=task_id,
                         intheamattachments='|'.join(attachment_urls)
                     )
-        except:
-            logger.exception("boom.")
+            except:
+                logger.exception("boom.")
 
         log_args = (
             "Added task %s via e-mail %s from %s." % (
