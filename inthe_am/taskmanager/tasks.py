@@ -1,19 +1,20 @@
 from __future__ import absolute_import
 
 from fnmatch import fnmatch as glob
+import logging
 import re
 import shlex
 import uuid
 
 from celery import shared_task
-from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.utils.timezone import now
 from django_mailbox.models import Message
 
 from .context_managers import git_checkpoint
 
-logger = get_task_logger(__name__)
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task(
