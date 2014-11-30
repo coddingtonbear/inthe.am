@@ -137,7 +137,8 @@ def process_email_message(self, message_id):
         else:
             attachment_urls = attachment_urls_raw.split('|')
 
-        for attachment in message.attachments.all():
+        for record in message.attachments.all():
+            attachment = record.document
             if attachment.file.size > settings.FILE_UPLOAD_MAXIMUM_BYTES:
                 logger.info(
                     "File %s too large (%s bytes).",
