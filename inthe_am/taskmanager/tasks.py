@@ -128,86 +128,82 @@ def process_email_message(self, message_id):
         not message.subject
         or message.subject.lower() in ['add', 'create', 'new'],
     ):
-        logger.info("Opening message %s for addition...", message)
         task_id = str(uuid.uuid4())
-        try:
-            message.text
-        except:
-            logger.exception("Error encountered while getting message text.")
         with git_checkpoint(store, 'Incoming E-mail'):
-            logger.info(
-                "Git checkpoint entered %s-%s-%s...",
-                message.subject,
-                message.pk,
-                message.text
-            )
             task_args = [
                 'add',
                 'uuid:%s' % task_id,
                 'intheamoriginalemailsubject:"%s"' % message.subject,
                 'intheamoriginalemailid:%s' % message.pk,
             ] + additional_args + shlex.split(message.text)
-            logger.info("Arguments composed.")
             stdout, stderr = store.client._execute_safe(*task_args)
-            logger.info("Task created: %s", task_id)
             task = store.client.get_task(uuid=task_id)
-            logger.info("Fetched.")
 
-        logger.info("Checkpoint released.")
+        logger.info("Processing attachments...")
 
-        attachment_urls_raw = task.get('intheamattachments')
-        if not attachment_urls_raw:
-            attachment_urls = []
-        else:
-            attachment_urls = attachment_urls_raw.split('|')
+        try:
+            attachment_urls_raw = task.get('intheamattachments')
+            if not attachment_urls_raw:
+                attachment_urls = []
+            else:
+                attachment_urls = attachment_urls_raw.split('|')
+        except:
+            logger.exception(
+                "Boom"
+            )
 
         for record in message.attachments.all():
-            attachment = record.document
-            if attachment.file.size > settings.FILE_UPLOAD_MAXIMUM_BYTES:
-                logger.info(
-                    "File %s too large (%s bytes).",
-                    attachment.file.name,
-                    attachment.file.size,
-                )
-                store.log_message(
-                    "Attachments must be smaller than %s bytes to be saved "
-                    "to a task, but the attachment %s received for task ID %s "
-                    "is %s bytes in size and was not saved as a result." % (
-                        settings.FILE_UPLOAD_MAXIMUM_BYTES,
+            try:
+                attachment = record.document
+                if attachment.file.size > settings.FILE_UPLOAD_MAXIMUM_BYTES:
+                    logger.info(
+                        "File %s too large (%s bytes).",
                         attachment.file.name,
-                        task_id,
                         attachment.file.size,
                     )
+                    store.log_message(
+                        "Attachments must be smaller than %s bytes to be saved "
+                        "to a task, but the attachment %s received for task ID %s "
+                        "is %s bytes in size and was not saved as a result." % (
+                            settings.FILE_UPLOAD_MAXIMUM_BYTES,
+                            attachment.file.name,
+                            task_id,
+                            attachment.file.size,
+                        )
+                    )
+                    attachment.delete()
+                    continue
+                logger.info("Saving attachment %s...", attachment)
+                document = TaskAttachment.objects.create(
+                    store=store,
+                    task_id=task_id,
+                    name=attachment.file.name,
+                    size=attachment.file.size,
                 )
+                document.document.save(
+                    '%s-%s-%s' % (
+                        store.user.username,
+                        task_id,
+                        attachment.file.name,
+                    ),
+                    attachment.document.file,
+                )
+                logger.info(
+                    '%s-%s-%s' % (
+                        store.user.username,
+                        task_id,
+                        attachment.file.name,
+                    ),
+                )
+                attachment_urls.append(
+                    document.document.url
+                )
+                logger.info("Deleting attachment...")
                 attachment.delete()
-                continue
-            logger.info("Saving attachment %s...", attachment)
-            document = TaskAttachment.objects.create(
-                store=store,
-                task_id=task_id,
-                name=attachment.file.name,
-                size=attachment.file.size,
-            )
-            document.document.save(
-                '%s-%s-%s' % (
-                    store.user.username,
-                    task_id,
-                    attachment.file.name,
-                ),
-                attachment.document.file,
-            )
-            logger.info(
-                '%s-%s-%s' % (
-                    store.user.username,
-                    task_id,
-                    attachment.file.name,
-                ),
-            )
-            attachment_urls.append(
-                document.document.url
-            )
-            logger.info("Deleting attachment...")
-            attachment.delete()
+            except Exception:
+                logger.exception(
+                    "Error encountered while processing attachment."
+                )
 
         if attachment_urls:
             with git_checkpoint(store, 'Setting attachment details'):
