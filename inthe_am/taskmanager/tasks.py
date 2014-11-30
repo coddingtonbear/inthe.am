@@ -53,6 +53,7 @@ def sync_repository(self, store_id, debounce_id=None):
     ignore_result=True,
 )
 def process_email_message(self, message_id):
+    print "Testing logging"
     from .models import TaskAttachment, TaskStore
 
     def get_secret_id_and_args(address):
