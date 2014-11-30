@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 from fnmatch import fnmatch as glob
-import logging
 import re
 import shlex
 import uuid
@@ -53,8 +52,16 @@ def sync_repository(self, store_id, debounce_id=None):
     ignore_result=True,
 )
 def process_email_message(self, message_id):
-    print "Testing logging"
     from .models import TaskAttachment, TaskStore
+
+    with open('/tmp/wtf.log') as output:
+        import json
+        output.write(
+            json.dumps(
+                settings.LOGGING,
+                indent=4
+            )
+        )
 
     def get_secret_id_and_args(address):
         inbox_id = address[0:36]
