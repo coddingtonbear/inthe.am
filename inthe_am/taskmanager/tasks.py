@@ -137,7 +137,7 @@ def process_email_message(self, message_id):
                 'intheamoriginalemailid:%s' % message.pk,
             ] + additional_args + shlex.split(message.text)
             stdout, stderr = store.client._execute_safe(*task_args)
-            task = store.client.get_task(uuid=task_id)
+            task = store.client.get_task(uuid=task_id)[1]
 
         logger.info("Processing attachments...")
 
