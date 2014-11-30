@@ -16,6 +16,7 @@ from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
 from django.template.response import TemplateResponse
 
 from .models import TaskStore, TaskStoreActivityLog
+from .lock import get_lock_name_for_store, redis_lock, LockTimeout
 
 
 logger = logging.getLogger(__name__)
@@ -37,13 +38,23 @@ class Status(BaseSseView):
     def check_head(self, head):
         store = self.get_store()
         new_head = store.repository.head()
-        if head != new_head:
-            logger.info('Found new repository head -- %s' % new_head)
-            ids = store.get_changed_task_ids(head, new_head)
-            for id in ids:
-                self.sse.add_message("task_changed", id)
-            head = new_head
-            self.sse.add_message("head_changed", new_head)
+
+        try:
+            with redis_lock(
+                get_lock_name_for_store(store),
+                message="SSE Head Change"
+            ):
+                if head != new_head:
+                    logger.info('Found new repository head -- %s' % new_head)
+                    ids = store.get_changed_task_ids(head, new_head)
+                    for id in ids:
+                        self.sse.add_message("task_changed", id)
+                    head = new_head
+                    self.sse.add_message("head_changed", new_head)
+        except LockTimeout:
+            # This is OK -- we'll check again on the next round.
+            pass
+
         return head
 
     def get_taskd_mtime(self, store):
