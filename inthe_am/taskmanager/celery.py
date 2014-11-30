@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 import copy
-import logging
+import logging.config
 import os
 
 from celery import Celery
