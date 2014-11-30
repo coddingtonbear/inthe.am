@@ -131,7 +131,7 @@ def process_email_message(self, message_id):
         logger.info("Opening message %s for addition...", message)
         task_id = str(uuid.uuid4())
         with git_checkpoint(store, 'Incoming E-mail'):
-            logger.info("Git checkpoint entered.")
+            logger.info("Git checkpoint entered...")
             task_args = [
                 'add',
                 'uuid:%s' % task_id,
