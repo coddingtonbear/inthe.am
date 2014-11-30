@@ -49,8 +49,6 @@ def sync_repository(self, store_id, debounce_id=None):
 
 @shared_task(
     bind=True,
-    soft_time_limit=30,
-    time_limit=45,
     ignore_result=True,
 )
 def process_email_message(self, message_id):
