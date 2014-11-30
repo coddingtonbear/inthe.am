@@ -73,7 +73,7 @@ def redis_lock(
 
         # Didn't get the lock!
         original_timestamp = client.get(name)
-        if float(original_timestamp) > time.time():
+        if original_timestamp and float(original_timestamp) > time.time():
             # The timestamp isn't yet expired, let's wait a second
             # and try again.
             time.sleep(lock_check_interval)
