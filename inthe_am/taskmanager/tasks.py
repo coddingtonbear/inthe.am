@@ -171,7 +171,7 @@ def process_email_message(self, message_id):
                 document = TaskAttachment.objects.create(
                     store=store,
                     task_id=task_id,
-                    name=attachment.file.name,
+                    name=record.get_filename(),
                     size=attachment.file.size,
                 )
                 document.document.save(
