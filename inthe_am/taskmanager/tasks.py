@@ -54,18 +54,6 @@ def sync_repository(self, store_id, debounce_id=None):
 def process_email_message(self, message_id):
     from .models import TaskAttachment, TaskStore
 
-    with open('/tmp/wtf.log', 'w') as output:
-        import json
-        output.write(
-            json.dumps(
-                settings.LOGGING,
-                indent=4
-            )
-        )
-        output.write(
-            getattr(settings, 'ANOTHER_SETTING', 'failed')
-        )
-
     def get_secret_id_and_args(address):
         inbox_id = address[0:36]
         args = []
