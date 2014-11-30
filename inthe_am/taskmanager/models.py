@@ -571,7 +571,6 @@ class TaskAttachment(models.Model):
     size = models.PositiveIntegerField()
     document = models.FileField(
         upload_to='attachments',
-        storage=S3BotoStorage(querystring_auth=False)
     )
     created = models.DateTimeField(auto_now_add=True)
 
