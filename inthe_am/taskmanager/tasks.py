@@ -130,6 +130,10 @@ def process_email_message(self, message_id):
     ):
         logger.info("Opening message %s for addition...", message)
         task_id = str(uuid.uuid4())
+        try:
+            message.text
+        except:
+            logger.exception("Error encountered while getting message text.")
         with git_checkpoint(store, 'Incoming E-mail'):
             logger.info(
                 "Git checkpoint entered %s-%s-%s...",
