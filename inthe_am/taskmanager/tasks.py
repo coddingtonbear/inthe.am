@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from fnmatch import fnmatch as glob
 import logging
+import logging.config
 import re
 import shlex
 import uuid
@@ -53,6 +54,9 @@ def sync_repository(self, store_id, debounce_id=None):
 )
 def process_email_message(self, message_id):
     from .models import TaskAttachment, TaskStore
+
+    from inthe_am import celery_settings
+    logger.config.dictConfig(celery_settings.LOGGING)
 
     def get_secret_id_and_args(address):
         inbox_id = address[0:36]
