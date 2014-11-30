@@ -60,6 +60,7 @@ def process_email_message(self, message_id):
         out.write(
             json.dumps(settings.LOGGING, indent=4)
         )
+        out.write(__name__)
 
     def get_secret_id_and_args(address):
         inbox_id = address[0:36]
