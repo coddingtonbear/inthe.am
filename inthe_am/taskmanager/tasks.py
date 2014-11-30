@@ -138,6 +138,7 @@ def process_email_message(self, message_id):
                 'intheamoriginalemailsubject:"%s"' % message.subject,
                 'intheamoriginalemailid:%s' % message.pk,
             ] + additional_args + shlex.split(message.text)
+            logger.info("Arguments composed.")
             stdout, stderr = store.client._execute_safe(*task_args)
             logger.info("Task created: %s", task_id)
             task = store.client.get_task(uuid=task_id)
