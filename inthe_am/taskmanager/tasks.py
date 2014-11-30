@@ -54,7 +54,7 @@ def sync_repository(self, store_id, debounce_id=None):
 def process_email_message(self, message_id):
     from .models import TaskAttachment, TaskStore
 
-    with open('/tmp/wtf.log') as output:
+    with open('/tmp/wtf.log', 'w') as output:
         import json
         output.write(
             json.dumps(
