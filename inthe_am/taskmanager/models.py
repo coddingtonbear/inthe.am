@@ -564,14 +564,20 @@ class TaskStore(models.Model):
         )
 
 
+def get_attachment_path(instance, filename):
+    return os.path.join(
+        'attachments',
+        instance.store.user.username,
+        instance.task_id,
+    )
+
+
 class TaskAttachment(models.Model):
     store = models.ForeignKey(TaskStore, related_name='attachments')
     task_id = models.CharField(max_length=36)
     name = models.CharField(max_length=256)
     size = models.PositiveIntegerField()
-    document = models.FileField(
-        upload_to='attachments',
-    )
+    document = models.FileField(upload_to=get_attachment_path)
     created = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
