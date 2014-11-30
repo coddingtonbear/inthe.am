@@ -175,11 +175,7 @@ def process_email_message(self, message_id):
                     size=attachment.file.size,
                 )
                 document.document.save(
-                    '%s-%s-%s' % (
-                        store.user.username,
-                        task_id,
-                        attachment.file.name,
-                    ),
+                    record.get_filename(),
                     attachment.file,
                 )
                 attachment_urls.append(
