@@ -210,7 +210,7 @@ LOGGING = {
             'propagate': True,
         },
         'inthe_am.taskmanager.tasks': {
-            'handlers': ['tasks'],
+            'handlers': ['tasks', 'sentry'],
             'level': 'DEBUG',
             'propagate': True,
         },
