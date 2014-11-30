@@ -569,6 +569,7 @@ def get_attachment_path(instance, filename):
         'attachments',
         instance.store.user.username,
         instance.task_id,
+        filename,
     )
 
 
