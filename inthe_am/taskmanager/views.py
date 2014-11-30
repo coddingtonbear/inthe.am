@@ -40,11 +40,11 @@ class Status(BaseSseView):
         new_head = store.repository.head()
 
         try:
-            with redis_lock(
-                get_lock_name_for_store(store),
-                message="SSE Head Change"
-            ):
-                if head != new_head:
+            if head != new_head:
+                with redis_lock(
+                    get_lock_name_for_store(store),
+                    message="SSE Head Change"
+                ):
                     logger.info('Found new repository head -- %s' % new_head)
                     ids = store.get_changed_task_ids(head, new_head)
                     for id in ids:
