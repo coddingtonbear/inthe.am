@@ -10,6 +10,11 @@
             </p>
         {{/if}}
         <div class="tags">
+            {{#if this.due}}
+                <i class="fa fa-clock-o">
+                    {{fromnow this.due}}
+                </i>
+            {{/if}}
             {{#each tags}}
                 <i class="fa fa-tag">{{this}}</i>
             {{/each}}
