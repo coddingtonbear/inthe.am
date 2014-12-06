@@ -13,6 +13,7 @@ install:
 - git config --global user.name "Inthe.AM Git Bot"
 before_script:
 - gem install travis-artifacts
+- sudo redis-server /etc/redis/redis.conf
 after_script:
 - travis-artifacts upload --path logs/twweb.log
 - travis-artifacts upload --path logs/twweb.error.log
