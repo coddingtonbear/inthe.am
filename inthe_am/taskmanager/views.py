@@ -206,7 +206,7 @@ class TaskFeed(Feed):
 def home(request):
     try:
         store = TaskStore.objects.get(user=request.user)
-        store.sync(async=False)
+        store.sync()
     except:
         pass
     return TemplateResponse(
