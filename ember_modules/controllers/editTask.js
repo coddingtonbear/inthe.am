@@ -9,12 +9,18 @@ var controller = Ember.ObjectController.extend({
   actions: {
     'save': function() {
       var model = this.get('model');
+      var application = this.get('controllers.application');
       var self = this;
-      $('#new_task_form').foundation('reveal', 'close');
+      application.showLoading();
       model.save().then(function(){
+        $('#new_task_form').foundation('reveal', 'close');
+        application.hideLoading();
         self.transitionToRoute('task', model);
       }, function(reason){
-        var application = self.get('controllers.application');
+        application.hideLoading();
+        application.error_message(
+            "An error was encountered while saving your task: '" + reason.statusText + "'."
+        );
         application.get('handleError').bind(application)(reason);
       });
     }

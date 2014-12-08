@@ -117,16 +117,13 @@ var controller = Ember.Controller.extend({
     });
   },
   error_message: function(message) {
-    $.growl.error({
-      title: 'Error',
-      message: message,
-    });
+    this.get('controllers.application').error_message(message);
   },
   success_message: function(message) {
-    $.growl.notice({
-      title: 'Success',
-      message: message,
-    });
+    this.get('controllers.application').success_message(message);
+  },
+  growl_message: function(type, opts) {
+    $.growl[type || 'notice'](opts || {})
   },
   actions: {
     save_taskrc: function() {

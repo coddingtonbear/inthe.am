@@ -37,6 +37,18 @@ var controller = Ember.Controller.extend({
   hideLoading: function() {
     Ember.run.next(this, '_hideLoading');
   },
+  error_message: function(message) {
+    $.growl.error({
+      title: 'Error',
+      message: message,
+    });
+  },
+  success_message: function(message) {
+    $.growl.notice({
+      title: 'Success',
+      message: message,
+    });
+  },
   _hideLoading: function() {
     $('#loading').hide();
   },
