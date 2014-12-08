@@ -6,9 +6,13 @@ var route = Ember.Route.extend({
     var application = this.controllerFor('application');
     if(application.user.logged_in && !application.user.tos_up_to_date) {
       this.transitionTo('termsOfService');
+    } else {
+        application.showLoading();
     }
   },
   afterModel: function(tasks, transition) {
+    var application = this.controllerFor('application');
+    application.hideLoading();
     if (tasks.get('length') === 0) {
       this.transitionTo('getting_started');
     } else if (transition.targetName == "tasks.index") {

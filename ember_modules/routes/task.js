@@ -2,6 +2,14 @@ var route = Ember.Route.extend({
   model: function(params) {
      return this.store.find('task', params.uuid);
   },
+  beforeModel: function() {
+    var application = this.controllerFor('application');
+    application.showLoading();
+  },
+  afterModel: function() {
+    var application = this.controllerFor('application');
+    application.hideLoading();
+  },
   actions: {
     edit: function(){
       if (this.controllerFor('application').isSmallScreen()) {

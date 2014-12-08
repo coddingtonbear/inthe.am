@@ -31,6 +31,15 @@ var controller = Ember.Controller.extend({
     sms_url: null,
     pebble_card_url: null,
   },
+  showLoading: function() {
+    $('#loading').show();
+  },
+  hideLoading: function() {
+    Ember.run.next(this, '_hideLoading');
+  },
+  _hideLoading: function() {
+    $('#loading').hide();
+  },
   taskUpdateStreamEnabled: function() {
     return this.get('controllers.configure.taskUpdateStreamEnabled');
   }.property(),
