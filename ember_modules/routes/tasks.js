@@ -17,7 +17,9 @@ var route = Ember.Route.extend({
       this.transitionTo('getting_started');
     } else if (transition.targetName == "tasks.index") {
       if($(document).width() > 700) {
-        this.transitionTo('task', tasks.get('firstObject'));
+        Ember.run.next(this, function(){
+            this.transitionTo('task', tasks.get('firstObject'));
+        })
       } else {
         if (window.navigator.standalone || window.navigator.userAgent.indexOf('iPhone') === -1) {
           this.transitionTo('mobileTasks');
