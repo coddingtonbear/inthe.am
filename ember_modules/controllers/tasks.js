@@ -1,4 +1,5 @@
 var controller = Ember.ArrayController.extend({
+  needs: ['application'],
   sortProperties: ['urgency'],
   sortAscending: false,
   defaultFilter: {
@@ -21,6 +22,20 @@ var controller = Ember.ArrayController.extend({
     // Then, request a new list from the endpoint to make sure
     // we gather any new tasks, too.
     this.get('content').update();
+  },
+  collectionObserver: function() {
+    // If the collection has changed, and we're currently on the tasks
+    // view, transition to showing the first task.
+    var path = this.get('controllers.application').getHandlerPath();
+    if(path == 'application.tasks.tasks.index') {
+        Ember.run.debounce(this, 'transitionToFirstTask', 100);
+    }
+  }.observes('model.length'),
+  transitionToFirstTask: function() {
+    var task = this.get('pendingTasks.firstObject');
+    if(task) {
+      this.transitionToRoute('task', task);
+    }
   },
   enteredFilters: function() {
     var value = this.get('filterString');

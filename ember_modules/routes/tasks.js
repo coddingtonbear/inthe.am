@@ -1,24 +1,16 @@
 var route = Ember.Route.extend({
   model: function() {
-    return this.store.find('task');
-  },
-  beforeModel: function(tasks, transition) {
-    var application = this.controllerFor('application');
-    if(application.user.logged_in && !application.user.tos_up_to_date) {
-      this.transitionTo('termsOfService');
-    } else {
-        application.showLoading();
-    }
+    return this.store.all('task');
   },
   afterModel: function(tasks, transition) {
-    var application = this.controllerFor('application');
-    application.hideLoading();
-    if (tasks.get('length') === 0) {
-      this.transitionTo('getting_started');
-    } else if (transition.targetName == "tasks.index") {
+    if (transition.targetName == "tasks.index") {
       if($(document).width() > 700) {
         Ember.run.next(this, function(){
-            this.transitionTo('task', tasks.get('firstObject'));
+            var task = this.controllerFor('tasks')
+                .get('pendingTasks.firstObject');
+            if(task) {
+                this.transitionTo('task', tasks.get('firstObject'));
+            }
         })
       } else {
         if (window.navigator.standalone || window.navigator.userAgent.indexOf('iPhone') === -1) {

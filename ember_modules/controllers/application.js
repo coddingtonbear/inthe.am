@@ -104,6 +104,15 @@ var controller = Ember.Controller.extend({
   },
   init: function(){
     var self = this;
+    // Load all tasks; the views are all populated by promises
+    // so whenever this is fulfilled, they'll automatically be populated
+    this.showLoading();
+    this.store.find('task').then(function(data) {
+        this.hideLoading();
+        if(data.get('length') == 0) {
+            this.transitionToRoute('getting_started');
+        }
+    }.bind(this));;
 
     if(window.location.hostname == 'inthe.am') {
         this.set('logo', '/static/logo.png');
@@ -278,6 +287,14 @@ var controller = Ember.Controller.extend({
   },
   isSmallScreen: function() {
     return $(document).width() <= 800;
+  },
+  getHandlerPath: function() {
+      var path_parts = [];
+      var handlers = App.Router.router.currentHandlerInfos;
+      for(var i = 0; i < handlers.length; i++) {
+          path_parts.push(handlers[i].name);
+      }
+      return path_parts.join('.');
   },
   getCookie: function(name) {
     var cookieValue = null;
