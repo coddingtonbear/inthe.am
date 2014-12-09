@@ -1,5 +1,5 @@
 var controller = Ember.ObjectController.extend({
-  needs: ['tasks'],
+  needs: ['application', 'tasks'],
   actions: {
     'complete': function(){
       var result = confirm("Are you sure you would like to mark this task as completed?");
@@ -9,7 +9,9 @@ var controller = Ember.ObjectController.extend({
           self.get('controllers.tasks').refresh();
           self.transitionToRoute('tasks');
         }, function(){
-          alert("An error was encountered while marking this task completed.");
+          this.get('controllers.application').error_message(
+              "An error was encountered while deleting that annotation."
+          );
         });
       }
     },
@@ -23,7 +25,14 @@ var controller = Ember.ObjectController.extend({
         }
       }
       model.set('annotations', annotations);
-      model.save();
+      model.save().then(function(model) {
+        // Noop
+      }, function(reason) {
+        this.get('controllers.application').error_message(
+          "Could not delete annotation!"
+        );
+        model.reload();
+      });
     },
     'start': function() {
       var model = this.get('model');
@@ -34,6 +43,12 @@ var controller = Ember.ObjectController.extend({
         dataType: 'json',
         type: 'POST',
         success: function() {
+          model.reload();
+        },
+        error: function() {
+          this.get('controllers.application').error_message(
+            "Could not start task!"
+          );
           model.reload();
         }
       });
@@ -47,6 +62,12 @@ var controller = Ember.ObjectController.extend({
         dataType: 'json',
         type: 'POST',
         success: function() {
+          model.reload();
+        },
+        error: function() {
+          this.get('controllers.application').error_message(
+            "Could not stop task!"
+          );
           model.reload();
         }
       });
@@ -64,6 +85,12 @@ var controller = Ember.ObjectController.extend({
             self.get('model').unloadRecord();
             self.get('controllers.tasks').refresh();
             self.transitionToRoute('tasks');
+          },
+          error: function() {
+            this.get('controllers.application').error_message(
+              "Could not delete task!"
+            );
+            model.reload();
           }
         });
       }
