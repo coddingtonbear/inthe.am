@@ -1,6 +1,9 @@
 var controller = Ember.ObjectController.extend({
+  needs: ['application'],
   actions: {
     'save': function() {
+      var self = this;
+      var application = self.get('controllers.application');
       var model = this.get('model');
       var annotations = model.get('annotations');
       var field = $("#new_annotation_body");
@@ -11,11 +14,17 @@ var controller = Ember.ObjectController.extend({
       }
       annotations.pushObject(field.val());
       model.set('annotations', annotations);
-      model.save();
-
-      field.val('');
-
-      form.foundation('reveal', 'close');
+      application.showLoading();
+      model.save().then(function(){
+        application.hideLoading();
+        field.val('');
+        form.foundation('reveal', 'close');
+      }, function() {
+        application.hideLoading();
+        application.error_message(
+          "An error was encountered while saving your annotation!"
+        )
+      });;
     }
   }
 });
