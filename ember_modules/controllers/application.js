@@ -134,7 +134,9 @@ var controller = Ember.Controller.extend({
             Ember.run.next(
                 this,
                 function(){
-                    this.transitionToRoute('getting_started');
+                    if(this.getHandlerPath() != "application.fourOhFour") {
+                        this.transitionToRoute('getting_started');
+                    }
                 }
             );
         }
