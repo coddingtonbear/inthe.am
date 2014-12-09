@@ -163,6 +163,7 @@ def existing_task_with_details(context):
     description = task.pop('description')
     task = store.client.task_add(description, **task)
     context.created_task_id = task['uuid']
+    context.browser.find_by_id('refresh-link').first.find_by_tag('a').click()
 
 
 @then(u'{count} {status} tasks exist in the user\'s task list')
