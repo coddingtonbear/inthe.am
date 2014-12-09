@@ -119,19 +119,7 @@ var controller = Ember.ArrayController.extend({
       }
     );
     return sortedResult;
-  }.property('model.@each.status'),
-  init: function() {
-    Ember.run.next(this, function(){
-      var self = this;
-      var handleChanged = function() {
-        self.set('filterString', this.value);
-        self.notifyPropertyChange('pendingTasks');
-      }
-      var element = $('.filter-string-element');
-      element.on('input', handleChanged);
-      element.on('search', handleChanged);
-    });
-  }
+  }.property('model.@each.status')
 });
 
 module.exports = controller;
