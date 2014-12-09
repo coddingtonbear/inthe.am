@@ -94,6 +94,10 @@ var controller = Ember.Controller.extend({
       App.Task.reopen({
         udas: this.get('user').udas
       });
+
+      if(!this.get('user.tos_up_to_date')) {
+        this.transitionToRoute('termsOfService');
+      }
     } else {
       Raven.setUser();
     }
@@ -183,6 +187,15 @@ var controller = Ember.Controller.extend({
       min_move_x: 100,
       preventDefaultEvents: false
     });
+
+    // If the user is on a small screen:
+    if($(document).width() <= 700) {
+      if (window.navigator.standalone || window.navigator.userAgent.indexOf('iPhone') === -1) {
+        this.transitionToRoute('mobileTasks');
+      } else {
+        this.transitionToRoute('addToHomeScreen');
+      }
+    }
   },
   checkStatusUpdater: function() {
     var statusUpdater = this.get('statusUpdater');
