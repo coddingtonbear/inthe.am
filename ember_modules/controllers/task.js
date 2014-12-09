@@ -48,7 +48,6 @@ var controller = Ember.ObjectController.extend({
       this.get('controllers.application').showLoading();
       $.ajax({
         url: url,
-        dataType: 'json',
         type: 'POST',
         success: function() {
           model.reload();
@@ -71,7 +70,6 @@ var controller = Ember.ObjectController.extend({
       var url = this.store.adapterFor('task').buildURL('task', model.get('uuid')) + 'stop/';
       $.ajax({
         url: url,
-        dataType: 'json',
         type: 'POST',
         success: function() {
           model.reload();
@@ -96,7 +94,6 @@ var controller = Ember.ObjectController.extend({
         this.get('controllers.application').showLoading();
         $.ajax({
           url: url,
-          dataType: 'json',
           type: 'POST',
           success: function(){
             model.reload();

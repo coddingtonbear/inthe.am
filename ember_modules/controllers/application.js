@@ -124,6 +124,8 @@ var controller = Ember.Controller.extend({
         if(data.get('length') == 0) {
             this.transitionToRoute('getting_started');
         }
+    }.bind(this), function() {
+        this.hideLoading();
     }.bind(this));;
 
     if(window.location.hostname == 'inthe.am') {
