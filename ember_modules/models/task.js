@@ -39,7 +39,11 @@ var model = DS.Model.extend({
 
   definedUDAs: function() {
     var fields = [];
-    for(var i = 0; i < this.udas.length; i++) {
+    var length = 0;
+    if(this.udas) {
+        length = this.udas.length
+    }
+    for(var i = 0; i < length || 0; i++) {
       var this_uda = this.udas[i];
       var value = this.get(this_uda.field);
       if(value) {
