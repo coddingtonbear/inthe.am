@@ -29,6 +29,7 @@ var route = Ember.Route.extend({
         Ember.run.next(null, function(){
           $(document).foundation();
           $("#new_task_form").foundation('reveal', 'open');
+          setTimeout(function(){$("input[name=description]").focus();}, 500);
         });
         return rendered;
       }
