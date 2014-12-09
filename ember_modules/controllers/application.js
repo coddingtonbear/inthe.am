@@ -3,6 +3,17 @@ var controller = Ember.Controller.extend({
   logo: '',
   applicationName: 'Local Installation',
   user: null,
+  shortcuts: {
+      'alt+h': 'show_help',
+      'alt+l': 'show_log',
+      'alt+/': 'launch_configuration',
+      'alt+x': 'logout',
+  
+      'alt+t': 'show_tasks',
+      'alt+n': 'show_create_task',
+
+      'alt+r': 'refresh',
+  },
   urls: {
     login: '/login/google-oauth2/',
     logout: '/logout/',
@@ -353,6 +364,18 @@ var controller = Ember.Controller.extend({
     }
     return cookieValue;
   },
+  bindKeyboardEvents: function() {
+    console.log('Binding...', this);
+    var controller = this;
+    for (var keycode in this.shortcuts) {
+      if (this.shortcuts.hasOwnProperty(keycode)) {
+        var event_name = this.shortcuts[keycode];
+        $(document).on('keydown', null, keycode, function(name, evt) {
+          controller.send(name, controller);
+        }.bind(this, event_name));
+      }
+    }
+  },
   actions: {
     refresh: function(){
       this.get('controllers.tasks').refresh();
@@ -365,6 +388,29 @@ var controller = Ember.Controller.extend({
     },
     logout: function(){
       window.location = this.get('urls.logout');
+    },
+    show_help: function(){
+      $('body').chardinJs('toggle');
+    },
+    show_log: function() {
+      this.transitionToRoute('activityLog');
+    },
+    launch_configuration: function() {
+      this.transitionToRoute('configure');
+    },
+    show_tasks: function(){
+      if($(document).width() > 700) {
+        this.transitionToRoute('tasks');
+      } else {
+        this.transitionToRoute('mobileTasks');
+      }
+    },
+    show_create_task: function() {
+      if($(document).width() > 700) {
+        this.send('create_task');
+      } else {
+        this.transitionToRoute('createTask');
+      }
     }
   }
 });

@@ -21,7 +21,10 @@ var controller = Ember.ArrayController.extend({
 
     // Then, request a new list from the endpoint to make sure
     // we gather any new tasks, too.
-    this.get('content').update();
+    var content = this.get('content');
+    if(content.length) {
+        content.update();
+    }
   },
   collectionObserver: function() {
     // If the collection has changed, and we're currently on the tasks

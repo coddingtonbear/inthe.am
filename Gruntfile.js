@@ -5,6 +5,7 @@ var STATIC_FILES = [
   'jquery.datetimepicker.js',
   'jquery.growl.js',
   'jquery.touchwipe.min.js',
+  'jquery.hotkeys.js',
   'fastclick.js',
   'moment.min.js',
   'markdown.min.js',
@@ -16,6 +17,7 @@ var STATIC_FILES = [
   'templates.js',
   'task_manager.js',
   'foundation.min.js',
+  'chardinjs.js',
 ];
 var STATIC_COLLECTED_DEV = STATIC_ROOT + '../compiled.dev.js';
 var STATIC_COLLECTED_PROD = STATIC_ROOT + '../compiled.min.js';

@@ -10,13 +10,16 @@
         <section class="top-bar-section">
             <!-- Right Nav Section -->
             <ul class="right">
-                <li>
+                <li class="desktop-only" data-intro="alt+h">
+                    <a href="#" {{action "show_help"}}>?</a>
+                </li>
+                <li data-intro="alt+l">
                     {{#link-to "activityLog"}}<i class="fa fa-list">Log</i>{{/link-to}}
                 </li>
-                <li>
+                <li data-intro="alt+/">
                     {{#link-to "configure"}}<i class="fa fa-wrench">Configuration</i>{{/link-to}}
                 </li>
-                <li>
+                <li data-intro="alt+x">
                     <a href="#" {{action "logout"}}><i class="fa fa-sign-out">Log Out</i></a>
                 </li>
             </ul>
@@ -24,23 +27,23 @@
             <!-- Left Nav Section -->
             <ul class="left">
                 <!-- Mobile-only -->
-                <li class="mobile-only">
+                <li class="mobile-only" data-intro="alt+t">
                     {{#link-to "mobileTasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
-                <li class="mobile-only">
+                <li class="mobile-only" data-intro="alt+n">
                     {{#link-to "createTask"}}<i class="fa fa-pencil-square-o">New</i>{{/link-to}}
                 </li>
 
                 <!-- Desktop-only -->
-                <li class="desktop-only">
+                <li class="desktop-only" data-intro="alt+t">
                     {{#link-to "tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
-                <li class="desktop-only">
+                <li class="desktop-only" data-intro="alt+n">
                     <a href="#" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
                 </li>
 
                 {{#unless taskUpdateStreamConnected}}
-                    <li id="refresh-link">
+                    <li id="refresh-link" data-intro="alt+r">
                         <a href="#" {{action "refresh"}}><i class="fa fa-refresh"></i></a>
                     </li>
                 {{/unless}}
