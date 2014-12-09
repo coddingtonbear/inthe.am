@@ -61,6 +61,10 @@ def before_all(context):
     context.browser.driver.set_window_size(1024, 1024)
     context.browser.driver.implicitly_wait(10)
     context.browser.driver.set_page_load_timeout(60)
+    context.browser.visit(context.config.server_url)
+    context.browser.execute_script(
+        u"window.localStorage.setItem('disable_ticket_stream', 'yes');"
+    )
 
 
 def after_all(context):
