@@ -190,9 +190,7 @@ var controller = Ember.Controller.extend({
 
     // If the user is on a small screen:
     if($(document).width() <= 700) {
-      if (window.navigator.standalone || window.navigator.userAgent.indexOf('iPhone') === -1) {
-        this.transitionToRoute('mobileTasks');
-      } else {
+      if (!(window.navigator.standalone || window.navigator.userAgent.indexOf('iPhone') === -1)) {
         this.transitionToRoute('addToHomeScreen');
       }
     }
