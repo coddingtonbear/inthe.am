@@ -569,6 +569,7 @@ input#filter-string {
   width: 100vw;
   z-index: 9999;
   background-color: rgba(0, 0, 0, 0.5);
+  display: none;
 
   .loading-container {
     position: relative;
