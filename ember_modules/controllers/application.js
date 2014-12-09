@@ -96,7 +96,12 @@ var controller = Ember.Controller.extend({
       });
 
       if(!this.get('user.tos_up_to_date')) {
-        this.transitionToRoute('termsOfService');
+        Ember.run.next(
+            this,
+            function(){
+                this.transitionToRoute('termsOfService');
+            }
+        );
       }
     } else {
       Raven.setUser();
@@ -126,7 +131,12 @@ var controller = Ember.Controller.extend({
     this.store.find('task').then(function(data) {
         this.hideLoading();
         if(data.get('length') == 0) {
-            this.transitionToRoute('getting_started');
+            Ember.run.next(
+                this,
+                function(){
+                    this.transitionToRoute('getting_started');
+                }
+            );
         }
     }.bind(this), function() {
         this.hideLoading();
@@ -191,7 +201,12 @@ var controller = Ember.Controller.extend({
     // If the user is on a small screen:
     if($(document).width() <= 700) {
       if (!(window.navigator.standalone || window.navigator.userAgent.indexOf('iPhone') === -1)) {
-        this.transitionToRoute('addToHomeScreen');
+        Ember.run.next(
+          this,
+          function(){
+            this.transitionToRoute('addToHomeScreen');
+          }
+        );
       }
     }
   },
