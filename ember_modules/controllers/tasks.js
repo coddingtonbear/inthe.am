@@ -1,5 +1,5 @@
 var controller = Ember.ArrayController.extend({
-  needs: ['application'],
+  needs: ['application', 'task'],
   sortProperties: ['urgency'],
   sortAscending: false,
   defaultFilter: {
@@ -122,7 +122,41 @@ var controller = Ember.ArrayController.extend({
       }
     );
     return sortedResult;
-  }.property('model.@each.status')
+  }.property('model.@each.status'),
+  actions: {
+    prev_task: function() {
+      var current_id = this.get('controllers.task.model.id');
+      var array = this.get('model');
+      var last_task = null;
+      var target_task = null;
+      array.forEach(function(item, idx, enumerable){
+        if(item.get('id') == current_id) {
+          target_task = last_task;
+        }
+        last_task = item;
+      }.bind(this));
+      if(target_task) {
+        this.transitionToRoute('task', target_task);
+      }
+    },
+    next_task: function() {
+      var current_id = this.get('controllers.task.model.id');
+      var array = this.get('model');
+      var found_my_id = false;
+      var target_task = null;
+      array.forEach(function(item, idx, enumerable){
+        if(found_my_id && target_task == null) {
+          target_task = item;
+        }
+        if(item.get('id') == current_id) {
+          found_my_id = true;
+        }
+      }.bind(this));
+      if(target_task) {
+        this.transitionToRoute('task', target_task);
+      }
+    }
+  }
 });
 
 module.exports = controller;

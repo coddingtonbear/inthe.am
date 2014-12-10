@@ -1,5 +1,5 @@
 <div class="row full-width">
-    <div id="list" class="task-list">
+    <div id="list" class="task-list" data-intro="alt+up/alt+down" data-position="right">
         <input results=5 incremental="true" autosave=intheamsearch type="search" class="filter-string-element" id="filter-string" />
         {{#each task in pendingTasks}}
             {{#link-to "task" task tagName="div" class="task"}}

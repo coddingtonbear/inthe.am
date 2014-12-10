@@ -19,6 +19,11 @@ var controller = Ember.Controller.extend({
       'alt+e': 'edit_task',
       'alt+c': 'complete_task',
       'alt+d': 'delete_task',
+
+      'alt+up': 'prev_task',
+      'alt+down': 'next_task',
+      'alt+left': 'show_tasks',
+      'alt+right': 'show_task',
   },
   urls: {
     login: '/login/google-oauth2/',
@@ -442,6 +447,21 @@ var controller = Ember.Controller.extend({
     delete_task: function() {
       var taskController = this.get('controllers.task');
       taskController.send('delete');
+    },
+    prev_task: function() {
+      var tasksController = this.get('controllers.tasks');
+      tasksController.send('prev_task');
+    },
+    next_task: function() {
+      var tasksController = this.get('controllers.tasks');
+      tasksController.send('next_task');
+    },
+    show_task: function() {
+        var taskController = this.get('controllers.task');
+        var task = taskController.get('model');
+        if(task) {
+            this.transitionToRoute('task', task);
+        }
     }
   }
 });
