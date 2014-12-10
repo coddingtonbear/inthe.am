@@ -26,34 +26,34 @@
         {{#if editable}}
             <ul id="task-actions" class="inline-list">
                 {{#if start}}
-                    <li>
+                    <li data-intro="alt+s">
                         <a href="#" {{action "stop"}}>
                             <i class="fa fa-star-o">Stop</i>
                         </a>
                     </li>
                 {{else}}
-                    <li>
+                    <li data-intro="alt+s">
                         <a href="#" {{action "start"}}>
                             <i class="fa fa-star">Start</i>
                         </a>
                     </li>
                 {{/if}}
-                <li>
+                <li data-intro="alt+a">
                     <a href="#" {{action "add_annotation"}}>
                         <i class="fa fa-pencil">Add Annotation</i>
                     </a>
                 </li>
-                <li>
+                <li data-intro="alt+e">
                     <a href="#" {{action "edit"}}>
                         <i class="fa fa-pencil-square-o">Edit</i>
                     </a>
                 </li>
-                <li>
+                <li data-intro="alt+c">
                     <a href="#" {{action "complete"}}>
                         <i class="fa fa-check-circle-o">Mark Completed</i>
                     </a>
                 </li>
-                <li>
+                <li data-intro="alt+d">
                     <a href="#" {{action "delete"}}>
                         <i class="fa fa-ban">Delete</i>
                     </a>

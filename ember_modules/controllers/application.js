@@ -1,5 +1,5 @@
 var controller = Ember.Controller.extend({
-  needs: ['tasks', 'activityLog', 'configure'],
+  needs: ['task', 'tasks', 'activityLog', 'configure'],
   logo: '',
   applicationName: 'Local Installation',
   user: null,
@@ -13,6 +13,12 @@ var controller = Ember.Controller.extend({
       'alt+n': 'show_create_task',
 
       'alt+r': 'refresh',
+
+      'alt+s': 'start_or_stop',
+      'alt+a': 'add_annotation',
+      'alt+e': 'edit_task',
+      'alt+c': 'complete_task',
+      'alt+d': 'delete_task',
   },
   urls: {
     login: '/login/google-oauth2/',
@@ -411,6 +417,31 @@ var controller = Ember.Controller.extend({
       } else {
         this.transitionToRoute('createTask');
       }
+    },
+    start_or_stop: function() {
+      var taskController = this.get('controllers.task');
+      var model = taskController.get('model');
+      if(model.get('start')) {
+        taskController.send('stop');
+      } else {
+        taskController.send('start');
+      }
+    },
+    add_annotation: function() {
+      var taskController = this.get('controllers.task');
+      taskController.send('add_annotation');
+    },
+    edit_task: function() {
+      var taskController = this.get('controllers.task');
+      taskController.send('edit');
+    },
+    complete_task: function() {
+      var taskController = this.get('controllers.task');
+      taskController.send('complete');
+    },
+    delete_task: function() {
+      var taskController = this.get('controllers.task');
+      taskController.send('delete');
     }
   }
 });
