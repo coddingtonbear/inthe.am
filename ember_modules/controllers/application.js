@@ -376,7 +376,6 @@ var controller = Ember.Controller.extend({
     return cookieValue;
   },
   bindKeyboardEvents: function() {
-    console.log('Binding...', this);
     var controller = this;
     for (var keycode in this.shortcuts) {
       if (this.shortcuts.hasOwnProperty(keycode)) {
