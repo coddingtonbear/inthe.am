@@ -126,7 +126,7 @@ var controller = Ember.ArrayController.extend({
   actions: {
     prev_task: function() {
       var current_id = this.get('controllers.task.model.id');
-      var array = this.get('model');
+      var array = this.get('pendingTasks');
       var last_task = null;
       var target_task = null;
       array.forEach(function(item, idx, enumerable){
@@ -141,7 +141,7 @@ var controller = Ember.ArrayController.extend({
     },
     next_task: function() {
       var current_id = this.get('controllers.task.model.id');
-      var array = this.get('model');
+      var array = this.get('pendingTasks');
       var found_my_id = false;
       var target_task = null;
       array.forEach(function(item, idx, enumerable){
