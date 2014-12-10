@@ -22,8 +22,10 @@ var controller = Ember.ArrayController.extend({
     // Then, request a new list from the endpoint to make sure
     // we gather any new tasks, too.
     var content = this.get('content');
-    if(content.length) {
+    try {
         content.update();
+    } catch(e) {
+        // This should happen only when we haven't yet loaded this view.
     }
   },
   collectionObserver: function() {
