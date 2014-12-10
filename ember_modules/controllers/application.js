@@ -399,8 +399,49 @@ var controller = Ember.Controller.extend({
     logout: function(){
       window.location = this.get('urls.logout');
     },
+    _help_hidden: function() {
+      // Re-set navigation bar background color
+      var originalBgColor = this.get('_chardin_original_bgcolor');
+      if(originalBgColor) {
+        $('nav').css(
+          'background-color',
+          originalBgColor
+        )
+      }
+
+      // Hide addenda
+      $('.chardinjs-addenda').fadeOut();
+    },
     show_help: function(){
-      $('body').chardinJs('toggle');
+      // ALSO: see `_help_hidden` for cleanup when chardin closes.
+      if($('.chardinjs-overlay').length) {
+        // Hide overlay
+        $('body').chardinJs('stop');
+      } else {
+        // Show overlay
+        $('body').chardinJs('start');
+
+        // Set navigation bar background color
+        var currentBgColor = $('nav').css('background-color');
+        var targetBgColor = '#000';
+        if(currentBgColor != targetBgColor) {
+          this.set(
+            '_chardin_original_bgcolor',
+            currentBgColor
+          );
+        }
+        $('nav').css('background-color', targetBgColor)
+
+        // Show corner help information
+        var helpInstructionsView = Ember.View.create({
+          template: this.container.lookup(
+            'template:helpInstructions'
+          )
+        });
+        helpInstructionsView.appendTo(
+          $('.chardinjs-overlay')
+        );
+      }
     },
     show_log: function() {
       this.transitionToRoute('activityLog');

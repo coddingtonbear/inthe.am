@@ -501,6 +501,9 @@ div.alert-box.error {
     padding: 5px;
   }
   nav {
+    .chardinjs-show-element {
+      color: #FFFFFF;
+    }
     .top-bar-section {
       li.desktop-only {
         display: none;
@@ -704,6 +707,21 @@ input#filter-string {
   background-color: #000;
   opacity: 0;
   @include transition(all 0.3s ease-out);
+
+  .chardin-addenda {
+    color: #fff;
+    position: absolute;
+    right: 40px;
+    bottom: 40px;
+    width: 240px;
+    padding: 25px;
+    border: 1px solid #fff;
+    border-radius: 25px;
+
+    p {
+      margin-bottom: 0px;
+    }
+  }
 }
 
 .chardinjs-helper-layer {
