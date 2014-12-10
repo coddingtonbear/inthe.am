@@ -10,23 +10,19 @@ var controller = Ember.ArrayController.extend({
     tags: [],
   },
   refresh: function(){
-    // Refresh each entry to see if it has been closed.
-    this.get('content').forEach(function(model){
-      try {
-        model.reload()
-      } catch(e) {
-        // pass
-      }
-    });
-
     // Then, request a new list from the endpoint to make sure
     // we gather any new tasks, too.
-    var content = this.get('content');
-    try {
-        content.update();
-    } catch(e) {
-        // This should happen only when we haven't yet loaded this view.
-    }
+    this.store.find('task').then(function(){
+        // Refresh each entry to see if it has been closed.
+        this.get('content').forEach(function(model){
+            console.log('Reloading: ', model);
+          try {
+            model.reload()
+          } catch(e) {
+            // pass
+          }
+        }.bind(this));
+    }.bind(this));
   },
   collectionObserver: function() {
     // If the collection has changed, and we're currently on the tasks
