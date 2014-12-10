@@ -58,6 +58,7 @@ label[for] {
   top: 0px;
   left: 0px;
   width: 100%;
+  z-index: 1000000;
 
   button {
     margin-bottom: 0px;
@@ -707,7 +708,7 @@ input#filter-string {
 
 .chardinjs-helper-layer {
   position: absolute;
-  z-index: 9999998;
+  z-index: 10000000;
   color: white;
   @include transition(all 0.3s ease-out);
 
