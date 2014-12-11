@@ -24,6 +24,8 @@ var controller = Ember.Controller.extend({
       'alt+down': 'next_task',
       'alt+left': 'show_tasks',
       'alt+right': 'show_task',
+
+      'alt+f': 'focus_filter',
   },
   urls: {
     login: '/login/google-oauth2/',
@@ -381,7 +383,9 @@ var controller = Ember.Controller.extend({
       if (this.shortcuts.hasOwnProperty(keycode)) {
         var event_name = this.shortcuts[keycode];
         $(document).on('keydown', null, keycode, function(name, evt) {
+          evt.stopPropagation();
           controller.send(name, controller);
+          return false;
         }.bind(this, event_name));
       }
     }
@@ -502,6 +506,9 @@ var controller = Ember.Controller.extend({
         if(task) {
             this.transitionToRoute('task', task);
         }
+    },
+    focus_filter: function(evt) {
+        $('#filter-string').focus();
     }
   }
 });

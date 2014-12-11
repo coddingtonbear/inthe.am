@@ -1,6 +1,6 @@
 <div class="row full-width">
     <div id="mobile-list" class="task-list">
-        <input results=5 autosave=intheamsearch type="search" class="filter-string-element" id="filter-string" />
+        <input data-intro="alt+f" results=5 autosave=intheamsearch type="search" class="filter-string-element" id="filter-string" />
         {{#each task in pendingTasks}}
             <div class="task">
                 {{#link-to "task" task }}
