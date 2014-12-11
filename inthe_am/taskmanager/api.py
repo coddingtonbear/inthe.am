@@ -1286,5 +1286,5 @@ class ActivityLogResource(resources.ModelResource):
             'message',
             'count'
         ]
-        limit = 100
+        limit = 25
         max_limit = 400
