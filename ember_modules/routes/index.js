@@ -1,8 +1,8 @@
 
 App.IndexRoute = Ember.Route.extend({
-  renderTemplate: function() {
-    this.render('index');
-  }
+    renderTemplate: function() {
+        this.render('index');
+    }
 });
 App.AboutRoute = require("./about");
 App.TaskRoute = require("./task");

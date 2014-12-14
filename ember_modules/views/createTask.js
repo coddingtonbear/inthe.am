@@ -1,5 +1,5 @@
 var view = Ember.View.extend({
-  templateName: 'editTask',
+    templateName: 'editTask',
 });
 
 module.exports = view;
