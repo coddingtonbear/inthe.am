@@ -51,6 +51,16 @@
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
+                            <p class="input-note">
+                                Protip: You can make configuring your local
+                                installation of Taskwarior to synchronize
+                                with Inthe.AM a little easier by using the
+                                <a href="http://github.com/coddingtonbear/taskwarrior-inthe.am">Taskwarrior Inthe.AM Utility</a>.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
                             {{view Ember.Select value=controllers.application.user.taskd_server_is_default optionValuePath="content.value" optionLabelPath="content.human" content=taskd_server_settings id="id_taskd_server_is_default"}}
                         </div>
                     </div>
