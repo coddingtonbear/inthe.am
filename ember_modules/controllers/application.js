@@ -306,7 +306,9 @@ var controller = Ember.Controller.extend({
     },
     updateColorscheme: function() {
         var scheme = this.get('user').colorscheme;
-        $("#colorscheme").attr('href', '/static/colorschemes/' + scheme + '.css');
+        if(scheme) {
+            $("#colorscheme").attr('href', '/static/colorschemes/' + scheme + '.css');
+        }
     },
     bindStatusActions: function(updater) {
         for (var key in this.get('statusActions')) {
