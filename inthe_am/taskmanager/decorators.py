@@ -6,23 +6,33 @@ from . import models
 from .context_managers import git_checkpoint
 
 
+def process_authentication(f):
+    @wraps(f)
+    def wrapper(self, request, *args, **kwargs):
+        self._meta.authentication.is_authenticated(request)
+        return f(self, request, *args, **kwargs)
+    return wrapper
+
+
 def requires_task_store(f):
     @wraps(f)
     def wrapper(self, *args, **kwargs):
         try:
-            # Normal Views
-            user = args[0].user
-        except AttributeError:
             # Some Tastypie Views
-            user = args[0].request.user
+            request = args[0].request
+        except AttributeError:
+            # Normal Views
+            request = args[0]
         except IndexError:
             # Other Tastypie Views
-            user = kwargs['bundle'].request.user
+            request = kwargs['bundle'].request
 
-        if not user.is_authenticated():
+        self._meta.authentication.is_authenticated(request)
+
+        if not request.user.is_authenticated():
             return HttpResponse('Unauthorized', status=401)
 
-        store = models.TaskStore.get_for_user(user)
+        store = models.TaskStore.get_for_user(request.user)
         kwargs['store'] = store
         result = f(self, *args, **kwargs)
         return result
