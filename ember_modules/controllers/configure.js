@@ -346,6 +346,26 @@ var controller = Ember.Controller.extend({
                 }
             });
         },
+        clear_lock: function() {
+            var url    = this.get('controllers.application').urls.clear_lock;
+            var self = this;
+
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                success: function() {
+                    self.success_message("Task list unlocked.");
+                },
+                error: function(xhr) {
+                    var response = JSON.parse(xhr.responseText);
+                    for (var property in response) {
+                        self.error_message(
+                            "Error encountered: " + property + ": " + response[property]
+                        );
+                    }
+                }
+            });
+        },
         save_colorscheme: function() {
             var value = $('#id_theme').val();
             var url    = this.get('controllers.application').urls.set_colorscheme;

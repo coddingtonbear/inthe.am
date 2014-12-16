@@ -550,6 +550,20 @@
                         </div>
                     </div>
                     <a href="" class="button radius alert" {{action "clear_task_data"}}>Clear Task Data</a>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Manually unlock task list</h3>
+                            <p>
+                                Pressing this button will unlock your task list.
+                                To prevent multiple actions from altering your taskwarrior
+                                task list simultaneously, a lock is used.
+                                Deleting this lock while an action is taking place is dangerous!
+                                Although locks do time out on their own, this button provides you
+                                an avenue for unlocking your repository manually.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="" class="button radius alert" {{action "clear_lock"}}>Manually Unlock Task List</a>
                 </div>
             </dd>
         </dl>
