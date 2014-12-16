@@ -280,7 +280,7 @@ var controller = Ember.Controller.extend({
                 success: function() {
                     self.success_message("Email settings saved.");
                 },
-                error: function() {
+                error: function(xhr) {
                     var response = JSON.parse(xhr.responseText);
                     for (var property in response) {
                         self.error_message(
@@ -305,7 +305,7 @@ var controller = Ember.Controller.extend({
                 success: function() {
                     self.success_message("Twilio settings saved.");
                 },
-                error: function() {
+                error: function(xhr) {
                     var response = JSON.parse(xhr.responseText);
                     for (var property in response) {
                         self.error_message(
@@ -336,7 +336,7 @@ var controller = Ember.Controller.extend({
                         window.location.reload();
                     }, 3000);
                 },
-                error: function() {
+                error: function(xhr) {
                     var response = JSON.parse(xhr.responseText);
                     for (var property in response) {
                         self.error_message(
