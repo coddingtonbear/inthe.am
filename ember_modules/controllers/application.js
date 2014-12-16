@@ -4,28 +4,28 @@ var controller = Ember.Controller.extend({
     applicationName: 'Local Installation',
     user: null,
     shortcuts: {
-            'alt+h': 'show_help',
-            'alt+l': 'show_log',
-            'alt+/': 'launch_configuration',
-            'alt+x': 'logout',
-    
-            'alt+t': 'show_tasks',
-            'alt+n': 'show_create_task',
+        'alt+h': 'show_help',
+        'alt+l': 'show_log',
+        'alt+/': 'launch_configuration',
+        'alt+x': 'logout',
 
-            'alt+r': 'refresh',
+        'alt+t': 'show_tasks',
+        'alt+n': 'show_create_task',
 
-            'alt+s': 'start_or_stop',
-            'alt+a': 'add_annotation',
-            'alt+e': 'edit_task',
-            'alt+c': 'complete_task',
-            'alt+d': 'delete_task',
+        'alt+r': 'refresh',
 
-            'alt+up': 'prev_task',
-            'alt+down': 'next_task',
-            'alt+left': 'show_tasks',
-            'alt+right': 'show_task',
+        'alt+s': 'start_or_stop',
+        'alt+a': 'add_annotation',
+        'alt+e': 'edit_task',
+        'alt+c': 'complete_task',
+        'alt+d': 'delete_task',
 
-            'alt+f': 'focus_filter',
+        'alt+up': 'prev_task',
+        'alt+down': 'next_task',
+        'alt+left': 'show_tasks',
+        'alt+right': 'show_task',
+
+        'alt+f': 'focus_filter',
     },
     urls: {
         login: '/login/google-oauth2/',
