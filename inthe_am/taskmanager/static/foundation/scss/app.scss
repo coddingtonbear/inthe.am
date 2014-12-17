@@ -780,3 +780,9 @@ input#filter-string {
 .chardinjs-relative-position {
   position: relative;
 }
+
+#growls.default {
+  // By default, the growl messages are displayed in such a way that
+  // they're obscured by the title/menu bar.
+  top: 40px !important;
+}
