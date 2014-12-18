@@ -254,7 +254,7 @@ class UserResource(resources.ModelResource):
             return response
 
     @git_managed("Reset taskd configuration", gc=False)
-    @process_authentication
+    @process_authentication()
     def reset_taskd_configuration(self, request, store=None, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -263,7 +263,7 @@ class UserResource(resources.ModelResource):
         return HttpResponse('OK')
 
     @git_managed("Configuring taskd server", gc=False)
-    @process_authentication
+    @process_authentication()
     def configure_taskd(self, request, store=None, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -318,7 +318,7 @@ class UserResource(resources.ModelResource):
 
         return HttpResponse('OK')
 
-    @process_authentication
+    @process_authentication()
     def configure_pebble_cards(self, request, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -334,7 +334,7 @@ class UserResource(resources.ModelResource):
 
         return HttpResponse('OK')
 
-    @process_authentication
+    @process_authentication()
     def configure_feed(self, request, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -350,7 +350,7 @@ class UserResource(resources.ModelResource):
 
         return HttpResponse('OK')
 
-    @process_authentication
+    @process_authentication()
     def mirakel_configuration(self, request, **kwargs):
         if request.method != 'GET':
             raise HttpResponseBadRequest()
@@ -385,7 +385,7 @@ class UserResource(resources.ModelResource):
         )
         return response
 
-    @process_authentication
+    @process_authentication()
     def enable_sync(self, request, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -396,7 +396,7 @@ class UserResource(resources.ModelResource):
 
         return HttpResponse('OK')
 
-    @process_authentication
+    @process_authentication()
     def colorscheme(self, request, **kwargs):
         meta = models.UserMetadata.get_for_user(request.user)
         if request.method == 'PUT':
@@ -426,7 +426,7 @@ class UserResource(resources.ModelResource):
 
         return HttpResponse('OK')
 
-    @process_authentication
+    @process_authentication()
     def email_integration(self, request, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -438,7 +438,7 @@ class UserResource(resources.ModelResource):
 
         return HttpResponse("OK")
 
-    @process_authentication
+    @process_authentication()
     def twilio_integration(self, request, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -451,7 +451,7 @@ class UserResource(resources.ModelResource):
         return HttpResponse('OK')
 
     @git_managed("Clearing task data", gc=False)
-    @process_authentication
+    @process_authentication()
     def clear_task_data(self, request, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
@@ -482,7 +482,7 @@ class UserResource(resources.ModelResource):
 
         return HttpResponse('OK')
 
-    @process_authentication
+    @process_authentication()
     def my_certificate(self, request, **kwargs):
         if request.method != 'GET':
             return HttpResponseNotAllowed(request.method)
@@ -492,7 +492,7 @@ class UserResource(resources.ModelResource):
             content_type='application/x-pem-file',
         )
 
-    @process_authentication
+    @process_authentication()
     def my_key(self, request, **kwargs):
         if request.method != 'GET':
             return HttpResponseNotAllowed(request.method)
@@ -502,7 +502,7 @@ class UserResource(resources.ModelResource):
             content_type='application/x-pem-file',
         )
 
-    @process_authentication
+    @process_authentication()
     def ca_certificate(self, request, **kwargs):
         if request.method != 'GET':
             raise HttpResponseNotAllowed(request.method)
@@ -513,7 +513,7 @@ class UserResource(resources.ModelResource):
         )
 
     @git_managed("Updating custom taskrc configuration", gc=False)
-    @process_authentication
+    @process_authentication()
     def taskrc_extras(self, request, **kwargs):
         if request.method == 'GET':
             ts = models.TaskStore.get_for_user(request.user)
@@ -541,7 +541,7 @@ class UserResource(resources.ModelResource):
         else:
             return HttpResponseNotAllowed(request.method)
 
-    @process_authentication
+    @process_authentication(required=False)
     def announcements(self, request, **kwargs):
         announcements = []
         if request.user.is_authenticated():
@@ -565,7 +565,7 @@ class UserResource(resources.ModelResource):
             content_type='application/json',
         )
 
-    @process_authentication
+    @process_authentication(required=False)
     def account_status(self, request, **kwargs):
         if request.user.is_authenticated():
             store = models.TaskStore.get_for_user(request.user)
@@ -712,7 +712,7 @@ class TaskResource(resources.Resource):
 
         return bundle
 
-    @process_authentication
+    @process_authentication()
     def manage_lock(self, request, **kwargs):
         store = models.TaskStore.get_for_user(request.user)
         lock_name = get_lock_name_for_store(store)

@@ -1,17 +1,22 @@
 from functools import wraps
 
 from django.http import HttpResponse
+from tastypie.http import HttpUnauthorized
 
 from . import models
 from .context_managers import git_checkpoint
 
 
-def process_authentication(f):
-    @wraps(f)
-    def wrapper(self, request, *args, **kwargs):
-        self._meta.authentication.is_authenticated(request)
-        return f(self, request, *args, **kwargs)
-    return wrapper
+def process_authentication(required=True):
+    def authenticate(f):
+        @wraps(f)
+        def wrapper(self, request, *args, **kwargs):
+            self._meta.authentication.is_authenticated(request)
+            if required and not request.user.is_authenticated():
+                return HttpUnauthorized()
+            return f(self, request, *args, **kwargs)
+        return wrapper
+    return authenticate
 
 
 def requires_task_store(f):
