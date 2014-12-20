@@ -125,7 +125,6 @@ URL: ``https://inthe.am/api/v1/task/<TASK_UUID>/start/``
 | ``POST`` | Mark an existing task as stopped. |
 +----------+-----------------------------------+
 
-
 Completed Tasks
 ---------------
 
@@ -150,3 +149,103 @@ URL: ``https://inthe.am/api/v1/completedtask/<TASK_UUID>/``
 +=========+=============================+
 | ``GET`` | Get completed task details. |
 +---------+-----------------------------+
+
+Utility Endpoints
+-----------------
+
+Pebble Cards
+~~~~~~~~~~~~
+
+Returns a JSON representation of your current highest-priority task
+for use by `Pebble Cards <https://keanulee.com/pebblecards/>`_.
+
+.. note::
+
+   This endpoint is not authenticated, and is thus disabled unless
+   specifically enabled in your configuration.
+
+URL: ``https://inthe.am/api/v1/task/pebble-card/<SECRET_ID>/``
+
++---------+------------------------+
+| Method  | Description            |
++=========+========================+
+| ``GET`` | Get Pebble Cards data. |
++---------+------------------------+
+
+User Information
+----------------
+
+Status
+~~~~~~
+
+Returns brief JSON-formatted information about the currently
+logged-in user.
+
+.. note::
+
+   This endpoint does not require authentication.  If you are not
+   authenticated via an API key or a cookie, you will receive only
+   limited information.
+
+URL: ``https://inthe.am/api/v1/user/status/``
+
++---------+----------------+
+| Method  | Description    |
++=========+================+
+| ``GET`` | Get user data. |
++---------+----------------+
+
+Announcements
+~~~~~~~~~~~~~
+
+Returns a JSON-formatted list of recent announcements.
+
+URL: ``https://inthe.am/api/v1/user/announcements/``
+
++---------+--------------------+
+| Method  | Description        |
++=========+====================+
+| ``GET`` | Get announcements. |
++---------+--------------------+
+
+Download My Certificate
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Returns your currently-active certificate used for communicating with
+Inthe.AM.
+
+URL: ``https://inthe.am/api/v1/user/my-certificate/``
+
++---------+------------------+
+| Method  | Description      |
++=========+==================+
+| ``GET`` | Get certificate. |
++---------+------------------+
+
+Download My Key
+~~~~~~~~~~~~~~~
+
+Returns your currently-active key used for communicating with
+Inthe.AM.
+
+URL: ``https://inthe.am/api/v1/user/my-key/``
+
++---------+------------------+
+| Method  | Description      |
++=========+==================+
+| ``GET`` | Get key.         |
++---------+------------------+
+
+Download CA Certificate
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Returns Inthe.AM's certificate; this is used for synchronizing with
+Inthe.AM's taskd server.
+
+URL: ``https://inthe.am/api/v1/user/ca-certificate/``
+
++---------+---------------------+
+| Method  | Description         |
++=========+=====================+
+| ``GET`` | Get CA certificate. |
++---------+---------------------+
