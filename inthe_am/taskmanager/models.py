@@ -55,6 +55,7 @@ class TaskStore(models.Model):
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)
     sync_enabled = models.BooleanField(default=True)
+    sync_permitted = models.BooleanField(default=True)
     pebble_cards_enabled = models.BooleanField(default=False)
     feed_enabled = models.BooleanField(default=False)
 
@@ -364,7 +365,7 @@ class TaskStore(models.Model):
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None
     ):
-        if not self.sync_enabled:
+        if not self.sync_enabled or not self.sync_permitted:
             return False
         client = get_lock_redis()
         debounce_id = kwargs.get('debounce_id') if kwargs else None

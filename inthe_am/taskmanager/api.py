@@ -391,6 +391,11 @@ class UserResource(resources.ModelResource):
             return HttpResponseNotAllowed(request.method)
 
         store = models.TaskStore.get_for_user(request.user)
+        if not store.sync_permitted:
+            return HttpResponseForbidden(
+                "Synchronization cannot be enabled for your account; "
+                "please contact admin@inthe.am for more information."
+            )
         store.sync_enabled = True
         store.save()
 
