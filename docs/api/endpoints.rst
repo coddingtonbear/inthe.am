@@ -249,3 +249,24 @@ URL: ``https://inthe.am/api/v1/user/ca-certificate/``
 +=========+=====================+
 | ``GET`` | Get CA certificate. |
 +---------+---------------------+
+
+Set or Get ``.taskrc`` Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Locally, Inthe.AM runs Taskwarrior in a way that's very similar to
+how you interact with Taskwarrior on your personal computer, and a
+``.taskrc`` file is read and used for calculating things like UDAs
+and priorities.
+
+Use this endpoint to see or set your current ``.taskrc``'s contents on
+Inthe.AM.
+
+URL: ``https://inthe.am/api/v1/user/taskrc/``
+
++---------+----------------------------------+
+| Method  | Description                      |
++=========+==================================+
+| ``GET`` | Get ``.taskrc`` file's contents. |
++---------+----------------------------------+
+| ``PUT`` | Set ``.taskrc`` file's contents. |
++---------+----------------------------------+
