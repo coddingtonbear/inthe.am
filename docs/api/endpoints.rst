@@ -270,3 +270,16 @@ URL: ``https://inthe.am/api/v1/user/taskrc/``
 +---------+----------------------------------+
 | ``PUT`` | Set ``.taskrc`` file's contents. |
 +---------+----------------------------------+
+
+Reset Taskserver Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you've changed your Taskserver settings, but you'd like to reset
+them such that Inthe.AM's built-in taskserver is utilized, send an empty
+``POST`` request to this endpoint.
+
++----------+----------------------------------+
+| Method   | Description                      |
++==========+==================================+
+| ``POST`` | Reset Taskserver configuration.  |
++----------+----------------------------------+
