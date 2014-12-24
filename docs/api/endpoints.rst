@@ -283,3 +283,21 @@ them such that Inthe.AM's built-in taskserver is utilized, send an empty
 +==========+==================================+
 | ``POST`` | Reset Taskserver configuration.  |
 +----------+----------------------------------+
+
+SMS Messaging (Twilio) Integration Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure or enable SMS integration by
+sending a ``POST`` request to this endpoint with
+two form-encoded variables:
+
+* ``twilio_auth_token``: Your Twilio Auth Token.  This is used for
+  authenticating the SMS request from Twilio.
+* ``sms_whitelist``: A newline-separated list of phone numbers from
+  which you would like to accept new tasks.
+
++----------+----------------------------------+
+| Method   | Description                      |
++==========+==================================+
+| ``POST`` | Configure SMS Integration.       |
++----------+----------------------------------+
