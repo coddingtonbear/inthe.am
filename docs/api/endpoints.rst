@@ -301,3 +301,21 @@ two form-encoded variables:
 +==========+==================================+
 | ``POST`` | Configure SMS Integration.       |
 +----------+----------------------------------+
+
+Email Integration Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure which e-mail addresses are allowed to send new
+tasks to your personal task creation e-mail address by sending a ``POST``
+to this address with the following form-encoded variable:
+
+* ``email_whitelist``: A newline-separated list of e-mail addresses from
+  which you will allow new tasks to be created when an e-mail email message
+  is received.
+
++----------+----------------------------------+
+| Method   | Description                      |
++==========+==================================+
+| ``POST`` | Configure Email Integration.     |
++----------+----------------------------------+
+
