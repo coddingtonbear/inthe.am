@@ -319,3 +319,19 @@ to this address with the following form-encoded variable:
 | ``POST`` | Configure Email Integration.     |
 +----------+----------------------------------+
 
+Clear Task Data
+~~~~~~~~~~~~~~~
+
+You can clear your taskserver information by sending a ``POST`` request
+to this endpoint.
+
+Please note that this does not permanently delete your task information;
+it only clears your taskserver information; if you would like your
+taskserver information cleared permanently, please send an email to
+admin@inthe.am.
+
++----------+----------------------------------+
+| Method   | Description                      |
++==========+==================================+
+| ``POST`` | Clear Taskserver information.    |
++----------+----------------------------------+
