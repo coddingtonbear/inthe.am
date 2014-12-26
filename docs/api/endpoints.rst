@@ -278,6 +278,8 @@ If you've changed your Taskserver settings, but you'd like to reset
 them such that Inthe.AM's built-in taskserver is utilized, send an empty
 ``POST`` request to this endpoint.
 
+URL: ``https://inthe.am/api/v1/user/reset-taskd-configuration/``
+
 +----------+----------------------------------+
 | Method   | Description                      |
 +==========+==================================+
@@ -296,6 +298,8 @@ two form-encoded variables:
 * ``sms_whitelist``: A newline-separated list of phone numbers from
   which you would like to accept new tasks.
 
+URL: ``https://inthe.am/api/v1/user/twilio-integration/``
+
 +----------+----------------------------------+
 | Method   | Description                      |
 +==========+==================================+
@@ -313,6 +317,8 @@ to this address with the following form-encoded variable:
   which you will allow new tasks to be created when an e-mail email message
   is received.
 
+URL: ``https://inthe.am/api/v1/user/email-integration/``
+
 +----------+----------------------------------+
 | Method   | Description                      |
 +==========+==================================+
@@ -329,6 +335,8 @@ Please note that this does not permanently delete your task information;
 it only clears your taskserver information; if you would like your
 taskserver information cleared permanently, please send an email to
 admin@inthe.am.
+
+URL: ``https://inthe.am/api/v1/user/clear-task-data/``
 
 +----------+----------------------------------+
 | Method   | Description                      |
