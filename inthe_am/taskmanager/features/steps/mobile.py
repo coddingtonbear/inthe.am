@@ -2,7 +2,7 @@ from behave import given
 
 
 @given('the user is using a mobile device')
-def using_mobile_device(context, url):
+def using_mobile_device(context):
     context.browser.set_window_size(320, 700)
 
     if not hasattr(context, 'teardown_steps'):

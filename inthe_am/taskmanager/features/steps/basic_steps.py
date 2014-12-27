@@ -184,3 +184,8 @@ def element_at_selector_has_value(context, selector, text):
 @step(u'debugger')
 def launch_debugger(context):
     ipdb.set_trace()
+
+
+@then(u'the page will transition to "{url}"')
+def watch_for_page_transition(context, url):
+    assert False, "Not Implemented"
