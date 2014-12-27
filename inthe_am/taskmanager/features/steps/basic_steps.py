@@ -188,4 +188,10 @@ def launch_debugger(context):
 
 @then(u'the page will transition to "{url}"')
 def watch_for_page_transition(context, url):
-    assert False, "Not Implemented"
+    timeout = 5 * 60  # minutes
+    started = time.time()
+    while time.time() < started + timeout:
+        if url in context.browser.driver.current_url:
+            return True
+        time.sleep(1)
+    assert False, "Current URL is %s" % context.browser.driver.current_url
