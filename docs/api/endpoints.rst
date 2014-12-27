@@ -343,3 +343,38 @@ URL: ``https://inthe.am/api/v1/user/clear-task-data/``
 +==========+==================================+
 | ``POST`` | Clear Taskserver information.    |
 +----------+----------------------------------+
+
+Colorscheme Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure the colorscheme used when displaying your tasks
+by sending a ``PUT`` request to this URL having a body matching
+the colorscheme you would like to use.
+
+Options include:
+
+* ``light-16.theme``
+* ``dark-16.theme``
+* ``light-256.theme``
+* ``dark-256.theme``
+* ``dark-red-256.theme``
+* ``dark-green-256.theme``
+* ``dark-blue-256.theme``
+* ``dark-violets-256.theme``
+* ``dark-yellow-green.theme`` (default)
+* ``dark-gray-256.theme``
+* ``solarized-dark-256.theme``
+* ``solarized-light-256.theme``
+
+You can also send a ``GET`` request to find the name of the colorscheme
+currently in use.
+
+URL: ``https://inthe.am/api/v1/user/colorscheme/``
+
++---------+--------------------------+
+| Method  | Description              |
++=========+==========================+
+| ``GET`` | Get current colorscheme. |
++---------+--------------------------+
+| ``PUT`` | Set colorscheme.         |
++---------+--------------------------+
