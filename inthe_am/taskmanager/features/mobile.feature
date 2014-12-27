@@ -10,4 +10,4 @@ Feature: Alterations to normal user experience on mobile.
         Given the user is using a mobile device
         And the user is logged-in
         When the user accesses the url "/"
-        Then the page will transition to "/mobile-tasks/"
+        Then the page will transition to "/getting-started"
