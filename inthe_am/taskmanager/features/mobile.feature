@@ -4,7 +4,10 @@ Feature: Alterations to normal user experience on mobile.
         Given the user is using a mobile device
         And the test account user does not exist
         When the user accesses the url "/"
-        Then the page contains the heading "Inthe.AM"
+        # Note that this is only true because this test is not being
+        # ran on Inthe.AM itself.  What we're searching for is the
+        # 'About' page.
+        Then the page contains the heading "Local Installation"
 
     Scenario: User is redirected to tasks when logging-in.
         Given the user is using a mobile device
