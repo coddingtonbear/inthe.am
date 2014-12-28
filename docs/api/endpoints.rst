@@ -378,3 +378,18 @@ URL: ``https://inthe.am/api/v1/user/colorscheme/``
 +---------+--------------------------+
 | ``PUT`` | Set colorscheme.         |
 +---------+--------------------------+
+
+Enable Synchronization
+~~~~~~~~~~~~~~~~~~~~~~
+
+You can re-enable synchronization if it has been disabled
+by sending an empty ``POST`` to this endpoint.
+
+URL: ``https://inthe.am/api/v1/user/enable-sync/``
+
++----------+--------------------------+
+| Method   | Description              |
++==========+==========================+
+| ``POST`` | Enable synchronization.  |
++----------+--------------------------+
+
