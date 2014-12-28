@@ -130,6 +130,7 @@ var controller = Ember.Controller.extend({
             }
         } else {
             Raven.setUser();
+            this.transitionToRoute('about');
         }
 
         this.set('urls.feed_url', this.get('user').feed_url);

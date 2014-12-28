@@ -20,9 +20,7 @@ App.IndexController = Ember.Controller.extend({
         var user = this.get('controllers.application').user;
         var configured = user.configured;
         var self = this;
-        if (! user.logged_in) {
-            self.transitionToRoute('about');
-        } else {
+        if (user.logged_in) {
             self.transitionToRoute('tasks');
         }
     }
