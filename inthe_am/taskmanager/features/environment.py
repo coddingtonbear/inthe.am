@@ -89,4 +89,9 @@ def before_scenario(context, step):
 
 
 def after_scenario(context, step):
+    if hasattr(context, 'teardown_steps'):
+        for teardown_function in context.teardown_steps:
+            teardown_function(context)
+        context.teardown_steps = []
+
     context.browser.visit(urljoin(context.config.server_url, '/logout/'))

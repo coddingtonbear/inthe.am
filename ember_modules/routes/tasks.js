@@ -3,7 +3,7 @@ var route = Ember.Route.extend({
         return this.store.all('task');
     },
     afterModel: function(tasks, transition) {
-        if (transition.targetName == "tasks.index") {
+        if (transition.targetName == "tasks.index" || transition.targetName == "tasks") {
             if($(document).width() > 700) {
                 Ember.run.next(this, function(){
                     var task = this.controllerFor('tasks')
