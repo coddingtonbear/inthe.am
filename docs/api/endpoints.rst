@@ -393,3 +393,20 @@ URL: ``https://inthe.am/api/v1/user/enable-sync/``
 | ``POST`` | Enable synchronization.  |
 +----------+--------------------------+
 
+Pebble Cards Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure whether your Pebble Cards endpoint is enabled by
+sending a ``POST`` request:
+
+* To enable: Send a single form-encoded parameter -- ``enabled`` in the
+  request.
+* To disable: Send an empty request.
+
+URL: ``https://inthe.am/api/v1/user/pebble-cards-config/``
+
++----------+--------------------------+
+| Method   | Description              |
++==========+==========================+
+| ``POST`` | Configure Pebble Cards.  |
++----------+--------------------------+
