@@ -405,8 +405,27 @@ sending a ``POST`` request:
 
 URL: ``https://inthe.am/api/v1/user/pebble-cards-config/``
 
++----------+-------------------------------+
+| Method   | Description                   |
++==========+===============================+
+| ``POST`` | Enable/Disable Pebble Cards.  |
++----------+-------------------------------+
+
+Feed Configuration
+~~~~~~~~~~~~~~~~~~
+
+You can enable or disable the RSS feed showing your upcoming tasks by
+sending a ``POST`` request:
+
+* To enable: Send a single form-encoded parameter -- ``enabled`` in the
+  request.
+* To disable: Send an empty request.
+
+URL: ``https://inthe.am/api/v1/user/feed-config/``
+
 +----------+--------------------------+
 | Method   | Description              |
 +==========+==========================+
-| ``POST`` | Configure Pebble Cards.  |
+| ``POST`` | Enable/Disable RSS feed. |
 +----------+--------------------------+
+
