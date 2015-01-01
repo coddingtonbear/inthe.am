@@ -102,7 +102,7 @@ def process_email_message(self, message_id):
     # Check for 'Received' headers matching a known e-mail address.
     if store is None:
         email_regex = re.compile(r'([0-9a-fA-F-]{36}@inthe.am)')
-        all_received_headers = message.get_all('Received')
+        all_received_headers = message.get_email_object().get_all('Received')
         for header in all_received_headers:
             matched_email = email_regex.search(header)
             if matched_email:
