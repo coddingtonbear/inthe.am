@@ -6,10 +6,9 @@ Inthe.AM provides a RESTful API that you can use for creating, modifying, or del
 tasks in your task list.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    authentication
    task_format
    endpoints
-   repository_locking
 
