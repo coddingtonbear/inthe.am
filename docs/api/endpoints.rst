@@ -117,7 +117,7 @@ URL: ``https://inthe.am/api/v1/task/<TASK_UUID>/start/``
 Stop a Task 
 ~~~~~~~~~~~
 
-URL: ``https://inthe.am/api/v1/task/<TASK_UUID>/start/``
+URL: ``https://inthe.am/api/v1/task/<TASK_UUID>/stop/``
 
 +----------+-----------------------------------+
 | Method   | Description                       |
