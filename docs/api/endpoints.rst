@@ -172,6 +172,29 @@ URL: ``https://inthe.am/api/v1/task/pebble-card/<SECRET_ID>/``
 | ``GET`` | Get Pebble Cards data. |
 +---------+------------------------+
 
+.. _repository_locking:
+
+Repository Lock
+~~~~~~~~~~~~~~~
+
+.. warning::
+
+   Do not use this endpoint unless you absolutely know what you are doing.
+   Manually unlocking your repository while an action is in progress may
+   result in data loss!
+
+URL: ``https://inthe.am/api/v1/task/lock/``
+
++--------+------------------------------------------------------------+
+| Method | Description                                                |
++========+============================================================+
+| DELETE | Manually unlock your repository.                           |
++--------+------------------------------------------------------------+
+| GET    | Check whether your repository is currently locked. Will    |
+|        | return a 200 if it is, and a 404 if it is not.             |
++--------+------------------------------------------------------------+
+
+
 User Information
 ----------------
 
