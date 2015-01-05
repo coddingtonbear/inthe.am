@@ -150,8 +150,29 @@ URL: ``https://inthe.am/api/v1/completedtask/<TASK_UUID>/``
 | ``GET`` | Get completed task details. |
 +---------+-----------------------------+
 
-Utility Endpoints
------------------
+Feeds
+-----
+
+RSS Feed
+~~~~~~~~
+
+Returns an RSS representation of your current pending tasks.
+
+.. note::
+
+   This endpoint is not authenticated, and is thus disabled unless
+   specifically enabled in your configuration.
+
+   After enabling this endpoint in your configuration, you will be
+   given the proper URL to use (including your ``SECRET_ID``).
+
+URL: ``https://inthe.am/api/v1/task/feed/<SECRET_ID>/``
+
++---------+------------------------+
+| Method  | Description            |
++=========+========================+
+| ``GET`` | RSS Tasks Feed.        |
++---------+------------------------+
 
 Pebble Cards
 ~~~~~~~~~~~~
@@ -164,6 +185,9 @@ for use by `Pebble Cards <https://keanulee.com/pebblecards/>`_.
    This endpoint is not authenticated, and is thus disabled unless
    specifically enabled in your configuration.
 
+   After enabling this endpoint in your configuration, you will be
+   given the proper URL to use (including your ``SECRET_ID``).
+
 URL: ``https://inthe.am/api/v1/task/pebble-card/<SECRET_ID>/``
 
 +---------+------------------------+
@@ -171,6 +195,9 @@ URL: ``https://inthe.am/api/v1/task/pebble-card/<SECRET_ID>/``
 +=========+========================+
 | ``GET`` | Get Pebble Cards data. |
 +---------+------------------------+
+
+Utility Endpoints
+-----------------
 
 .. _repository_locking:
 
@@ -194,6 +221,19 @@ URL: ``https://inthe.am/api/v1/task/lock/``
 |        | return a 200 if it is, and a 404 if it is not.             |
 +--------+------------------------------------------------------------+
 
+Enable Synchronization
+~~~~~~~~~~~~~~~~~~~~~~
+
+You can re-enable synchronization if it has been disabled
+by sending an empty ``POST`` to this endpoint.
+
+URL: ``https://inthe.am/api/v1/user/enable-sync/``
+
++----------+--------------------------+
+| Method   | Description              |
++==========+==========================+
+| ``POST`` | Enable synchronization.  |
++----------+--------------------------+
 
 User Information
 ----------------
@@ -426,20 +466,6 @@ URL: ``https://inthe.am/api/v1/user/colorscheme/``
 +---------+--------------------------+
 | ``PUT`` | Set colorscheme.         |
 +---------+--------------------------+
-
-Enable Synchronization
-~~~~~~~~~~~~~~~~~~~~~~
-
-You can re-enable synchronization if it has been disabled
-by sending an empty ``POST`` to this endpoint.
-
-URL: ``https://inthe.am/api/v1/user/enable-sync/``
-
-+----------+--------------------------+
-| Method   | Description              |
-+==========+==========================+
-| ``POST`` | Enable synchronization.  |
-+----------+--------------------------+
 
 Pebble Cards
 ~~~~~~~~~~~~
