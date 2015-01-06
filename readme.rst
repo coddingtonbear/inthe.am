@@ -1,7 +1,7 @@
 Inthe.AM
 ========
 
-.. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=master
+.. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=development
    :target: https://travis-ci.org/coddingtonbear/inthe.am
 
 - Documentation for Inthe.AM is available on
