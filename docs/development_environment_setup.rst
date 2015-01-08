@@ -1,11 +1,40 @@
-
 Setting up a Development Environment
 ====================================
 
-1. Create the virtual machine ``vagrant up``
-2. Enter the virtual machine: ``vagrant ssh``
-3. Switch to the project directory: ``cd /var/www/twweb/``
-4. Start the ``runserver`` by running ``python manage.py runserver 0.0.0.0:8000``
+Prerequisites
+-------------
+
+* `Vagrant <https://www.vagrantup.com/>`_
+* `Virtualbox <https://www.virtualbox.org/>`_ or another Virtual Machine host supported by Vagrant
+
+Setup
+-----
+
+From a your clone of the Inthe.AM repository, run the following commands::
+
+    vagrant up
+    vagrant ssh
+
+After running ``vagrant ssh``, you're automatically SSH'd into your virtual machine,
+and can start the development environment by first switching to the directory
+holding your clone of the Inthe.AM repository::
+
+    cd /var/www/twweb
+
+.. note::
+
+   You'll note that the path above -- ``/var/www/twweb`` -- probably doesn't
+   match the path to where you've cloned the Inthe.AM repository, but are 
+   in fact the same files.  Virtualbox provides a mechanism for mapping directories
+   between the host OS (your computer) and the guest OS (the development environment)
+   magically for you.
+
+Then, you can start the runserver by running::
+
+   python manage.py runserver 0.0.0.0:8000
+
+Once the runserver is running, you'll be able to access your local copy of Inthe.AM
+by going to `http://127.0.0.1:8000 <http://127.0.0.1:8000>`_ in a browser.
 
 Troubleshooting your Development Environment
 --------------------------------------------
