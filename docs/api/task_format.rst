@@ -1,7 +1,7 @@
 Task Format
 ===========
 
-Each task has the following fields:
+Each task has at least the following fields:
 
 +------------------+-------------------------------------------------------------------------+
 | Field            | Description                                                             |
