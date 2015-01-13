@@ -517,9 +517,12 @@ class TaskStore(models.Model):
                 self.local_path,
                 self.DEFAULT_FILENAMES['key'],
             )
-            cert_filename = os.path.join(
-                self.local_path,
-                self.DEFAULT_FILENAMES['certificate'],
+            cert_filename = self.taskrc.get(
+                'taskd.certificate',
+                os.path.join(
+                    self.local_path,
+                    self.DEFAULT_FILENAMES['certificate'],
+                )
             )
             # Create and write a new certificate
             cert_proc = subprocess.Popen(
