@@ -563,6 +563,15 @@ class UserResource(resources.ModelResource):
     @process_authentication(required=False)
     def announcements(self, request, **kwargs):
         announcements = []
+
+        for announcement in models.Announcement.objects.current():
+            announcements.append({
+                'type': announcement.category,
+                'title': announcement.title,
+                'duration': announcement.duration * 1000,
+                'message': announcement.message,
+            })
+
         if request.user.is_authenticated():
             store = models.TaskStore.get_for_user(request.user)
             if not store.sync_enabled:

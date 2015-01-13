@@ -7,6 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 
 from .models import (
+    Announcement,
     TaskAttachment,
     TaskStore,
     TaskStoreActivityLog,
@@ -182,3 +183,11 @@ class UserMetadataAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserMetadata, UserMetadataAdmin)
+
+
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'duration', 'starts', 'expires', )
+    list_filter = ('category', 'starts', 'expires', )
+    search_fields = ('title', 'category', )
+
+admin.site.register(Announcement, AnnouncementAdmin)
