@@ -146,6 +146,12 @@ class UserResource(resources.ModelResource):
                 self.wrap_view('announcements')
             ),
             url(
+                r"^(?P<resource_name>%s)/generate-new-certificate/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('generate_new_certificate')
+            ),
+            url(
                 r"^(?P<resource_name>%s)/my-certificate/?$" % (
                     self._meta.resource_name
                 ),
@@ -485,6 +491,14 @@ class UserResource(resources.ModelResource):
                     )
                 )
 
+        return HttpResponse('OK')
+
+    @process_authentication()
+    def generate_new_certificate(self, request, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(request.method)
+        ts = models.TaskStore.get_for_user(request.user)
+        ts.generate_new_certificate()
         return HttpResponse('OK')
 
     @process_authentication()

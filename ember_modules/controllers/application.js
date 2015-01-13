@@ -31,6 +31,7 @@ var controller = Ember.Controller.extend({
         login: '/login/google-oauth2/',
         logout: '/logout/',
         about: '/about/',
+        generate_new_certificate: '/api/v1/user/generate-new-certificate/',
         ca_certificate: '/api/v1/user/ca-certificate/',
         my_certificate: '/api/v1/user/my-certificate/',
         my_key: '/api/v1/user/my-key/',

@@ -488,7 +488,40 @@ class TaskStore(models.Model):
             with open(private_key_filename, 'w') as out:
                 out.write(private_key)
 
-            # Create and write a new public key
+        cert_filename = self.generate_new_certificate()
+
+        with git_checkpoint(self, 'Save initial taskrc credentials'):
+            # Save these details to the taskrc
+            taskd_credentials = '%s/%s/%s' % (
+                settings.TASKD_ORG,
+                self.user.username,
+                taskd_user_key,
+            )
+            self.taskrc.update({
+                'data.location': self.local_path,
+                'taskd.certificate': cert_filename,
+                'taskd.key': private_key_filename,
+                'taskd.ca': self.server_config['ca.cert'],
+                'taskd.server': settings.TASKD_SERVER,
+                'taskd.credentials': taskd_credentials
+            })
+            self.metadata['generated_taskd_credentials'] = taskd_credentials
+
+        with git_checkpoint(self, 'Initial Synchronization'):
+            self.save()
+            self.client.sync(init=True)
+
+    def generate_new_certificate(self):
+        with git_checkpoint(self, 'Generate New Certificate'):
+            private_key_filename = os.path.join(
+                self.local_path,
+                self.DEFAULT_FILENAMES['key'],
+            )
+            cert_filename = os.path.join(
+                self.local_path,
+                self.DEFAULT_FILENAMES['certificate'],
+            )
+            # Create and write a new certificate
             cert_proc = subprocess.Popen(
                 [
                     'certtool',
@@ -506,31 +539,10 @@ class TaskStore(models.Model):
                 stderr=subprocess.PIPE,
             )
             cert = cert_proc.communicate()[0]
-            cert_filename = os.path.join(
-                self.local_path,
-                self.DEFAULT_FILENAMES['certificate'],
-            )
+
             with open(cert_filename, 'w') as out:
                 out.write(cert)
-
-            # Save these details to the taskrc
-            taskd_credentials = '%s/%s/%s' % (
-                settings.TASKD_ORG,
-                self.user.username,
-                taskd_user_key,
-            )
-            self.taskrc.update({
-                'data.location': self.local_path,
-                'taskd.certificate': cert_filename,
-                'taskd.key': private_key_filename,
-                'taskd.ca': self.server_config['ca.cert'],
-                'taskd.server': settings.TASKD_SERVER,
-                'taskd.credentials': taskd_credentials
-            })
-            self.metadata['generated_taskd_credentials'] = taskd_credentials
-
-            self.save()
-            self.client.sync(init=True)
+        return cert_filename
 
     def _log_entry(self, message, error, *parameters):
         message_hash = hashlib.md5(

@@ -359,6 +359,21 @@ URL: ``https://inthe.am/api/v1/user/taskrc/``
 | ``PUT`` | Set ``.taskrc`` file's contents. |
 +---------+----------------------------------+
 
+Generate New Taskserver Certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you would like to regenerate your Taskserver certificate, usually
+because your existing one has expired, you can do so using this endpoint.
+
+URL: ``https://inthe.am/api/v1/user/generate-new-certificate/``
+
++----------+----------------------------------+
+| Method   | Description                      |
++==========+==================================+
+| ``POST`` | Generate new Taskserver          |
+|          | Certificate.                     |
++----------+----------------------------------+
+
 Reset Taskserver Settings
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

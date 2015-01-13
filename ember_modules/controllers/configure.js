@@ -151,6 +151,24 @@ var controller = Ember.Controller.extend({
                 }
             });
         },
+        regenerate_taskd_certificate: function() {
+            var url = this.get('controllers.application').urls.generate_new_certificate;
+            var self = this;
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {},
+                success: function(){
+                    self.get('controllers.application').update_user_info();
+                    self.success_message("New taskserver certificate generated!");
+                },
+                error: function(xhr){
+                    self.error_message(
+                        "Error encountered while generating taskserver certificate!"
+                    );
+                }
+            });
+        },
         reset_taskd: function() {
             var csrftoken = this.get('controllers.application').getCookie(
                 'csrftoken'
