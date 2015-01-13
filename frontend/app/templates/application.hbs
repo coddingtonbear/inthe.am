@@ -1,0 +1,71 @@
+{{#unless controller.isHomePage}}
+<nav class="top-bar" data-topbar>
+    <ul class="title-area">
+        <li class="name">
+            <h1><a href="#" {{action "home"}}>{{#if controller.logo}}<img {{bind-attr src="controller.logo"}} />{{/if}}{{ controller.applicationName }}</a></h1>
+        </li>
+    </ul>
+
+    {{#if controller.user.name}}
+        <section class="top-bar-section">
+            <!-- Right Nav Section -->
+            <ul class="right">
+                <li class="desktop-only" data-intro="alt+h">
+                    <a href="#" {{action "show_help"}}>?</a>
+                </li>
+                <li data-intro="alt+l">
+                    {{#link-to "activity-log"}}<i class="fa fa-list">Log</i>{{/link-to}}
+                </li>
+                <li data-intro="alt+/">
+                    {{#link-to "configure"}}<i class="fa fa-wrench">Configuration</i>{{/link-to}}
+                </li>
+                <li data-intro="alt+x">
+                    <a href="#" {{action "logout"}}><i class="fa fa-sign-out">Log Out</i></a>
+                </li>
+            </ul>
+
+            <!-- Left Nav Section -->
+            <ul class="left">
+                <!-- Mobile-only -->
+                <li class="mobile-only" data-intro="alt+t">
+                    {{#link-to "mobile-tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
+                </li>
+                <li class="mobile-only" data-intro="alt+n">
+                    {{#link-to "create-task"}}<i class="fa fa-pencil-square-o">New</i>{{/link-to}}
+                </li>
+
+                <!-- Desktop-only -->
+                <li class="desktop-only" data-intro="alt+t">
+                    {{#link-to "tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
+                </li>
+                <li class="desktop-only" data-intro="alt+n">
+                    <a href="#" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
+                </li>
+
+                {{#unless taskUpdateStreamConnected}}
+                    <li id="refresh-link" data-intro="alt+r">
+                        <a href="#" {{action "refresh"}}><i class="fa fa-refresh"></i></a>
+                    </li>
+                {{/unless}}
+            </ul>
+        </section>
+    {{else}}
+        <section class="top-bar-section">
+            <ul class="left">
+                <li>
+                    <a href="#" {{action "login"}}><i class="fa fa-sign-in">Log In with Google</i></a>
+                </li>
+            </ul>
+        </section>
+    {{/if}}
+</nav>
+{{/unless}}
+<div id='loading'>
+    <div class='loading-container'>
+        <div class='loading-spinner'>
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+{{outlet}}
+{{outlet modal}}

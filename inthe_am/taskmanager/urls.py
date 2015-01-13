@@ -7,7 +7,7 @@ from .api import (
     UserResource, TaskResource, CompletedTaskResource,
     ActivityLogResource
 )
-from .views import debug_login, home, Status, TaskFeed
+from .views import debug_login, Status, TaskFeed
 
 api = Api(api_name='v1')
 api.register(UserResource())
@@ -21,7 +21,6 @@ urlpatterns = patterns(
     url('^api/v1/task/feed/(?P<uuid>[^/]+)/', TaskFeed(), name='feed'),
     url('^api/', include(api.urls)),
     url('^status/', Status.as_view(), name='status'),
-    url('^', home, name='home'),
 )
 
 if settings.DEBUG:

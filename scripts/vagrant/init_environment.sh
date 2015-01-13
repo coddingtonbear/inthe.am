@@ -110,11 +110,14 @@ if [ $? -ne 0 ]; then
 fi
 
 cd $MAIN_DIR
-npm install -g grunt-cli
+npm install -g ember-cli bower
 npm install
 
+cd frontend
+ember install
+
+cd $MAIN_DIR
 sudo chown -R $USER inthe_am/taskmanager/static
-grunt sass browserify ember_handlebars uglify concat
 
 # Install requirements
 source /var/www/envs/twweb/bin/activate

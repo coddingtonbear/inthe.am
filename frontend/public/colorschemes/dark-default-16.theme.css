@@ -1,0 +1,10 @@
+.task-list {
+  background-color: #202020;
+  color: #DEDEDE; }
+
+.task.active {
+  background-color: #131313; }
+
+.task .pri__H {
+  color: #ffffff; }
+

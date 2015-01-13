@@ -1,9 +1,10 @@
 import os.path
+import subprocess
 import sys
 import textwrap
 
 import webcolors
-from fabulous.xterm256 import xterm_to_rgb
+from x256.x256 import to_rgb
 
 
 DEFAULT_FOREGROUND = '#BBBBBB'
@@ -47,7 +48,7 @@ def get_color(color):
         color = color[10:]
     if color.startswith('color'):
         number = int(color[3:])
-        r, g, b = xterm_to_rgb(number)
+        r, g, b = to_rgb(number)
         return hex_rgb(r, g, b)
     if color.startswith('rgb'):
         r_, g_, b_ = color[3:]
@@ -55,8 +56,8 @@ def get_color(color):
         return hex_rgb(r, g, b)
     if color.startswith('gray'):
         level = int(color[4:])
-        r, g, b = [255 - (level * (256.0 / 23))] * 3
-        return hex_rgb(r, g, b)
+        red, green, blue = [level * (255.0 / 23)] * 3
+        return hex_rgb(red, green, blue)
     try:
         return webcolors.name_to_hex(color)
     except:
@@ -162,26 +163,48 @@ def get_styles(filename):
     return get_stylesheet(processed, bg, fg, modifier)
 
 
-def generate_all_styles(path_to_styles):
+def generate_all_styles(path_to_styles, final_directory):
+    staging_directory = final_directory.rstrip('/') + '.tmp'
+    try:
+        os.mkdir(staging_directory)
+    except OSError:
+        pass
+    try:
+        os.mkdir(final_directory)
+    except OSError:
+        pass
+
     for filename in os.listdir(path_to_styles):
         if os.path.splitext(filename)[1] != '.theme':
             continue
-        with open(
-            os.path.join(
-                os.path.dirname(__file__),
-                '../inthe_am/taskmanager/static/colorschemes/',
-                '%s.scss' % filename
-            ),
-            'w',
-        ) as output:
+        staging_path = os.path.join(
+            os.path.dirname(__file__),
+            staging_directory,
+            '%s.scss' % filename
+        )
+        final_path = os.path.join(
+            os.path.dirname(__file__),
+            final_directory,
+            '%s.css' % filename
+        )
+        with open(staging_path, 'w') as output:
             output.write(
                 '\n'.join(get_styles(os.path.join(path_to_styles, filename)))
             )
+        subprocess.call(
+            [
+                'node-sass',
+                staging_path,
+                final_path
+            ]
+        )
+        os.unlink(staging_path)
+    os.rmdir(staging_directory)
 
 
 if __name__ == '__main__':
     if os.path.isdir(sys.argv[1]):
-        generate_all_styles(sys.argv[1])
+        generate_all_styles(sys.argv[1], sys.argv[2])
     else:
         colors = get_styles(sys.argv[1])
         for color in colors:

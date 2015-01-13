@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import time
-import uuid
 
 from django_sse.views import BaseSseView
 import pytz
@@ -13,7 +12,6 @@ from django.contrib.syndication.views import Feed
 from django.core.exceptions import SuspiciousOperation
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
-from django.template.response import TemplateResponse
 
 from .models import TaskStore, TaskStoreActivityLog
 from .lock import get_lock_name_for_store, redis_lock, LockTimeout
@@ -201,24 +199,6 @@ class TaskFeed(Feed):
             first_name=store.user.first_name,
             last_name=store.user.last_name
         )
-
-
-def home(request):
-    try:
-        store = TaskStore.objects.get(user=request.user)
-        store.sync()
-    except:
-        pass
-    return TemplateResponse(
-        request,
-        'home.html',
-        {
-            'DEBUG': settings.DEBUG or settings.TESTING,
-            'VERSION': (
-                str(uuid.uuid4()) if settings.DEBUG else settings.VERSION
-            )
-        }
-    )
 
 
 def debug_login(request):

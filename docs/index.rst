@@ -17,7 +17,6 @@ Contents:
    :maxdepth: 2
 
    development_environment_setup
-   build_process
    google_oauth_keys
    api/index
 

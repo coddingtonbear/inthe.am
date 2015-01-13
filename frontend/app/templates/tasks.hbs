@@ -1,0 +1,47 @@
+<div class="row full-width">
+    <div id="list" class="task-list">
+        <input data-position="right" data-intro="alt+f" results=5 incremental="true" autosave=intheamsearch type="search" class="filter-string-element" id="filter-string" />
+        {{#each task in pendingTasks}}
+            {{#link-to "task" task tagName="div" class="task"}}
+                <div {{bind-attr class=":task-item task.taskwarrior_class"}}>
+                    <div {{bind-attr class=":task-list-icon task.status"}}>
+                        <i {{bind-attr class=":task-icon :fa task.icon"}}></i>
+                    </div>
+                    <div class="task-list-item">
+                        {{#if task.project}}
+                            <h5 class="status" {{bind-attr title="task.project"}}>{{to-propercase task.project}}</h5>
+                        {{/if}}
+                        <p class="description">{{task.description}}</p>
+                        <p class="tags">
+                            {{#if task.annotations}}
+                                <i class="fa fa-pencil-square"></i>
+                            {{/if}}
+                            {{#each task.tags}}
+                                <i class="fa fa-tag">{{this}}</i>
+                            {{/each}}
+                        </p>
+                        <p class="duedatetime">
+                            {{#if task.due}}
+                                <i class="fa fa-clock-o">
+                                    {{moment-fromnow task.due}}
+                                </i>
+                            {{/if}}
+                        </p>
+                    </div>
+                </div>
+            {{/link-to}}
+        {{else}}
+            <div class="task">
+                <div class="task-item">
+                    <div class="task-list-item">
+                        <p class="description">
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+    <div id="task-details">
+        {{outlet}}
+    </div>
+</div>

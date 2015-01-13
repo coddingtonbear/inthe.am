@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="always">
+    <title>Frontend</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {{content-for 'head'}}
+
+    <link rel="stylesheet" media="screen" id="colorscheme" />
+    <link rel="stylesheet" href="assets/vendor.css">
+    <link rel="stylesheet" href="assets/frontend.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="{% static "startup_image_640x1096.png" %}" />
+    <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" href="{% static "startup_image_640x920.png" %}" />
+    <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 1)" href="{% static "startup_image_320x460.png" %}" />
+    <script type="application/javascript">
+        function reportError(error) {
+            if (typeof(error) == 'object') {
+                if (error.stack) {
+                    // this is a native JS error; yay!
+                } else if (error.statusText) {
+                    error = new Error(error.status + " " + error.statusText);
+                } else {
+                    error = new Error(JSON.stringify(error));
+                }
+            } else if (typeof(error) == 'string') {
+                error = new Error(error);
+            }
+            Raven.captureException(error);
+        }
+    </script>
+
+    {{content-for 'head-footer'}}
+  </head>
+  <body>
+    {{content-for 'body'}}
+
+    <script src="assets/vendor.js"></script>
+    <script src="assets/frontend.js"></script>
+
+    {{content-for 'body-footer'}}
+  </body>
+</html>

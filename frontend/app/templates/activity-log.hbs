@@ -1,0 +1,46 @@
+<div class="row standalone">
+    <div class="standalone-content">
+        <h2>Activity Log</h2>
+
+        <table class="log">
+            <thead>
+                <tr>
+                    <th>Last Seen</th>
+                    <th>First Seen</th>
+                    <th>Message</th>
+                    <th>Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each msg in controller}}
+                    {{#if msg.error}}
+                        <tr class="error">
+                    {{else}}
+                        <tr class="info">
+                    {{/if}}
+                        <td class="last_seen">{{moment-fromnow msg.last_seen}}</td>
+                        <td class="created">{{moment-fromnow msg.created}}</td>
+                        <td class="message">
+                            {{msg.message}}
+                            {{#if msg.task_uuids}}
+                                <ul>
+                                    {{#each task_uuid in msg.task_uuids}}
+                                        <li>
+                                            {{#link-to 'task' task_uuid}}
+                                                <i class="fa fa-arrow-circle-o-right">
+                                                    {{task_uuid}}
+                                                </i>
+                                            {{/link-to}}
+                                        </li>
+                                    {{/each}}
+                                </li>
+                            {{/if}}
+                        </td>
+                        <td class="count">{{msg.count}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{partial "footer"}}
+    </div>
+</div>

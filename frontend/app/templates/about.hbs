@@ -1,0 +1,80 @@
+<div class="row standalone homepage">
+    <div class="standalone-content">
+        <img id="about_logo" src="/about_logo.svg" />
+        <h1>Inthe.AM</h1>
+        <div class="medium-12">
+            <p class="tagline">
+                Access your <a href="http://taskwarrior.org/">Taskwarrior</a>
+                task list from wherever you happen to be.
+            </p>
+        </div>
+        <div>
+            <a href="" class="button radius" {{action "login"}}>
+                Log In with Google to get started
+            </a>
+        </div>
+        <div class="medium-12">
+            <img {{bind-attr src=urls.web_ui}} />
+        </div>
+        <div class="medium-12 features">
+            <div class="promo_cell">
+                <i class="fa fa-refresh"></i>
+                <p>
+                    <span class='headline'>Built-In Taskserver</span>
+                    We've built in an automatically-configured
+                    synchronization server that you can set up your local
+                    Taskwarrior client to synchronize with.
+                </p>
+            </div>
+            <div class="promo_cell">
+                <i class="fa fa-envelope-o"></i>
+                <p>
+                    <span class="headline">
+                        E-mail &amp; SMS Integration
+                    </span>
+                    You can easily add tasks to your task list by sending
+                    an e-mail to your own whitelist-controlled e-mail address
+                    or while on-the-go by sending a text message from your
+                    phone.
+                </p>
+            </div>
+            <div class="promo_cell">
+                <i class="fa fa-code"></i>
+                <p>
+                    <span class="headline">RSS &amp; Pebble Cards Feeds</span>
+                    You can use the provided RSS feed functionality to
+                    display your tasks in any RSS reader, or even on your Pebble
+                    using built-in Pebble Cards feed integration.
+                </p>
+            </div>
+            <div class="promo_cell">
+                <i class="fa fa-mobile"></i>
+                <p>
+                    <span class='headline'>Mobile-ready web UI</span>
+                    Inthe.AM is mobile-ready, and looks just about as good
+                    on small screens as it does on your desktop. There's
+                    even a web-app mode usable for those of you with an iphone.
+                </p>
+            </div>
+            <div class="promo_cell">
+                <i class="fa fa-code-fork"></i>
+                <p>
+                    <span class="headline">Open Source</span>
+                    Inthe.AM is an open-source application relying upon open-source
+                    libraries.  The features you want are just a pull-request
+                    or a <a href="https://github.com/coddingtonbear/inthe.am/issues?page=1&state=open">bug-report</a> away!
+                </p>
+            </div>
+            <div class="promo_cell">
+                <i class="fa fa-cogs"></i>
+                <p>
+                    <span class='headline'>RESTful API</span>
+                    You can write your own tools for creating, reading,
+                    changing, completing, or deleting your tasks using our
+                    built-in RESTful API.
+                </p>
+            </div>
+        </div>
+        {{partial "footer"}}
+    </div>
+</div>

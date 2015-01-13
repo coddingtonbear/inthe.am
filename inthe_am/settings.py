@@ -111,7 +111,7 @@ LOGIN_REDIRECT_URL = '/'
 
 TASK_STORAGE_PATH = os.path.join(BASE_DIR, 'task_data')
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'frontend/public/static')
 
 LOGGING = {
     'version': 1,

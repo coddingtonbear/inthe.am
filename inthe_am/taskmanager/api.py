@@ -1321,7 +1321,7 @@ class CompletedTaskResource(TaskResource):
 
 class ActivityLogResource(resources.ModelResource):
     class Meta:
-        resource_name = 'activitylog'
+        resource_name = 'activityLog'
         queryset = models.TaskStoreActivityLog.objects.order_by('-last_seen')
         authorization = TaskStoreAuthorization()
         list_allowed_methods = ['get']

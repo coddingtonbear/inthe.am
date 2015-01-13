@@ -19,7 +19,6 @@ functionally essential for doing much of anything with Inthe.AM.
 6. Enter the following for 'Authorized Redirect URI'::
 
     http://127.0.0.1:8000/complete/google-oauth2/
-    http://localhost:8081/complete/google-oauth2/
 
 7. Save
 8. You will be presented with your newly-generated client ID.

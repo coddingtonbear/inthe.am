@@ -29,9 +29,14 @@ holding your clone of the Inthe.AM repository::
    between the host OS (your computer) and the guest OS (the development environment)
    magically for you.
 
-Then, you can start the runserver by running::
+Then, you can start the server by running::
 
-   python manage.py runserver 0.0.0.0:8000
+   python manage.py run
+
+.. note::
+
+   It will take about a 30 seconds for both of the underlying servers to start.
+   Once you see the message "Build successful" in green, the server is ready.
 
 Once the runserver is running, you'll be able to access your local copy of Inthe.AM
 by going to `http://127.0.0.1:8000 <http://127.0.0.1:8000>`_ in a browser.

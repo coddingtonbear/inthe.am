@@ -1,0 +1,87 @@
+.task-list {
+  background-color: #202020;
+  color: #DEDEDE; }
+
+.task.active {
+  background-color: #131313; }
+
+.task .tagged {
+  color: #858585; }
+
+.task .history__delete {
+  background-color: #6e6e6e; }
+
+.task.active .history__delete {
+  background-color: #616161; }
+
+.task .sync__rejected {
+  color: #424242; }
+
+.task .summary__background {
+  color: #ffffff;
+  background-color: #212121; }
+
+.task.active .summary__background {
+  background-color: #141414; }
+
+.task .calendar__weeknumber {
+  color: #2c2c2c; }
+
+.task .sync__added {
+  color: #6e6e6e; }
+
+.task .summary__bar {
+  color: #000000;
+  background-color: #858585; }
+
+.task.active .summary__bar {
+  background-color: #787878; }
+
+.task .sync__changed {
+  color: #a6a6a6; }
+
+.task .alternate {
+  background-color: #161616; }
+
+.task.active .alternate {
+  background-color: #090909; }
+
+.task .burndown__started {
+  background-color: #a6a6a6; }
+
+.task.active .burndown__started {
+  background-color: #999999; }
+
+.task .history__done {
+  background-color: #a6a6a6; }
+
+.task.active .history__done {
+  background-color: #999999; }
+
+.task .recurring {
+  color: #585858; }
+
+.task .undo__after {
+  color: #a6a6a6; }
+
+.task .burndown__done {
+  background-color: #6e6e6e; }
+
+.task.active .burndown__done {
+  background-color: #616161; }
+
+.task .undo__before {
+  color: #424242; }
+
+.task .burndown__pending {
+  background-color: #424242; }
+
+.task.active .burndown__pending {
+  background-color: #353535; }
+
+.task .history__add {
+  background-color: #424242; }
+
+.task.active .history__add {
+  background-color: #353535; }
+
