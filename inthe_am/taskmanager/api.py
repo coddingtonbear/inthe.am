@@ -564,7 +564,7 @@ class UserResource(resources.ModelResource):
     def announcements(self, request, **kwargs):
         announcements = []
 
-        for announcement in models.Announcement.objects.current():
+        for announcement in models.Announcement.current():
             announcements.append({
                 'type': announcement.category,
                 'title': announcement.title,
