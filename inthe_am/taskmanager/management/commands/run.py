@@ -17,12 +17,13 @@ class Command(BaseCommand):
             ]
         )
 
-    def run_ember(self):
+    def run_ember(self, **kwargs):
         subprocess.call(
             [
                 'ember',
                 'server',
             ],
+            **kwargs
         )
 
     def handle(self, *args, **kwargs):
