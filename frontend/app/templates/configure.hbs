@@ -27,8 +27,8 @@
             </div>
         {{/unless}}
 
-        <dl class="accordion" data-accordion>
-            <dd>
+        <ul class="accordion" data-accordion>
+            <li class="accordion-navigation">
                 <a href="#custom_taskd">Synchronization Settings</a>
                 <div id="custom_taskd" class="content">
                     <div class="row">
@@ -181,8 +181,8 @@
                         </div>
                     {{/unless}}
                 </div>
-            </dd>
-            <dd>
+            </li>
+            <li class="accordion-navigation">
                 <a href="#interface">Interface &amp; Customizations</a>
                 <div id="interface" class="content">
                     <div class="row">
@@ -226,8 +226,8 @@
                         </div>
                     {{/if}}
                 </div>
-            </dd>
-            <dd>
+            </li>
+            <li class="accordion-navigation">
                 <a href="#api">API Access</a>
                 <div id="api" class="content">
                     <div class="row">
@@ -255,8 +255,8 @@
                         </div>
                     </div>
                 </div>
-            </dd>
-            <dd>
+            </li>
+            <li class="accordion-navigation">
                 <a href="#feeds">RSS &amp; Pebble Feeds</a>
                 <div id="feeds" class="content">
                     <div class="row">
@@ -332,8 +332,8 @@
                         </div>
                     </div>
                 </div>
-            </dd>
-            <dd>
+            </li>
+            <li class="accordion-navigation">
                 <a href="#email">Email Access</a>
                 <div id="email" class="content">
                     <div class="row">
@@ -427,8 +427,8 @@
                     </div>
                     <a href="" class="button radius" {{action "save_email"}}>Save Settings</a>
                 </div>
-            </dd>
-            <dd>
+            </li>
+            <li class="accordion-navigation">
                 <a href="#twilio">SMS Access</a>
                 <div id="twilio" class="content">
                     <div class="row">
@@ -509,8 +509,8 @@
                     </div>
                     <a href="" class="button radius" {{action "save_twilio"}}>Save Settings</a>
                 </div>
-            </dd>
-            <dd>
+            </li>
+            <li class="accordion-navigation">
                 <a href="#mirakel">Mirakel Configuration</a>
                 <div id="mirakel" class="content">
                     <div class="row">
@@ -536,8 +536,8 @@
                     </div>
                     <a {{bind-attr href=controllers.application.urls.mirakel_configuration }}" class="button radius">Download</a>
                 </div>
-            </dd>
-            <dd>
+            </li>
+            <li class="accordion-navigation">
                 <a href="#dangerous">Danger Zone</a>
                 <div id="dangerous" class="content">
                     <div class="row">
@@ -566,8 +566,8 @@
                     </div>
                     <a href="" class="button radius alert" {{action "clear_lock"}}>Manually Unlock Task List</a>
                 </div>
-            </dd>
-        </dl>
+            </li>
+        </ul>
         {{partial "footer"}}
     </div>
 </div>

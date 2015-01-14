@@ -5,7 +5,6 @@ export default {
     initialize: function() {
         Ember.View.reopen({
             _initializeFoundation: function() {
-                console.log('Re-initialized foundation.');
                 $(document).foundation();
             },
             initializeFoundation: function() {

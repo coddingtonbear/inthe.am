@@ -19,7 +19,7 @@
     "growl": "https://github.com/ksylvest/jquery-growl.git#~1.2.4",
     "datetimepicker": "~2.4.1",
     "fontawesome": "~4.2.0",
-    "foundation": "~5.5.0",
+    "foundation": "^5.5.0",
     "ember-data-tastypie-adapter": "*",
     "raven-js": "~1.1.16",
     "fastclick": "~1.0.3",
