@@ -130,4 +130,6 @@ if [ -z "$TRAVIS" ]; then
 
     service taskd-celery restart
     service taskd restart
+else
+    chmod -R 777 /home/travis/.config/
 fi
