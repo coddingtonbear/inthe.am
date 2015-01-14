@@ -148,7 +148,8 @@ def user_goes_to_tasks_url(context):
     url = urljoin(
         context.config.server_url, '/tasks/%s' % context.created_task_id
     )
-    context.browser.visit(url)
+    full_url = urljoin(context.config.server_url, url)
+    context.browser.visit(full_url)
 
 
 @given(u'a task with the following details exists')
