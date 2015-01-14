@@ -27,10 +27,10 @@ class Command(RunserverCommand):
 
         ember = threading.Thread(
             target=self.run_ember,
-            #kwargs={
-            #    'stdout': fnull,
-            #    'stderr': subprocess.STDOUT
-            #}
+            kwargs={
+                'stdout': fnull,
+                'stderr': subprocess.STDOUT
+            }
         )
         ember.daemon = True
         ember.start()
