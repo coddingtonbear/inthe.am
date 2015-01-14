@@ -111,6 +111,7 @@ fi
 
 cd $MAIN_DIR
 npm install -g ember-cli bower
+bower install
 ember install
 
 # Install requirements
