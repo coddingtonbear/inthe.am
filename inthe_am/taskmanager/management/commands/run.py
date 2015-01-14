@@ -26,9 +26,9 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **kwargs):
-        print "\033[31m Note: It will take approximately 30 seconds for both"
-        print "      necessary servers to start.  Once you see the"
-        print "      message '\033[32mBuild Successful\033[31m', both"
+        print "\033[31m Note: It will take a few seconds for both necessary"
+        print "      servers to start.  Once you see the message"
+        print "      message '\033[32mBuild Successful\033[31m', both",
         print "servers are up."
         print "\033[m"
         runserver = threading.Thread(target=self.run_runserver)
