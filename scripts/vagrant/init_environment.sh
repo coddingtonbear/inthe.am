@@ -113,9 +113,6 @@ cd $MAIN_DIR
 npm install -g ember-cli bower
 ember install
 
-cd $MAIN_DIR
-sudo chown -R $USER inthe_am/taskmanager/static
-
 # Install requirements
 source /var/www/envs/twweb/bin/activate
 pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements.txt
