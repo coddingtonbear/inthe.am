@@ -111,9 +111,6 @@ fi
 
 cd $MAIN_DIR
 npm install -g ember-cli bower
-npm install
-
-cd frontend
 ember install
 
 cd $MAIN_DIR
