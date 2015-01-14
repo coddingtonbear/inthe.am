@@ -1,4 +1,3 @@
-import os
 import subprocess
 import sys
 import threading
@@ -24,10 +23,6 @@ class Command(BaseCommand):
                 'ember',
                 'server',
             ],
-            cwd=os.path.join(
-                os.getcwd(),
-                'frontend/',
-            ),
         )
 
     def handle(self, *args, **kwargs):
