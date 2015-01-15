@@ -52,4 +52,9 @@ class Command(RunserverCommand):
         if kwargs['wip']:
             test_args.append('--behave_wip')
 
-        sys.exit(self.run_tests(*test_args))
+        try:
+            result = self.run_tests(*test_args)
+        except:
+            result = 1
+        self.teardown()
+        sys.exit(result)

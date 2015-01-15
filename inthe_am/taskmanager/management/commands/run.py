@@ -1,5 +1,6 @@
+import os
+import signal
 import subprocess
-import sys
 import threading
 import time
 
@@ -7,8 +8,10 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
+    pids = []
+
     def run_runserver(self):
-        subprocess.call(
+        proc = subprocess.Popen(
             [
                 'python',
                 'manage.py',
@@ -16,15 +19,26 @@ class Command(BaseCommand):
                 '0.0.0.0:8001',
             ]
         )
+        self.pids.append(proc.pid)
+        os.waitpid(proc.pid, 0)
 
     def run_ember(self, **kwargs):
-        subprocess.call(
+        proc = subprocess.Popen(
             [
                 'ember',
                 'server',
             ],
             **kwargs
         )
+        self.pids.append(proc.pid)
+        os.waitpid(proc.pid, 0)
+
+    def teardown(self):
+        for pid in self.pids:
+            try:
+                os.kill(pid, signal.SIGKILL)
+            except:
+                print "\033[31mFailed to kill PID %s\033[m" % pid
 
     def handle(self, *args, **kwargs):
         print "\033[31m Note: It will take a few seconds for both necessary"
@@ -44,4 +58,5 @@ class Command(BaseCommand):
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:
-            sys.exit()
+            pass
+        self.teardown()
