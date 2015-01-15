@@ -125,7 +125,6 @@ var controller = Ember.Controller.extend({
             Task.reopen({
                 udas: this.get('user').udas
             });
-
             if(!this.get('user.tos_up_to_date')) {
                 Ember.run.next(
                         this,
@@ -187,7 +186,6 @@ var controller = Ember.Controller.extend({
         Ember.RSVP.configure('onerror', reportError);
 
         // Fetch user information
-        console.log('Updating user information...');
         this.update_user_info();
 
         // Ensure that we always add the CSRF token
