@@ -18,7 +18,7 @@ Router.map(function() {
     this.resource("activity-log", {path: "/activity-log"});
     this.route("configure", {path: "/configure"});
     this.route("getting-started", {path: "/getting-started"});
-    this.route("terms-of-Service", {path: "/terms-of-service"});
+    this.route("terms-of-service", {path: "/terms-of-service"});
     this.route("four-oh-four", {path: "*path"});
 });
 
