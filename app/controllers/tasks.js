@@ -15,15 +15,14 @@ var controller = Ember.ArrayController.extend({
         // Then, request a new list from the endpoint to make sure
         // we gather any new tasks, too.
         this.store.find('task').then(function(){
-                // Refresh each entry to see if it has been closed.
-                this.get('content').forEach(function(model){
-                        console.log('Reloading: ', model);
-                    try {
-                        model.reload()
-                    } catch(e) {
-                        // pass
-                    }
-                }.bind(this));
+            // Refresh each entry to see if it has been closed.
+            this.get('content').forEach(function(model){
+                try {
+                    model.reload();
+                } catch(e) {
+                    // pass
+                }
+            }.bind(this));
         }.bind(this));
     },
     collectionObserver: function() {
