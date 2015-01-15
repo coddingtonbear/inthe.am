@@ -35,7 +35,7 @@ Then, you can start the server by running::
 
 .. note::
 
-   It will take about a 30 seconds for both of the underlying servers to start.
+   It will take about a 10 seconds for both of the underlying servers to start.
    Once you see the message "Build successful" in green, the server is ready.
 
 Once the runserver is running, you'll be able to access your local copy of Inthe.AM
@@ -52,7 +52,7 @@ Troubleshooting your Development Environment
   * ``TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY``
   * ``TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET``
 
-* "When trying to start ``runserver``, I get a message reading
+* "When trying to run ``python manage.py run``, I get a message reading
   'Error: That port is already in use.'".
 
   * While a browser window is open, one connection is persistently
@@ -61,11 +61,3 @@ Troubleshooting your Development Environment
     connection with the browser.  Either close your browser tab
     showing that window or find the PID of the still-running process
     using ``ps -f``, and killing the running process with ``kill <that pid>``.
-
-* "When running tests with ``python manage.py test taskmanager``, it isn't
-  seeing changes I've made."
-
-  * Tests are ran against development (read: concatenated) assets rather
-    than the assets that are 'uglified' for production.  Make sure that
-    you have run ``grunt browserify concat`` before running tests.
-

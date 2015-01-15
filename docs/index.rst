@@ -17,6 +17,8 @@ Contents:
    :maxdepth: 2
 
    development_environment_setup
+   testing
+   contributions
    google_oauth_keys
    api/index
 
