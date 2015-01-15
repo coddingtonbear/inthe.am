@@ -1,5 +1,5 @@
-import Ember from "ember";
+import EditTaskController from "./edit-task";
 
-var controller = Ember.Controller.extend({});
+var controller = EditTaskController.extend({});
 
 export default controller;
