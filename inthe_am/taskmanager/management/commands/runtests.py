@@ -1,4 +1,5 @@
 import os
+from optparse import make_option
 import subprocess
 import sys
 import threading
@@ -8,19 +9,29 @@ from .run import Command as RunserverCommand
 
 
 class Command(RunserverCommand):
-    def run_tests(self):
+    option_list = RunserverCommand.option_list + (
+        make_option(
+            '--wip',
+            action='store_true',
+            dest='wip',
+            default=False,
+            help='Run only tests marked with @wip'
+        ),
+    )
+
+    def run_tests(self, *args):
         env = os.environ.copy()
         env['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = 'localhost:8001'
 
-        return subprocess.call(
-            [
-                'python',
-                'manage.py',
-                'test',
-                'taskmanager',
-            ],
-            env=env,
-        )
+        command = [
+            'python',
+            'manage.py',
+            'test',
+            'taskmanager',
+        ]
+        command.extend(args)
+
+        return subprocess.call(command, env=env)
 
     def handle(self, *args, **kwargs):
         fnull = open(os.devnull, 'w')
@@ -37,4 +48,8 @@ class Command(RunserverCommand):
 
         time.sleep(10)
 
-        sys.exit(self.run_tests())
+        test_args = []
+        if kwargs['wip']:
+            test_args.append('--behave_wip')
+
+        sys.exit(self.run_tests(*test_args))
