@@ -9,6 +9,6 @@ Feature: Basic Use
         Then a new account will be created using the test e-mail address
         And the page contains the heading "Terms and Conditions of Use of Inthe.AM"
         And the user accepts the terms and conditions
-        When the user accesses the url "/logout/"
+        When the user clicks the link "Log Out"
         And the user clicks the link "Log In"
         Then the page contains the heading "Let's get started"
