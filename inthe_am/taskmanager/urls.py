@@ -1,7 +1,10 @@
+import os
+
 from tastypie.api import Api
 
 from django.conf import settings
 from django.conf.urls import include, patterns, url
+from django.http import HttpResponse
 
 from .api import (
     UserResource, TaskResource, CompletedTaskResource,
@@ -16,11 +19,23 @@ api.register(CompletedTaskResource())
 api.register(ActivityLogResource())
 
 
+def fallback(request):
+    # This is sort of a hack; sorry!
+    index_template_path = os.path.join(
+        settings.BASE_DIR,
+        '../dist/index.html'
+    )
+    with open(index_template_path) as index:
+        return HttpResponse(index.read())
+
+
 urlpatterns = patterns(
     '',
     url('^api/v1/task/feed/(?P<uuid>[^/]+)/', TaskFeed(), name='feed'),
     url('^api/', include(api.urls)),
     url('^status/', Status.as_view(), name='status'),
+    url('^status/', Status.as_view(), name='status'),
+    url('^', fallback),
 )
 
 if settings.DEBUG:
