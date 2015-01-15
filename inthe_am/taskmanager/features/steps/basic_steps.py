@@ -17,7 +17,13 @@ from inthe_am.taskmanager.debug_utils import artificial_login
 
 @step(u'the user accesses the url "{url}"')
 def user_accesses_the_url(context, url):
-    full_url = urljoin(context.config.server_url, url)
+    if url != '/':
+        full_url = '%s#%s' % (
+            context.config.server_url,
+            url,
+        )
+    else:
+        full_url = context.config.server_url
     context.browser.visit(full_url)
     context.browser.execute_script(
         u"window.localStorage.setItem('disable_ticket_stream', 'yes');"

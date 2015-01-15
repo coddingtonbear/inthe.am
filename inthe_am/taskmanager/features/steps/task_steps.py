@@ -1,7 +1,6 @@
 import datetime
 import json
 import re
-from urlparse import urljoin
 
 from behave import given, when, then, step
 import pytz
@@ -145,11 +144,11 @@ def logged_in_and_viewing_task(context, field, value):
 
 @step(u'the user goes to the task\'s URL')
 def user_goes_to_tasks_url(context):
-    url = urljoin(
-        context.config.server_url, '/tasks/%s' % context.created_task_id
-    )
-    full_url = urljoin(context.config.server_url, url)
-    context.browser.visit(full_url)
+    context.execute_steps(u'''
+        then the user accesses the url "%s"
+    ''' % (
+        '/tasks/%s' % context.created_task_id
+    ))
 
 
 @given(u'a task with the following details exists')
