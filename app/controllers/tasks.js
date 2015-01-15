@@ -52,13 +52,12 @@ var controller = Ember.ArrayController.extend({
         var raw_tokens = value.split(' ');
         $.each(raw_tokens, function(idx, value) {
             var colon = value.indexOf(':');
-            if(value.substring(0, 1) == '+') {
-                filters.tags.push(value.substring(1));
+            if(value.slice(0, 1) == '+') {
+                filters.tags.push(value.slice(1));
             } else if (colon > -1) {
-                var this_filter = {};
-                key = value.substring(0, colon);
-                value = value.substring(colon + 1);
-                filters.fields[key] = value;
+                var key = value.slice(0, colon);
+                var sliced_value = value.slice(colon + 1);
+                filters.fields[key] = sliced_value;
             } else {
                 filters.description.push(value);
             }
