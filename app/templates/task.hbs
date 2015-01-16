@@ -164,7 +164,7 @@
             {{#each annotations}}
                 <li>
                     <span class="annotation_tools">
-                        <a {{action "delete_annotation" this}}>&#215;</a>
+                        <a class="delete-annotation-link" {{action "delete_annotation" this}}>&#215;</a>
                     </span>
                     {{render-markdown this}}
                 </li>

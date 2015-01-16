@@ -1,11 +1,7 @@
 import time
-from urlparse import urljoin
 
 from behave import given, when, then, step
 import ipdb
-from selenium.common.exceptions import (
-    StaleElementReferenceException,
-)
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,6 +9,8 @@ from django.utils.timezone import now
 
 from inthe_am.taskmanager.models import TaskStore, UserMetadata
 from inthe_am.taskmanager.debug_utils import artificial_login
+
+from .utils import find_element_and_do
 
 
 @step(u'the user accesses the url "{url}"')
@@ -87,19 +85,26 @@ def wait_for_a_bit(context, num):
 
 @when(u'the user clicks the link "{anchor_text}"')
 def clicks_link(context, anchor_text):
-    matches = context.browser.find_link_by_partial_text(anchor_text)
-    for match in matches:
-        try:
-            if match.visible:
-                match.click()
-                time.sleep(1)
-                return
-        except StaleElementReferenceException:
-            pass
-    assert False, "Of %s anchors with text %s, none were clickable." % (
-        len(matches),
-        anchor_text,
+    result = find_element_and_do(
+        context.browser.find_link_by_partial_text,
+        args=(anchor_text, )
     )
+    if not result:
+        assert False, "No links having the text %s are clickable." % (
+            anchor_text,
+        )
+
+
+@when(u'the user clicks the link with the class "{class_name}"')
+def clicks_link_class(context, class_name):
+    result = find_element_and_do(
+        context.browser.find_by_css,
+        args=(".%s" % class_name, )
+    )
+    if not result:
+        assert False, "No links having the class %s are clickable." % (
+            class_name,
+        )
 
 
 @when(u'the user enters the text "{text}" into the field named "{field}"')
