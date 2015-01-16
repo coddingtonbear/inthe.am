@@ -125,12 +125,13 @@ def user_selects_option_from_field(context, text, field):
 
 @when(u'the user clicks the button labeled "{label}"')
 def user_clicks_button_labeled(context, label):
-    for button in context.browser.find_by_tag("button"):
-        if button.visible and button.text == label:
-            button.click()
-            time.sleep(1)
-            return
-    assert False, "No button with label %s could be clicked" % label
+    result = find_element_and_do(
+        context.browser.find_by_tag,
+        args=('button', ),
+        test=lambda x: x.visible and x.text == label
+    )
+    if not result:
+        assert False, "No button with label %s could be clicked" % label
 
 
 @when(u'the user enters his credentials if necessary')
