@@ -77,12 +77,18 @@ def after_all(context):
 
 def before_step(context, step):
     if 'TRAVIS' in os.environ:
-        save_page_details(context, step, 'before')
+        try:
+            save_page_details(context, step, 'before')
+        except Exception as e:
+            print e
 
 
 def after_step(context, step):
     if 'TRAVIS' in os.environ:
-        save_page_details(context, step, 'following')
+        try:
+            save_page_details(context, step, 'following')
+        except Exception as e:
+            print e
 
 
 def before_scenario(context, step):
