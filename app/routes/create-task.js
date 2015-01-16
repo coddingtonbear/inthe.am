@@ -2,7 +2,7 @@ import Ember from "ember";
 
 var route = Ember.Route.extend({
     setupController: function(controller) {
-        model = this.store.createRecord('task', {});
+        var model = this.store.createRecord('task', {});
         controller.set('model', model);
     },
     actions: {

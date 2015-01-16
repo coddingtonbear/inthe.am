@@ -29,7 +29,7 @@ var controller = Ember.ArrayController.extend({
         // If the collection has changed, and we're currently on the tasks
         // view, transition to showing the first task.
         var path = this.get('controllers.application').getHandlerPath();
-        if(path == 'application.tasks.tasks.index') {
+        if(path === 'application.tasks.tasks.index') {
                 Ember.run.debounce(this, 'transitionToFirstTask', 100);
         }
     }.observes('model.length'),
@@ -52,7 +52,7 @@ var controller = Ember.ArrayController.extend({
         var raw_tokens = value.split(' ');
         $.each(raw_tokens, function(idx, value) {
             var colon = value.indexOf(':');
-            if(value.slice(0, 1) == '+') {
+            if(value.slice(0, 1) === '+') {
                 filters.tags.push(value.slice(1));
             } else if (colon > -1) {
                 var key = value.slice(0, colon);
@@ -73,10 +73,10 @@ var controller = Ember.ArrayController.extend({
                 var filter_value = filters.fields[field];
                 var item_value = item.get(field);
                 if(item_value instanceof Date) {
-                    item_value = moment(item_value).format('YYYY-MM-DDTHH:mm:ssZ')
-                    if(filter_value == 'today') {
+                    item_value = moment(item_value).format('YYYY-MM-DDTHH:mm:ssZ');
+                    if(filter_value === 'today') {
                         filter_value = moment().format('YYYY-MM-DD');
-                    } else if(filter_value == 'tomorrow') {
+                    } else if(filter_value === 'tomorrow') {
                         filter_value = moment().add(1, 'days').format('YYYY-MM-DD');
                     }
                 }
@@ -111,7 +111,7 @@ var controller = Ember.ArrayController.extend({
             return ok;
         });
 
-        var sortedResult = Em.ArrayProxy.createWithMixins(
+        var sortedResult = Ember.ArrayProxy.createWithMixins(
             Ember.SortableMixin,
             {
                 content:result,
@@ -128,7 +128,7 @@ var controller = Ember.ArrayController.extend({
             var last_task = null;
             var target_task = null;
             array.forEach(function(item, idx, enumerable){
-                if(item.get('id') == current_id) {
+                if(item.get('id') === current_id) {
                     target_task = last_task;
                 }
                 last_task = item;
@@ -146,7 +146,7 @@ var controller = Ember.ArrayController.extend({
                 if(found_my_id && target_task == null) {
                     target_task = item;
                 }
-                if(item.get('id') == current_id) {
+                if(item.get('id') === current_id) {
                     found_my_id = true;
                 }
             }.bind(this));

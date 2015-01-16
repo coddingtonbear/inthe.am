@@ -1,10 +1,5 @@
 import Ember from "ember";
 
-var route = Ember.Route.extend({
-    renderTemplate: function(_, error){
-        this._super();
-        var self = this;
-    },
-});
+var route = Ember.Route.extend({});
 
 export default route;

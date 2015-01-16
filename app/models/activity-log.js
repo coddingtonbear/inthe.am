@@ -14,7 +14,7 @@ var model = DS.Model.extend({
         var match;
         var matches = Ember.ArrayProxy.create({content: []});
         while(match = taskMatcher.exec(this.get('message'))) {
-            if (matches.indexOf(match[0]) == -1) {
+            if (matches.indexOf(match[0]) === -1) {
                 matches.pushObject(match[0]);
             }
         }

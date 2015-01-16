@@ -5,7 +5,7 @@ var route = Ember.Route.extend({
         return this.store.all('task');
     },
     afterModel: function(tasks, transition) {
-        if (transition.targetName == "tasks.index" || transition.targetName == "tasks") {
+        if (transition.targetName === "tasks.index" || transition.targetName === "tasks") {
             if($(document).width() > 700) {
                 Ember.run.next(this, function(){
                     var task = this.controllerFor('tasks')
@@ -13,7 +13,7 @@ var route = Ember.Route.extend({
                     if(task) {
                             this.transitionTo('task', tasks.get('firstObject'));
                     }
-                })
+                });
             } else {
                 this.transitionToRoute('mobile-tasks');
             }

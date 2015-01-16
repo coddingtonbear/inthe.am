@@ -87,14 +87,11 @@ var controller = Ember.Controller.extend({
             self.error_message("An error was encountered while uploading your files");
             return;
         } else if (
-            !data.certificate || !data.key || (!data.ca && data.trust == 'no')
+            !data.certificate || !data.key || (!data.ca && data.trust === 'no')
         ) {
             return;
         }
         var url = this.get('controllers.application').urls.taskd_settings;
-        var csrftoken = this.get('controllers.application').getCookie(
-            'csrftoken'
-        );
         var self = this;
 
         $.ajax({
@@ -125,7 +122,7 @@ var controller = Ember.Controller.extend({
         this.get('controllers.application').success_message(message);
     },
     growl_message: function(type, opts) {
-        $.growl[type || 'notice'](opts || {})
+        $.growl[type || 'notice'](opts || {});
     },
     actions: {
         save_taskrc: function() {
@@ -213,7 +210,7 @@ var controller = Ember.Controller.extend({
             var self = this;
 
             // Load Cert
-            var cert_reader = new FileReader();
+            var cert_reader = new window.FileReader();
             cert_reader.onload = function(evt){
                 data.certificate = evt.target.result;
                 self.submit_taskd(data, after);
@@ -237,7 +234,7 @@ var controller = Ember.Controller.extend({
             }
 
             // Load Key
-            var key_reader = new FileReader();
+            var key_reader = new window.FileReader();
             key_reader.onload = function(evt){
                 data.key = evt.target.result;
                 self.submit_taskd(data, after);
@@ -262,7 +259,7 @@ var controller = Ember.Controller.extend({
 
             // Load CA Certificate
             if (data.trust === 'no') {
-                var ca_reader = new FileReader();
+                var ca_reader = new window.FileReader();
                 ca_reader.onload = function(evt){
                     data.ca = evt.target.result;
                     self.submit_taskd(data, after);
@@ -289,7 +286,7 @@ var controller = Ember.Controller.extend({
         save_email: function() {
             var data = {
                 'email_whitelist': document.getElementById('id_email_whitelist').value,
-            }
+            };
             var url    = this.get('controllers.application').urls.email_integration;
             var self = this;
 
@@ -409,7 +406,7 @@ var controller = Ember.Controller.extend({
         save_feed: function(value) {
             var url    = this.get('controllers.application').urls.configure_feed;
             var enabled = false;
-            if(typeof(value) != 'undefined') {
+            if(typeof(value) !== 'undefined') {
                 enabled = value;
             } else if($("#id_feed_config").val() === true) {
                 enabled = true;
@@ -439,7 +436,7 @@ var controller = Ember.Controller.extend({
         save_pebble_cards: function(value) {
             var url    = this.get('controllers.application').urls.configure_pebble_cards;
             var enabled = false;
-            if(typeof(value) != 'undefined') {
+            if(typeof(value) !== 'undefined') {
                 enabled = value;
             }
             else if($("#id_pebble_cards_config").val() === true) {

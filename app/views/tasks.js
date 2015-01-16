@@ -7,7 +7,7 @@ var view = Ember.View.extend({
             var handleChanged = function() {
                 controller.set('filterString', this.value);
                 controller.notifyPropertyChange('pendingTasks');
-            }
+            };
             var element = $('.filter-string-element');
             element.on('input', handleChanged);
             element.on('search', handleChanged);

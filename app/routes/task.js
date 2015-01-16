@@ -41,7 +41,7 @@ var route = Ember.Route.extend({
                 'model',
                 this.controllerFor('task').get('model')
             );
-            var rendered = this.render(
+            this.render(
                     'create_annotation',
                     {
                         'into': 'application',

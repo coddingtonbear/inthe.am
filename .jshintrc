@@ -2,6 +2,8 @@
     "predef": [
         "QUnit",
         "define",
+        "alert",
+        "confirm",
         "console",
         "Ember",
         "DS",
@@ -31,6 +33,9 @@
         "window", "document",
         "setTimeout", "clearTimeout", "setInterval", "clearInterval",
 
+        "linkify",
+        "markdown",
+        "ga",
         "moment",
         "reportError",
         "Raven",

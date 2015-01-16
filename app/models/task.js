@@ -21,14 +21,14 @@ var model = DS.Model.extend({
     imask: DS.attr('number'),
 
     editable: function(){
-        if (this.get('status') == 'pending') {
+        if (this.get('status') === 'pending') {
             return true;
         }
         return false;
     }.property('status'),
 
     icon: function() {
-        if (this.get('status') == 'completed') {
+        if (this.get('status') === 'completed') {
             return 'fa-check-circle-o';
         } else if (this.get('start')) {
             return 'fa-asterisk';
@@ -43,7 +43,7 @@ var model = DS.Model.extend({
         var fields = [];
         var length = 0;
         if(this.udas) {
-                length = this.udas.length
+                length = this.udas.length;
         }
         for(var i = 0; i < length || 0; i++) {
             var this_uda = this.udas[i];
@@ -84,11 +84,11 @@ var model = DS.Model.extend({
             value = 'due';
         } else if (this.get('imask')) {
             value = 'recurring';
-        } else if (this.get('priority') == 'H') {
+        } else if (this.get('priority') === 'H') {
             value = 'pri__H';
-        } else if (this.get('priority') == 'M') {
+        } else if (this.get('priority') === 'M') {
             value = 'pri__M';
-        } else if (this.get('priority') == 'L') {
+        } else if (this.get('priority') === 'L') {
             value = 'pri__L';
         } else if (this.get('tags').length > 0) {
             value = 'tagged';
@@ -137,7 +137,6 @@ var model = DS.Model.extend({
     },
 
     dependent_tickets: function(){
-        var self = this;
         return this.ticketIdsToObjects(this.get('depends'));
     }.property('depends'),
 

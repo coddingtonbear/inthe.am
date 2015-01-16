@@ -7,7 +7,6 @@ var controller = Ember.ObjectController.extend({
             var result = confirm("Are you sure you would like to mark this task as completed?");
             if(result) {
                 var self = this;
-                var model = this.get('model');
                 this.get('controllers.application').showLoading();
                 this.get('model').destroyRecord().then(function(){
                     self.get('controllers.application').hideLoading();
@@ -27,7 +26,7 @@ var controller = Ember.ObjectController.extend({
             this.get('controllers.application').showLoading();
 
             for (var i = 0; i < annotations.length; i++) {
-                if (annotations[i] == description) {
+                if (annotations[i] === description) {
                     annotations.removeAt(i);
                 }
             }
