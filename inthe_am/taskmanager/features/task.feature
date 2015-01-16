@@ -107,7 +107,7 @@ Feature: User can manipulate tasks
             | Key         | Value   |
             | annotations | ["One"] |
         When the user goes to the task's URL
-        And the user clicks the link "×"
+        And the user clicks the link with the class "delete-annotation-link"
         Then a single pending task with the following details will exist
             | Key         | Value   |
             | annotations | [] |
