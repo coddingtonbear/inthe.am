@@ -341,3 +341,5 @@ DATABASES = {
         'PORT': DATABASE_PORT
     }
 }
+
+WEBDRIVER_BROWSER = 'firefox'

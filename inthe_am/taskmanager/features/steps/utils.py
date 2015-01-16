@@ -14,8 +14,8 @@ def find_element_and_do(
         args = []
     if kwargs is None:
         kwargs = {}
-    matches = selector(*args, **kwargs)
     for loop in range(3):
+        matches = selector(*args, **kwargs)
         for match in matches:
             try:
                 if test(match):

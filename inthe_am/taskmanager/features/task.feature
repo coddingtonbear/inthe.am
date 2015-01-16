@@ -92,6 +92,7 @@ Feature: User can manipulate tasks
             | description      | "Alpha" |
         And a single pending task will not have its "start" field set
 
+    @wip
     Scenario: User can add annotation
         Given the user is viewing an existing task with the description "Alpha"
         When the user clicks the link "Add Annotation"
@@ -101,6 +102,7 @@ Feature: User can manipulate tasks
             | Key         | Value   |
             | annotations | ["Boo"] |
 
+    @wip
     Scenario: User can delete annotation
         Given the user is logged-in
         And a task with the following details exists
