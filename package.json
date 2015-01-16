@@ -17,20 +17,6 @@
     "node": ">= 0.10.0"
   },
   "author": "Adam Coddington",
-  "jshintConfig": {
-    "undef": true,
-    "node": true,
-    "unused": true,
-    "esnext": true,
-    "browser": true,
-    "devel": true,
-    "jquery": true,
-    "predef": [
-      "reportError",
-      "Raven",
-      "FastClick"
-    ]
-  },
   "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "^2.0.0",
