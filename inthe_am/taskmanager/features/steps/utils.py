@@ -8,7 +8,7 @@ from selenium.common.exceptions import (
 def find_element_and_do(
     selector, args=None, kwargs=None,
     test=lambda x: x.visible, action=lambda x: x.click(),
-    retries=3, retry_sleep=1, post_sleep=1,
+    retries=3, retry_sleep=1, post_sleep=3,
 ):
     if args is None:
         args = []
