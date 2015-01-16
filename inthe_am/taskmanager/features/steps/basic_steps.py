@@ -200,7 +200,7 @@ def launch_debugger(context):
 
 @then(u'the page will transition to "{url}"')
 def watch_for_page_transition(context, url):
-    timeout = 5 * 60  # minutes
+    timeout = 30  # seconds
     started = time.time()
     while time.time() < started + timeout:
         if url in context.browser.driver.current_url:
