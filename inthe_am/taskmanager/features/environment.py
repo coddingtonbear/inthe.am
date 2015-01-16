@@ -56,11 +56,11 @@ def save_page_details(context, step, prefix):
 
 
 def before_all(context):
-    engine = getattr(settings, 'WEBDRIVER_BROWSER', 'phantomjs')
+    context.engine = getattr(settings, 'WEBDRIVER_BROWSER', 'phantomjs')
     # Ember is running on :8000, and it knows to send API traffic to :8001
     # where this server is running.
     context.config.server_url = 'http://127.0.0.1:8000/'
-    context.browser = Browser(engine)
+    context.browser = Browser(context.engine)
     context.browser.driver.set_window_size(1024, 800)
     context.browser.driver.implicitly_wait(10)
     context.browser.driver.set_page_load_timeout(60)
