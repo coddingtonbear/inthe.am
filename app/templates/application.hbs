@@ -17,13 +17,13 @@
                     <a target="_blank" title="Documentation" href="http://intheam.readthedocs.org/en/latest/index.html"><i class="fa fa-book"></i></a>
                 </li>
                 <li data-intro="alt+l">
-                    {{#link-to "activity-log"}}<i class="fa fa-list">Log</i>{{/link-to}}
+                    {{#link-to "activity-log" title="Log"}}<i class="fa fa-list">Log</i>{{/link-to}}
                 </li>
                 <li data-intro="alt+/">
-                    {{#link-to "configure"}}<i class="fa fa-wrench">Configuration</i>{{/link-to}}
+                    {{#link-to "configure" title="Configuration"}}<i class="fa fa-wrench">Configuration</i>{{/link-to}}
                 </li>
                 <li data-intro="alt+x">
-                    <a href="#" {{action "logout"}}><i class="fa fa-sign-out">Log Out</i></a>
+                    <a href="#" title="Log Out" {{action "logout"}}><i class="fa fa-sign-out">Log Out</i></a>
                 </li>
             </ul>
 
@@ -31,23 +31,23 @@
             <ul class="left">
                 <!-- Mobile-only -->
                 <li class="mobile-only" data-intro="alt+t">
-                    {{#link-to "mobile-tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
+                    {{#link-to "mobile-tasks" title="Tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
                 <li class="mobile-only" data-intro="alt+n">
-                    {{#link-to "create-task"}}<i class="fa fa-pencil-square-o">New</i>{{/link-to}}
+                    {{#link-to "create-task" title="New"}}<i class="fa fa-pencil-square-o">New</i>{{/link-to}}
                 </li>
 
                 <!-- Desktop-only -->
                 <li class="desktop-only" data-intro="alt+t">
-                    {{#link-to "tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
+                    {{#link-to "tasks" title="Tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
                 <li class="desktop-only" data-intro="alt+n">
-                    <a href="#" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
+                    <a href="#" title="New" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
                 </li>
 
                 {{#unless taskUpdateStreamConnected}}
                     <li id="refresh-link" data-intro="alt+r">
-                        <a href="#" {{action "refresh"}}><i class="fa fa-refresh"></i></a>
+                        <a href="#" title="Refresh" {{action "refresh"}}><i class="fa fa-refresh"></i></a>
                     </li>
                 {{/unless}}
             </ul>
