@@ -1,5 +1,6 @@
 import os
 from optparse import make_option
+import socket
 import subprocess
 import sys
 import threading
@@ -46,7 +47,13 @@ class Command(RunserverCommand):
         ember.daemon = True
         ember.start()
 
-        time.sleep(10)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        while True:
+            result = s.connect_ex(('127.0.0.1', 8000, ))
+            if result == 0:
+                s.close()
+                break
+            time.sleep(1)
 
         test_args = []
         if kwargs['wip']:
