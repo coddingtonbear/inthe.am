@@ -1,6 +1,9 @@
 Endpoints
 =========
 
+.. toctree::
+   :maxdepth: 2
+
 Common Response Codes
 ---------------------
 

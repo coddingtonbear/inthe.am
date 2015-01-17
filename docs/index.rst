@@ -14,7 +14,7 @@ Released under the `GNU AFFERO GENERAL PUBLIC LICENSE <http://www.gnu.org/licens
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    development/index
    api/index
