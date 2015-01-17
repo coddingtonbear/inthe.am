@@ -9,6 +9,7 @@ Inthe.AM
 .. toctree::
    :maxdepth: 3
 
+   whats_new
    development/index
    api/index
 
@@ -18,3 +19,4 @@ Enter an issue on `Inthe.AM's issue tracker <https://github.com/coddingtonbear/i
 Questions?  Ask in ``##inthe.am`` on `Freenode <http://freenode.net/irc_servers.shtml>`_.
 
 Released under the `GNU AFFERO GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/agpl-3.0-standalone.html>`_.
+
