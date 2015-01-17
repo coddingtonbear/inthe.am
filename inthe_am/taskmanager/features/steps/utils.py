@@ -8,7 +8,7 @@ from selenium.common.exceptions import (
 def find_element_and_do(
     selector, args=None, kwargs=None,
     test=lambda x: x.visible, action=lambda x: x.click(),
-    retries=3, retry_sleep=1, post_sleep=3,
+    retries=3, retry_sleep=1, post_sleep=1,
 ):
     if args is None:
         args = []
@@ -27,3 +27,22 @@ def find_element_and_do(
         time.sleep(retry_sleep)
 
     return False
+
+
+def monkey_patch_browser(context):
+    context.browser.execute_script("""
+        window.localStorage.setItem('disable_ticket_stream', 'yes');
+    """.replace('\n', ' '))
+    context.browser.execute_script("""
+        window.confirm = function(message) {
+            lastConfirmationMessage = message; return true;
+        }
+    """.replace('\n', ' '))
+    context.browser.execute_script("""
+        CONSOLE_LOG = [];
+    """.replace('\n', ' '))
+    context.browser.execute_script("""
+        window.console.log = function() {
+            CONSOLE_LOG.push(arguments)
+        }
+    """.replace('\n', ''))

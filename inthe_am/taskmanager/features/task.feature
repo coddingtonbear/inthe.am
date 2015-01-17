@@ -59,7 +59,6 @@ Feature: User can manipulate tasks
 
     Scenario: User can delete existing task
         Given the user is viewing an existing task with the description "Alpha"
-        And confirmation dialogs are disabled
         When the user clicks the link "Delete"
         Then a single deleted task with the following details will exist
             | Key              | Value   |
@@ -67,7 +66,6 @@ Feature: User can manipulate tasks
 
     Scenario: User can complete existing task
         Given the user is viewing an existing task with the description "Alpha"
-        And confirmation dialogs are disabled
         When the user clicks the link "Complete"
         Then a single completed task with the following details will exist
             | Key              | Value   |
@@ -75,7 +73,6 @@ Feature: User can manipulate tasks
 
     Scenario: User can start existing task
         Given the user is viewing an existing task with the description "Alpha"
-        And confirmation dialogs are disabled
         When the user clicks the link "Start"
         Then a single pending task with the following details will exist
             | Key              | Value   |
@@ -84,7 +81,6 @@ Feature: User can manipulate tasks
 
     Scenario: User can stop existing task
         Given the user is viewing an existing task with the description "Alpha"
-        And confirmation dialogs are disabled
         When the user clicks the link "Start"
         And the user clicks the link "Stop"
         Then a single pending task with the following details will exist

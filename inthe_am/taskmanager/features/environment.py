@@ -12,7 +12,8 @@ from inthe_am.taskmanager import models
 
 TEST_COUNTERS = {
     'following': Counter(),
-    'before': Counter()
+    'before': Counter(),
+    'demand': Counter()
 }
 ABSOLUTE_COUNTER = 0
 
@@ -27,14 +28,17 @@ def sanitize_name(name):
     return ''.join(acceptable_letters)
 
 
-def save_page_details(context, step, prefix):
+def save_page_details(context, step=None, prefix='demand'):
     global TEST_COUNTERS, ABSOLUTE_COUNTER
     ABSOLUTE_COUNTER += 1
 
     this_absolute_counter = ABSOLUTE_COUNTER
 
     scenario_name = sanitize_name(context.scenario.name)
-    step_name = sanitize_name(step.name)
+    if step:
+        step_name = sanitize_name(step.name)
+    else:
+        step_name = ''
 
     status = 'FAIL' if context.failed else 'OK'
 

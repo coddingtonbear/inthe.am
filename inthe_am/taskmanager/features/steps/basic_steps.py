@@ -1,3 +1,5 @@
+import datetime
+import json
 import time
 
 from behave import given, when, then, step
@@ -10,7 +12,7 @@ from django.utils.timezone import now
 from inthe_am.taskmanager.models import TaskStore, UserMetadata
 from inthe_am.taskmanager.debug_utils import artificial_login
 
-from .utils import find_element_and_do
+from .utils import find_element_and_do, monkey_patch_browser
 
 
 @step(u'the user accesses the url "{url}"')
@@ -23,9 +25,7 @@ def user_accesses_the_url(context, url):
     else:
         full_url = context.config.server_url
     context.browser.visit(full_url)
-    context.browser.execute_script(
-        u"window.localStorage.setItem('disable_ticket_stream', 'yes');"
-    )
+    monkey_patch_browser(context)
 
 
 @given(u'the user is logged-in')
@@ -175,14 +175,6 @@ def page_contains_heading(context, heading):
         )
 
 
-@step(u'confirmation dialogs are disabled')
-def disable_confirmation_dialog(context):
-    context.browser.execute_script(
-        'window.confirm = function(message) '
-        '{ lastConfirmationMessage = message; return true; }'
-    )
-
-
 @then(u'the element at CSS selector "{selector}" has text "{text}"')
 def element_at_selector_has_value(context, selector, text):
     actual = context.browser.find_by_css(selector).text
@@ -196,6 +188,35 @@ def element_at_selector_has_value(context, selector, text):
 @step(u'debugger')
 def launch_debugger(context):
     ipdb.set_trace()
+
+
+@step(u'save page details')
+def save_page_details(context):
+    from ..environment import save_page_details
+    save_page_details(context)
+
+
+@step(u'save a screenshot')
+@step(u'save a screenshot as "{name}"')
+def save_a_screenshot(context, name=None):
+    if name is None:
+        name = 'screenshot_%s' % datetime.datetime.now().isoformat('T')
+    context.browser.screenshot(name)
+
+
+@step(u'save console output')
+@step(u'save console output as "{name}"')
+def save_console_output(context, name=None):
+    if name is None:
+        name = 'console_%s' % datetime.datetime.now().isoformat('T')
+    result = context.browser.evaluate_script('CONSOLE_LOG')
+    with open('/tmp/%s.txt' % name, 'w') as out:
+        for row in result:
+            out.write(
+                ' '.join(
+                    [json.dumps(o) for o in row]
+                ) + '\n'
+            )
 
 
 @then(u'the page will transition to "{url}"')

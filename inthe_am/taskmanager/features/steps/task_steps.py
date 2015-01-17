@@ -1,6 +1,7 @@
 import datetime
 import json
 import re
+import time
 
 from behave import given, when, then, step
 import pytz
@@ -151,6 +152,12 @@ def user_goes_to_tasks_url(context):
     ))
 
 
+@step(u'the user clicks the refresh button')
+def user_clicks_refresh(context):
+    context.browser.find_by_id('refresh-link').first.find_by_tag('a').click()
+    time.sleep(1)
+
+
 @given(u'a task with the following details exists')
 def existing_task_with_details(context):
     task = {
@@ -163,7 +170,9 @@ def existing_task_with_details(context):
     description = task.pop('description')
     task = store.client.task_add(description, **task)
     context.created_task_id = task['uuid']
-    context.browser.find_by_id('refresh-link').first.find_by_tag('a').click()
+    context.execute_steps(u'''
+        then the user clicks the refresh button
+    ''')
 
 
 @then(u'{count} {status} tasks exist in the user\'s task list')
