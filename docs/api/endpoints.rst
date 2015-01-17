@@ -236,7 +236,7 @@ URL: ``https://inthe.am/api/v1/user/announcements/``
 | ``GET`` | Get announcements. |
 +---------+--------------------+
 
-Download My Certificate
+Download my certificate
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Returns your currently-active certificate used for communicating with
@@ -250,7 +250,7 @@ URL: ``https://inthe.am/api/v1/user/my-certificate/``
 | ``GET`` | Get certificate. |
 +---------+------------------+
 
-Download My Key
+Download my key
 ~~~~~~~~~~~~~~~
 
 Returns your currently-active key used for communicating with
@@ -264,7 +264,7 @@ URL: ``https://inthe.am/api/v1/user/my-key/``
 | ``GET`` | Get key.         |
 +---------+------------------+
 
-Download CA Certificate
+Download CA certificate
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Returns Inthe.AM's certificate; this is used for synchronizing with
@@ -278,7 +278,7 @@ URL: ``https://inthe.am/api/v1/user/ca-certificate/``
 | ``GET`` | Get CA certificate. |
 +---------+---------------------+
 
-Download Mirakel Configuration
+Download mirakel configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Returns a Mirakel configuration file.  If you use Mirakel, you can issue
@@ -303,8 +303,8 @@ URL: ``https://inthe.am/api/v1/user/mirakel-configuration/``
 Configuration
 -------------
 
-Set or Get ``.taskrc`
-~~~~~~~~~~~~~~~~~~~~~
+Update ``.taskrc``
+~~~~~~~~~~~~~~~~~~
 
 Locally, Inthe.AM runs Taskwarrior in a way that's very similar to
 how you interact with Taskwarrior on your personal computer, and a
@@ -324,8 +324,8 @@ URL: ``https://inthe.am/api/v1/user/taskrc/``
 | ``PUT`` | Set ``.taskrc`` file's contents. |
 +---------+----------------------------------+
 
-Generate New Taskserver Certificate
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Generate a new taskserver certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you would like to regenerate your Taskserver certificate, usually
 because your existing one has expired, you can do so using this endpoint.
@@ -339,7 +339,7 @@ URL: ``https://inthe.am/api/v1/user/generate-new-certificate/``
 |          | Certificate.                     |
 +----------+----------------------------------+
 
-Reset Taskserver Settings
+Reset taskserver settings
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you've changed your Taskserver settings, but you'd like to reset
@@ -354,7 +354,7 @@ URL: ``https://inthe.am/api/v1/user/reset-taskd-configuration/``
 | ``POST`` | Reset Taskserver configuration.  |
 +----------+----------------------------------+
 
-SMS Messaging (Twilio) Integration
+SMS messaging (Twilio) integration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can configure or enable SMS integration by
@@ -374,7 +374,7 @@ URL: ``https://inthe.am/api/v1/user/twilio-integration/``
 | ``POST`` | Configure SMS Integration.       |
 +----------+----------------------------------+
 
-Email Integration
+Email integration
 ~~~~~~~~~~~~~~~~~
 
 You can configure which e-mail addresses are allowed to send new
@@ -393,7 +393,7 @@ URL: ``https://inthe.am/api/v1/user/email-integration/``
 | ``POST`` | Configure Email Integration.     |
 +----------+----------------------------------+
 
-Clear Task Data
+Clear task data
 ~~~~~~~~~~~~~~~
 
 You can clear your taskserver information by sending a ``POST`` request
@@ -465,7 +465,7 @@ URL: ``https://inthe.am/api/v1/user/pebble-cards-config/``
 | ``POST`` | Enable/Disable Pebble Cards.  |
 +----------+-------------------------------+
 
-RSS Feeds
+RSS feeds
 ~~~~~~~~~
 
 You can enable or disable the RSS feed showing your upcoming tasks by
