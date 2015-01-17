@@ -1,6 +1,5 @@
-
-Accessing, creating or modifying your tasks via the API
-=======================================================
+API Documentation
+=================
 
 Inthe.AM provides a RESTful API that you can use for creating, modifying, or deleting
 tasks in your task list.
