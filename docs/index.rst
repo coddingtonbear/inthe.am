@@ -6,13 +6,6 @@
 Inthe.AM
 ========
 
-Released under the `GNU AFFERO GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/agpl-3.0-standalone.html>`_.
-
-.. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=master
-   :target: https://travis-ci.org/coddingtonbear/inthe.am
-
-Contents:
-
 .. toctree::
    :maxdepth: 3
 
@@ -23,6 +16,9 @@ Found a bug, or want to suggest a new feature?
 Enter an issue on `Inthe.AM's issue tracker <https://github.com/coddingtonbear/inthe.am/issues>`_.
 
 Questions?  Ask in ``##inthe.am`` on `Freenode <http://freenode.net/irc_servers.shtml>`_.
+
+Released under the `GNU AFFERO GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/agpl-3.0-standalone.html>`_.
+
 
 Indices and tables
 ==================
