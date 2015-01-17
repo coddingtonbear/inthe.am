@@ -11,7 +11,7 @@ var controller = Ember.ArrayController.extend({
         description: [],
         tags: [],
     },
-    refresh: function(){
+    refresh: function(after){
         // Then, request a new list from the endpoint to make sure
         // we gather any new tasks, too.
         this.store.find('task').then(function(){
@@ -23,6 +23,9 @@ var controller = Ember.ArrayController.extend({
                     // pass
                 }
             }.bind(this));
+            if(after) {
+                after();
+            }
         }.bind(this));
     },
     collectionObserver: function() {

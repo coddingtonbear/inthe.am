@@ -401,7 +401,10 @@ var controller = Ember.Controller.extend({
     },
     actions: {
         refresh: function(){
-            this.get('controllers.tasks').refresh();
+            this.showLoading();
+            this.get('controllers.tasks').refresh(function(){
+                this.hideLoading();
+            }.bind(this));
         },
         home: function(){
             window.location = '/';

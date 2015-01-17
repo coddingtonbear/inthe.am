@@ -19,11 +19,15 @@ var controller = Ember.ObjectController.extend({
                 });
             }
         },
-        'delete_annotation': function(description) {
+        'delete_annotation': function(rawDescription) {
             var model = this.get('model');
             var self = this;
             var annotations = model.get('annotations');
             this.get('controllers.application').showLoading();
+
+            // Sometimes, for some unknown reason, some browsers receive
+            // the annotation value as an array-like object :-\
+            var description = Array.prototype.join.call(rawDescription, '');
 
             for (var i = 0; i < annotations.length; i++) {
                 if (annotations[i] === description) {
