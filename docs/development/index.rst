@@ -6,7 +6,7 @@ Developing for Inthe.AM
 
 .. toctree::
    :maxdepth: 2
-   development_environment_setup
-   testing
-   contributions
-   google_oauth_keys
+   development/development_environment_setup
+   development/testing
+   development/contributions
+   development/google_oauth_keys
