@@ -23,7 +23,7 @@ def deploy():
         run('git merge origin/master')
         run('bower install')
         run('npm install')
-        run('ember build')
+        run('ember build --environment=production')
         virtualenv('pip install -r /var/www/twweb/requirements.txt')
         virtualenv('python manage.py collectstatic --noinput')
         virtualenv('python manage.py migrate')
