@@ -1,3 +1,5 @@
+.. _google_oauth_keys:
+
 Google OAuth Keys
 =================
 

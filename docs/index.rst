@@ -7,7 +7,7 @@ Inthe.AM
 ========
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    whats_new
    development/index

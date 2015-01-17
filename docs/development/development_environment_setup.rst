@@ -46,7 +46,7 @@ Troubleshooting your Development Environment
 
 * Various environment variables are set in ``environment_variables.sh``,
   and you will need to set *at least* the following two environment variables
-  to use the site; see `Google OAuth Keys`_ for details regarding what you
+  to use the site; see :ref:`google_oauth_keys` for details regarding what you
   should set these variables to:
 
   * ``TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY``
