@@ -8,6 +8,7 @@ tasks in your task list.
    :maxdepth: 3
 
    authentication
+   response_codes
    task_format
    endpoints
 
