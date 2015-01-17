@@ -19,7 +19,8 @@ Contents:
    development/index
    api/index
 
-`File issues and bug reports on Github <https://github.com/coddingtonbear/inthe.am/issues>`_.
+Found a bug, or want to suggest a new feature?
+Enter an issue on `Inthe.AM's issue tracker <https://github.com/coddingtonbear/inthe.am/issues>`_.
 
 Questions?  Ask in ``##inthe.am`` on `Freenode <http://freenode.net/irc_servers.shtml>`_.
 
