@@ -4,6 +4,11 @@ What's New?
 17 January 2015
 ---------------
 
+Features
+~~~~~~~~
+
+* Updated `documentation <http://intheam.readthedocs.org/en/latest/index.html>`_ and added link to documentation to the page UI.
+
 Technical
 ~~~~~~~~~
 
