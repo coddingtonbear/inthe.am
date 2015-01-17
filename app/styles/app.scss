@@ -60,11 +60,33 @@ label[for] {
   width: 100%;
   z-index: 1000000;
 
+  .top-bar-section {
+    ul {
+      height: auto !important;
+      width: auto !important;
+      display: inline !important;
+
+      li {
+        float: left;
+      }
+    }
+  }
   button {
     margin-bottom: 0px;
   }
   li.mobile-only {
     display: none;
+  }
+  .title-area {
+    float: left;
+  }
+  // Override some default foundation styles.
+  .name {
+    h1 {
+      a {
+        width: auto;
+      }
+    }
   }
 }
 
@@ -542,14 +564,14 @@ div.alert-box.error {
 @media screen and (max-width: 550px) {
   nav {
     .top-bar-section {
-      a {
+      /*a {
         padding: 0px 5px !important;
-      }
+      }*/
     }
   }
 }
 
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 400px) {
   .top-bar .name h1 {
     font-size: 0.7rem;
   }
