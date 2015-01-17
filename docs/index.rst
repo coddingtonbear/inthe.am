@@ -8,7 +8,7 @@ Inthe.AM
 
 Released under the `GNU AFFERO GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/agpl-3.0-standalone.html>`_.
 
-.. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=development
+.. image:: https://travis-ci.org/coddingtonbear/inthe.am.png?branch=master
    :target: https://travis-ci.org/coddingtonbear/inthe.am
 
 Contents:
@@ -16,10 +16,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   development_environment_setup
-   testing
-   contributions
-   google_oauth_keys
+   development/index
    api/index
 
 `File issues and bug reports on Github <https://github.com/coddingtonbear/inthe.am/issues>`_.
