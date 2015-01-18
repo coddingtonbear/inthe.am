@@ -1,7 +1,7 @@
 What's New?
 ===========
 
-17 January 2015
+18 January 2015
 ---------------
 
 Features
@@ -14,6 +14,11 @@ Technical
 
 * Updated front-end Javascript code to use `Ember-CLI <http://www.ember-cli.com/>`_ to remove the
   existing one-off Javascript bundle build process.
+
+Bugfixes
+~~~~~~~~
+
+* Fixed `#141: "Single-byte characters in task content may cause UnicodeDecodeError to be raised." <https://github.com/coddingtonbear/inthe.am/issues/141>`_.
 
 1 January 2015
 --------------
