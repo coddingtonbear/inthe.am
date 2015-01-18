@@ -1,4 +1,5 @@
 import curses.ascii
+import json
 import logging
 import subprocess
 import uuid
@@ -29,6 +30,11 @@ class TaskwarriorClient(TaskWarriorShellout):
         if command.lower() in self._get_acceptable_properties():
             return command.lower()
         return False
+
+    def _get_json(self, *args):
+        encoded = self._execute(*args)[0]
+        decoded = encoded.decode('utf-8', 'replace')
+        return json.loads(decoded)
 
     def _strip_unsafe_args(self, *args):
         if not args:
