@@ -14,13 +14,9 @@ by running the following command::
 .. note::
 
    By default, tests run in PhantomJS, but if you would like to
-   see the tests in action, you can run them in Firefox by adding the
-   following line to the bottom of your ``settings.py`` file 
-   (at ``inthe_am/settings.py``)::
+   see the tests in action, you can run them in Firefox by setting
+   the the ``TWWEB_WEBDRIVER_BROWSER`` environment variable to
+   ``firefox``; for example::
 
-        WEBDRIVER_BROWSER = 'firefox'
+        TWWEB_WEBDRIVER_BROWSER=firefox python manage.py runtests
 
-    and installing the requisite Ubuntu package by running the following
-    command::
-
-        sudo apt-get install firefox
