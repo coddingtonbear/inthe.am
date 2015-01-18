@@ -110,6 +110,25 @@ def get_published_properties(user, store, meta):
     }
 
 
+class LockTimeoutMixin(object):
+    def _handle_500(self, request, e):
+        if isinstance(e, LockTimeout):
+            message = (
+                'Your task list is currently in use; please try again later.'
+            )
+            store = models.TaskStore.get_for_user(request.user)
+            store.log_error(message)
+            return HttpResponse(
+                json.dumps(
+                    {
+                        'error_message': message
+                    }
+                ),
+                status=409,
+            )
+        return super(LockTimeoutMixin, self)._handle_500(request, e)
+
+
 class UserAuthorization(authorization.Authorization):
     def read_list(self, object_list, bundle):
         return object_list.filter(
@@ -130,7 +149,7 @@ class TaskStoreAuthorization(authorization.Authorization):
         return bundle.obj.store.user == bundle.request.user
 
 
-class UserResource(resources.ModelResource):
+class UserResource(LockTimeoutMixin, resources.ModelResource):
     def prepend_urls(self):
         return [
             url(
@@ -266,7 +285,12 @@ class UserResource(resources.ModelResource):
             return HttpResponseNotAllowed(request.method)
         store.reset_taskd_configuration()
         store.log_message("Taskd settings reset to default.")
-        return HttpResponse('OK')
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @git_managed("Configuring taskd server", gc=False)
     @process_authentication()
@@ -322,7 +346,12 @@ class UserResource(resources.ModelResource):
         store.log_message("Taskd settings changed.")
         store.taskrc.update(taskd_data)
 
-        return HttpResponse('OK')
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @process_authentication()
     def configure_pebble_cards(self, request, **kwargs):
@@ -338,7 +367,12 @@ class UserResource(resources.ModelResource):
         store.pebble_cards_enabled = True if enabled else False
         store.save()
 
-        return HttpResponse('OK')
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @process_authentication()
     def configure_feed(self, request, **kwargs):
@@ -354,7 +388,12 @@ class UserResource(resources.ModelResource):
         store.feed_enabled = True if enabled else False
         store.save()
 
-        return HttpResponse('OK')
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @process_authentication()
     def mirakel_configuration(self, request, **kwargs):
@@ -405,7 +444,12 @@ class UserResource(resources.ModelResource):
         store.sync_enabled = True
         store.save()
 
-        return HttpResponse('OK')
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @process_authentication()
     def colorscheme(self, request, **kwargs):
@@ -413,7 +457,12 @@ class UserResource(resources.ModelResource):
         if request.method == 'PUT':
             meta.colorscheme = request.body
             meta.save()
-            return HttpResponse('OK')
+            return HttpResponse(
+                json.dumps({
+                    'message': 'OK',
+                }),
+                content_type='application/json',
+            )
         elif request.method == 'GET':
             return HttpResponse(meta.colorscheme)
         return HttpResponseNotAllowed(request.method)
@@ -435,7 +484,12 @@ class UserResource(resources.ModelResource):
         meta.tos_accepted = now()
         meta.save()
 
-        return HttpResponse('OK')
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @process_authentication()
     def email_integration(self, request, **kwargs):
@@ -447,7 +501,12 @@ class UserResource(resources.ModelResource):
         ts.log_message("Email integration settings changed.")
         ts.save()
 
-        return HttpResponse("OK")
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @process_authentication()
     def twilio_integration(self, request, **kwargs):
@@ -459,7 +518,12 @@ class UserResource(resources.ModelResource):
         ts.sms_whitelist = request.POST.get('sms_whitelist', '')
         ts.log_message("Twilio settings changed.")
         ts.save()
-        return HttpResponse('OK')
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @git_managed("Clearing task data", gc=False)
     @process_authentication()
@@ -491,7 +555,12 @@ class UserResource(resources.ModelResource):
                     )
                 )
 
-        return HttpResponse('OK')
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @process_authentication()
     def generate_new_certificate(self, request, **kwargs):
@@ -499,7 +568,12 @@ class UserResource(resources.ModelResource):
             return HttpResponseNotAllowed(request.method)
         ts = models.TaskStore.get_for_user(request.user)
         ts.generate_new_certificate()
-        return HttpResponse('OK')
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @process_authentication()
     def my_certificate(self, request, **kwargs):
@@ -620,7 +694,7 @@ class UserResource(resources.ModelResource):
         )
 
 
-class TaskResource(resources.Resource):
+class TaskResource(LockTimeoutMixin, resources.Resource):
     TASK_TYPE = 'pending'
     SYNTHETIC_FIELDS = [
         'blocks',
@@ -751,25 +825,33 @@ class TaskResource(resources.Resource):
             if value:
                 store.log_message("Lockfile deleted.")
                 return HttpResponse(
-                    '',
+                    json.dumps({
+                        'lock_status': value,
+                    }),
                     status=200
                 )
             store.log_error(
                 "Attempted to delete lockfile, but repository was not locked."
             )
             return HttpResponse(
-                '',
+                json.dumps({
+                    'error_message': 'Repository is not locked'
+                }),
                 status=404
             )
         elif request.method == 'GET':
             value = client.get(lock_name)
             if value:
                 return HttpResponse(
-                    value,
+                    json.dumps({
+                        'lock_status': value,
+                    }),
                     status=200
                 )
             return HttpResponse(
-                '',
+                json.dumps({
+                    'error_message': 'Repository is not locked'
+                }),
                 status=404
             )
         return HttpResponseNotAllowed(request.method)
@@ -780,7 +862,12 @@ class TaskResource(resources.Resource):
             return HttpResponseNotAllowed(request.method)
 
         store.client.sync(init=True)
-        return HttpResponse('OK')
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @requires_task_store
     def refresh_tasks(self, request, store, **kwargs):
@@ -872,7 +959,10 @@ class TaskResource(resources.Resource):
             raise exceptions.NotFound()
         store.log_message("Task %s started.", uuid)
         return HttpResponse(
-            status=200
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
         )
 
     @requires_task_store
@@ -886,7 +976,10 @@ class TaskResource(resources.Resource):
             raise exceptions.NotFound()
         store.log_message("Task %s stopped.", uuid)
         return HttpResponse(
-            status=200
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
         )
 
     @requires_task_store
@@ -901,7 +994,10 @@ class TaskResource(resources.Resource):
 
         store.log_message("Task %s deleted.", uuid)
         return HttpResponse(
-            status=200
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
         )
 
     def incoming_sms(self, request, username, **kwargs):
@@ -1221,24 +1317,9 @@ class TaskResource(resources.Resource):
                 ),
                 status=403
             )
-        try:
-            return super(TaskResource, self).dispatch(
-                request_type, request, *args, **kwargs
-            )
-        except LockTimeout:
-            message = (
-                'Your task list is currently in use; please try again later.'
-            )
-            store = models.TaskStore.get_for_user(request.user)
-            store.log_error(message)
-            return HttpResponse(
-                json.dumps(
-                    {
-                        'error_message': message
-                    }
-                ),
-                status=409,
-            )
+        return super(TaskResource, self).dispatch(
+            request_type, request, *args, **kwargs
+        )
 
     def get_empty_task(self, request):
         store = models.TaskStore.get_for_user(request.user)
@@ -1319,7 +1400,7 @@ class CompletedTaskResource(TaskResource):
         max_limit = 400
 
 
-class ActivityLogResource(resources.ModelResource):
+class ActivityLogResource(LockTimeoutMixin, resources.ModelResource):
     class Meta:
         resource_name = 'activityLog'
         queryset = models.TaskStoreActivityLog.objects.order_by('-last_seen')
