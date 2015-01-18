@@ -66,7 +66,7 @@ var controller = Ember.Controller.extend({
         this.showLoading();
         return $.ajax(params).then(function() {
             this.hideLoading();
-            return arguments;
+            return arguments[0];
         }.bind(this), function(){
             this.hideLoading();
             if (arguments[0].responseText) {
@@ -108,7 +108,7 @@ var controller = Ember.Controller.extend({
     isHomePage: function() {
         return this.get('currentPath') === "about";
     }.property('currentPath'),
-    update_user_info: function() {
+    update_user_info: function(after) {
         return this.ajaxRequest({
             url: this.get('urls.user_status'),
             dataType: 'json'
@@ -153,6 +153,9 @@ var controller = Ember.Controller.extend({
             this.set('urls.sms_url', this.get('user').sms_url);
             this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
             this.set('statusUpdaterHead', this.get('user').repository_head);
+            if(after) {
+                after();
+            }
         }.bind(this), function(msg){
             this.error_message(
                 `An error was encountered while ` +
@@ -203,7 +206,14 @@ var controller = Ember.Controller.extend({
         Ember.RSVP.configure('onerror', reportError);
 
         // Fetch user information
-        this.update_user_info();
+        this.update_user_info(function(){
+            if(
+                this.getHandlerPath() === 'application.index' &&
+                this.get('user').logged_in === true
+            ) {
+                this.transitionToRoute('tasks');
+            }
+        }.bind(this));
 
         this.ajaxRequest({
             url: this.get('urls.announcements'),
@@ -379,12 +389,12 @@ var controller = Ember.Controller.extend({
         return $(document).width() <= 800;
     },
     getHandlerPath: function() {
-            var path_parts = [];
-            var handlers = Router.router.currentHandlerInfos;
-            for(var i = 0; i < handlers.length; i++) {
-                    path_parts.push(handlers[i].name);
-            }
-            return path_parts.join('.');
+        var path_parts = [];
+        var handlers = Router.router.currentHandlerInfos;
+        for(var i = 0; i < handlers.length; i++) {
+                path_parts.push(handlers[i].name);
+        }
+        return path_parts.join('.');
     },
     bindKeyboardEvents: function() {
         var controller = this;
