@@ -62,6 +62,25 @@ var controller = Ember.Controller.extend({
         sms_url: null,
         pebble_card_url: null,
     },
+    ajaxRequest: function(params){
+        this.showLoading();
+        return $.ajax(params).then(function() {
+            this.hideLoading();
+            return arguments;
+        }.bind(this), function(){
+            this.hideLoading();
+            if (arguments[0].responseText) {
+                try {
+                    var responseJson = JSON.parse(arguments[0].responseText);
+                    return responseJson.error_message;
+                } catch(e) {
+                    return arguments[0].responseText;
+                }
+            } else {
+                return arguments[2];
+            }
+        }.bind(this));
+    },
     showLoading: function() {
         $('#loading').show();
     },
@@ -90,58 +109,56 @@ var controller = Ember.Controller.extend({
         return this.get('currentPath') === "about";
     }.property('currentPath'),
     update_user_info: function() {
-        this.set(
-            'user',
-            JSON.parse(
-                $.ajax(
-                    {
-                        url: this.get('urls.user_status'),
-                        async: false,
-                        dataType: 'json'
+        return this.ajaxRequest({
+            url: this.get('urls.user_status'),
+            dataType: 'json'
+        }).then(function(data){
+            this.set('user', data);
+            this.updateColorscheme();
+            if(this.get('user').logged_in){
+                Raven.setUser({
+                    email: this.get('user').email,
+                    id: this.get('user').uid,
+                    username: this.get('user').username
+                });
+                // Re-open the model class to append the known UDAs
+                var uda_fields = {};
+                for(var i = 0; i < this.get('user').udas.length; i++) {
+                    var this_uda = this.get('user').udas[i];
+                    var attr_type = 'string';
+                    if(this_uda.type === 'DateField') {
+                        attr_type = 'date';
+                    } else if(this_uda.type === 'NumericField') {
+                        attr_type = 'number';
                     }
-                ).responseText
-            )
-        );
-        this.updateColorscheme();
-        if(this.get('user').logged_in){
-            Raven.setUser({
-                email: this.get('user').email,
-                id: this.get('user').uid,
-                username: this.get('user').username
-            });
-            // Re-open the model class to append the known UDAs
-            var uda_fields = {};
-            for(var i = 0; i < this.get('user').udas.length; i++) {
-                var this_uda = this.get('user').udas[i];
-                var attr_type = 'string';
-                if(this_uda.type === 'DateField') {
-                    attr_type = 'date';
-                } else if(this_uda.type === 'NumericField') {
-                    attr_type = 'number';
+                    uda_fields[this_uda.field] = DS.attr(attr_type);
                 }
-                uda_fields[this_uda.field] = DS.attr(attr_type);
+                Task.reopen(uda_fields);
+                Task.reopen({
+                    udas: this.get('user').udas
+                });
+                if(!this.get('user.tos_up_to_date')) {
+                    Ember.run.next(
+                            this,
+                            function(){
+                                    this.transitionToRoute('terms-of-service');
+                            }
+                    );
+                }
+            } else {
+                Raven.setUser();
+                this.transitionToRoute('about');
             }
-            Task.reopen(uda_fields);
-            Task.reopen({
-                udas: this.get('user').udas
-            });
-            if(!this.get('user.tos_up_to_date')) {
-                Ember.run.next(
-                        this,
-                        function(){
-                                this.transitionToRoute('terms-of-service');
-                        }
-                );
-            }
-        } else {
-            Raven.setUser();
-            this.transitionToRoute('about');
-        }
-
-        this.set('urls.feed_url', this.get('user').feed_url);
-        this.set('urls.sms_url', this.get('user').sms_url);
-        this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
-        this.set('statusUpdaterHead', this.get('user').repository_head);
+            this.set('urls.feed_url', this.get('user').feed_url);
+            this.set('urls.sms_url', this.get('user').sms_url);
+            this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
+            this.set('statusUpdaterHead', this.get('user').repository_head);
+        }.bind(this), function(msg){
+            this.error_message(
+                `An error was encountered while ` +
+                `attempting to gather user information: ${msg}`
+            );
+        }.bind(this));
     },
     handleError: function(reason) {
         if (reason.status === 401) {
@@ -188,19 +205,23 @@ var controller = Ember.Controller.extend({
         // Fetch user information
         this.update_user_info();
 
-        $.ajax({
+        this.ajaxRequest({
             url: this.get('urls.announcements'),
             dataType: 'json',
-            success: function(data) {
-                $.each(data, function(idx, announcement) {
-                    $.growl[announcement.type || 'notice']({
-                        title: announcement.title || 'Announcement',
-                        message: announcement.message || '',
-                        duration: announcement.duration || 15000,
-                    });
+        }).then(function(data){
+            $.each(data, function(idx, announcement) {
+                $.growl[announcement.type || 'notice']({
+                    title: announcement.title || 'Announcement',
+                    message: announcement.message || '',
+                    duration: announcement.duration || 15000,
                 });
-            }
-        });
+            });
+        }.bind(this), function(msg){
+            this.error_message(
+                `An error was encountered while ` +
+                `attempting to load announcements: ${msg}`
+            );
+        }.bind(this));
 
         // Adding FastClick
         window.addEventListener('load', function() {
