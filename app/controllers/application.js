@@ -188,12 +188,6 @@ var controller = Ember.Controller.extend({
         // Fetch user information
         this.update_user_info();
 
-        // Ensure that we always add the CSRF token
-        $.ajaxSetup({
-            headers: {
-                'X-CSRFToken': this.getCookie('csrftoken')
-            }
-        });
         $.ajax({
             url: this.get('urls.announcements'),
             dataType: 'json',
@@ -370,21 +364,6 @@ var controller = Ember.Controller.extend({
                     path_parts.push(handlers[i].name);
             }
             return path_parts.join('.');
-    },
-    getCookie: function(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = $.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
     },
     bindKeyboardEvents: function() {
         var controller = this;

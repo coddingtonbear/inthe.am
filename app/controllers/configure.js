@@ -126,9 +126,6 @@ var controller = Ember.Controller.extend({
     },
     actions: {
         save_taskrc: function() {
-            var csrftoken = this.get('controllers.application').getCookie(
-                'csrftoken'
-            );
             var url = this.get('controllers.application').urls.taskrc_extras;
             var value = $('textarea[name=custom_taskrc]').val();
             var self = this;
@@ -136,9 +133,6 @@ var controller = Ember.Controller.extend({
             $.ajax({
                 url: url,
                 type: 'PUT',
-                headers: {
-                    'X-CSRFToken': csrftoken
-                },
                 dataType: 'text',
                 data: value,
                 success: function() {
@@ -169,17 +163,11 @@ var controller = Ember.Controller.extend({
             });
         },
         reset_taskd: function() {
-            var csrftoken = this.get('controllers.application').getCookie(
-                'csrftoken'
-            );
             var url = this.get('controllers.application').urls.taskd_reset;
             var self = this;
             $.ajax({
                 url: url,
                 type: 'POST',
-                headers: {
-                    'X-CSRFToken': csrftoken
-                },
                 data: {},
                 success: function(){
                     self.get('controllers.application').update_user_info();
