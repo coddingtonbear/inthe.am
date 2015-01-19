@@ -14,6 +14,9 @@ Technical
 
 * Updated front-end Javascript code to use `Ember-CLI <http://www.ember-cli.com/>`_ to remove the
   existing one-off Javascript bundle build process.
+* Completed `#133: "Switch from using one-off $.ajax requests to using promises." <https://github.com/coddingtonbear/inthe.am/issues/133>`_.
+* Completed `#132: "Show loading animation when perfoming XHRs from the configuration page." <https://github.com/coddingtonbear/inthe.am/issues/132>`_.
+* Completed `#131: "Display returned errors rather than a generic error message when interacting with the configuration page." <https://github.com/coddingtonbear/inthe.am/issues/131>`_.
 
 Bugfixes
 ~~~~~~~~
