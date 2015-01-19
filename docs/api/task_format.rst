@@ -26,7 +26,7 @@ Each task has at least the following fields:
 +------------------+-------------------------------------------------------------------------+
 | ``description``  | The title of the task.                                                  |
 +------------------+-------------------------------------------------------------------------+
-| ``prioriry``     | One of 'H', 'M', or 'L'.                                                |
+| ``priority``     | One of 'H', 'M', or 'L'.                                                |
 +------------------+-------------------------------------------------------------------------+
 | ``due``          | A date string [#datestring]_ representing this task's due date and      |
 |                  | time.                                                                   |
