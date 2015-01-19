@@ -108,10 +108,12 @@ var controller = Ember.Controller.extend({
     isHomePage: function() {
         return this.get('currentPath') === "about";
     }.property('currentPath'),
-    update_user_info: function(after) {
+    update_user_info: function(sync) {
+        var async = !sync;
         return this.ajaxRequest({
             url: this.get('urls.user_status'),
-            dataType: 'json'
+            dataType: 'json',
+            async: async
         }).then(function(data){
             this.set('user', data);
             this.updateColorscheme();
@@ -153,9 +155,6 @@ var controller = Ember.Controller.extend({
             this.set('urls.sms_url', this.get('user').sms_url);
             this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
             this.set('statusUpdaterHead', this.get('user').repository_head);
-            if(after) {
-                after();
-            }
         }.bind(this), function(msg){
             this.error_message(
                 `An error was encountered while ` +
@@ -206,14 +205,7 @@ var controller = Ember.Controller.extend({
         Ember.RSVP.configure('onerror', reportError);
 
         // Fetch user information
-        this.update_user_info(function(){
-            if(
-                this.getHandlerPath() === 'application.index' &&
-                this.get('user').logged_in === true
-            ) {
-                this.transitionToRoute('tasks');
-            }
-        }.bind(this));
+        this.update_user_info(true);
 
         this.ajaxRequest({
             url: this.get('urls.announcements'),
