@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
     soft_time_limit=30,
     time_limit=45,
     default_retry_delay=60,
+    max_retries=10,  # We should always stop at two, anyway
     ignore_result=True,
 )
 def sync_repository(self, store_id, debounce_id=None):
