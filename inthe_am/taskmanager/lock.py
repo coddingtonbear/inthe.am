@@ -80,9 +80,8 @@ def redis_lock(
             continue
         else:
             logger.debug(
-                "Lock %s expired %s seconds ago; attempting to steal lock.",
-                name,
-                time.time() - float(original_timestamp)
+                "Lock %s expired; attempting to steal lock.",
+                name
             )
 
         getset_timestamp = client.getset(name, str(lock_expiry))
