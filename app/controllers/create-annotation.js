@@ -22,6 +22,7 @@ var controller = Ember.ObjectController.extend({
                 field.val('');
                 form.foundation('reveal', 'close');
             }, function() {
+                model.rollback();
                 application.hideLoading();
                 application.error_message(
                     "An error was encountered while saving your annotation!"

@@ -19,6 +19,7 @@ var controller = Ember.ObjectController.extend({
                 application.hideLoading();
                 self.transitionToRoute('task', model);
             }, function(reason){
+                model.rollback();
                 application.hideLoading();
                 application.error_message(
                         "An error was encountered while saving your task: '" + reason.statusText + "'."
