@@ -52,7 +52,11 @@ def redis_lock(
                 time.time() - started
             )
             # Got the lock!
-            yield
+            try:
+                yield
+            except:
+                client.delete(name)
+                raise
             # Make sure that this operation didn't take longer than
             # a lock timeout -- if it did, don't delete the key, it might
             # be somebody elses!
@@ -90,7 +94,11 @@ def redis_lock(
                 "Lock %s successfully stolen.",
                 name,
             )
-            yield
+            try:
+                yield
+            except:
+                client.delete(name)
+                raise
             # Make sure that this operation didn't take longer than
             # a lock timeout -- if it did, don't delete the key, it might
             # be somebody elses!
