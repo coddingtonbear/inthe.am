@@ -408,18 +408,23 @@ span {
 
 div.block.error {
   background-color: #FFEEEE;
-  border: 5px solid #FF0000;
-  border-radius: 10px;
-  padding: 25px 25px 15px 25px;
+  border: 1px solid #FF0000;
+  padding: 15px;
   margin-bottom: 10px;
+  box-shadow: 3px 3px 3px #aaa;
+
+  *:last-child {
+    margin-bottom: 0px;
+  }
 }
 div.block.warning {
-  background-color: #FFFFAA;
-  border-radius: 10px;
-  padding: 10px;
+  border: 1px solid #FFFF00;
+  background-color: #FFFFDD;
+  padding: 15px;
   margin-bottom: 10px;
+  box-shadow: 3px 3px 3px #aaa;
 
-  p:last-child {
+  *:last-child {
     margin-bottom: 0px;
   }
 }
