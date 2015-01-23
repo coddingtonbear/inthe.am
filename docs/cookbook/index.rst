@@ -8,8 +8,8 @@ Quickly adding tasks to your task list while on-the-go
 Every once in a while, a task that I need to accomplish comes to mind
 when I'm far away from a computer; I add quick tasks to my task list by:
 
-1. Adding a contact to my e-mail inbox that automatically assigns a
-   tag ``+review`` to the created task that I can use for finding tasks
+1. Adding a contact to my e-mail contact list that automatically assigns a
+   tag ``+review`` to the created task, so I can use it for finding tasks
    that I need to review and prioritize next time I'm nearby a computer.
 
    You can do this by adding ``+review`` to the end of your Inthe.AM
@@ -24,6 +24,10 @@ when I'm far away from a computer; I add quick tasks to my task list by:
    For example::
 
        urgency.user.tag.review.coefficient=99
+
+   The above urgency setting causes the urgency of tasks tagged with
+   ``+review`` to increase by 99 points -- almost certainly higher
+   than any other tasks you might have.
 
 
 Now, while you're on the go, you can just find that contact in your
