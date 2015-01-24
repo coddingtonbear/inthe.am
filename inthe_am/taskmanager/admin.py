@@ -85,7 +85,7 @@ class RegistrationRecency(admin.SimpleListFilter):
 
 
 class TwilioEnabledFilter(admin.SimpleListFilter):
-    title = 'twilio_enabled'
+    title = 'twilio enabled'
     parameter_name = 'twilio_enabled'
 
     def lookups(self, request, model_admin):
