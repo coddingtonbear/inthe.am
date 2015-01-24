@@ -84,6 +84,32 @@ class RegistrationRecency(admin.SimpleListFilter):
         )
 
 
+class TwilioEnabledFilter(admin.SimpleListFilter):
+    title = 'twilio_enabled'
+    parameter_name = 'twilio_enabled'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', 'Yes', ),
+            ('0', 'No', ),
+        )
+
+    def queryset(self, request, queryset):
+        try:
+            value = int(self.value())
+        except (ValueError, TypeError):
+            return queryset
+
+        if value:
+            return queryset.exclude(
+                twilio_auth_token=''
+            )
+        else:
+            return queryset.filter(
+                twilio_auth_token=''
+            )
+
+
 class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     raw_id_fields = ('user', )
     search_fields = (
@@ -93,10 +119,12 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     list_display = (
         'user', 'created', 'last_synced',
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
+        'twilio_enabled',
     )
     list_filter = (
         ActivityStatusListFilter,
         RegistrationRecency,
+        TwilioEnabledFilter,
         'created', 'last_synced',
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
     )
@@ -126,6 +154,10 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
 
     def taskrc(self, store):
         return self._renderable(store.taskrc)
+
+    def twilio_enabled(self, store):
+        return True if self.twilio_auth_token else False
+    twilio_enabled.boolean = True
 
 admin.site.register(TaskStore, TaskStoreAdmin)
 
