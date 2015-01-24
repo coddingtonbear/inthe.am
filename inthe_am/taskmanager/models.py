@@ -9,18 +9,16 @@ import uuid
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 from dulwich.repo import Repo
-from storages.backends.s3boto import S3BotoStorage
 import subprocess32 as subprocess
 from tastypie.models import ApiKey
 
 from .context_managers import git_checkpoint
-from .taskwarrior_client import TaskwarriorClient, TaskwarriorError
+from .taskwarrior_client import TaskwarriorClient
 from .taskstore_migrations import upgrade as upgrade_taskstore
 from .tasks import sync_repository
 from .lock import get_debounce_name_for_store, get_lock_redis
