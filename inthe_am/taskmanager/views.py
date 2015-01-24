@@ -105,6 +105,7 @@ class Status(BaseSseView):
             entries = TaskStoreActivityLog.objects.filter(
                 last_seen__gt=last_checked,
                 error=True,
+                silent=False,
                 store=store,
             )
             for entry in entries:

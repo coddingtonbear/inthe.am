@@ -585,16 +585,19 @@ class TaskStore(models.Model):
                 out.write(cert)
         return cert_filename
 
-    def _log_entry(self, message, error, *parameters):
+    def _log_entry(self, message, error=False, params=None, silent=False):
+        if params is None:
+            params = []
         message_hash = hashlib.md5(
-            self.local_path + message % parameters
+            self.local_path + message % params
         ).hexdigest()
         instance, created = TaskStoreActivityLog.objects.get_or_create(
             store=self,
             md5hash=message_hash,
             defaults={
                 'error': error,
-                'message': message % parameters,
+                'silent': silent,
+                'message': message % params,
                 'count': 0,
             }
         )
@@ -606,15 +609,23 @@ class TaskStore(models.Model):
     def log_message(self, message, *parameters):
         self._log_entry(
             message,
-            False,
-            *parameters
+            error=False,
+            params=parameters
         )
 
     def log_error(self, message, *parameters):
         self._log_entry(
             message,
-            True,
-            *parameters
+            error=True,
+            params=parameters
+        )
+
+    def log_silent_error(self, message, *parameters):
+        self._log_entry(
+            message,
+            error=True,
+            silent=True,
+            params=parameters
         )
 
 
@@ -649,6 +660,7 @@ class TaskStoreActivityLog(models.Model):
     last_seen = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     error = models.BooleanField(default=False)
+    silent = models.BooleanField(default=False)
     message = models.TextField()
     count = models.IntegerField(default=0)
 

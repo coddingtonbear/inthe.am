@@ -119,7 +119,7 @@ class LockTimeoutMixin(object):
                 e.code,
                 e.stderr,
             )
-            store.log_error(
+            store.log_silent_error(
                 'Taskwarrior error encountered: %s' % message
             )
             return HttpResponse(
