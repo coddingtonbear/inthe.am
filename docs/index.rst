@@ -12,7 +12,7 @@ Inthe.AM
    whats_new
    development/index
    api/index
-   cookbook
+   cookbook/index
 
 Found a bug, or want to suggest a new feature?
 Enter an issue on `Inthe.AM's issue tracker <https://github.com/coddingtonbear/inthe.am/issues>`_.
