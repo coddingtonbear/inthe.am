@@ -21,12 +21,13 @@ var controller = Ember.ObjectController.extend({
                 application.hideLoading();
                 field.val('');
                 form.foundation('reveal', 'close');
-            }, function() {
+            }, function(msg) {
                 model.rollback();
                 model.reload();
                 application.hideLoading();
                 application.error_message(
-                    "An error was encountered while saving your annotation!"
+                    `An error was encountered while ` +
+                    `saving your annotation: ${msg}`
                 );
             });
         }
