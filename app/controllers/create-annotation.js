@@ -26,8 +26,9 @@ var controller = Ember.ObjectController.extend({
                 model.reload();
                 application.hideLoading();
                 application.error_message(
-                    `An error was encountered while ` +
-                    `saving your annotation: ${msg}`
+                    "An error was encountered while " +
+                    "saving this annotation.  Check your " +
+                    "Activity Log for more information."
                 );
             });
         }

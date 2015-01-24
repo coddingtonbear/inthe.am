@@ -23,7 +23,9 @@ var controller = Ember.ObjectController.extend({
                 model.reload();
                 application.hideLoading();
                 application.error_message(
-                        "An error was encountered while saving your task: '" + reason.statusText + "'."
+                    "An error was encountered while " +
+                    "saving this task.  Check your " +
+                    "Activity Log for more information."
                 );
                 application.get('handleError').bind(application)(reason);
             });
