@@ -2,6 +2,10 @@ Cookbook
 ========
 
 
+To add items to this cookbook, click the 'Edit on Github'
+button in the upper-right corner.
+
+
 Quickly adding tasks to your task list while on-the-go
 ------------------------------------------------------
 
