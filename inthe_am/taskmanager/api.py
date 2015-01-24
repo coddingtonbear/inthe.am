@@ -41,6 +41,7 @@ from .decorators import (
 )
 from .lock import LockTimeout, get_lock_name_for_store, get_lock_redis
 from .task import Task
+from .taskwarrior_client import TaskwarriorError
 
 
 logger = logging.getLogger(__name__)
@@ -112,6 +113,23 @@ def get_published_properties(user, store, meta):
 
 class LockTimeoutMixin(object):
     def _handle_500(self, request, e):
+        if isinstance(e, TaskwarriorError):
+            store = models.TaskStore.get_for_user(request.user)
+            message = '(%s) %s' % (
+                e.code,
+                e.stderr,
+            )
+            store.log_error(
+                'Taskwarrior error encountered: %s' % message
+            )
+            return HttpResponse(
+                json.dumps(
+                    {
+                        'error_message': message
+                    }
+                ),
+                status=400,
+            )
         if isinstance(e, LockTimeout):
             message = (
                 'Your task list is currently in use; please try again later.'
