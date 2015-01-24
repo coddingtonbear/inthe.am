@@ -31,4 +31,5 @@ def deploy():
     sudo('/usr/sbin/service twweb restart', shell=False)
     sudo('/usr/sbin/service twweb-status restart', shell=False)
     sudo('/usr/sbin/service twweb-celery restart', shell=False)
+    sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)
     local('git checkout development')
