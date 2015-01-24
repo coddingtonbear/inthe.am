@@ -156,7 +156,7 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
         return self._renderable(store.taskrc)
 
     def twilio_enabled(self, store):
-        return True if self.twilio_auth_token else False
+        return True if store.twilio_auth_token else False
     twilio_enabled.boolean = True
 
 admin.site.register(TaskStore, TaskStoreAdmin)
