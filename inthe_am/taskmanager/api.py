@@ -128,6 +128,7 @@ class LockTimeoutMixin(object):
                         'error_message': message
                     }
                 ),
+                content_type='application/json',
                 status=400,
             )
         if isinstance(e, LockTimeout):
@@ -142,6 +143,7 @@ class LockTimeoutMixin(object):
                         'error_message': message
                     }
                 ),
+                content_type='application/json',
                 status=409,
             )
         return super(LockTimeoutMixin, self)._handle_500(request, e)
