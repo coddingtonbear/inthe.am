@@ -104,7 +104,9 @@ var controller = Ember.Controller.extend({
         $('#loading').hide();
     },
     taskUpdateStreamEnabled: function() {
-        return this.get('controllers.configure.taskUpdateStreamEnabled');
+        var enabled = this.get('user.streaming_enabled');
+        var compatible = this.get('controllers.configure.taskUpdateStreamCompatible');
+        return enabled && compatible;
     }.property(),
     isHomePage: function() {
         return this.get('currentPath') === "about";

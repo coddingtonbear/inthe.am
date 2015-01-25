@@ -37,21 +37,12 @@ var controller = Ember.Controller.extend({
         {file: 'solarized-light-256.theme', name: 'Solarized Light'},
     ],
     taskUpdateStreamEnabledUI: function() {
-        if(this.get('taskUpdateStreamEnabled')) {
+        var enabled = this.get('controllers.application.user.streaming_enabled');
+        if(enabled) {
             return 'yes';
         } else {
             return 'no';
         }
-    }.property(),
-    taskUpdateStreamEnabled: function() {
-        var enabled = this.get('controllers.application.user.streaming_enabled');
-        if(!this.get('taskUpdateStreamCompatible')) {
-            return false;
-        }
-        if(!enabled) {
-            return false;
-        }
-        return true;
     }.property(),
     taskUpdateStreamCompatible: function() {
         if(!window.EventSource) {
