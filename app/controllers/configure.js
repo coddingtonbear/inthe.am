@@ -44,19 +44,17 @@ var controller = Ember.Controller.extend({
         }
     }.property(),
     taskUpdateStreamEnabled: function() {
+        var enabled = this.get('controllers.application.user.streaming_enabled');
         if(!this.get('taskUpdateStreamCompatible')) {
             return false;
         }
-        if(window.localStorage.getItem('disable_ticket_stream')) {
+        if(!enabled) {
             return false;
         }
         return true;
     }.property(),
     taskUpdateStreamCompatible: function() {
         if(!window.EventSource) {
-            return false;
-        }
-        if(!window.localStorage) {
             return false;
         }
         return true;
