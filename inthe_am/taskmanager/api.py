@@ -64,6 +64,9 @@ def get_published_properties(user, store, meta):
         'taskd_server_is_default': (
             store.taskrc.get('taskd.server') == settings.TASKD_SERVER
         ),
+        'streaming_enabled': (
+            store.streaming_enabled and settings.STREAMING_UPDATES_ENABLED
+        ),
         'taskd_files': store.taskd_certificate_status,
         'twilio_auth_token': store.twilio_auth_token,
         'sms_whitelist': store.sms_whitelist,
@@ -275,6 +278,12 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
                 self.wrap_view('configure_feed')
             ),
             url(
+                r"^(?P<resource_name>%s)/streaming-config/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('configure_streaming')
+            ),
+            url(
                 r"^(?P<resource_name>%s)/mirakel-configuration/?$" % (
                     self._meta.resource_name
                 ),
@@ -385,6 +394,27 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
 
         store = models.TaskStore.get_for_user(request.user)
         store.pebble_cards_enabled = True if enabled else False
+        store.save()
+
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
+
+    @process_authentication()
+    def configure_streaming(self, request, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(request.method)
+
+        try:
+            enabled = int(request.POST.get('enabled', 0))
+        except (TypeError, ValueError):
+            return HttpResponseBadRequest()
+
+        store = models.TaskStore.get_for_user(request.user)
+        store.streaming_enabled = True if enabled else False
         store.save()
 
         return HttpResponse(

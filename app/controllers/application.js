@@ -52,6 +52,7 @@ var controller = Ember.Controller.extend({
         mirakel_configuration: '/api/v1/user/mirakel-configuration/',
         configure_pebble_cards: '/api/v1/user/pebble-cards-config/',
         configure_feed: '/api/v1/user/feed-config/',
+        configure_streaming: '/api/v1/user/streaming-config/',
         user_status: '/api/v1/user/status/',
         announcements: '/api/v1/user/announcements/',
         refresh: '/api/v1/task/refresh/',
@@ -103,7 +104,7 @@ var controller = Ember.Controller.extend({
         $('#loading').hide();
     },
     taskUpdateStreamEnabled: function() {
-        return this.get('controllers.configure.taskUpdateStreamEnabled');
+        return this.get('user').streaming_enabled;
     }.property(),
     isHomePage: function() {
         return this.get('currentPath') === "about";

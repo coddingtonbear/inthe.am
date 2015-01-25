@@ -309,12 +309,36 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         save_streaming: function() {
-            if($("#id_update_stream").val() === 'no') {
-                window.localStorage.setItem('disable_ticket_stream', 'yes');
-            } else {
-                window.localStorage.removeItem('disable_ticket_stream');
+            var url = this.get('controllers.application').urls.configure_streaming;
+            var value = 0;
+
+            if($("#id_update_stream").val() !== 'no') {
+                value = 1;
             }
-            window.location.reload();
+            return this.ajaxRequest({
+                url: url,
+                type: 'POST',
+                data: {
+                    enabled: value ? 1 : 0,
+                },
+            }).then(function(){
+                if (value) {
+                    this.success_message("Streaming ticket updates enabled.");
+                } else {
+                    this.success_message("Streaming ticket updates disabled.");
+                }
+                setTimeout(function(){
+                    window.location.reload();
+                }, 3000);
+            }.bind(this), function(msg) {
+                this.error_message(
+                    `An error was encountered while ` +
+                    `configuring streaming updates: ${msg}`
+                );
+                setTimeout(function(){
+                    window.location.reload();
+                }, 3000);
+            }.bind(this));
         },
         clear_task_data: function() {
             var url    = this.get('controllers.application').urls.clear_task_data;

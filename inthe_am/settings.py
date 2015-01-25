@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import json
 import os
 from subprocess32 import check_output
 import sys
@@ -311,15 +312,27 @@ TASKD_SIGNING_TEMPLATE = '/var/taskd/cert.template'
 TASKD_SERVER = '127.0.0.1:53589'
 TASKD_ORG = 'testing'
 
+# Streaming ticket updates enabled?
+STREAMING_UPDATES_ENABLED = True
+
 # Must be sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
 #  AWS_ACCESS_KEY_ID
 #  AWS_SECRET_ACCESS_KEY
 #  AWS_STORAGE_BUCKET_NAME
+ENVIRONMENT_SETTING_SUFFIXES = {
+    '__BOOL': lambda x: bool(int(x)),
+    '__INT': lambda x: int(x),
+    '__JSON': lambda x: json.loads(x),
+}
 this_module = sys.modules[__name__]
 for key, value in os.environ.items():
     if key.startswith(ENVIRONMENT_SETTING_PREFIX):
+        for suffix, fn in ENVIRONMENT_SETTING_SUFFIXES.items():
+            if key.endswith(suffix):
+                value = fn(value)
+                key = key[:-len(suffix)]
         setattr(
             this_module,
             key[len(ENVIRONMENT_SETTING_PREFIX):],

@@ -119,14 +119,15 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     list_display = (
         'user', 'created', 'last_synced',
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
-        'twilio_enabled',
+        'streaming_enabled', 'twilio_enabled',
     )
     list_filter = (
         ActivityStatusListFilter,
         RegistrationRecency,
         TwilioEnabledFilter,
         'created', 'last_synced',
-        'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
+        'sync_enabled', 'pebble_cards_enabled',
+        'feed_enabled', 'streaming_enabled',
     )
     ordering = ('-last_synced', )
     readonly_fields = (

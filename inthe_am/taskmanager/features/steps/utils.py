@@ -31,9 +31,6 @@ def find_element_and_do(
 
 def monkey_patch_browser(context):
     context.browser.execute_script("""
-        window.localStorage.setItem('disable_ticket_stream', 'yes');
-    """.replace('\n', ' '))
-    context.browser.execute_script("""
         window.confirm = function(message) {
             lastConfirmationMessage = message; return true;
         }
