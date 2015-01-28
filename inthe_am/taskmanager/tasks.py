@@ -203,6 +203,9 @@ def process_email_message(self, message_id):
                 attachment_urls.append(
                     document.document.url
                 )
+                store.client.task_annotate(
+                    task, 'Attached File: %s' % document.document.url
+                )
 
             if attachment_urls:
                 task['intheamattachments'] = ' '.join(attachment_urls)
