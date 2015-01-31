@@ -1,6 +1,17 @@
 What's New?
 ===========
 
+30 January 2015
+---------------
+
+* Attachment annotations: New attachments will now add annotations containing
+  a link to the uploaded attachment in S3; this makes it easier to access your
+  annotations when using Taskwarrior clients other than Inthe.AM.
+* Automatic SMS arguments: You can now specify default tags and attributes for
+  incoming SMS messages; this makes it easy for you to make sure you can those
+  messages you wrote while on a bumpy bus or train so you can clean up those
+  tasks later.
+
 18 January 2015
 ---------------
 
