@@ -30,6 +30,6 @@
   "resolutions": {
     "ember-data": "1.0.0-beta.12",
     "jquery": "^1.11.1",
-    "handlebars": "~1.3.0"
+    "handlebars": "1.3.0"
   }
 }
