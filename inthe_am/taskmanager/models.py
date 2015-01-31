@@ -89,6 +89,7 @@ class TaskStore(models.Model):
     twilio_auth_token = models.CharField(max_length=32, blank=True)
     secret_id = models.CharField(blank=True, max_length=36)
     sms_whitelist = models.TextField(blank=True)
+    sms_arguments = models.TextField(blank=True)
     email_whitelist = models.TextField(blank=True)
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)

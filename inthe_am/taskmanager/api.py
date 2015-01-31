@@ -70,6 +70,7 @@ def get_published_properties(user, store, meta):
         'taskd_files': store.taskd_certificate_status,
         'twilio_auth_token': store.twilio_auth_token,
         'sms_whitelist': store.sms_whitelist,
+        'sms_arguments': store.sms_arguments,
         'email_whitelist': store.email_whitelist,
         'task_creation_email_address': '%s@inthe.am' % (
             store.secret_id
@@ -566,6 +567,7 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
         ts = models.TaskStore.get_for_user(request.user)
         ts.twilio_auth_token = request.POST.get('twilio_auth_token', '')
         ts.sms_whitelist = request.POST.get('sms_whitelist', '')
+        ts.sms_arguments = request.POST.get('sms_arguments', '')
         ts.log_message("Twilio settings changed.")
         ts.save()
         return HttpResponse(
@@ -1142,7 +1144,11 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 r.sms("Bad Request: Empty task.")
             else:
                 task_uuid = str(uuid.uuid4())
-                task_args = ['add'] + shlex.split(task_info)
+                task_args = (
+                    ['add'] +
+                    shlex.split(task_info) +
+                    shlex.split(store.sms_arguments)
+                )
                 task_args.append('uuid:%s' % task_uuid)
                 result = store.client._execute_safe(*task_args)
                 stdout, stderr = result
@@ -1150,10 +1156,12 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
 
                 log_args = (
                     "Added task %s via SMS from %s; message '%s'; "
+                    "automatic args: '%s';"
                     "response: '%s'." % (
                         task_uuid,
                         from_,
                         body,
+                        store.sms_arguments,
                         stdout,
                     ),
                 )
