@@ -1146,8 +1146,8 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 task_uuid = str(uuid.uuid4())
                 task_args = (
                     ['add'] +
-                    shlex.split(task_info) +
-                    shlex.split(store.sms_arguments)
+                    shlex.split(store.sms_arguments) +
+                    shlex.split(task_info)
                 )
                 task_args.append('uuid:%s' % task_uuid)
                 result = store.client._execute_safe(*task_args)
