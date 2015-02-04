@@ -23,6 +23,8 @@ var model = DS.Model.extend({
     editable: function(){
         if (this.get('status') === 'pending') {
             return true;
+        } else if (this.get('status') === 'waiting') {
+            return true;
         }
         return false;
     }.property('status'),
