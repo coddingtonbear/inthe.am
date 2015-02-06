@@ -43,6 +43,9 @@ if [ -z "$TRAVIS" ]; then
 else
     source $MAIN_DIR/scripts/vagrant/environment_variables.sh
     source ~/virtualenv/python2.7/bin/activate
+    if [ -d /home/travis/.config ]; then
+        chmod -R 777 /home/travis/.config
+    fi
 fi
 
 mkdir -p $MAIN_DIR/task_data
@@ -129,8 +132,4 @@ if [ -z "$TRAVIS" ]; then
 
     service taskd-celery restart
     service taskd restart
-else
-    if [ -d /home/travis/.config ]; then
-        chmod -R 777 /home/travis/.config
-    fi
 fi
