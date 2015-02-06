@@ -8,6 +8,7 @@ from django.utils.timezone import now
 
 from .models import (
     Announcement,
+    KanbanBoard,
     TaskAttachment,
     TaskStore,
     TaskStoreActivityLog,
@@ -224,3 +225,10 @@ class AnnouncementAdmin(admin.ModelAdmin):
     search_fields = ('title', 'category', )
 
 admin.site.register(Announcement, AnnouncementAdmin)
+
+
+class KanbanBoardAdmin(TaskStoreAdmin):
+    search_fields = ('name', 'uuid', ) + TaskStoreAdmin.search_fields
+    list_display = ('name', 'uuid', ) + TaskStoreAdmin.list_display
+
+admin.site.register(KanbanBoard, KanbanBoardAdmin)
