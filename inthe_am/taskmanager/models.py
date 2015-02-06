@@ -766,7 +766,7 @@ class Metadata(object):
 
 class KanbanBoard(TaskStore):
     name = models.CharField(max_length=255)
-    uuid = models.CharField(max_length=36, blank=True)
+    uuid = models.CharField(max_length=36, blank=True, db_index=True)
     column_names = models.TextField(default='Ready|Doing|Done')
 
     def save(self):
