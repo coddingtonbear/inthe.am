@@ -81,7 +81,12 @@ class TaskStore(models.Model):
         'certificate': 'private.certificate.pem',
     }
 
-    user = models.ForeignKey(User, related_name='task_stores')
+    user = models.ForeignKey(
+        User,
+        related_name='task_stores',
+        null=True,
+        blank=True,
+    )
     local_path = models.CharField(
         max_length=255,
         blank=True,
