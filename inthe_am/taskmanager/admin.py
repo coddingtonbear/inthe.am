@@ -201,7 +201,7 @@ class TaskStoreActivityLogAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     }
 
     def username(self, obj):
-        return obj.store.user.username
+        return obj.store.username
     username.short_description = 'Username'
 
 

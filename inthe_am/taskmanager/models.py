@@ -104,6 +104,10 @@ class TaskStore(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     @property
+    def username(self):
+        return self.user.username if self.user else 'taskstore%s' % self.pk
+
+    @property
     def version(self):
         return self.metadata.get('version', 0)
 
@@ -274,7 +278,7 @@ class TaskStore(models.Model):
         if not self.local_path:
             user_tasks = os.path.join(
                 settings.TASK_STORAGE_PATH,
-                self.user.username
+                self.username,
             )
             if not os.path.isdir(user_tasks):
                 os.mkdir(user_tasks)
@@ -481,7 +485,7 @@ class TaskStore(models.Model):
 
             logger.warning(
                 '%s just autoconfigured an account!',
-                self.user.username,
+                self.username,
             )
 
             # Remove any cached taskrc/taskw clients
@@ -500,7 +504,7 @@ class TaskStore(models.Model):
                 'add',
                 'user',
                 settings.TASKD_ORG,
-                self.user.username,
+                self.username,
             ]
             key_proc = subprocess.Popen(
                 command,
@@ -534,7 +538,7 @@ class TaskStore(models.Model):
             # Save these details to the taskrc
             taskd_credentials = '%s/%s/%s' % (
                 settings.TASKD_ORG,
-                self.user.username,
+                self.username,
                 taskd_user_key,
             )
             self.taskrc.update({
@@ -634,7 +638,7 @@ class TaskStore(models.Model):
 def get_attachment_path(instance, filename):
     return os.path.join(
         'attachments',
-        instance.store.user.username,
+        instance.store.username,
         instance.task_id,
         filename,
     )
@@ -758,6 +762,17 @@ class Metadata(object):
 
     def __str__(self):
         return self.__unicode__().encode('utf-8', 'REPLACE')
+
+
+class KanbanBoard(TaskStore):
+    name = models.CharField(max_length=255)
+    uuid = models.CharField(max_length=36, blank=True)
+    column_names = models.TextField(default='Ready|Doing|Done')
+
+    def save(self):
+        if not self.uuid:
+            self.uuid = str(uuid.uuid4())
+        super(KanbanBoard, self).save()
 
 
 class TaskRc(object):

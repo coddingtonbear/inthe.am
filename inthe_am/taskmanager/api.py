@@ -477,7 +477,7 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
             content_type='application/octet-stream'
         )
         response['Content-Disposition'] = 'attachment; filename="%s"' % (
-            "%s.taskdconfig" % store.user.username
+            "%s.taskdconfig" % store.username
         )
         return response
 
