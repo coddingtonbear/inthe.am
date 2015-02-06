@@ -780,6 +780,86 @@ class KanbanBoard(TaskStore):
         super(KanbanBoard, self).save()
 
 
+class KanbanMembershipManager(models.Manager):
+    def active(self):
+        return super(KanbanMembershipManager, self).get_queryset().filter(
+            valid=True,
+            accepted=True,
+        )
+
+    def pending(self):
+        return super(KanbanMembershipManager, self).get_queryset().filter(
+            valid=True,
+            accepted=False,
+        )
+
+    def owners_of(self, kanban_board):
+        return self.active().filter(
+            role=KanbanMembership.OWNER,
+            kanban_board=kanban_board,
+        )
+
+    def members_of(self, kanban_board):
+        return self.active().filter(
+            role=KanbanMembership.MEMBER,
+            kanban_board=kanban_board,
+        )
+
+
+class KanbanMembership(models.Model):
+    OWNER = 'owner'
+    MEMBER = 'member'
+
+    ROLES = (
+        (OWNER, 'Owner', ),
+        (MEMBER, 'Member', ),
+    )
+
+    uuid = models.CharField(
+        max_length=36,
+        db_index=True,
+    )
+    kanban_board = models.ForeignKey(
+        KanbanBoard,
+        related_name='memberships',
+        db_index=True,
+    )
+    sender = models.ForeignKey(
+        User,
+        related_name='sent_memberships',
+    )
+    invitee_email = models.EmailField(
+        max_length=254,
+        db_index=True,
+    )
+    role = models.CharField(
+        max_length=255,
+        choices=ROLES,
+        default=MEMBER
+    )
+    accepted = models.BooleanField(default=False)
+    valid = models.BooleanField(default=True)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now_add=True)
+
+    def reject(self):
+        self.valid = False
+        self.accepted = False
+
+    def accept(self):
+        self.valid = True
+        self.accepted = True
+
+    @property
+    def invitee(self):
+        User.objects.get(email=self.invitee_email)
+
+    def save(self):
+        if not self.uuid:
+            self.uuid = str(uuid.uuid4())
+
+
 class TaskRc(object):
     def __init__(self, path, read_only=False):
         self.path = path
