@@ -64,11 +64,13 @@ class KanbanBoard(TaskStore):
                     'intheamkanbantaskuuid': task_id
                 })
                 if existing_tasks:
-                    existing_task_uuid = existing_tasks[0]['uuid']
+                    existing_task = existing_tasks[0]
+                    existing_task_uuid = existing_task['uuid']
                     # Update the kanban task's UUID to match the user's
                     # task; this will make us overwrite
-                    kanban_task['uuid'] = existing_task_uuid
-                    assignee_store.client.task_update(kanban_task)
+                    if existing_task['modified'] != kanban_task['modified']:
+                        kanban_task['uuid'] = existing_task_uuid
+                        assignee_store.client.task_update(kanban_task)
                 else:
                     # Create a new task in the user's board
                     assignee_store.client.task_add(**kanban_task)
