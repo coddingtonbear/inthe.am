@@ -13,7 +13,7 @@ from tastypie.models import ApiKey
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 
@@ -28,6 +28,8 @@ from .taskstoreactivitylog import TaskStoreActivityLog
 
 
 logger = logging.getLogger(__name__)
+
+HEX_COLOR_RE = re.compile(r'^#(?:[0-9a-fA-F]{3}){1,2}$')
 
 
 class TaskStore(models.Model):
@@ -232,6 +234,84 @@ class TaskStore(models.Model):
                     else:
                         errored[key] = (value, message)
         return applied, errored
+
+    def get_kanban_board_for_task(self, task):
+        from .kanbanboard import KanbanBoard
+
+        board = KanbanBoard.objects.get(
+            uuid=task['intheamkanbanboarduuid']
+        )
+        if not board.user_is_member(self.user):
+            raise PermissionDenied()
+        return board
+
+    def sync_related(self):
+        tasks = self.client.filter_tasks({
+            'intheamkanbanboarduuid.not': '',
+        })
+        if not tasks:
+            return
+        with git_checkpoint(
+            self, "Syncing tasks to kanban boards", sync=True
+        ):
+            for task in tasks:
+                try:
+                    board = self.get_kanban_board_for_task(task)
+                except (ObjectDoesNotExist, PermissionDenied, ):
+                    self.log_error(
+                        "Kanban board %s could not be updated either because "
+                        "it does not exist, or you are not a member.",
+                        task['intheamkanbanboarduuid'],
+                    )
+                    task['intheamkanbanboarduuid'] = ''
+                    self.client.task_update(task)
+                    continue
+
+                if 'intheamkanbancolumn' in task:
+                    if task['intheamkanbancolumn'] not in board.get_columns():
+                        self.log_error(
+                            "Task %s specified an invalid column %s; "
+                            "resetting to default (backlog).",
+                            task['uuid'],
+                            task['intheamkanbancolumn'],
+                        )
+                        task['intheamkanbancolumn'] = ''
+                        self.client.task_update(task)
+
+                if 'intheamkanbancolor' in task:
+                    if not HEX_COLOR_RE.match(task['intheamkanbancolor']):
+                        self.log_error(
+                            "Task %s specified an invalid color %s; "
+                            "resetting.",
+                            task['uuid'],
+                            task['intheamkanbancolor'],
+                        )
+                        task['intheamkanbancolor'] = ''
+                        self.client.task_update(task)
+
+                # We must wait until after we've found the board; we might've
+                # needed to update the task above.
+                del task['uuid']
+
+                with git_checkpoint(
+                    board, "Syncing task to Kanban Board", sync=True
+                ):
+                    existing_tasks = board.client.filter_tasks({
+                        'uuid': task['intheamkanbantaskuuid'],
+                    })
+                    if existing_tasks:
+                        existing_task = existing_tasks[0]
+                        # Update the kanban task's UUID to match the user's
+                        # task; this will make us overwrite
+                        if existing_task['modified'] != task['modified']:
+                            task['uuid'] = existing_task['uuid']
+                            board.client.task_update(task)
+                    else:
+                        task['intheamkanbancolumn'] = ''
+                        board.client.task_add(**task)
+
+    def post_checkpoint_hook(self, *args, **kwargs):
+        self.sync_related()
 
     def save(self, *args, **kwargs):
         # Create the user directory
