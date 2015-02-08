@@ -332,6 +332,8 @@ TASKD_SIGNING_TEMPLATE = '/var/taskd/cert.template'
 TASKD_SERVER = '127.0.0.1:53589'
 TASKD_ORG = 'testing'
 
+ANNOUNCEMENTS_CHANNEL = '__general__'
+
 # Streaming ticket updates enabled?
 STREAMING_UPDATES_ENABLED = True
 

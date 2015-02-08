@@ -1,7 +1,6 @@
 import datetime
 import json
 import logging
-import os
 import time
 
 from django_sse.views import BaseSseView
@@ -13,8 +12,13 @@ from django.core.exceptions import SuspiciousOperation
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
 
-from .models import TaskStore, TaskStoreActivityLog
-from .lock import get_lock_name_for_store, redis_lock, LockTimeout
+from .models import KanbanBoard, TaskStore, TaskStoreActivityLog
+from .lock import (
+    get_announcements_subscription,
+    get_lock_name_for_store,
+    redis_lock,
+    LockTimeout
+)
 
 
 logger = logging.getLogger(__name__)
@@ -25,11 +29,18 @@ class Status(BaseSseView):
         if not cached or getattr(self, '_store', None) is None:
             if not self.request.user.is_authenticated():
                 return None
-            try:
-                store = TaskStore.objects.get(user=self.request.user)
+
+            if 'uuid' in self.kwargs:
+                store = KanbanBoard.objects.get(uuid=self.kwargs['uuid'])
+                if not store.user_is_member(self.request.user):
+                    return None
                 setattr(self, '_store', store)
-            except TaskStore.DoesNotExist:
-                return None
+            else:
+                try:
+                    store = TaskStore.objects.get(user=self.request.user)
+                    setattr(self, '_store', store)
+                except TaskStore.DoesNotExist:
+                    return None
 
         return self._store
 
@@ -55,13 +66,6 @@ class Status(BaseSseView):
 
         return head
 
-    def get_taskd_mtime(self, store):
-        try:
-            taskd_mtime = os.path.getmtime(store.taskd_data_path)
-        except OSError:
-            taskd_mtime = 0
-        return taskd_mtime
-
     def beat_heart(self, store):
         heartbeat_interval = datetime.timedelta(
             seconds=settings.EVENT_STREAM_HEARTBEAT_INTERVAL
@@ -83,9 +87,19 @@ class Status(BaseSseView):
             )
             self._last_heartbeat = datetime.datetime.now()
 
+    def process_messages(self, subscription):
+        envelope = subscription.get_message()
+        while envelope:
+            if envelope['type'] != 'message':
+                continue
+            # No message types are currently handled.
+            envelope = subscription.get_message()
+
     def iterator(self):
         last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
         store = self.get_store()
+        subscription = get_announcements_subscription(store)
+
         if not store:
             return
         kwargs = {
@@ -96,8 +110,6 @@ class Status(BaseSseView):
         }
         store.sync(msg='Iterator initialization', **kwargs)
         created = time.time()
-        last_sync = time.time()
-        taskd_mtime = self.get_taskd_mtime(store)
         head = self.request.GET.get('head', store.repository.head())
         self.beat_heart(store)
         while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
@@ -118,24 +130,7 @@ class Status(BaseSseView):
             # See if our head has changed, and queue messages if so
             head = self.check_head(head)
 
-            if store.using_local_taskd:
-                new_mtime = self.get_taskd_mtime(store)
-                if (
-                    new_mtime != taskd_mtime
-                    or (
-                        (time.time() - last_sync)
-                        > settings.EVENT_STREAM_POLLING_INTERVAL
-                    )
-                ):
-                    taskd_mtime = new_mtime
-                    last_sync = time.time()
-                    store.sync(msg='Local mtime sync', **kwargs)
-            else:
-                if time.time() - last_sync > (
-                    settings.EVENT_STREAM_POLLING_INTERVAL
-                ):
-                    last_sync = time.time()
-                    store.sync(msg='Remote polling sync', **kwargs)
+            self.process_messages(subscription)
 
             store = self.get_store(cached=False)
 

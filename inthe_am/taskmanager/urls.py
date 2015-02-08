@@ -34,7 +34,7 @@ urlpatterns = patterns(
     url('^api/v1/kanban/(?P<uuid>[^/]+)/', include(KanbanTaskResource().urls)),
     url('^api/v1/task/feed/(?P<uuid>[^/]+)/', TaskFeed(), name='feed'),
     url('^api/', include(api.urls)),
-    url('^status/', Status.as_view(), name='status'),
+    url('^status/(?P<uuid>[^/]+)/', Status.as_view(), name='status'),
     url('^status/', Status.as_view(), name='status'),
     url('^', fallback),
 )
