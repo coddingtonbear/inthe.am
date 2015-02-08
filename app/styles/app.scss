@@ -60,6 +60,10 @@ label[for] {
   width: 100%;
   z-index: 1000000;
 
+  &.expanded {
+    background-color: #333;
+  }
+
   .top-bar-section {
     ul {
       height: auto !important;

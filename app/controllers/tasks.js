@@ -35,12 +35,12 @@ var controller = Ember.ArrayController.extend({
                     after();
                 }
             }.bind(this));
-        }, function(msg){
+        }.bind(this), function(msg){
             this.get('controllers.application').error_message(
                 `An error was encountered while ` +
                 `attempting to synchronize your task list: ${msg}`
             );
-        });
+        }.bind(this));
     },
     collectionObserver: function() {
         // If the collection has changed, and we're currently on the tasks

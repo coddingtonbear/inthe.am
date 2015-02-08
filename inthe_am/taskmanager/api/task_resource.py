@@ -221,7 +221,18 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
 
-        store.sync(init=False)
+        result = store.sync(async=False)
+        if not result:
+            return HttpResponse(
+                json.dumps({
+                    'error_message': (
+                        'Synchronization is currently disabled '
+                        'for your account.'
+                    )
+                }),
+                content_type='application/json',
+                status=406,
+            )
         return HttpResponse(
             json.dumps({
                 'message': 'OK',
