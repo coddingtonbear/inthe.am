@@ -35,20 +35,18 @@ class Command(RunserverCommand):
         return subprocess.call(command, env=env)
 
     def handle(self, *args, **kwargs):
-        print "Starting ember..."
         fnull = open(os.devnull, 'w')
 
         ember = threading.Thread(
             target=self.run_ember,
-            #kwargs={
-            #    'stdout': subprocess.PIPE,
-            #    'stderr': subprocess.STDOUT
-            #}
+            kwargs={
+                'stdout': fnull,
+                'stderr': subprocess.STDOUT
+            }
         )
         ember.daemon = True
         ember.start()
 
-        print "Waiting for ember server to be available..."
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         started = time.time()
         connected = False
@@ -61,8 +59,8 @@ class Command(RunserverCommand):
             time.sleep(1)
 
         if not connected:
+            print "Ember server did not start!"
             sys.exit(1)
-        print "Starting tests..."
 
         test_args = []
         if kwargs['wip']:
