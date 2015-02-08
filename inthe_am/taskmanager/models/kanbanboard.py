@@ -1,6 +1,6 @@
 import uuid
 
-from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 from .taskstore import TaskStore
@@ -19,41 +19,43 @@ class KanbanBoard(TaskStore):
         from .kanbanmembership import KanbanMembership
         return KanbanMembership.objects.user_is_member(self, user)
 
+    def get_task_store_by_email(self, email):
+        from .kanbanmembership import KanbanMembership
+
+        matching_assignee = KanbanMembership.objects.members_of(self).get(
+            member__email=email
+        )
+        return TaskStore.get_for_user(matching_assignee.member)
+
     def sync_outgoing(self):
-        kanban_assigned_tasks = self.store.filter_tasks({
+        kanban_assigned_tasks = self.client.filter_tasks({
             'intheamkanbanassignee.not': '',
         })
         for kanban_task in kanban_assigned_tasks:
             task_id = kanban_task['uuid']
             kanban_task['intheamkanbanboarduuid'] = uuid.UUID(self.uuid)
             kanban_task['intheamkanbantaskuuid'] = task_id
-            del kanban_task['uuid']
             assignee_email = kanban_task['intheamkanbanassignee']
 
             # Check if the assigned user exists:
             try:
-                assignee = User.objects.get(
-                    email=assignee_email
+                assignee_store = self.get_task_store_by_email(
+                    assignee_email
                 )
-            except User.DoesNotExist:
+            except ObjectDoesNotExist:
                 self.log_error(
-                    "User %s does not exist; clearing assignee.",
+                    "Task store for %s could not be found; clearing assignee.",
                     assignee_email,
                 )
                 kanban_task['intheamkanbanassignee'] = ''
-                self.store.task_update(kanban_task)
+                self.client.task_update(kanban_task)
                 continue
 
-            # Check if the assignee is a member
-            if not self.user_is_member(assignee):
-                self.log_error(
-                    'User %s is not a member of this kanban board.',
-                    assignee,
-                )
-                continue
+            # We must wait until after we've found an assignee; we might've
+            # needed to update the task above.
+            del kanban_task['uuid']
 
             # Find an existing task in the assignee's task list
-            assignee_store = TaskStore.get_for_user(assignee)
             existing_tasks = assignee_store.client.filter_tasks({
                 'intheamkanbantaskuuid': task_id
             })
