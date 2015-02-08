@@ -6,10 +6,10 @@ from django.conf import settings
 from django.conf.urls import include, patterns, url
 from django.http import HttpResponse
 
-from .api import (
-    UserResource, TaskResource, CompletedTaskResource,
-    ActivityLogResource
-)
+from .api.task_resource import TaskResource
+from .api.user_resource import UserResource
+from .api.completed_task_resource import CompletedTaskResource
+from .api.activity_log_resource import ActivityLogResource
 from .views import debug_login, Status, TaskFeed
 
 api = Api(api_name='v1')
