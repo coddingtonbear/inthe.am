@@ -210,6 +210,7 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
         return HttpResponseNotAllowed(request.method)
 
     @requires_task_store
+    @git_managed("Sync init", sync=False)
     def sync_init(self, request, store, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
