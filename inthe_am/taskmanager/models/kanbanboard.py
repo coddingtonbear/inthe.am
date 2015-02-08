@@ -3,6 +3,7 @@ import uuid
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
+from ..context_managers import git_checkpoint
 from .taskstore import TaskStore
 
 
@@ -55,19 +56,25 @@ class KanbanBoard(TaskStore):
             # needed to update the task above.
             del kanban_task['uuid']
 
-            # Find an existing task in the assignee's task list
-            existing_tasks = assignee_store.client.filter_tasks({
-                'intheamkanbantaskuuid': task_id
-            })
-            if existing_tasks:
-                existing_task_uuid = existing_tasks[0]['uuid']
-                # Update the kanban task's UUID to match the user's
-                # task; this will make us overwrite
-                kanban_task['uuid'] = existing_task_uuid
-                assignee_store.client.task_update(kanban_task)
-            else:
-                # Create a new task in the user's board
-                assignee_store.client.task_add(**kanban_task)
+            with git_checkpoint(
+                assignee_store, "Syncing task from Kanban Board", sync=True
+            ):
+                # Find an existing task in the assignee's task list
+                existing_tasks = assignee_store.client.filter_tasks({
+                    'intheamkanbantaskuuid': task_id
+                })
+                if existing_tasks:
+                    existing_task_uuid = existing_tasks[0]['uuid']
+                    # Update the kanban task's UUID to match the user's
+                    # task; this will make us overwrite
+                    kanban_task['uuid'] = existing_task_uuid
+                    assignee_store.client.task_update(kanban_task)
+                else:
+                    # Create a new task in the user's board
+                    assignee_store.client.task_add(**kanban_task)
+
+    def post_checkpoint_hook(self, *args, **kwargs):
+        self.sync_outgoing()
 
     def save(self, *args, **kwargs):
         if not self.uuid:
