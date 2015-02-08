@@ -159,4 +159,5 @@ class Command(BaseCommand):
                         "logger line %s.",
                         line,
                     )
-            time.sleep(0.1)
+            else:
+                time.sleep(0.1)
