@@ -54,8 +54,6 @@ class KanbanTaskResource(TaskResource):
         ]
 
     def get_task_store(self, request):
-        import ipdb
-        ipdb.set_trace()
         board = KanbanBoard.objects.get(
             uuid=self.BOARD_ID_RE.search(request.path).group('uuid')
         )
