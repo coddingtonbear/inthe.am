@@ -48,12 +48,19 @@ class Command(RunserverCommand):
         ember.start()
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        while True:
+        started = time.time()
+        connected = False
+        while time.time() < started + 60:
             result = s.connect_ex(('127.0.0.1', 8000, ))
             if result == 0:
                 s.close()
+                connected = True
                 break
             time.sleep(1)
+
+        if not connected:
+            print "Ember server did not start!"
+            sys.exit(1)
 
         test_args = []
         if kwargs['wip']:
