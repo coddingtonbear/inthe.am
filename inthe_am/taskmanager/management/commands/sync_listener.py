@@ -78,6 +78,8 @@ class Command(BaseCommand):
             if not message:
                 time.sleep(0.1)
                 continue
+            if message['type'] != 'pmessage':
+                continue
 
             try:
                 operation = json.loads(message['data'])
