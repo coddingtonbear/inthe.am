@@ -447,6 +447,10 @@ class TaskStore(models.Model):
             'tx.data'
         )
 
+    @property
+    def sync_uses_default_server(self):
+        return self.taskrc.get('taskd.server') == settings.TASKD_SERVER
+
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None
     ):
