@@ -43,6 +43,9 @@ if [ -z "$TRAVIS" ]; then
 else
     source $MAIN_DIR/scripts/vagrant/environment_variables.sh
     source ~/virtualenv/python2.7/bin/activate
+    if [ -d /home/travis/.config ]; then
+        chmod -R 777 /home/travis/.config
+    fi
 fi
 
 mkdir -p $MAIN_DIR/task_data
@@ -111,6 +114,7 @@ fi
 
 cd $MAIN_DIR
 npm install -g ember-cli bower
+npm install
 bower --config.interactive=false install --allow-root
 
 # Install requirements
@@ -129,6 +133,4 @@ if [ -z "$TRAVIS" ]; then
 
     service taskd-celery restart
     service taskd restart
-else
-    chmod -R 777 /home/travis/.config/
 fi
