@@ -1,7 +1,6 @@
 from functools import wraps
 
-from django.http import HttpResponse
-from tastypie.http import HttpUnauthorized
+from django.core.exceptions import PermissionDenied
 
 from . import models
 from .context_managers import git_checkpoint
@@ -13,7 +12,7 @@ def process_authentication(required=True):
         def wrapper(self, request, *args, **kwargs):
             self._meta.authentication.is_authenticated(request)
             if required and not request.user.is_authenticated():
-                return HttpUnauthorized()
+                raise PermissionDenied()
             return f(self, request, *args, **kwargs)
         return wrapper
     return authenticate
@@ -35,9 +34,9 @@ def requires_task_store(f):
         self._meta.authentication.is_authenticated(request)
 
         if not request.user.is_authenticated():
-            return HttpResponse('Unauthorized', status=401)
+            raise PermissionDenied()
 
-        store = models.TaskStore.get_for_user(request.user)
+        store = self.get_task_store(request)
         kwargs['store'] = store
         result = f(self, *args, **kwargs)
         return result
@@ -55,7 +54,7 @@ def git_managed(message, sync=False, gc=True):
                 user = kwargs['bundle'].request.user
 
             if not user.is_authenticated():
-                return HttpResponse('Unauthorized', status=401)
+                raise PermissionDenied()
 
             store = models.TaskStore.get_for_user(user)
             kwargs['store'] = store

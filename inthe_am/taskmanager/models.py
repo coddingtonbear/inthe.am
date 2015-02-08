@@ -304,7 +304,7 @@ class TaskStore(models.Model):
         super(TaskStore, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return 'Tasks for %s' % self.user
+        return 'Tasks for %s' % self.username
 
     #  Git-related methods
 
@@ -774,10 +774,16 @@ class KanbanBoard(TaskStore):
     uuid = models.CharField(max_length=36, blank=True, db_index=True)
     column_names = models.TextField(default='Ready|Doing|Done')
 
-    def save(self):
+    def user_is_owner(self, user):
+        return KanbanMembership.objects.user_is_owner(self, user)
+
+    def user_is_member(self, user):
+        return KanbanMembership.objects.user_is_member(self, user)
+
+    def save(self, *args, **kwargs):
         if not self.uuid:
             self.uuid = str(uuid.uuid4())
-        super(KanbanBoard, self).save()
+        super(KanbanBoard, self).save(*args, **kwargs)
 
 
 class KanbanMembershipManager(models.Manager):
@@ -801,9 +807,18 @@ class KanbanMembershipManager(models.Manager):
 
     def members_of(self, kanban_board):
         return self.active().filter(
-            role=KanbanMembership.MEMBER,
-            kanban_board=kanban_board,
+            kanban_board=kanban_board
         )
+
+    def user_is_member(self, kanban_board, user):
+        return self.members_of(kanban_board).filter(
+            member=user
+        ).exists()
+
+    def user_is_owner(self, kanban_board, user):
+        return self.owners_of(kanban_board).filter(
+            member=user
+        ).exists()
 
 
 class KanbanMembership(models.Model):
@@ -828,6 +843,13 @@ class KanbanMembership(models.Model):
         User,
         related_name='sent_memberships',
     )
+    member = models.ForeignKey(
+        User,
+        related_name='kanban_memberships',
+        null=True,
+        blank=True,
+        db_index=True,
+    )
     invitee_email = models.EmailField(
         max_length=254,
         db_index=True,
@@ -843,6 +865,8 @@ class KanbanMembership(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)
 
+    objects = KanbanMembershipManager()
+
     def reject(self):
         self.valid = False
         self.accepted = False
@@ -855,9 +879,30 @@ class KanbanMembership(models.Model):
     def invitee(self):
         User.objects.get(email=self.invitee_email)
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if not self.uuid:
             self.uuid = str(uuid.uuid4())
+        super(KanbanMembership, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        if self.valid and self.accepted:
+            return "%s level membership to %s by %s" % (
+                self.role,
+                self.kanban_board,
+                self.member,
+            )
+        elif self.valid and not self.accepted:
+            return "(Pending Invitation) %s level membership to %s by %s" % (
+                self.role,
+                self.kanban_board,
+                self.member,
+            )
+        elif not self.valid:
+            return "(Rejected Invitation) %s level membership to %s by %s" % (
+                self.role,
+                self.kanban_board,
+                self.member,
+            )
 
 
 class TaskRc(object):

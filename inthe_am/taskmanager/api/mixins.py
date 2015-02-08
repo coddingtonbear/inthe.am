@@ -1,5 +1,6 @@
 import json
 
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http import HttpResponse
 
 from ..lock import LockTimeout
@@ -30,7 +31,7 @@ class LockTimeoutMixin(object):
                 content_type='application/json',
                 status=400,
             )
-        if isinstance(e, LockTimeout):
+        elif isinstance(e, LockTimeout):
             message = (
                 'Your task list is currently in use; please try again later.'
             )
@@ -44,5 +45,25 @@ class LockTimeoutMixin(object):
                 ),
                 content_type='application/json',
                 status=409,
+            )
+        elif isinstance(e, PermissionDenied):
+            return HttpResponse(
+                json.dumps(
+                    {
+                        'error_message': 'Unauthorized',
+                    }
+                ),
+                content_type='application/json',
+                status=401,
+            )
+        elif isinstance(e, ObjectDoesNotExist):
+            return HttpResponse(
+                json.dumps(
+                    {
+                        'error_message': 'Resource Not Found',
+                    }
+                ),
+                content_type='application/json',
+                status=404,
             )
         return super(LockTimeoutMixin, self)._handle_500(request, e)
