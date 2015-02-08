@@ -52,7 +52,9 @@ def get_published_properties(user, store, meta):
             store.taskrc.get('taskd.server') == settings.TASKD_SERVER
         ),
         'streaming_enabled': (
-            store.streaming_enabled and settings.STREAMING_UPDATES_ENABLED
+            store.streaming_enabled and
+            settings.STREAMING_UPDATES_ENABLED and
+            store.taskrc.get('taskd.server') == settings.TASKD_SERVER
         ),
         'taskd_files': store.taskd_certificate_status,
         'twilio_auth_token': store.twilio_auth_token,
