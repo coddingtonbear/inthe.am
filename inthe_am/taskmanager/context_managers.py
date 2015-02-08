@@ -106,6 +106,7 @@ def git_checkpoint(
                 )
             raise
     if hasattr(store, 'post_checkpoint_hook'):
-        store.post_checkpoint_hook()
+        changes = store.repository.head() != pre_work_sha
+        store.post_checkpoint_hook(changes=changes)
     if sync:
         store.sync()

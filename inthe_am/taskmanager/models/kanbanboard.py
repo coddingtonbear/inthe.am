@@ -39,7 +39,7 @@ class KanbanBoard(TaskStore):
         )
         return TaskStore.get_for_user(matching_assignee.member)
 
-    def sync_related(self):
+    def sync_related(self, *args, **kwargs):
         kanban_assigned_tasks = self.client.filter_tasks({
             'intheamkanbanassignee.not': '',
         })

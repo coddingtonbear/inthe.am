@@ -245,7 +245,7 @@ class TaskStore(models.Model):
             raise PermissionDenied()
         return board
 
-    def sync_related(self):
+    def sync_related(self, *args, **kwargs):
         tasks = self.client.filter_tasks({
             'intheamkanbanboarduuid.not': '',
         })
@@ -310,8 +310,9 @@ class TaskStore(models.Model):
                         task['intheamkanbancolumn'] = ''
                         board.client.task_add(**task)
 
-    def post_checkpoint_hook(self, *args, **kwargs):
-        self.sync_related()
+    def post_checkpoint_hook(self, changes=False, *args, **kwargs):
+        if changes:
+            self.sync_related(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         # Create the user directory
