@@ -58,6 +58,7 @@ var controller = Ember.Controller.extend({
         refresh: '/api/v1/task/refresh/',
         clear_lock: '/api/v1/task/lock/',
         sync_init: '/api/v1/task/sync-init/',
+        sync: '/api/v1/task/sync/',
         status_feed: '/status/',
         feed_url: null,
         sms_url: null,

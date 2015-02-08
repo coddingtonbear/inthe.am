@@ -118,6 +118,13 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 name='refresh_tasks',
             ),
             url(
+                r"^(?P<resource_name>%s)/sync/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('sync_immediately'),
+                name='sync_immediately',
+            ),
+            url(
                 r"^(?P<resource_name>%s)/sync-init/?$" % (
                     self._meta.resource_name
                 ),
@@ -208,6 +215,19 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 status=404
             )
         return HttpResponseNotAllowed(request.method)
+
+    @requires_task_store
+    def sync_immediately(self, request, store, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(request.method)
+
+        store.sync(init=False)
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
 
     @requires_task_store
     @git_managed("Sync init", sync=False)
