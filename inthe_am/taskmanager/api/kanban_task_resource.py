@@ -14,9 +14,8 @@ from ..decorators import (
     process_authentication,
     requires_task_store
 )
-from .task_resource import TaskResource
-
 from .kanban_membership_resource import KanbanMembershipResource
+from .task_resource import TaskResource
 
 
 class KanbanTaskResource(TaskResource):
