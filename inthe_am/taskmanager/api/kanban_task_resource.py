@@ -10,7 +10,10 @@ from django.forms import EmailField, ValidationError
 from django.http import HttpResponse, HttpResponseNotAllowed
 
 from ..models import KanbanBoard, KanbanMembership
-from ..decorators import requires_task_store
+from ..decorators import (
+    process_authentication,
+    requires_task_store
+)
 from .task_resource import TaskResource
 
 from .kanban_membership_resource import KanbanMembershipResource
@@ -27,6 +30,11 @@ class KanbanTaskResource(TaskResource):
                 r"^members/invite/?$",
                 self.wrap_view('members_invite'),
                 name='kanban_members_invite',
+            ),
+            url(
+                r"^members/respond/?$",
+                self.wrap_view('members_respond'),
+                name='kanban_members_respond',
             ),
             url(
                 r"^members/(?P<member_uuid>[\w\d_.-]+)/?$",
@@ -80,7 +88,6 @@ class KanbanTaskResource(TaskResource):
 
     @requires_task_store
     def members_list(self, request, store, **kwargs):
-        store = self.get_task_store(request)
         resource = KanbanMembershipResource(store)
 
         if request.method == 'GET':
@@ -90,7 +97,6 @@ class KanbanTaskResource(TaskResource):
 
     @requires_task_store
     def members_detail(self, request, store, **kwargs):
-        store = self.get_task_store(request)
         resource = KanbanMembershipResource(store)
 
         if request.method == 'DELETE':
@@ -111,8 +117,6 @@ class KanbanTaskResource(TaskResource):
 
     @requires_task_store
     def members_invite(self, request, store, **kwargs):
-        store = self.get_task_store(request)
-
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
 
@@ -148,6 +152,45 @@ class KanbanTaskResource(TaskResource):
                 'message': 'Membership sent; pending acceptance.'
             }),
             status=200,
+        )
+
+    @process_authentication
+    def members_respond(self, request, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(request.method)
+
+        invitation_id = request.POST.get('uuid')
+        accepted = bool(int(request.POST.get('accepted', 0)))
+
+        try:
+            membership = KanbanMembership.objects.get(
+                member=None,
+                uuid=invitation_id,
+            )
+        except:
+            return HttpResponse(
+                json.dumps({
+                    'error_message': (
+                        'The invitation ID you specified is invalid.'
+                    )
+                }),
+                status=400,
+            )
+
+        membership.accepted = accepted
+        if not accepted:
+            membership.valid = False
+        membership.save()
+
+        return HttpResponse(
+            json.dumps({
+                'message': (
+                    'Invitation accepted'
+                    if accepted
+                    else 'Invitation rejected'
+                )
+            }),
+            status=200
         )
 
     def get_task_store(self, request):
