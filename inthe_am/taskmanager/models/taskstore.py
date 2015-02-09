@@ -235,6 +235,13 @@ class TaskStore(models.Model):
                         errored[key] = (value, message)
         return applied, errored
 
+    def get_kanban_memberships(self):
+        from .kanbanmembership import KanbanMembership
+
+        return KanbanMembership.objects.active().filter(
+            member=self.user
+        )
+
     def get_kanban_board_for_task(self, task):
         from .kanbanboard import KanbanBoard
 

@@ -99,9 +99,9 @@ class KanbanTaskResource(TaskResource):
         resource = KanbanMembershipResource(store)
 
         if request.method == 'DELETE':
-            record = store.kanban_memberships.objects.get(
-                uuid=kwargs['uuid'],
-                kanban_baord=store,
+            record = store.memberships.get(
+                uuid=kwargs['member_uuid'],
+                kanban_board=store,
             )
             if not (
                 record.member == request.user or

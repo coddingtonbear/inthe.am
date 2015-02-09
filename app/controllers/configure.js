@@ -330,6 +330,34 @@ var controller = Ember.Controller.extend({
                 }, 3000);
             }.bind(this));
         },
+        leave_kanban_board: function(board) {
+            var name = board[0];
+            var url = board[1];
+            var result = confirm(
+                `Are you sure you would like to leave the ${name} ` +
+                `Kanban board?`
+            );
+            if(!result) {
+                return;
+            }
+
+            return this.ajaxRequest({
+                url: url,
+                method: 'DELETE',
+            }).then(function(){
+                this.success_message(
+                    `You have now left the Kanban board ${name}.`
+                );
+                setTimeout(function(){
+                    window.location.reload();
+                }, 3000);
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `attempting to leave the Kanban board ${name}`
+                );
+            }.bind(this));
+        },
         clear_task_data: function() {
             var url    = this.get('controllers.application').urls.clear_task_data;
 
