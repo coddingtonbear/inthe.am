@@ -4,7 +4,7 @@ from tastypie.api import Api
 
 from django.conf import settings
 from django.conf.urls import include, patterns, url
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 
 from .api.task_resource import TaskResource
 from .api.user_resource import UserResource
@@ -29,8 +29,14 @@ def fallback(request):
     with open(index_template_path) as index:
         return HttpResponse(index.read())
 
+
+def view_does_not_exist(request):
+    return HttpResponseNotFound()
+
+
 urlpatterns = patterns(
     '',
+    url('^api/v1/kanban/?$', view_does_not_exist),
     url('^api/v1/kanban/(?P<uuid>[^/]+)/', include(KanbanTaskResource().urls)),
     url('^api/v1/task/feed/(?P<uuid>[^/]+)/', TaskFeed(), name='feed'),
     url('^api/', include(api.urls)),

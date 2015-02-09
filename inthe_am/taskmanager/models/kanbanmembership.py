@@ -1,7 +1,9 @@
 import uuid
 
 from django.contrib.auth.models import User
+from django.core.mail import EmailMultiAlternatives
 from django.db import models
+from django.template.loader import render_to_string
 
 
 class KanbanMembershipManager(models.Manager):
@@ -96,6 +98,36 @@ class KanbanMembership(models.Model):
     @property
     def invitee(self):
         User.objects.get(email=self.invitee_email)
+
+    @classmethod
+    def invite_user(cls, board, sender, email, role, send_email=True):
+        invitation = cls.create(
+            kanban_board=board,
+            sender=sender,
+            invitee_email=email,
+            role=role,
+        )
+        invitation.send_email()
+
+    def send_email(self):
+        ctx = {
+            'sender': self.sender,
+            'kanban_board': self.kanban_board,
+            'uuid': self.uuid,
+        }
+        text_content = render_to_string('kanban_invitation.txt', ctx)
+        html_content = render_to_string('kanban_invitation.html', ctx)
+        msg = EmailMultiAlternatives(
+            '%s would like you to join the %s Kanban Board' % (
+                self.sender.first_name
+                if self.sender.first_name
+                else 'Somebody',
+            ),
+            text_content,
+            [self.invitee_email],
+        )
+        msg.attach_alternative(html_content, 'text/html')
+        msg.send()
 
     def save(self, *args, **kwargs):
         if not self.uuid:
