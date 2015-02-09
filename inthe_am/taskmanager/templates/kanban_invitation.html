@@ -1,0 +1,21 @@
+<html>  
+    <head>
+    </head>
+    <body>
+        <p>Hello!</p>
+        <p>
+            {{sender.first_name}} {{sender.last_name}} would like to invite you to join
+            the Kanban Board "{{kanban_board.name}}" on <a href="http://inthe.am/">Inthe.AM</a>.  To
+            accept or reject this invitation, please proceed to the following URL:
+        </p>
+        <p>
+            <a href="http://inthe.am/kanban/invitation/?uuid={{uuid}}">
+                http://inthe.am/kanban/invitation/?uuid={{uuid}}
+            </a>
+        </p>
+        <p>
+            If you have any questions, you can reach {{sender.first_name}} {{sender.last_name}}
+            at {{sender.email}}.
+        </p>
+    </body>
+</html>
