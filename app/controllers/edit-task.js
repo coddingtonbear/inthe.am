@@ -17,7 +17,10 @@ var controller = Ember.ObjectController.extend({
             model.save().then(function(){
                 $('#new_task_form').foundation('reveal', 'close');
                 application.hideLoading();
-                self.transitionToRoute('task', model);
+                var currentPath = this.get('controllers.application').getHandlerPath();
+                if (currentPath !== 'application.kanban-board') {
+                    self.transitionToRoute('task', model);
+                }
             }, function(reason){
                 model.rollback();
                 model.reload();

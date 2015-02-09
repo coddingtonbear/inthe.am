@@ -192,6 +192,10 @@ class KanbanTaskResource(TaskResource):
             status=200
         )
 
+    def passes_filters(self, task, filters):
+        """ Filters are not currently supported for KanbanTask items."""
+        return True
+
     def get_task_store(self, request):
         board = KanbanBoard.objects.get(
             uuid=self.BOARD_ID_RE.search(request.path).group('uuid')
@@ -202,5 +206,5 @@ class KanbanTaskResource(TaskResource):
         return board
 
     class Meta(TaskResource.Meta):
-        resource_name = 'kanbantask'
+        resource_name = 'kanbanTask'
         authorization = authorization.Authorization()
