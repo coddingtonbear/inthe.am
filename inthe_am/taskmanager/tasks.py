@@ -7,6 +7,7 @@ import shlex
 import uuid
 
 from celery import shared_task
+from celery.signals import setup_logging
 from django.conf import settings
 from django.utils.timezone import now
 from django_mailbox.models import Message
@@ -15,6 +16,13 @@ from .context_managers import git_checkpoint
 
 
 logger = logging.getLogger(__name__)
+
+
+@setup_logging.connect
+def project_setup_logging(loglevel, logfile, format, colorize, **kwargs):
+    import logging.config
+    from django.conf import settings
+    logging.config.dictConfigClass(settings.LOGGING).configure()
 
 
 @shared_task(
