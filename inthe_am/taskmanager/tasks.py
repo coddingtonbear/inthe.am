@@ -36,7 +36,7 @@ def sync_repository(self, store_id, debounce_id=None):
             kwargs={'debounce_id': debounce_id},
         )
     except Exception as e:
-        if self.retries >= 2:
+        if self.request.retries >= 2:
             store.log_error(
                 "An unexpected error was encountered while synchronizing "
                 "your tasks with the taskd server. Synchronization has been "
