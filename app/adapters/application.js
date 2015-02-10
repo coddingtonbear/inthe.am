@@ -17,6 +17,8 @@ export default DS.DjangoTastypieAdapter.extend({
                 result = result + id + "/";
             }
             return result;
+        } else if(type === "kanbanBoard") {
+            return  "/api/v1/kanban/" + id + "/meta/";
         }
         return result;
     }

@@ -128,6 +128,14 @@ div.row {
     height: 100%;
     background-color: inherit;
 
+    &.full-width {
+      div.standalone-content {
+        max-width: none;
+        margin: 0 auto;
+        padding: 0px 25px 0px 25px;
+        position: relative;
+      }
+    }
     &.homepage {
       text-align: center;
 

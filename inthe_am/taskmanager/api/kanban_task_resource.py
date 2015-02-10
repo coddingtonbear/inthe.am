@@ -45,6 +45,11 @@ class KanbanTaskResource(TaskResource):
                 self.wrap_view('members_list'),
                 name='kanban_members_list',
             ),
+            url(
+                r"^meta/?$",
+                self.wrap_view('kanban_meta'),
+                name='kanban_meta',
+            ),
         ]
 
     def base_urls(self):
@@ -191,6 +196,59 @@ class KanbanTaskResource(TaskResource):
             }),
             status=200
         )
+
+    def meta(self, store):
+        return {
+            'id': store.uuid,
+            'name': store.name,
+            'columns': [
+                (
+                    [column_name, '']
+                    if ':' not in column_name
+                    else column_name.split(':')
+                )
+                for column_name
+                in store.column_names.split('|')
+            ]
+        }
+
+    def set_meta(self, store, value):
+        store.name = value['name']
+        store.columns = '|'.join([
+            (
+                ':'.join([column[0], column[1]])
+                if column[1]
+                else column[0]
+            )
+            for column
+            in value['columns']
+        ])
+        store.save()
+
+    @requires_task_store
+    def kanban_meta(self, request, store, **kwargs):
+        if request.method == 'GET':
+            return HttpResponse(
+                json.dumps(self.meta(store)),
+                content_type='application/json',
+            )
+        elif request.method == 'PUT':
+            self.set_meta(
+                store,
+                self.deserialize(
+                    request,
+                    request.body,
+                    format=request.META.get(
+                        'CONTENT_TYPE', 'application/json'
+                    )
+                )
+            )
+            return HttpResponse(
+                json.dumps(self.meta),
+                content_type='application/json',
+            )
+
+        return HttpResponseNotAllowed(request.method)
 
     def passes_filters(self, task, filters):
         """ Filters are not currently supported for KanbanTask items."""
