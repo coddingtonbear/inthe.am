@@ -21,7 +21,7 @@ var controller = Ember.ObjectController.extend({
                 if (currentPath !== 'application.kanban-board') {
                     self.transitionToRoute('task', model);
                 }
-            }, function(reason){
+            }.bind(this), function(reason){
                 model.rollback();
                 model.reload();
                 application.hideLoading();
@@ -31,7 +31,7 @@ var controller = Ember.ObjectController.extend({
                     "Activity Log for more information."
                 );
                 application.get('handleError').bind(application)(reason);
-            });
+            }.bind(this));
         }
     }
 });
