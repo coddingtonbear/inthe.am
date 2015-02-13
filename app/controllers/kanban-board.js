@@ -4,9 +4,6 @@ var KANBAN_ID_URL_RE = window.RegExp(".*kanban/([a-f0-9-]{36})");
 
 var controller = Ember.ObjectController.extend({
     needs: ['application'],
-    ajaxRequest: function(params) {
-        return this.get('controllers.application').ajaxRequest(params);
-    },
     getBoardId: function(){
         var matched = KANBAN_ID_URL_RE.exec(window.location.href);
         if (matched) {
@@ -19,8 +16,23 @@ var controller = Ember.ObjectController.extend({
     meta: function(){
         return this.store.find('kanban-board', this.getBoardId());
     }.property('model'),
-    tasks: function(){
+    tasks: function() {
         return this.store.find('kanban-task');
+    }.property('model'),
+    columns: function(){
+        if(! this.get('model')) {
+            return [];
+        }
+
+        var columns = [['Backlog', '']];
+        this.get('meta').then(function(metadata) {
+            metadata.get('columns').forEach(
+                function(col) {
+                    columns.pushObject(col);
+                }.bind(this)
+            );
+        });
+        return columns;
     }.property('model'),
 });
 
