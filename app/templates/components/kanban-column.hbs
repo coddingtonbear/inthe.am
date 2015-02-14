@@ -1,4 +1,10 @@
-<h3>{{ column }}</h3>
-{{#each task in columnTasks}}
-    {{task}}
-{{/each}}
+<h3>{{ columnName }}</h3>
+<div class='kanban-column' {{bind-attr data-task-status="columnStatus"}}>
+    {{#each task in columnTasks}}
+        <div {{bind-attr class=":kanban-task task.taskwarrior_class"}} {{bind-attr data-uuid='task.uuid'}}>
+            <div class='description'>
+                {{ task.description }}
+            </div>
+        </div>
+    {{/each}}
+</div>

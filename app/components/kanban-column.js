@@ -5,6 +5,9 @@ var component = Ember.Component.extend({
     columnName: function() {
         return this.column[0];
     }.property('column'),
+    columnStatus: function() {
+        return this.column[1];
+    }.property('column'),
     columnTasks: function() {
         var tasks = [];
         this.get('tasks').then(function(allTasks){
@@ -26,8 +29,6 @@ var component = Ember.Component.extend({
     taskMatchesColumn: function(task, columnName) {
         var allColumns = this.getKnownColumns();
         var taskColumn = task.get('intheamkanbancolumn');
-
-        debugger;
 
         if (
             allColumns.indexOf(taskColumn) === -1 ||
