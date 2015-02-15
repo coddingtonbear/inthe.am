@@ -515,10 +515,6 @@ var controller = Ember.Controller.extend({
             var taskController = this.get('controllers.task');
             taskController.send('add_annotation');
         },
-        edit_task: function() {
-            var taskController = this.get('controllers.task');
-            taskController.send('edit');
-        },
         complete_task: function() {
             var taskController = this.get('controllers.task');
             taskController.send('complete');

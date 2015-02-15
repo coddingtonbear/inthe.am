@@ -164,6 +164,11 @@ var component = Ember.Component.extend({
             )
         );
     },
+    actions: {
+        edit_task: function(task){
+            this.sendAction('edit_task', task);
+        }
+    }
 });
 
 export default component;

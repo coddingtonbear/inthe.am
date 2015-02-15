@@ -12,7 +12,7 @@ var route = Ember.Route.extend({
         }
     },
     actions: {
-        'switch_to_kanban': function(){
+        switch_to_kanban: function(){
             var memberships = this.controllerFor('application').user.kanban_memberships;
             if (memberships.length === 1) {
                 var kanbanBoardId = this.getKanbanBoardIdFromMembership(memberships[0][1]);
@@ -31,7 +31,24 @@ var route = Ember.Route.extend({
                 console.log("Error; either zero or more than one kanban board membership.");
             }
         },
-        'create_task': function() {
+        edit_task: function(task) {
+            task = task ? task : this.controllerFor('task').get('model');
+            this.controllerFor('create-task-modal').set('model', task);
+            var rendered = this.render(
+                'create-task-modal',
+                {
+                    'into': 'application',
+                    'outlet': 'modal',
+                }
+            );
+            Ember.run.next(null, function(){
+                $(document).foundation();
+                $("#new_task_form").foundation('reveal', 'open');
+                setTimeout(function(){$("input[name=description]").focus();}, 500);
+            });
+            return rendered;
+        },
+        create_task: function() {
             var currentPath = this.controllerFor('application').getHandlerPath();
             var record = null;
             if (currentPath === 'application.kanban-board') {

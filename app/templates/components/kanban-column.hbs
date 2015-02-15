@@ -5,6 +5,9 @@
             <div {{bind-attr class=":kanban-task task.taskwarrior_class"}} {{bind-attr data-uuid='task.uuid'}}>
                 <div class='description'>
                     ({{task.intheamkanbansortorder}}) {{ task.description }}
+                    <a href="#" {{action "edit_task" task}}>
+                        <i class="fa fa-pencil-square-o"></i>
+                    </a>
                 </div>
             </div>
         {{/each}}

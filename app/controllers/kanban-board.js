@@ -33,7 +33,7 @@ var controller = Ember.ObjectController.extend({
             );
         });
         return columns;
-    }.property('model'),
+    }.property('model')
 });
 
 export default controller;
