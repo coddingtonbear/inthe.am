@@ -304,6 +304,10 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
         'intheamkanbanassignee': {
             'type': 'string',
             'label': 'Inthe.AM Kanban Task Assignee',
+        },
+        'intheamkanbansortorder': {
+            'type': 'numeric',
+            'label': 'Inthe.AM Kanban Task Sort Order',
         }
     }
 }
