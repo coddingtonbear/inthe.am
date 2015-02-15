@@ -117,7 +117,7 @@ var controller = Ember.Controller.extend({
             error = new Error(error);
         }
         if(window.console && window.console.log) {
-            window.console.error(error);
+            window.console.error("Error encountered", error);
         }
         Raven.captureException(error);
     },
