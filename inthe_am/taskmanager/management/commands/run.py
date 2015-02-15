@@ -27,7 +27,6 @@ class Command(BaseCommand):
             [
                 'ember',
                 'server',
-                '--watcher', 'polling',
                 '--live-reload-port', '8009',
             ],
             **kwargs
