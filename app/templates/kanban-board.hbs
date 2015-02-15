@@ -1,5 +1,5 @@
 <div class="row full-width standalone">
-    <div class='standalone-content'>
+    <div id="kanban-board" class='standalone-content'>
         <h2>{{meta.name}}</h2>
         {{#each column in columns}}
             {{kanban-column tasks=tasks column=column allColumns=meta.columns}}

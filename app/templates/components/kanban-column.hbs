@@ -1,10 +1,12 @@
-<h3>{{ columnName }}</h3>
-<div class='kanban-column' {{bind-attr data-task-status="columnStatus"}}>
-    {{#each task in columnTasks}}
-        <div {{bind-attr class=":kanban-task task.taskwarrior_class"}} {{bind-attr data-uuid='task.uuid'}}>
-            <div class='description'>
-                {{ task.description }}
+<div class='kanban-column'>
+    <h3>{{ columnName }}</h3>
+    <div class='kanban-tasks' {{bind-attr data-task-status="columnStatus"}}>
+        {{#each task in columnTasks}}
+            <div {{bind-attr class=":kanban-task task.taskwarrior_class"}} {{bind-attr data-uuid='task.uuid'}}>
+                <div class='description'>
+                    {{ task.description }}
+                </div>
             </div>
-        </div>
-    {{/each}}
+        {{/each}}
+    </div>
 </div>

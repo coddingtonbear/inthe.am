@@ -263,6 +263,27 @@ div.row {
   }
 }
 
+#kanban-board {
+  width: 100%;
+  min-height: 500px;
+  overflow-x: scroll;
+  white-space: nowrap;
+
+  >.ember-view {
+    display: inline-block;
+    vertical-align: top;
+  }
+  .kanban-column {
+    width: 250px;
+    display: inline-block;
+    white-space: normal;
+
+    .kanban-tasks {
+      min-height: 400px;
+    }
+  }
+}
+
 #mobile-list {
   width: 100%;
   min-width: inherit;

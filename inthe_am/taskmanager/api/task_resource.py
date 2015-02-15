@@ -50,7 +50,7 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
         'blocks',
     ]
 
-    id = fields.IntegerField(attribute='id', null=True)
+    id = UUIDField(attribute='uuid', null=True)
     uuid = UUIDField(attribute='uuid')
     status = fields.CharField(attribute='status')
     urgency = fields.FloatField(attribute='urgency')
