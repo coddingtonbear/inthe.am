@@ -2,7 +2,17 @@
     <div id="kanban-board" class='standalone-content'>
         <h2>{{meta.name}}</h2>
         {{#each column in columns}}
-            {{kanban-column tasks=tasks column=column allColumns=meta.columns edit_task="edit_task"}}
+            {{
+                kanban-column
+
+                tasks=tasks
+                column=column
+                allColumns=meta.columns
+                currentUser=controllers.application.user.email
+
+                edit_task="edit_task"
+                assign_to_me="assign_to_me"
+            }}
         {{/each}}
     </div>
 </div>

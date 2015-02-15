@@ -4,6 +4,7 @@ var KANBAN_ID_URL_RE = window.RegExp(".*kanban/([a-f0-9-]{36})");
 
 var controller = Ember.ObjectController.extend({
     needs: ['application'],
+    ASSIGNEE: 'intheamkanbanassignee',
     getBoardId: function(){
         var matched = KANBAN_ID_URL_RE.exec(window.location.href);
         if (matched) {
@@ -33,7 +34,21 @@ var controller = Ember.ObjectController.extend({
             );
         });
         return columns;
-    }.property('model')
+    }.property('model'),
+    actions: {
+        assign_to_me: function(task) {
+            var email = this.get('controllers.application.user').email;
+            if(task.get(this.ASSIGNEE) !== email) {
+                task.set(
+                    this.ASSIGNEE,
+                    this.get('controllers.application.user').email
+                );
+            } else {
+                task.set(this.ASSIGNEE, '');
+            }
+            task.save();
+        }
+    }
 });
 
 export default controller;

@@ -167,6 +167,9 @@ var component = Ember.Component.extend({
     actions: {
         edit_task: function(task){
             this.sendAction('edit_task', task);
+        },
+        assign_to_me: function(task) {
+            this.sendAction('assign_to_me', task);
         }
     }
 });

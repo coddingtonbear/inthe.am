@@ -1,6 +1,14 @@
 @import "bower_components/foundation/scss/normalize.scss";
 @import "bower_components/foundation/scss/foundation.scss";
 
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
 html, body {
   height: 100%;
   overflow: hidden;
@@ -280,6 +288,33 @@ div.row {
 
     .kanban-tasks {
       min-height: 400px;
+
+      .kanban-task {
+        @include clearfix;
+
+        padding: 5px;
+        margin-bottom: 5px;
+        width: 250px;
+        box-shadow: 3px 3px 3px #aaa;
+        background-color: #ddd;
+
+        .actions {
+          width: 20px;
+          float: right;
+          margin-left: 10px;
+        }
+        .description {
+        }
+        .assignee {
+          font-size: 0.7em;
+          font-style: italic;
+        }
+        .due {
+          clear: both;
+          font-weight: 700;
+          text-align: right;
+        }
+      }
     }
   }
 }
