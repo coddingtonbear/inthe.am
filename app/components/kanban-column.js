@@ -61,7 +61,6 @@ var component = Ember.Component.extend({
     taskAdded: function(evt) {
         var destinationStatus = this.get('columnStatus');
         this.getTaskForItem(evt.item).then(function(item) {
-            debugger;
             item.set('intheamkanbancolumn', this.get('columnName'));
             if(destinationStatus) {
                 item.set('status', destinationStatus);

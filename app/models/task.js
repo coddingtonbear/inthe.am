@@ -15,6 +15,7 @@ var model = DS.Model.extend({
     'status': DS.attr('string'),
     urgency: DS.attr('number'),
     uuid: DS.attr('string'),
+    short_id: DS.attr('number'),
     depends: DS.attr(),
     blocks: DS.attr(),
     project: DS.attr('string'),

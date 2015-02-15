@@ -13,6 +13,10 @@ Each task has at least the following fields:
 | ``uuid``         | (**read-only**, **primary key**) **DEPRECATED** Please use ``id`` to    |
 |                  | fetch your task's ID number.                                            |
 +------------------+-------------------------------------------------------------------------+
+| ``short_id``     | (**read-only**, **primary key**) Returns the short ID of the task.      |
+|                  | Note that this number is **unstable** and will change as tasks are      |
+|                  | added/removed from the pending task list.                               |
++------------------+-------------------------------------------------------------------------+
 | ``resource_uri`` | (**read-only**) This is the URL at which this task can be retrieved     |
 |                  | again in the future. It will match the URL you used for fetching this   |
 |                  | task unless you fetched this task from a listing endpoint.              |
