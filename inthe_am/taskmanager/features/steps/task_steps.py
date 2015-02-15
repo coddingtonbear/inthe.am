@@ -44,7 +44,7 @@ def task_with_details(context, status):
     )
     task = tasks[0]
     for key, value in context.table.rows:
-        assert task[key] == get_json_value(value), (
+        assert task.get(key) == get_json_value(value), (
             "Task field %s's value is %s, not %s" % (
                 key,
                 task[key],

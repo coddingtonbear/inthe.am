@@ -2,6 +2,16 @@ from taskw.task import Task as TaskwTask
 
 
 class Task(object):
+    LIST_FIELDS = [
+        'annotations',
+        'blocks',
+        'depends',
+        'tags',
+    ]
+    AUTO_NULL = [
+        'priority'
+    ]
+
     def __init__(self, json=None, store=None):
         if json is None:
             taskw_task_kwargs = {}
@@ -39,11 +49,20 @@ class Task(object):
             return self.__dict__['_store']
         if name in self.__dict__:
             return self.__dict__[name]()
-        return self._json.get(name, None)
+        value = self._json.get(name, None)
+        if value is None and name in self.LIST_FIELDS:
+            value = []
+        if value is '' and name in self.AUTO_NULL:
+            value = None
+        return value
 
     def __setattr__(self, key, value):
         if key in TaskwTask.FIELDS and TaskwTask.FIELDS[key].read_only:
             return
+        if value is None and key in self.LIST_FIELDS:
+            value = []
+        if value == '' and key in self.AUTO_NULL:
+            value = None
         self.__dict__['_json'][key] = value
 
     def __str__(self):
