@@ -129,6 +129,11 @@ div.row {
     height: 100%;
     overflow: hidden;
     padding-top: 45px;
+
+    &.horizontal {
+      overflow-x: scroll;
+      white-space: nowrap;
+    }
   }
   &.standalone {
     overflow: auto;
@@ -274,8 +279,6 @@ div.row {
 #kanban-board {
   width: 100%;
   min-height: 500px;
-  overflow-x: scroll;
-  white-space: nowrap;
 
   >.ember-view {
     display: inline-block;
