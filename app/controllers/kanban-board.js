@@ -11,8 +11,11 @@ var controller = Ember.ObjectController.extend({
             return matched[1];
         }
     },
-    getBoardUrl: function(post="meta/"){
-        return '/api/v1/kanban/' + this.getBoardId() + '/' + post;
+    getBoardUrl: function(post="meta/", boardId=""){
+        if(!boardId) {
+            boardId = this.getBoardId();
+        }
+        return '/api/v1/kanban/' + boardId  + '/' + post;
     },
     meta: function(){
         return this.store.find('kanban-board', this.getBoardId());

@@ -10,10 +10,7 @@ from django.forms import EmailField, ValidationError
 from django.http import HttpResponse, HttpResponseNotAllowed
 
 from ..models import KanbanBoard, KanbanMembership
-from ..decorators import (
-    process_authentication,
-    requires_task_store
-)
+from ..decorators import requires_task_store
 from .kanban_membership_resource import KanbanMembershipResource
 from .task_resource import TaskResource
 
@@ -158,7 +155,6 @@ class KanbanTaskResource(TaskResource):
             status=200,
         )
 
-    @process_authentication
     def members_respond(self, request, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)

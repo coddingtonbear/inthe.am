@@ -38,6 +38,17 @@ class KanbanMembershipResource(LockTimeoutMixin, resources.ModelResource):
             }
         )
 
+    def dehydrate(self, bundle):
+        bundle.data['sender'] = {
+            'first_name': bundle.obj.sender.first_name,
+            'last_name': bundle.obj.sender.last_name,
+            'email': bundle.obj.sender.email,
+        }
+        bundle.data['board'] = {
+            'name': bundle.obj.kanban_board.name,
+        }
+        return bundle
+
     class Meta:
         resource_name = 'kanbanmembership'
         queryset = models.KanbanMembership.objects.all()
