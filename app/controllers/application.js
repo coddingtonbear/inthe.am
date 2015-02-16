@@ -168,8 +168,15 @@ var controller = Ember.Controller.extend({
                             }
                     );
                 }
+                this.handlePostLoginRedirects();
             } else {
                 Raven.setUser();
+                if(window.localStorage) {
+                    window.localStorage.setItem(
+                        'redirect_to',
+                        window.location.href
+                    );
+                }
                 this.transitionToRoute('about');
             }
             this.set('urls.feed_url', this.get('user').feed_url);
@@ -182,6 +189,24 @@ var controller = Ember.Controller.extend({
                 `attempting to gather user information: ${msg}`
             );
         }.bind(this));
+    },
+    handlePostLoginRedirects: function() {
+        if(window.localStorage) {
+            var url = window.localStorage.getItem('redirect_to');
+            if(url) {
+                Ember.run.later(
+                    this,
+                    function(){
+                        var url = window.localStorage.getItem('redirect_to');
+                        window.localStorage.removeItem('redirect_to');
+                        window.location.href = url;
+                    },
+                    5000
+                );
+                return true;
+            }
+        }
+        return false;
     },
     handleError: function(reason) {
         if (reason.status === 401) {
