@@ -256,6 +256,8 @@ var controller = Ember.Controller.extend({
             this.set('statusUpdaterLog', []);
             this.startEventStream();
             window.setInterval(this.checkStatusUpdater.bind(this), 500);
+        } else {
+            this.startPeriodicRefreshTimer();
         }
 
         // Set up left-right swipe for returning to the task list
@@ -321,6 +323,14 @@ var controller = Ember.Controller.extend({
             this.set('taskUpdateStreamConnected', true);
             this.set('statusUpdaterErrorred', false);
         }
+    },
+    startPeriodicRefreshTimer: function() {
+        setInterval(
+            function() {
+                this.send('refresh');
+            }.bind(this),
+            1000 * 5 * 60
+        );
     },
     startEventStream: function() {
         var head = this.get('statusUpdaterHead');
