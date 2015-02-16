@@ -307,7 +307,17 @@ div.row {
         margin-bottom: 5px;
         width: 250px;
         box-shadow: 3px 3px 3px #aaa;
-        background-color: #ddd;
+        background-color: #ffa;
+
+        div.actions {
+          a {
+            color: #777;
+
+            &:hover {
+              color: #008cba;
+            }
+          }
+        }
 
         .actions {
           width: 20px;
