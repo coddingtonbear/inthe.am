@@ -280,6 +280,14 @@ div.row {
   width: 100%;
   min-height: 500px;
 
+  /* Column titles */
+  h3 {
+    text-transform: uppercase;
+    font-size: 1em;
+    text-align: center;
+    border-bottom: 2px solid #000;
+  }
+
   >.ember-view {
     display: inline-block;
     vertical-align: top;
