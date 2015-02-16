@@ -12,6 +12,7 @@ var controller = Ember.Controller.extend({
                 },
             }).then(function(){
                 this.get('controllers.application').update_user_info();
+                this.get('controllers.application').handlePostLoginRedirects();
                 this.transitionToRoute('tasks');
             }.bind(this), function(msg){
                 this.get('controllers.application').error_message(

@@ -191,7 +191,7 @@ var controller = Ember.Controller.extend({
         }.bind(this));
     },
     handlePostLoginRedirects: function() {
-        if(window.localStorage) {
+        if(window.localStorage && this.get('user.tos_up_to_date')) {
             var url = window.localStorage.getItem('redirect_to');
             if(url) {
                 Ember.run.later(
