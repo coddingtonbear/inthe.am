@@ -201,28 +201,14 @@ class KanbanTaskResource(TaskResource):
         return {
             'id': store.uuid,
             'name': store.name,
-            'columns': [
-                (
-                    [column_name, '']
-                    if ':' not in column_name
-                    else column_name.split(':')
-                )
-                for column_name
-                in store.column_names.split('|')
-            ]
+            'columns': json.loads(store.columns),
         }
 
     def set_meta(self, store, value):
         store.name = value['name']
-        store.columns = '|'.join([
-            (
-                ':'.join([column[0], column[1]])
-                if column[1]
-                else column[0]
-            )
-            for column
-            in value['columns']
-        ])
+        store.columns = json.dumps(
+            value['columns']
+        )
         store.save()
 
     @requires_task_store

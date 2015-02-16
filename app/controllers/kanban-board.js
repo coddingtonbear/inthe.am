@@ -25,7 +25,7 @@ var controller = Ember.ObjectController.extend({
             return [];
         }
 
-        var columns = [['Backlog', '']];
+        var columns = [{name: 'Backlog'}];
         this.get('meta').then(function(metadata) {
             metadata.get('columns').forEach(
                 function(col) {

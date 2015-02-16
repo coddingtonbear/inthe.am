@@ -1,3 +1,4 @@
+import json
 import uuid
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -8,9 +9,21 @@ from .taskstore import TaskStore
 
 
 class KanbanBoard(TaskStore):
+    DEFAULT_COLUMNS = json.dumps([
+        {
+            'name': 'Ready',
+        },
+        {
+            'name': 'Doing',
+        },
+        {
+            'name': 'Done',
+        }
+    ])
+
     name = models.CharField(max_length=255)
     uuid = models.CharField(max_length=36, blank=True, db_index=True)
-    column_names = models.TextField(default='Ready|Doing|Done')
+    columns = models.TextField(default=DEFAULT_COLUMNS)
 
     def user_is_owner(self, user):
         from .kanbanmembership import KanbanMembership
@@ -19,17 +32,6 @@ class KanbanBoard(TaskStore):
     def user_is_member(self, user):
         from .kanbanmembership import KanbanMembership
         return KanbanMembership.objects.user_is_member(self, user)
-
-    def get_columns(self):
-        columns = {}
-
-        for column_name in self.column_names.split('|'):
-            column_status = ''
-            if ':' in column_name:
-                column_name, column_status = column_name.split(':')
-                columns[column_name] = column_status
-
-        return columns
 
     def get_task_store_by_email(self, email):
         from .kanbanmembership import KanbanMembership

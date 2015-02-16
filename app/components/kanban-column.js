@@ -5,10 +5,10 @@ var component = Ember.Component.extend({
     COLUMN: 'intheamkanbancolumn',
     componentName: 'Test',
     columnName: function() {
-        return this.column[0];
+        return this.column.name;
     }.property('column'),
     columnStatus: function() {
-        return this.column[1];
+        return this.column['status'];
     }.property('column'),
     columnTasks: function() {
         var tasks = Ember.ArrayProxy.create(
@@ -58,7 +58,7 @@ var component = Ember.Component.extend({
     getKnownColumns: function() {
         var columns = [];
         this.allColumns.forEach(function(col) {
-            columns.pushObject(col[0]);
+            columns.pushObject(col.name);
         }.bind(this));
         return columns;
     },
