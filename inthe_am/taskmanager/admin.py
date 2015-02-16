@@ -230,5 +230,6 @@ admin.site.register(Announcement, AnnouncementAdmin)
 class KanbanBoardAdmin(TaskStoreAdmin):
     search_fields = ('name', 'uuid', ) + TaskStoreAdmin.search_fields
     list_display = ('name', 'uuid', ) + TaskStoreAdmin.list_display
+    default_filters = {}
 
 admin.site.register(KanbanBoard, KanbanBoardAdmin)
