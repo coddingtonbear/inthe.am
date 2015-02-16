@@ -1,6 +1,9 @@
 <div class="row full-width standalone horizontal">
     <div id="kanban-board" class='standalone-content'>
         <h2>{{meta.name}}</h2>
+        <div class="actions">
+            <a href="#" {{action "invite_user"}}><i class="fa fa-user-plus">Invite User</i></a>
+        </div>
         {{#each column in columns}}
             {{
                 kanban-column

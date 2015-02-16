@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
@@ -101,7 +102,7 @@ class KanbanMembership(models.Model):
 
     @classmethod
     def invite_user(cls, board, sender, email, role, send_email=True):
-        invitation = cls.create(
+        invitation = cls.objects.create(
             kanban_board=board,
             sender=sender,
             invitee_email=email,
@@ -122,12 +123,14 @@ class KanbanMembership(models.Model):
                 self.sender.first_name
                 if self.sender.first_name
                 else 'Somebody',
+                self.kanban_board.name,
             ),
             text_content,
+            settings.SERVER_EMAIL,
             [self.invitee_email],
         )
         msg.attach_alternative(html_content, 'text/html')
-        msg.send()
+        msg.send(fail_silently=False)
 
     def save(self, *args, **kwargs):
         if not self.uuid:

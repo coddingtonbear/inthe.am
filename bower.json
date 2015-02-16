@@ -18,7 +18,7 @@
     "javascript-linkify": "latest",
     "growl": "https://github.com/ksylvest/jquery-growl.git#~1.2.4",
     "datetimepicker": "~2.4.1",
-    "fontawesome": "~4.2.0",
+    "fontawesome": "~4.3.0",
     "foundation": "^5.5.0",
     "ember-data-tastypie-adapter": "https://github.com/escalant3/ember-data-tastypie-adapter.git#2d426535d1fba5f0caa86980e6adab45f5c520ae",
     "raven-js": "~1.1.16",

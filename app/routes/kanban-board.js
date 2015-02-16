@@ -8,6 +8,23 @@ var route = Ember.Route.extend({
             application.hideLoading();
             return data;
         });
+    },
+    actions: {
+        invite_user: function() {
+            var rendered = this.render(
+                'invite-user-to-kanban-board',
+                {
+                    into: 'application',
+                    outlet: 'modal'
+                }
+            );
+            Ember.run.next(null, function(){
+                $(document).foundation();
+                $("#invite_user_form").foundation('reveal', 'open');
+                setTimeout(function(){$("input[name=description]").focus();}, 500);
+            });
+            return rendered;
+        }
     }
 });
 

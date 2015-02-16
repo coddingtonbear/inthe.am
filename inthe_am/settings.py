@@ -271,6 +271,8 @@ REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_DB = 2
 
+SERVER_EMAIL = 'no-reply@localhost'
+
 TASKWARRIOR_CONFIG_OVERRIDES = {
     'uda': {
         'intheamattachments': {
