@@ -283,6 +283,30 @@ var controller = Ember.Controller.extend({
             }
         }
     },
+    taskUpdateStreamStatusMessage: function(){
+        var state = this.get('_taskUpdateStreamStatus');
+        if (state === 'auto') {
+            return 'Streaming updates enabled';
+        } else if (state === 'reconnecting') {
+            return 'Reconnecting; click to refresh manually';
+        } else if (state === 'manual') {
+            return 'Refresh';
+        }
+    }.property('_taskUpdateStreamStatus'),
+    taskUpdateStreamClass: function(){
+        return this.get('_taskUpdateStreamStatus');
+    }.property('_taskUpdateStreamStatus'),
+    _taskUpdateStreamStatus: function(){
+        var enabled = this.get('taskUpdateStreamEnabled');
+        var connected = this.get('taskUpdateStreamConnected');
+        if(enabled && connected) {
+            return 'auto';
+        } else if (enabled && !connected) {
+            return 'reconnecting';
+        } else if (!enabled && !connected) {
+            return 'manual';
+        }
+    }.property('taskUpdateStreamConnected', 'taskUpdateStreamEnabled'),
     checkStatusUpdater: function() {
         var statusUpdater = this.get('statusUpdater');
         var connected = this.get('taskUpdateStreamConnected');
@@ -434,6 +458,10 @@ var controller = Ember.Controller.extend({
     },
     actions: {
         refresh: function(){
+            if (this.get('_taskUpdateStreamStatus') === 'auto') {
+                /* Do not do a manual refresh if we're in auto mode. */
+                return;
+            }
             this.showLoading();
             this.get('controllers.tasks').refresh(function(){
                 this.hideLoading();
