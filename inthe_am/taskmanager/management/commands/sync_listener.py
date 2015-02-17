@@ -42,10 +42,10 @@ class Command(BaseCommand):
     def operation_requires_sync(self, op):
         if (
             (
-                op['stored_count'] > 0 or op['merged_count'] > 0
+                op.get('stored_count', 0) > 0 or op.get('merged_count', 0) > 0
             )
             and (
-                op['ip'] not in self.local_ips
+                op.get('ip', '') not in self.local_ips
             )
         ):
             return True
