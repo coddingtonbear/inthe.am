@@ -7,8 +7,6 @@ import re
 import subprocess
 import select
 
-import redis
-
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -57,10 +55,6 @@ class Command(BaseCommand):
     def get_redis_connection(self):
         if not hasattr(self, '_redis'):
             self._redis = get_lock_redis()
-        try:
-            self._redis.ping()
-        except redis.ConnectionError:
-            self._redis = get_lock_redis()
 
         return self._redis
 
@@ -70,13 +64,13 @@ class Command(BaseCommand):
         return False
 
     def emit_operation_message(self, message):
-        redis = self.get_redis_connection()
+        r = self.get_redis_connection()
         serialized = json.dumps(
             message,
             cls=DjangoJSONEncoder
         )
         logger.debug("Emitting message: %s", serialized)
-        redis.publish(
+        r.publish(
             self._get_queue_name(message['username']),
             serialized
         )

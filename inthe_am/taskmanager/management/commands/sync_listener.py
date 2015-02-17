@@ -1,6 +1,5 @@
 import json
 import logging
-import redis
 import socket
 import time
 
@@ -16,11 +15,6 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     def get_redis_connection(self):
         if not hasattr(self, '_redis'):
-            self._redis = get_lock_redis()
-            self._subscription = None
-        try:
-            self._redis.ping()
-        except redis.ConnectionError:
             self._redis = get_lock_redis()
             self._subscription = None
 
