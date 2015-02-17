@@ -17,8 +17,11 @@ var controller = Ember.ObjectController.extend({
             model.save().then(function(){
                 $('#new_task_form').foundation('reveal', 'close');
                 application.hideLoading();
-                self.transitionToRoute('task', model);
-            }, function(reason){
+                var currentPath = this.get('controllers.application').getHandlerPath();
+                if (currentPath !== 'application.kanban-board') {
+                    self.transitionToRoute('task', model);
+                }
+            }.bind(this), function(reason){
                 model.rollback();
                 model.reload();
                 application.hideLoading();
@@ -28,7 +31,7 @@ var controller = Ember.ObjectController.extend({
                     "Activity Log for more information."
                 );
                 application.get('handleError').bind(application)(reason);
-            });
+            }.bind(this));
         }
     }
 });

@@ -6,13 +6,16 @@ Each task has at least the following fields:
 +------------------+-------------------------------------------------------------------------+
 | Field            | Description                                                             |
 +==================+=========================================================================+
-| ``id``           | The short ID number of a task. These are not stable and are generally   |
-|                  | used when using the Taskwarrior command-line client for ease-of entry;  |
-|                  | if a task is completed, all tasks may receive a new ID number.          |
-+------------------+-------------------------------------------------------------------------+
-| ``uuid``         | (**read-only**, **primary key**) The unique ID number of a task. These  |
+| ``id``           | (**read-only**, **primary key**) The unique ID number of a task. These  |
 |                  | are stable and can be used in situations where you may want to retrieve |
 |                  | a task after it has been completed.                                     |
++------------------+-------------------------------------------------------------------------+
+| ``uuid``         | (**read-only**, **primary key**) **DEPRECATED** Please use ``id`` to    |
+|                  | fetch your task's ID number.                                            |
++------------------+-------------------------------------------------------------------------+
+| ``short_id``     | (**read-only**, **primary key**) Returns the short ID of the task.      |
+|                  | Note that this number is **unstable** and will change as tasks are      |
+|                  | added/removed from the pending task list.                               |
 +------------------+-------------------------------------------------------------------------+
 | ``resource_uri`` | (**read-only**) This is the URL at which this task can be retrieved     |
 |                  | again in the future. It will match the URL you used for fetching this   |

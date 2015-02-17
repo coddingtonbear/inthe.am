@@ -1,0 +1,41 @@
+<form id="invite_user_form" class="reveal-modal" data-reveal>
+    <div class="row">
+        <div class="medium-12 columns">
+            <h2>Send Invitation</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="medium-12 columns">
+            <p>
+                Enter an e-mail address below to invite a user to join 
+                this Team Kanban Board.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="medium-8 columns">
+            <label>Email Address</label>
+            {{input name="email_address"}}
+        </div>
+        <div class="medium-4 columns">
+            <label>Role</label>
+            {{
+                view "select"
+                name="role"
+
+                value="member"
+                optionValuePath="content.value"
+                optionLabelPath="content.name"
+                content=roleOptions
+            }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="medium-12 columns">
+            <button class="secondary-button" {{action "invite"}}>
+                Invite
+            </button>
+        </div>
+    </div>
+    <a class="close-reveal-modal">&#215;</a>
+</form>

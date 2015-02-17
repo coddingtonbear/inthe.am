@@ -4,10 +4,9 @@ import string
 from urlparse import urljoin
 
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from splinter.browser import Browser
-
-from inthe_am.taskmanager import models
 
 
 TEST_COUNTERS = {
@@ -96,7 +95,7 @@ def after_step(context, step):
 
 
 def before_scenario(context, step):
-    models.User.objects.filter(
+    User.objects.filter(
         email=settings.TESTING_LOGIN_USER
     ).delete()
 

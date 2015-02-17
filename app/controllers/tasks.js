@@ -11,21 +11,35 @@ var controller = Ember.ArrayController.extend({
         description: [],
         tags: [],
     },
+    ajaxRequest: function(params) {
+        return this.get('controllers.application').ajaxRequest(params);
+    },
     refresh: function(after){
-        // Then, request a new list from the endpoint to make sure
-        // we gather any new tasks, too.
-        this.store.find('task').then(function(){
-            // Refresh each entry to see if it has been closed.
-            this.get('content').forEach(function(model){
-                try {
-                    model.reload();
-                } catch(e) {
-                    // pass
+        // First, request a synchronous sync
+        this.ajaxRequest({
+            url: this.get('controllers.application').urls.sync,
+            type: 'POST',
+        }).then(function(){
+            // Then, request a new list from the endpoint to make sure
+            // we gather any new tasks, too.
+            this.store.find('task').then(function(){
+                // Refresh each entry to see if it has been closed.
+                this.get('content').forEach(function(model){
+                    try {
+                        model.reload();
+                    } catch(e) {
+                        // pass
+                    }
+                }.bind(this));
+                if(after) {
+                    after();
                 }
             }.bind(this));
-            if(after) {
-                after();
-            }
+        }.bind(this), function(msg){
+            this.get('controllers.application').error_message(
+                `An error was encountered while ` +
+                `attempting to synchronize your task list: ${msg}`
+            );
         }.bind(this));
     },
     collectionObserver: function() {

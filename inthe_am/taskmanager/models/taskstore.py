@@ -1,78 +1,35 @@
-import json
 import hashlib
 import logging
 import os
 import re
+import subprocess
 import tempfile
 import time
 import uuid
 
-from django.conf import settings
-from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
-from django.template.loader import render_to_string
-from django.utils.timezone import now
 from dulwich.repo import Repo
-import subprocess32 as subprocess
 from tastypie.models import ApiKey
 
-from .context_managers import git_checkpoint
-from .taskwarrior_client import TaskwarriorClient
-from .taskstore_migrations import upgrade as upgrade_taskstore
-from .tasks import sync_repository
-from .lock import get_debounce_name_for_store, get_lock_redis
+from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.template.loader import render_to_string
+from django.utils.timezone import now
+
+from ..context_managers import git_checkpoint
+from ..lock import get_debounce_name_for_store, get_lock_redis
+from ..tasks import sync_repository
+from ..taskstore_migrations import upgrade as upgrade_taskstore
+from ..taskwarrior_client import TaskwarriorClient
+from .taskrc import TaskRc
+from .metadata import Metadata
+from .taskstoreactivitylog import TaskStoreActivityLog
 
 
 logger = logging.getLogger(__name__)
 
-
-class MultipleTaskFoldersFound(Exception):
-    pass
-
-
-class NoTaskFoldersFound(Exception):
-    pass
-
-
-class CurrentAnnouncementsManager(models.Manager):
-    def get_queryset(self):
-        return super(CurrentAnnouncementsManager, self).get_queryset().filter(
-            starts__lt=now(),
-            expires__gt=now()
-        )
-
-
-class Announcement(models.Model):
-    CATEGORY_ERROR = 'error'
-    CATEGORY_INFO = 'notice'
-    CATEGORY_WARNING = 'warning'
-    CATEGORIES = (
-        (CATEGORY_ERROR, 'Error', ),
-        (CATEGORY_INFO, 'Info', ),
-        (CATEGORY_WARNING, 'Warning', ),
-    )
-
-    title = models.CharField(max_length=200)
-    category = models.CharField(
-        max_length=10,
-        choices=CATEGORIES
-    )
-    duration = models.PositiveIntegerField(
-        default=60 * 5,
-        help_text="In seconds"
-    )
-    message = models.TextField()
-    starts = models.DateTimeField()
-    expires = models.DateTimeField()
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now_add=True)
-
-    objects = models.Manager()
-    current = CurrentAnnouncementsManager()
-
-    def __unicode__(self):
-        return self.title
+HEX_COLOR_RE = re.compile(r'^#(?:[0-9a-fA-F]{3}){1,2}$')
 
 
 class TaskStore(models.Model):
@@ -81,7 +38,12 @@ class TaskStore(models.Model):
         'certificate': 'private.certificate.pem',
     }
 
-    user = models.ForeignKey(User, related_name='task_stores')
+    user = models.ForeignKey(
+        User,
+        related_name='task_stores',
+        null=True,
+        blank=True,
+    )
     local_path = models.CharField(
         max_length=255,
         blank=True,
@@ -102,6 +64,10 @@ class TaskStore(models.Model):
     last_synced = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def username(self):
+        return self.user.username if self.user else 'taskstore%s' % self.pk
 
     @property
     def version(self):
@@ -165,7 +131,7 @@ class TaskStore(models.Model):
         )
 
     @classmethod
-    def get_for_user(self, user):
+    def get_for_user(cls, user):
         store, created = TaskStore.objects.get_or_create(
             user=user,
         )
@@ -269,12 +235,98 @@ class TaskStore(models.Model):
                         errored[key] = (value, message)
         return applied, errored
 
+    def get_kanban_memberships(self):
+        from .kanbanmembership import KanbanMembership
+
+        return KanbanMembership.objects.active().filter(
+            member=self.user
+        )
+
+    def get_kanban_board_for_task(self, task):
+        from .kanbanboard import KanbanBoard
+
+        board = KanbanBoard.objects.get(
+            uuid=task['intheamkanbanboarduuid']
+        )
+        if not board.user_is_member(self.user):
+            raise PermissionDenied()
+        return board
+
+    def sync_related(self, *args, **kwargs):
+        tasks = self.client.filter_tasks({
+            'intheamkanbanboarduuid.not': '',
+        })
+        if not tasks:
+            return
+        with git_checkpoint(
+            self, "Syncing tasks to kanban boards", sync=True
+        ):
+            for task in tasks:
+                try:
+                    board = self.get_kanban_board_for_task(task)
+                except (ObjectDoesNotExist, PermissionDenied, ):
+                    self.log_error(
+                        "Kanban board %s could not be updated either because "
+                        "it does not exist, or you are not a member.",
+                        task['intheamkanbanboarduuid'],
+                    )
+                    task['intheamkanbanboarduuid'] = ''
+                    self.client.task_update(task)
+                    continue
+
+                if 'intheamkanbancolumn' in task:
+                    if task['intheamkanbancolumn'] not in board.get_columns():
+                        self.log_error(
+                            "Task %s specified an invalid column %s; "
+                            "resetting to default (backlog).",
+                            task['uuid'],
+                            task['intheamkanbancolumn'],
+                        )
+                        task['intheamkanbancolumn'] = ''
+                        self.client.task_update(task)
+
+                if 'intheamkanbancolor' in task:
+                    if not HEX_COLOR_RE.match(task['intheamkanbancolor']):
+                        self.log_error(
+                            "Task %s specified an invalid color %s; "
+                            "resetting.",
+                            task['uuid'],
+                            task['intheamkanbancolor'],
+                        )
+                        task['intheamkanbancolor'] = ''
+                        self.client.task_update(task)
+
+                # We must wait until after we've found the board; we might've
+                # needed to update the task above.
+                del task['uuid']
+
+                with git_checkpoint(
+                    board, "Syncing task to Kanban Board", sync=True
+                ):
+                    existing_tasks = board.client.filter_tasks({
+                        'uuid': task['intheamkanbantaskuuid'],
+                    })
+                    if existing_tasks:
+                        existing_task = existing_tasks[0]
+                        # Update the kanban task's UUID to match the user's
+                        # task; this will make us overwrite
+                        if existing_task['modified'] != task['modified']:
+                            task['uuid'] = existing_task['uuid']
+                            board.client.task_update(task)
+                    else:
+                        task['intheamkanbancolumn'] = ''
+                        board.client.task_add(**task)
+
+    def post_checkpoint_hook(self, changes=False, *args, **kwargs):
+        if changes:
+            self.sync_related(*args, **kwargs)
+
     def save(self, *args, **kwargs):
         # Create the user directory
         if not self.local_path:
             user_tasks = os.path.join(
                 settings.TASK_STORAGE_PATH,
-                self.user.username
+                self.username,
             )
             if not os.path.isdir(user_tasks):
                 os.mkdir(user_tasks)
@@ -295,7 +347,7 @@ class TaskStore(models.Model):
         super(TaskStore, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return 'Tasks for %s' % self.user
+        return 'Tasks for %s' % self.username
 
     #  Git-related methods
 
@@ -402,6 +454,10 @@ class TaskStore(models.Model):
             'tx.data'
         )
 
+    @property
+    def sync_uses_default_server(self):
+        return self.taskrc.get('taskd.server') == settings.TASKD_SERVER
+
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None
     ):
@@ -481,7 +537,7 @@ class TaskStore(models.Model):
 
             logger.warning(
                 '%s just autoconfigured an account!',
-                self.user.username,
+                self.username,
             )
 
             # Remove any cached taskrc/taskw clients
@@ -500,7 +556,7 @@ class TaskStore(models.Model):
                 'add',
                 'user',
                 settings.TASKD_ORG,
-                self.user.username,
+                self.username,
             ]
             key_proc = subprocess.Popen(
                 command,
@@ -534,7 +590,7 @@ class TaskStore(models.Model):
             # Save these details to the taskrc
             taskd_credentials = '%s/%s/%s' % (
                 settings.TASKD_ORG,
-                self.user.username,
+                self.username,
                 taskd_user_key,
             )
             self.taskrc.update({
@@ -630,264 +686,5 @@ class TaskStore(models.Model):
             params=parameters
         )
 
-
-def get_attachment_path(instance, filename):
-    return os.path.join(
-        'attachments',
-        instance.store.user.username,
-        instance.task_id,
-        filename,
-    )
-
-
-class TaskAttachment(models.Model):
-    store = models.ForeignKey(TaskStore, related_name='attachments')
-    task_id = models.CharField(max_length=36)
-    name = models.CharField(max_length=256)
-    size = models.PositiveIntegerField()
-    document = models.FileField(upload_to=get_attachment_path)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __unicode__(self):
-        return u"%s: %s (%s MB)" % (
-            self.task_id,
-            self.name,
-            round(float(self.size) / 2**20, 1)
-        )
-
-
-class TaskStoreActivityLog(models.Model):
-    store = models.ForeignKey(TaskStore, related_name='log_entries')
-    md5hash = models.CharField(max_length=32)
-    last_seen = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
-    error = models.BooleanField(default=False)
-    silent = models.BooleanField(default=False)
-    message = models.TextField()
-    count = models.IntegerField(default=0)
-
-    def __unicode__(self):
-        return self.message.replace('\n', ' ')[0:50]
-
     class Meta:
-        unique_together = ('store', 'md5hash', )
-
-
-class UserMetadata(models.Model):
-    user = models.ForeignKey(
-        User,
-        related_name='metadata',
-        unique=True,
-    )
-    tos_version = models.IntegerField(default=0)
-    tos_accepted = models.DateTimeField(
-        default=None,
-        null=True,
-    )
-    colorscheme = models.CharField(
-        default='dark-yellow-green.theme',
-        max_length=255,
-    )
-
-    @property
-    def tos_up_to_date(self):
-        return self.tos_version == settings.TOS_VERSION
-
-    @classmethod
-    def get_for_user(self, user):
-        meta, created = UserMetadata.objects.get_or_create(
-            user=user
-        )
-        return meta
-
-    def __unicode__(self):
-        return self.user.username
-
-
-class Metadata(object):
-    def __init__(self, store, path):
-        self.path = path
-        self.store = store
-
-        self.config = self._read()
-
-    def _init(self):
-        self.config = {
-            'files': {
-            },
-            'taskrc': os.path.join(
-                self.store.local_path,
-                '.taskrc',
-            ),
-        }
-        self._write()
-        return self.config
-
-    def _read(self):
-        if not os.path.isfile(self.path):
-            return self._init()
-
-        with open(self.path, 'r') as config_file:
-            return json.loads(config_file.read().decode('utf8'))
-
-    def _write(self):
-        with open(self.path, 'w') as config_file:
-            config_file.write(json.dumps(self.config).encode('utf8'))
-
-    def items(self):
-        return self.config.items()
-
-    def keys(self):
-        return self.config.keys()
-
-    def get(self, item, default=None):
-        try:
-            return self[item]
-        except KeyError:
-            return default
-
-    def __getitem__(self, item):
-        return self.config[item]
-
-    def __setitem__(self, item, value):
-        self.config[item] = value
-        self._write()
-
-    def __unicode__(self):
-        return u'metadata at %s' % self.path
-
-    def __str__(self):
-        return self.__unicode__().encode('utf-8', 'REPLACE')
-
-
-class TaskRc(object):
-    def __init__(self, path, read_only=False):
-        self.path = path
-        self.read_only = read_only
-        if not os.path.isfile(self.path):
-            self.config, self.includes = {}, []
-        else:
-            self.config, self.includes = self._read(self.path)
-        self.include_values = {}
-        for include_path in self.includes:
-            self.include_values[include_path], _ = self._read(
-                os.path.abspath(include_path),
-                include_from=self.path
-            )
-
-    def _read(self, path, include_from=None):
-        config = {}
-        includes = []
-        if include_from and include_from.find(os.path.dirname(path)) != 0:
-            return config, includes
-        with open(path, 'r') as config_file:
-            for line in config_file.readlines():
-                line = line.decode('utf8', 'replace')
-                if line.startswith('#'):
-                    continue
-                if line.startswith('include '):
-                    try:
-                        left, right = line.split(' ')
-                        if right.strip() not in includes:
-                            includes.append(right.strip())
-                    except ValueError:
-                        pass
-                else:
-                    try:
-                        left, right = line.split('=')
-                        key = left.strip()
-                        value = right.strip()
-                        config[key] = value
-                    except ValueError:
-                        pass
-        return config, includes
-
-    def _write(self, path=None, data=None, includes=None):
-        if path is None:
-            path = self.path
-        if data is None:
-            data = self.config
-        if includes is None:
-            includes = self.includes
-        if self.read_only:
-            raise AttributeError(
-                "This instance is read-only."
-            )
-        with open(path, 'w') as config:
-            for include in includes:
-                config.write(
-                    "include %s\n" % (
-                        include
-                    )
-                )
-            for key, value in data.items():
-                config.write(
-                    "%s=%s\n" % (
-                        key.encode('utf8'),
-                        value.encode('utf8')
-                    )
-                )
-
-    @property
-    def assembled(self):
-        all_items = {}
-        for include_values in self.include_values.values():
-            all_items.update(include_values)
-        all_items.update(self.config)
-        return all_items
-
-    def items(self):
-        return self.assembled.items()
-
-    def keys(self):
-        return self.assembled.keys()
-
-    def get(self, item, default=None):
-        try:
-            return self.assembled[item]
-        except KeyError:
-            return default
-
-    def __getitem__(self, item):
-        return self.assembled[item]
-
-    def __setitem__(self, item, value):
-        self.config[item] = str(value)
-        self._write()
-
-    def update(self, value):
-        self.config.update(value)
-        self._write()
-
-    def get_udas(self):
-        udas = {}
-
-        uda_type = re.compile('^uda\.([^.]+)\.(type)$')
-        uda_label = re.compile('^uda\.([^.]+)\.(label)$')
-        for k, v in self.items():
-            for matcher in (uda_type, uda_label):
-                matches = matcher.match(k)
-                if matches:
-                    if matches.group(1) not in udas:
-                        udas[matches.group(1)] = {}
-                    udas[matches.group(1)][matches.group(2)] = v
-
-        return udas
-
-    def add_include(self, item):
-        if item not in self.includes:
-            self.includes.append(item)
-        self._write()
-
-    def __unicode__(self):
-        return u'.taskrc at %s' % self.path
-
-    def __str__(self):
-        return self.__unicode__().encode('utf-8', 'REPLACE')
-
-
-# This *must* be at the bottom of *this* file for complicated reasons
-import signal_handlers
-
-# This is just a noop here to make linters not complain:
-signal_handlers
+        app_label = 'taskmanager'

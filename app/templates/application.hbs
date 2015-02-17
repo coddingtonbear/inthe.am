@@ -41,15 +41,18 @@
                 <li class="desktop-only" data-intro="alt+t">
                     {{#link-to "tasks" title="Tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
+                {{#if user.kanban_memberships}}
+                    <li class="desktop-only" data-intro="alt+k">
+                        <a href="#" title="Team" {{action "switch_to_kanban"}}><i class="fa fa-columns">Team</i></a>
+                    </li>
+                {{/if}}
                 <li class="desktop-only" data-intro="alt+n">
                     <a href="#" title="New" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
                 </li>
 
-                {{#unless taskUpdateStreamConnected}}
-                    <li id="refresh-link" data-intro="alt+r">
-                        <a href="#" title="Refresh" {{action "refresh"}}><i class="fa fa-refresh"></i></a>
-                    </li>
-                {{/unless}}
+                <li id="refresh-link" data-intro="alt+r">
+                    <a href="#" {{bind-attr title="taskUpdateStreamStatusMessage"}} {{action "refresh"}}><i {{bind-attr class=":fa :fa-refresh taskUpdateStreamClass"}}></i></a>
+                </li>
             </ul>
         </section>
     {{else}}

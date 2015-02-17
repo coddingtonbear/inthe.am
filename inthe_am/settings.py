@@ -271,6 +271,8 @@ REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_DB = 2
 
+SERVER_EMAIL = 'no-reply@localhost'
+
 TASKWARRIOR_CONFIG_OVERRIDES = {
     'uda': {
         'intheamattachments': {
@@ -284,6 +286,30 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
         'intheamoriginalemailid': {
             'type': 'numeric',
             'label': 'Inthe.AM E-mail ID',
+        },
+        'intheamkanbanboarduuid': {
+            'type': 'string',
+            'label': 'Inthe.AM Kanban Board UUID',
+        },
+        'intheamkanbantaskuuid': {
+            'type': 'string',
+            'label': 'Inthe.AM Kanban Task UUID',
+        },
+        'intheamkanbancolumn': {
+            'type': 'string',
+            'label': 'Inthe.AM Kanban Board Column',
+        },
+        'intheamkanbancolor': {
+            'type': 'string',
+            'label': 'Inthe.AM Kanban Board Color',
+        },
+        'intheamkanbanassignee': {
+            'type': 'string',
+            'label': 'Inthe.AM Kanban Task Assignee',
+        },
+        'intheamkanbansortorder': {
+            'type': 'numeric',
+            'label': 'Inthe.AM Kanban Task Sort Order',
         }
     }
 }
@@ -311,6 +337,8 @@ TASKD_DATA = '/var/taskd'
 TASKD_SIGNING_TEMPLATE = '/var/taskd/cert.template'
 TASKD_SERVER = '127.0.0.1:53589'
 TASKD_ORG = 'testing'
+
+ANNOUNCEMENTS_CHANNEL = '__general__'
 
 # Streaming ticket updates enabled?
 STREAMING_UPDATES_ENABLED = True

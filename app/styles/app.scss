@@ -1,6 +1,14 @@
 @import "bower_components/foundation/scss/normalize.scss";
 @import "bower_components/foundation/scss/foundation.scss";
 
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
 html, body {
   height: 100%;
   overflow: hidden;
@@ -60,6 +68,10 @@ label[for] {
   width: 100%;
   z-index: 1000000;
 
+  &.expanded {
+    background-color: #333;
+  }
+
   .top-bar-section {
     ul {
       height: auto !important;
@@ -117,6 +129,11 @@ div.row {
     height: 100%;
     overflow: hidden;
     padding-top: 45px;
+
+    &.horizontal {
+      overflow-x: scroll;
+      white-space: nowrap;
+    }
   }
   &.standalone {
     overflow: auto;
@@ -124,6 +141,14 @@ div.row {
     height: 100%;
     background-color: inherit;
 
+    &.full-width {
+      div.standalone-content {
+        max-width: none;
+        margin: 0 auto;
+        padding: 0px 25px 0px 25px;
+        position: relative;
+      }
+    }
     &.homepage {
       text-align: center;
 
@@ -246,6 +271,70 @@ div.row {
         display: inline-block;
         width: 220px;
         padding: 5px 0 0 0;
+      }
+    }
+  }
+}
+
+#kanban-board {
+  width: 100%;
+  min-height: 500px;
+
+  /* Column titles */
+  h3 {
+    text-transform: uppercase;
+    font-size: 1em;
+    text-align: center;
+    border-bottom: 2px solid #000;
+  }
+
+  >.ember-view {
+    display: inline-block;
+    vertical-align: top;
+  }
+  .kanban-column {
+    width: 250px;
+    display: inline-block;
+    white-space: normal;
+
+    .kanban-tasks {
+      min-height: 400px;
+
+      .kanban-task {
+        @include clearfix;
+
+        padding: 5px;
+        margin-bottom: 5px;
+        width: 250px;
+        box-shadow: 3px 3px 3px #aaa;
+        background-color: #ffa;
+
+        div.actions {
+          a {
+            color: #777;
+
+            &:hover {
+              color: #008cba;
+            }
+          }
+        }
+
+        .actions {
+          width: 20px;
+          float: right;
+          margin-left: 10px;
+        }
+        .description {
+        }
+        .assignee {
+          font-size: 0.7em;
+          font-style: italic;
+        }
+        .due {
+          clear: both;
+          font-weight: 700;
+          text-align: right;
+        }
       }
     }
   }
@@ -457,7 +546,7 @@ div.alert-box.error {
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 850px) {
   // Hide text content of buttons
   html, body {
     overflow: hidden;
@@ -546,6 +635,11 @@ div.alert-box.error {
       }
       li.mobile-only {
         display: list-item;
+      }
+      li#refresh-link {
+        i.auto {
+          color: #555;
+        }
       }
     }
     button#show-task-list {

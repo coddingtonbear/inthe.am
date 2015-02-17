@@ -58,6 +58,7 @@ var controller = Ember.Controller.extend({
         refresh: '/api/v1/task/refresh/',
         clear_lock: '/api/v1/task/lock/',
         sync_init: '/api/v1/task/sync-init/',
+        sync: '/api/v1/task/sync/',
         status_feed: '/status/',
         feed_url: null,
         sms_url: null,
@@ -102,6 +103,23 @@ var controller = Ember.Controller.extend({
     },
     _hideLoading: function() {
         $('#loading').hide();
+    },
+    reportError: function(error) {
+        if (typeof(error) === 'object') {
+            if (error.stack) {
+                // this is a native JS error; yay!
+            } else if (error.statusText) {
+                error = new Error(error.status + " " + error.statusText);
+            } else {
+                error = new Error(JSON.stringify(error));
+            }
+        } else if (typeof(error) === 'string') {
+            error = new Error(error);
+        }
+        if(window.console && window.console.log) {
+            window.console.error("Error encountered", error);
+        }
+        Raven.captureException(error);
     },
     taskUpdateStreamEnabled: function() {
         var enabled = this.get('user.streaming_enabled');
@@ -150,8 +168,15 @@ var controller = Ember.Controller.extend({
                             }
                     );
                 }
+                this.handlePostLoginRedirects();
             } else {
                 Raven.setUser();
+                if(window.localStorage) {
+                    window.localStorage.setItem(
+                        'redirect_to',
+                        window.location.href
+                    );
+                }
                 this.transitionToRoute('about');
             }
             this.set('urls.feed_url', this.get('user').feed_url);
@@ -164,6 +189,24 @@ var controller = Ember.Controller.extend({
                 `attempting to gather user information: ${msg}`
             );
         }.bind(this));
+    },
+    handlePostLoginRedirects: function() {
+        if(window.localStorage && this.get('user.tos_up_to_date')) {
+            var url = window.localStorage.getItem('redirect_to');
+            if(url) {
+                Ember.run.later(
+                    this,
+                    function(){
+                        var url = window.localStorage.getItem('redirect_to');
+                        window.localStorage.removeItem('redirect_to');
+                        window.location.href = url;
+                    },
+                    5000
+                );
+                return true;
+            }
+        }
+        return false;
     },
     handleError: function(reason) {
         if (reason.status === 401) {
@@ -204,8 +247,8 @@ var controller = Ember.Controller.extend({
         document.title = this.get('applicationName');
 
         // Set up error reporting
-        Ember.onerror = reportError;
-        Ember.RSVP.configure('onerror', reportError);
+        Ember.onerror = this.reportError;
+        Ember.RSVP.configure('onerror', this.reportError);
 
         // Fetch user information
         this.update_user_info(true);
@@ -263,6 +306,30 @@ var controller = Ember.Controller.extend({
             }
         }
     },
+    taskUpdateStreamStatusMessage: function(){
+        var state = this.get('_taskUpdateStreamStatus');
+        if (state === 'auto') {
+            return 'Streaming updates enabled';
+        } else if (state === 'reconnecting') {
+            return 'Reconnecting; click to refresh manually';
+        } else if (state === 'manual') {
+            return 'Refresh';
+        }
+    }.property('_taskUpdateStreamStatus'),
+    taskUpdateStreamClass: function(){
+        return this.get('_taskUpdateStreamStatus');
+    }.property('_taskUpdateStreamStatus'),
+    _taskUpdateStreamStatus: function(){
+        var enabled = this.get('taskUpdateStreamEnabled');
+        var connected = this.get('taskUpdateStreamConnected');
+        if(enabled && connected) {
+            return 'auto';
+        } else if (enabled && !connected) {
+            return 'reconnecting';
+        } else if (!enabled && !connected) {
+            return 'manual';
+        }
+    }.property('taskUpdateStreamConnected', 'taskUpdateStreamEnabled'),
     checkStatusUpdater: function() {
         var statusUpdater = this.get('statusUpdater');
         var connected = this.get('taskUpdateStreamConnected');
@@ -406,6 +473,10 @@ var controller = Ember.Controller.extend({
     },
     actions: {
         refresh: function(){
+            if (this.get('_taskUpdateStreamStatus') === 'auto') {
+                /* Do not do a manual refresh if we're in auto mode. */
+                return;
+            }
             this.showLoading();
             this.get('controllers.tasks').refresh(function(){
                 this.hideLoading();
@@ -496,10 +567,6 @@ var controller = Ember.Controller.extend({
         add_annotation: function() {
             var taskController = this.get('controllers.task');
             taskController.send('add_annotation');
-        },
-        edit_task: function() {
-            var taskController = this.get('controllers.task');
-            taskController.send('edit');
         },
         complete_task: function() {
             var taskController = this.get('controllers.task');

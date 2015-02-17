@@ -41,6 +41,7 @@ app.import('bower_components/raven-js/dist/raven.js');
 app.import('bower_components/fastclick/lib/fastclick.js');
 app.import('bower_components/chardin.js/chardinjs.js');
 app.import('bower_components/chardin.js/chardinjs.css');
+app.import('bower_components/Sortable/Sortable.js');
 app.import('vendor/touchwipe/jquery.touchwipe.1.1.1.js');
 app.import('bower_components/jquery.hotkeys/jquery.hotkeys.js');
 

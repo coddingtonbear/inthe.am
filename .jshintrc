@@ -39,7 +39,8 @@
         "moment",
         "reportError",
         "Raven",
-        "FastClick"
+        "FastClick",
+        "Sortable"
     ],
     "esnext": true,
     "node": false,

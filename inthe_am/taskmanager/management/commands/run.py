@@ -17,16 +17,19 @@ class Command(BaseCommand):
                 'manage.py',
                 'runserver',
                 '0.0.0.0:8001',
-            ]
+            ],
+            env=os.environ.copy()
         )
         self.pids.append(proc.pid)
         os.waitpid(proc.pid, 0)
 
     def run_ember(self, **kwargs):
+        kwargs['env'] = os.environ.copy()
         proc = subprocess.Popen(
             [
                 'ember',
                 'server',
+                '--live-reload-port', '8009',
             ],
             **kwargs
         )

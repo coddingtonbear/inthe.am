@@ -1,0 +1,30 @@
+<div class='kanban-column'>
+    <h3>{{ columnName }}</h3>
+    <div class='kanban-tasks' {{bind-attr data-task-status="columnStatus"}}>
+        {{#each task in columnTasks}}
+            <div {{bind-attr class=":kanban-task task.taskwarrior_class"}} {{bind-attr data-uuid='task.uuid'}}>
+                <div class="actions">
+                    <a href="#" {{action "edit_task" task}} title="Edit">
+                        <i class="fa fa-pencil-square-o"></i>
+                    </a>
+                    <a href="#" {{action "assign_to_me" task}} title="Assign to Me">
+                        <i class="fa fa-child"></i>
+                    </a>
+                </div>
+                <div class='description'>
+                    {{ task.description }}
+                </div>
+                {{#if task.intheamkanbanassignee}}
+                    <div class='assignee'>
+                        {{ task.intheamkanbanassignee }}
+                    </div>
+                {{/if}}
+                {{#if task.due}}
+                    <div class='due'>
+                        due {{moment-fromnow task.due}}
+                    </div>
+                {{/if}}
+            </div>
+        {{/each}}
+    </div>
+</div>
