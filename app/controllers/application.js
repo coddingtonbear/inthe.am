@@ -309,7 +309,7 @@ var controller = Ember.Controller.extend({
     taskUpdateStreamStatusMessage: function(){
         var state = this.get('_taskUpdateStreamStatus');
         if (state === 'auto') {
-            return 'Streaming updates enabled';
+            return 'Instant refresh enabled';
         } else if (state === 'reconnecting') {
             return 'Reconnecting; click to refresh manually';
         } else if (state === 'manual') {
