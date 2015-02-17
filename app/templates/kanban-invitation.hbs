@@ -1,5 +1,44 @@
 <div class="row standalone">
     <div class="standalone-content">
-        <h2>{{ model.sender.first_name }} {{ model.sender.last_name }} would like you to join the "{{ model.board.name }}" Team Kanban Board</h2>
+        {{#if model.acceptable }}
+            <div class="row">
+                <div class="medium-12 columns">
+                    <h2>{{ model.sender.first_name }} {{ model.sender.last_name }} would like you to join the "{{ model.board.name }}" Team Kanban Board</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="medium-12 columns">
+                    <p>
+                        {{ model.sender.first_name }} {{ model.sender.last_name }} would like
+                        for you to join the "{{ model.board.name }}" Team Kanban Board.
+                    </p>
+                    <p>
+                        By accepting this invitation, tasks from the "{{ model.board.name }}"
+                        Team Kanban Board can be added to your task list by the Kanban Board's
+                        members.
+                    </p>
+                    <p>
+                        Note: This does <b>not</b> provide members of the Team Kanban Board
+                        access to view or edit any tasks on your task list that were not
+                        created from the Team Kanban Board.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="medium-12 columns">
+                    <button class="secondary-button" {{action "accept"}}>Accept Invitation</button>
+                    <button class="secondary-button" {{action "reject"}}>Reject Invitation</button>
+                </div>
+            </div>
+        {{else}}
+            <div class="row">
+                <div class="medium-12 columns">
+                    <h2>Invalid Invitation</h2>
+                    <p>
+                        The invitation you have linked to is no longer valid.
+                    </p>
+                </div>
+            </div>
+        {{/if}}
     </div>
 </div>

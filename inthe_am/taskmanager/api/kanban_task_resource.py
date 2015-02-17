@@ -165,6 +165,7 @@ class KanbanTaskResource(TaskResource):
         try:
             membership = KanbanMembership.objects.get(
                 member=None,
+                valid=True,
                 uuid=invitation_id,
             )
         except:
@@ -177,10 +178,19 @@ class KanbanTaskResource(TaskResource):
                 status=400,
             )
 
+        membership.member = request.user
         membership.accepted = accepted
         if not accepted:
             membership.valid = False
         membership.save()
+
+        if accepted:
+            KanbanMembership.objects.filter(
+                member=request.user,
+                kanban_board=membership.kanban_board
+            ).exclude(
+                pk=membership.pk
+            ).update(valid=False)
 
         return HttpResponse(
             json.dumps({

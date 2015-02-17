@@ -46,7 +46,12 @@ class KanbanMembershipResource(LockTimeoutMixin, resources.ModelResource):
         }
         bundle.data['board'] = {
             'name': bundle.obj.kanban_board.name,
+            'uuid': bundle.obj.kanban_board.uuid,
         }
+        bundle.data['acceptable'] = (
+            bundle.obj.member is None
+            and bundle.obj.valid
+        )
         return bundle
 
     class Meta:

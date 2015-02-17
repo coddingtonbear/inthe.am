@@ -15,7 +15,7 @@ Router.map(function() {
     this.resource("tasks", function(){
         this.resource("task", {path: "/:uuid"});
     });
-    this.route("kanban-invitation", {path: "/kanban/invitation/:board_uuid/:invitation_uuid"});
+    this.route("kanban-invitation", {path: "/kanban/:board_uuid/invitation/:invitation_uuid"});
     this.resource("kanban-board", {path: "/kanban/:uuid"});
     this.resource("activity-log", {path: "/activity-log"});
     this.route("configure", {path: "/configure"});

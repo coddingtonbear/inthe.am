@@ -1,6 +1,6 @@
 import Ember from "ember";
 
-var KANBAN_ID_URL_RE = window.RegExp(".*kanban/([a-f0-9-]{36})");
+var KANBAN_ID_URL_RE = window.RegExp(".*kanban/([a-f0-9-]{36}).*");
 
 var controller = Ember.ObjectController.extend({
     needs: ['application'],
