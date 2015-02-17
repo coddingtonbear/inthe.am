@@ -153,10 +153,14 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
         )
 
     def metadata(self, store):
-        return self._renderable(store.metadata)
+        if store.pk:
+            return self._renderable(store.metadata)
+        return ''
 
     def taskrc(self, store):
-        return self._renderable(store.taskrc)
+        if store.pk:
+            return self._renderable(store.taskrc)
+        return ''
 
     def twilio_enabled(self, store):
         return True if store.twilio_auth_token else False
