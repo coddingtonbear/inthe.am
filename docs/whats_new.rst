@@ -25,6 +25,9 @@ Technical
     task information, and will instead need to click the 'Refresh' button
     to synchronize tasks.
 
+* Removed functionality allowing one to disable the task update stream.  Very
+  few users were using the functionality allowing one to disable it.
+
 Deprecation Warnings
 ~~~~~~~~~~~~~~~~~~~~
 
