@@ -81,6 +81,11 @@ label[for] {
       li {
         float: left;
       }
+      li#refresh-link {
+        i.auto {
+          color: #555;
+        }
+      }
     }
   }
   button {
@@ -635,11 +640,6 @@ div.alert-box.error {
       }
       li.mobile-only {
         display: list-item;
-      }
-      li#refresh-link {
-        i.auto {
-          color: #555;
-        }
       }
     }
     button#show-task-list {
