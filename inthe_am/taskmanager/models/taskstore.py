@@ -59,7 +59,6 @@ class TaskStore(models.Model):
     sync_permitted = models.BooleanField(default=True)
     pebble_cards_enabled = models.BooleanField(default=False)
     feed_enabled = models.BooleanField(default=False)
-    streaming_enabled = models.BooleanField(default=True)
 
     last_synced = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)

@@ -52,7 +52,6 @@ var controller = Ember.Controller.extend({
         mirakel_configuration: '/api/v1/user/mirakel-configuration/',
         configure_pebble_cards: '/api/v1/user/pebble-cards-config/',
         configure_feed: '/api/v1/user/feed-config/',
-        configure_streaming: '/api/v1/user/streaming-config/',
         user_status: '/api/v1/user/status/',
         announcements: '/api/v1/user/announcements/',
         refresh: '/api/v1/task/refresh/',
@@ -309,11 +308,11 @@ var controller = Ember.Controller.extend({
     taskUpdateStreamStatusMessage: function(){
         var state = this.get('_taskUpdateStreamStatus');
         if (state === 'auto') {
-            return 'Instant refresh enabled';
+            return 'Connected';
         } else if (state === 'reconnecting') {
-            return 'Reconnecting; click to refresh manually';
+            return 'Reconnecting; click to sync tasks';
         } else if (state === 'manual') {
-            return 'Refresh';
+            return 'Sync tasks';
         }
     }.property('_taskUpdateStreamStatus'),
     taskUpdateStreamClass: function(){

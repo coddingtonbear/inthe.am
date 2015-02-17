@@ -36,14 +36,6 @@ var controller = Ember.Controller.extend({
         {file: 'solarized-dark-256.theme', name: 'Solarized Dark'},
         {file: 'solarized-light-256.theme', name: 'Solarized Light'},
     ],
-    taskUpdateStreamEnabledUI: function() {
-        var enabled = this.get('controllers.application.user.streaming_enabled');
-        if(enabled) {
-            return 'yes';
-        } else {
-            return 'no';
-        }
-    }.property(),
     taskUpdateStreamCompatible: function() {
         if(!window.EventSource) {
             return false;
@@ -296,38 +288,6 @@ var controller = Ember.Controller.extend({
                     `An error was encountered while ` +
                     `updating your twilio configuration: ${msg}`
                 );
-            }.bind(this));
-        },
-        save_streaming: function() {
-            var url = this.get('controllers.application').urls.configure_streaming;
-            var value = 0;
-
-            if($("#id_update_stream").val() !== 'no') {
-                value = 1;
-            }
-            return this.ajaxRequest({
-                url: url,
-                type: 'POST',
-                data: {
-                    enabled: value ? 1 : 0,
-                },
-            }).then(function(){
-                if (value) {
-                    this.success_message("Streaming ticket updates enabled.");
-                } else {
-                    this.success_message("Streaming ticket updates disabled.");
-                }
-                setTimeout(function(){
-                    window.location.reload();
-                }, 3000);
-            }.bind(this), function(msg) {
-                this.error_message(
-                    `An error was encountered while ` +
-                    `configuring streaming updates: ${msg}`
-                );
-                setTimeout(function(){
-                    window.location.reload();
-                }, 3000);
             }.bind(this));
         },
         leave_kanban_board: function(board) {
