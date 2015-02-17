@@ -121,7 +121,7 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     list_display = (
         'user', 'created', 'last_synced',
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
-        'streaming_enabled', 'twilio_enabled',
+        'streaming_enabled', 'twilio_enabled', 'local_sync',
     )
     list_filter = (
         ActivityStatusListFilter,
@@ -161,6 +161,10 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     def twilio_enabled(self, store):
         return True if store.twilio_auth_token else False
     twilio_enabled.boolean = True
+
+    def local_sync(self, store):
+        return store.sync_uses_default_server
+    local_sync.boolean = True
 
 admin.site.register(TaskStore, TaskStoreAdmin)
 
