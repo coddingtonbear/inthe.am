@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
         if not self._subscription:
             self._subscription = connection.pubsub()
-            self._subscrption.psubscribe('sync.*')
+            self._subscription.psubscribe('sync.*')
 
         return self._subscription
 
