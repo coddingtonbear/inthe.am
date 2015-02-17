@@ -1,6 +1,38 @@
 What's New?
 ===========
 
+16 February 2015
+----------------
+
+Features
+~~~~~~~~
+
+* (Private Beta) Team Kanban Boards: Added configurable Kanban Board
+  functionality allowing teams to collaborate on shared tasks.
+  Completes Phase 1 of `#146 Kanban Board <https://github.com/coddingtonbear/inthe.am/issues/146>`_.
+
+Technical
+~~~~~~~~~
+
+* Updated sync behavior in a few fundamental ways:
+
+  * Inthe.AM will automatically synchronize local user task lists as sync
+    events are seen in the Taskserver logs.
+  * Rather than periodically initiating a sync while connected to the
+    status stream; simply waits for head changes from the synchronization
+    operation finished in the above step.
+  * Users using non-local Taskservers will no longer have access to streaming
+    task information, and will instead need to click the 'Refresh' button
+    to synchronize tasks.
+
+Deprecation Warnings
+~~~~~~~~~~~~~~~~~~~~
+
+* Synchronization using non-local Taskservers will be disabled after
+  1 April 2015.  Configuring an existing account to synchronize
+  with a non-local Taskserver will be disabled in the near future.
+  See `#167: Deprecate synchronization using non-local Taskservers <https://github.com/coddingtonbear/inthe.am/issues/167>`_ for more information.
+
 30 January 2015
 ---------------
 
