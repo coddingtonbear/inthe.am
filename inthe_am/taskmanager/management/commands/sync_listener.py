@@ -108,6 +108,7 @@ class Command(BaseCommand):
                     (now() - last_announcement).seconds > 300
                 )
             ):
+                last_announcement = now()
                 logger.warning(
                     "No synchronizations have been queued during the last %s "
                     "minutes;  it is likely that something is misconfigured.",
