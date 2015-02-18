@@ -7,8 +7,10 @@ import re
 import subprocess
 import select
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.timezone import now
 
 from inthe_am.taskmanager.lock import get_lock_redis
 
@@ -69,7 +71,8 @@ class Command(BaseCommand):
             message,
             cls=DjangoJSONEncoder
         )
-        logger.debug("Emitting message: %s", serialized)
+        logger.info("Emitting message: %s", serialized)
+        self.last_message_emitted = now()
         r.publish(
             self._get_queue_name(message['username']),
             serialized
@@ -131,6 +134,7 @@ class Command(BaseCommand):
             self.operations[operation_number] = operation
 
     def handle(self, *args, **kwargs):
+        self.last_message_emitted = None
         self.operations = {}
         self.highest_message = 0
 
@@ -155,3 +159,18 @@ class Command(BaseCommand):
                     )
             else:
                 time.sleep(0.1)
+
+            if (
+                self.last_message_emitted and
+                (
+                    (now() - self.last_message_emitted) >
+                    datetime.timedelta(
+                        seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
+                    )
+                )
+            ):
+                logger.warning(
+                    "No messages have been emitted during the last %s "
+                    "minutes; it is likely that something is misconfigured.",
+                    round((now() - self.last_message_emitted).seconds / 60.0)
+                )

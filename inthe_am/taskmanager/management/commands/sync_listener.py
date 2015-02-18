@@ -1,9 +1,12 @@
+import datetime
 import json
 import logging
 import socket
 import time
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.utils.timezone import now
 
 from inthe_am.taskmanager.lock import get_lock_redis
 from inthe_am.taskmanager.models import KanbanBoard, TaskStore
@@ -66,6 +69,7 @@ class Command(BaseCommand):
         return self._local_ips
 
     def handle(self, *args, **kwargs):
+        self.last_sync_queued = None
         while True:
             message = self.get_next_message()
 
@@ -79,12 +83,28 @@ class Command(BaseCommand):
                 operation = json.loads(message['data'])
                 if self.operation_requires_sync(operation):
                     repo = self.get_taskstore_for_operation(operation)
-                    logger.debug(
+                    logger.info(
                         "Queueing sync for %s",
                         repo,
                     )
                     repo.sync()
+                    self.last_sync_queued = now()
             except:
                 logger.exception(
                     "Error encountered while processing sync event."
+                )
+
+            if (
+                self.last_sync_queued and
+                (
+                    (now() - self.last_sync_queued) >
+                    datetime.timedelta(
+                        seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
+                    )
+                )
+            ):
+                logger.warning(
+                    "No synchronizations have been queued during the last %s "
+                    "minutes;  it is likely that something is misconfigured.",
+                    round((now() - self.last_sync_queued).seconds / 60.0)
                 )
