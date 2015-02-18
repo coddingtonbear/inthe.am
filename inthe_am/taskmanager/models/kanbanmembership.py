@@ -54,6 +54,7 @@ class KanbanMembership(models.Model):
     uuid = models.CharField(
         max_length=36,
         db_index=True,
+        blank=True,
     )
     kanban_board = models.ForeignKey(
         'KanbanBoard',
@@ -74,6 +75,7 @@ class KanbanMembership(models.Model):
     invitee_email = models.EmailField(
         max_length=254,
         db_index=True,
+        blank=True,
     )
     role = models.CharField(
         max_length=255,
