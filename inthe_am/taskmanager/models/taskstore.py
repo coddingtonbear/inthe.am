@@ -66,7 +66,7 @@ class TaskStore(models.Model):
 
     @property
     def username(self):
-        return self.user.username if self.user else self.uuid
+        return self.user.username
 
     @property
     def version(self):

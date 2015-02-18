@@ -25,6 +25,10 @@ class KanbanBoard(TaskStore):
     uuid = models.CharField(max_length=36, blank=True, db_index=True)
     columns = models.TextField(default=DEFAULT_COLUMNS)
 
+    @property
+    def username(self):
+        return self.uuid
+
     def user_is_owner(self, user):
         from .kanbanmembership import KanbanMembership
         return KanbanMembership.objects.user_is_owner(self, user)
