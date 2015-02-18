@@ -20,18 +20,31 @@ models.signals.post_save.connect(
 )
 
 
-@receiver(models.signals.post_save, sender=User, dispatch_uid='generate_taskd')
+@receiver(
+    models.signals.post_save,
+    sender=User,
+    dispatch_uid='generate_taskstore'
+)
+def create_taskstore_for_user(sender, instance, **kwargs):
+    # This just makes sure that the task store exists.
+    instance = TaskStore.get_for_user(instance)
+
+
+@receiver(
+    models.signals.post_save,
+    sender=TaskStore,
+    dispatch_uid='configure_taskstore'
+)
 def autoconfigure_taskd_for_user(sender, instance, **kwargs):
-    store = TaskStore.get_for_user(instance)
     try:
-        if not store.configured:
-            store.autoconfigure_taskd()
+        if not instance.configured:
+            instance.autoconfigure_taskd()
     except:
         if not settings.DEBUG:
             raise
         message = "Error encountered while configuring task store."
         logger.exception(message)
-        store.log_error(message)
+        instance.log_error(message)
 
 
 @receiver(message_received, dispatch_uid='incoming_email')
