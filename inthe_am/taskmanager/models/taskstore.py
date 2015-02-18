@@ -66,7 +66,10 @@ class TaskStore(models.Model):
 
     @property
     def username(self):
-        return self.user.username
+        try:
+            return self.user.username
+        except:
+            return '(None)'
 
     @property
     def version(self):
