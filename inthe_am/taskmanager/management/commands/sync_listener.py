@@ -103,8 +103,10 @@ class Command(BaseCommand):
                         seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
                     )
                 ) and
-                last_announcement and
-                (now() - last_announcement).seconds > 300
+                (
+                    not last_announcement or
+                    (now() - last_announcement).seconds > 300
+                )
             ):
                 logger.warning(
                     "No synchronizations have been queued during the last %s "
