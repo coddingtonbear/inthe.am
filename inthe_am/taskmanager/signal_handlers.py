@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django_mailbox.signals import message_received
 from tastypie.models import create_api_key
 
-from .models import TaskStore
+from .models import KanbanBoard, TaskStore
 from .tasks import process_email_message
 
 
@@ -18,6 +18,18 @@ logger = logging.getLogger(__name__)
 models.signals.post_save.connect(
     create_api_key, sender=User, dispatch_uid='generate_api'
 )
+
+
+def autoconfigure_taskd_if_necessary(instance):
+    try:
+        if not instance.configured:
+            instance.autoconfigure_taskd()
+    except:
+        if not settings.DEBUG:
+            raise
+        message = "Error encountered while configuring task store."
+        logger.exception(message)
+        instance.log_error(message)
 
 
 @receiver(
@@ -35,16 +47,17 @@ def create_taskstore_for_user(sender, instance, **kwargs):
     sender=TaskStore,
     dispatch_uid='configure_taskstore'
 )
-def autoconfigure_taskd_for_user(sender, instance, **kwargs):
-    try:
-        if not instance.configured:
-            instance.autoconfigure_taskd()
-    except:
-        if not settings.DEBUG:
-            raise
-        message = "Error encountered while configuring task store."
-        logger.exception(message)
-        instance.log_error(message)
+def autoconfigure_taskstore_for_user(sender, instance, **kwargs):
+    autoconfigure_taskd_if_necessary(instance)
+
+
+@receiver(
+    models.signals.post_save,
+    sender=KanbanBoard,
+    dispatch_uid='configure_kanbanboard'
+)
+def autoconfigure_kanbanboard_for_user(sender, instance, **kwargs):
+    autoconfigure_taskd_if_necessary(instance)
 
 
 @receiver(message_received, dispatch_uid='incoming_email')
