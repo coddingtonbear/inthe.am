@@ -88,16 +88,12 @@ class TaskStore(models.Model):
 
     @property
     def metadata(self):
-        if not self.pk:
-            return {}
         if not getattr(self, '_metadata', None):
             self._metadata = Metadata(self, self.metadata_registry)
         return self._metadata
 
     @property
     def taskrc(self):
-        if not self.pk:
-            return {}
         if not getattr(self, '_taskrc', None):
             self._taskrc = TaskRc(self.metadata['taskrc'])
         return self._taskrc
