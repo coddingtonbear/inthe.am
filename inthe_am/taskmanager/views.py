@@ -98,10 +98,10 @@ class Status(BaseSseView):
     def iterator(self):
         last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
         store = self.get_store()
-        subscription = get_announcements_subscription(store)
-
         if not store:
             return
+
+        subscription = get_announcements_subscription(store)
         kwargs = {
             'async': True,
             'function': (
