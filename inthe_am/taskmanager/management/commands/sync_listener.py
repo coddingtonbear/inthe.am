@@ -69,7 +69,7 @@ class Command(BaseCommand):
         return self._local_ips
 
     def handle(self, *args, **kwargs):
-        self.last_sync_queued = None
+        last_sync_queued = None
         last_announcement = None
         while True:
             message = self.get_next_message()
@@ -77,8 +77,11 @@ class Command(BaseCommand):
             if not message:
                 time.sleep(0.1)
                 continue
-            if message['type'] != 'pmessage':
+            elif message['type'] != 'pmessage':
                 continue
+            else:
+                # This was an actual message we'd like to use.
+                last_sync_queued = now()
 
             try:
                 operation = json.loads(message['data'])
@@ -89,16 +92,15 @@ class Command(BaseCommand):
                         repo,
                     )
                     repo.sync()
-                    self.last_sync_queued = now()
             except:
                 logger.exception(
                     "Error encountered while processing sync event."
                 )
 
             if (
-                self.last_sync_queued and
+                last_sync_queued and
                 (
-                    (now() - self.last_sync_queued) >
+                    (now() - last_sync_queued) >
                     datetime.timedelta(
                         seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
                     )
@@ -112,5 +114,5 @@ class Command(BaseCommand):
                 logger.warning(
                     "No synchronizations have been queued during the last %s "
                     "minutes;  it is likely that something is misconfigured.",
-                    round((now() - self.last_sync_queued).seconds / 60.0)
+                    round((now() - last_sync_queued).seconds / 60.0)
                 )
