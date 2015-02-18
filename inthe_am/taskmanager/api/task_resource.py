@@ -439,7 +439,7 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 user,
                 e,
             )
-            logger.warning(*log_args)
+            logger.exception(*log_args)
             store.log_error(*log_args)
             return HttpResponseForbidden()
         if not validator.validate(url, request.POST, signature):
