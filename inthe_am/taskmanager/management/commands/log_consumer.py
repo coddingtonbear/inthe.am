@@ -135,6 +135,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self.last_message_emitted = None
+        last_announcement = None
         self.operations = {}
         self.highest_message = 0
 
@@ -167,8 +168,11 @@ class Command(BaseCommand):
                     datetime.timedelta(
                         seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
                     )
-                )
+                ) and
+                last_announcement and
+                (now() - last_announcement).seconds > 300
             ):
+                last_announcement = now()
                 logger.warning(
                     "No messages have been emitted during the last %s "
                     "minutes; it is likely that something is misconfigured.",

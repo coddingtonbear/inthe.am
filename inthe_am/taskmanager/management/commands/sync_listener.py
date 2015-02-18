@@ -70,6 +70,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self.last_sync_queued = None
+        last_announcement = None
         while True:
             message = self.get_next_message()
 
@@ -101,7 +102,9 @@ class Command(BaseCommand):
                     datetime.timedelta(
                         seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
                     )
-                )
+                ) and
+                last_announcement and
+                (now() - last_announcement).seconds > 300
             ):
                 logger.warning(
                     "No synchronizations have been queued during the last %s "
