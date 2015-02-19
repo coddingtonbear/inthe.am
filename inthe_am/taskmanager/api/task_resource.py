@@ -393,7 +393,10 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
             return HttpResponse(status=404)
 
         r = Response()
-        store = self.get_task_store(request)
+
+        # This request is unauthenticated; we'll need to fetch the user's
+        # store directly rather than looking it up via the auth cookie.
+        store = models.TaskStore.get_for_user(user)
 
         if not store.twilio_auth_token:
             log_args = (
