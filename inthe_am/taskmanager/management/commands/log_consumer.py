@@ -6,6 +6,7 @@ import pytz
 import re
 import subprocess
 import select
+import sys
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -20,6 +21,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 class Command(BaseCommand):
+    NO_RECENT_MESSAGES = 11
+
     PREFIX_RE = re.compile(
         r'^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \[(\d+)\] (.*)$'
     )
@@ -175,8 +178,10 @@ class Command(BaseCommand):
                 )
             ):
                 last_announcement = now()
-                logger.warning(
+                logger.error(
                     "No messages have been emitted during the last %s "
-                    "minutes; it is likely that something is misconfigured.",
+                    "minutes; it is likely that something has gone awry "
+                    "our tail.  Suiciding; will be restarted automatically.",
                     round((now() - self.last_message_emitted).seconds / 60.0)
                 )
+                sys.exit(self.NO_RECENT_MESSAGES)

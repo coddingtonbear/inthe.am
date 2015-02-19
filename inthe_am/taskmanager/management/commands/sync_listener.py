@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import socket
+import sys
 import time
 
 from django.conf import settings
@@ -16,6 +17,8 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
+    NO_RECENT_MESSAGES = 11
+
     def get_redis_connection(self):
         if not hasattr(self, '_redis'):
             self._redis = get_lock_redis()
@@ -111,8 +114,10 @@ class Command(BaseCommand):
                 )
             ):
                 last_announcement = now()
-                logger.warning(
+                logger.error(
                     "No synchronizations have been queued during the last %s "
-                    "minutes;  it is likely that something is misconfigured.",
+                    "minutes;  it is likely that something has gone awry. "
+                    "Suiciding; will be restarted automatically.",
                     round((now() - last_sync_queued).seconds / 60.0)
                 )
+                sys.exit(11)
