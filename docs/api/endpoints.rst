@@ -365,6 +365,19 @@ two form-encoded variables:
   authenticating the SMS request from Twilio.
 * ``sms_whitelist``: A newline-separated list of phone numbers from
   which you would like to accept new tasks.
+* ``sms_replies``: An integer indicating under what conditions should
+  Inthe.AM send SMS message replies.  See the table below for information
+  about what values are appropriate:
+
+  +-------+--------------------------------------------+
+  | Value | Meaning                                    |
+  +=======+============================================+
+  | 0     | Do not reply to any incoming text messages |
+  +-------+--------------------------------------------+
+  | 5     | Reply only to error messages               |
+  +-------+--------------------------------------------+
+  | 9     | Reply to all messages                      |
+  +-------+--------------------------------------------+
 
 URL: ``https://inthe.am/api/v1/user/twilio-integration/``
 

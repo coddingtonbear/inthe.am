@@ -1,6 +1,16 @@
 What's New?
 ===========
 
+19 February 2015
+----------------
+
+Features
+~~~~~~~~
+
+* Added functionality allowing a user to configure under what circumstances
+  should Inthe.AM reply to incoming text messages;
+  `this addresses concerns raised in  #164 <https://github.com/coddingtonbear/inthe.am/issues/174>`_.
+
 16 February 2015
 ----------------
 

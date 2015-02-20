@@ -492,6 +492,17 @@
                             </p>
                         </div>
                         <div class="large-12 columns">
+                            <label>Replies</label>
+                            {{
+                                view "select"
+                                value=controllers.application.user.sms_replies
+                                optionValuePath="content.short"
+                                optionLabelPath="content.long"
+                                content=smsRepliesSettings
+                                id="id_sms_replies"
+                            }}
+                        </div>
+                        <div class="large-12 columns">
                             <label>Phone Number Whitelist</label>
                             {{textarea name="sms_whitelist" id="id_sms_whitelist" value=controllers.application.user.sms_whitelist placeholder="+15555555555"}}
                             <p class='input-note'>

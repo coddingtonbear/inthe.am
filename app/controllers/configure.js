@@ -10,6 +10,11 @@ var controller = Ember.Controller.extend({
         {short: 'no', long: 'Disabled'},
         {short: 'yes', long: 'Enabled'},
     ],
+    smsRepliesSettings: [
+        {short: 0, long: 'Do not reply to any incoming text messages'},
+        {short: 5, long: 'Reply only when an error has occurred'},
+        {short: 9, long: 'Reply to all messages'},
+    ],
     taskd_server_settings: [
         {value: true, human: "Use the built-in taskserver"},
         {value: false, human: "Use a custom taskserver"},
@@ -273,7 +278,8 @@ var controller = Ember.Controller.extend({
             var data = {
                 'twilio_auth_token': document.getElementById('id_twilio_auth_token').value,
                 'sms_whitelist': document.getElementById('id_sms_whitelist').value,
-                'sms_arguments': document.getElementById('id_sms_arguments').value
+                'sms_arguments': document.getElementById('id_sms_arguments').value,
+                'sms_replies': document.getElementById('id_sms_replies').value,
             };
             var url    = this.get('controllers.application').urls.twilio_integration;
 

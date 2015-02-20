@@ -33,6 +33,15 @@ HEX_COLOR_RE = re.compile(r'^#(?:[0-9a-fA-F]{3}){1,2}$')
 
 
 class TaskStore(models.Model):
+    REPLY_ALL = 9
+    REPLY_ERROR = 5
+    REPLY_NEVER = 0
+    REPLY_CHOICES = (
+        (REPLY_ALL, 'Reply to all messages', ),
+        (REPLY_ERROR, 'Reply only to error messages', ),
+        (REPLY_NEVER, 'Do not reply to any incoming text messages', ),
+    )
+
     DEFAULT_FILENAMES = {
         'key': 'private.key.pem',
         'certificate': 'private.certificate.pem',
@@ -52,6 +61,10 @@ class TaskStore(models.Model):
     secret_id = models.CharField(blank=True, max_length=36)
     sms_whitelist = models.TextField(blank=True)
     sms_arguments = models.TextField(blank=True)
+    sms_replies = models.PositiveIntegerField(
+        choices=REPLY_CHOICES,
+        default=REPLY_ALL
+    )
     email_whitelist = models.TextField(blank=True)
     taskrc_extras = models.TextField(blank=True)
     configured = models.BooleanField(default=False)

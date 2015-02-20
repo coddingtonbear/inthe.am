@@ -57,6 +57,7 @@ def get_published_properties(user, store, meta):
         'twilio_auth_token': store.twilio_auth_token,
         'sms_whitelist': store.sms_whitelist,
         'sms_arguments': store.sms_arguments,
+        'sms_replies': store.sms_replies,
         'email_whitelist': store.email_whitelist,
         'task_creation_email_address': '%s@inthe.am' % (
             store.secret_id
@@ -479,6 +480,7 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
         ts.twilio_auth_token = request.POST.get('twilio_auth_token', '')
         ts.sms_whitelist = request.POST.get('sms_whitelist', '')
         ts.sms_arguments = request.POST.get('sms_arguments', '')
+        ts.sms_replies = request.POST.get('sms_replies', 9)
         ts.log_message("Twilio settings changed.")
         ts.save()
         return HttpResponse(
