@@ -171,10 +171,15 @@ var controller = Ember.Controller.extend({
             } else {
                 Raven.setUser();
                 if(window.localStorage) {
-                    window.localStorage.setItem(
-                        'redirect_to',
-                        window.location.href
-                    );
+                    if(
+                        (!window.location.pathname) ||
+                        window.location.pathname !== '/'
+                    ) {
+                        window.localStorage.setItem(
+                            'redirect_to',
+                            window.location.href
+                        );
+                    }
                 }
                 this.transitionToRoute('about');
             }
