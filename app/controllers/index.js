@@ -3,9 +3,14 @@ import Ember from "ember";
 var controller = Ember.Controller.extend({
     needs: ["application"],
     init: function(){
-        var user = this.get('controllers.application').user;
+        var application = this.get('controllers.application');
+        var user = application.user;
         if(user.logged_in) {
-            this.transitionToRoute('tasks');
+            if(application.isSmallScreen()) {
+                this.transitionToRoute('mobile-tasks');
+            } else {
+                this.transitionToRoute('tasks');
+            }
         }
     }
 });
