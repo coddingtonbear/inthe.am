@@ -151,9 +151,7 @@ var controller = Ember.Controller.extend({
             var result = confirm(
                 `Are you sure you would like to configure your Inthe.AM ` +
                 `task list to synchronize with the built-in taskserver ` +
-                `rather than a custom one?  You will need to update your ` +
-                `Taskwarrior synchronization settings using the ` +
-                `instructions above after making this change.`
+                `rather than a custom one?`
             );
             if(!result) {
                 return;
