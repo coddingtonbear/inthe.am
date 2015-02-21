@@ -216,6 +216,11 @@ div.row {
       text-align: center;
     }
   }
+  .info-box {
+    background: rgba(255,255,255,.8);
+    border: 2px solid #eee;
+    padding: 20px;
+  }
 }
 
 #list, #mobile-list {

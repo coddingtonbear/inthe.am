@@ -51,16 +51,6 @@
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            <p class="input-note">
-                                Protip: You can make configuring your local
-                                installation of Taskwarior to synchronize
-                                with Inthe.AM a little easier by using the
-                                <a href="http://github.com/coddingtonbear/taskwarrior-inthe.am">Taskwarrior Inthe.AM Utility</a>.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="large-12 columns">
                             {{view "select" value=controllers.application.user.taskd_server_is_default optionValuePath="content.value" optionLabelPath="content.human" content=taskd_server_settings id="id_taskd_server_is_default"}}
                         </div>
                     </div>
@@ -68,66 +58,12 @@
                         <div class="row">
                             <div class="large-12 columns">
                                 <h3 id="built_in_task_server">Using the built-in taskserver</h3>
-                                <table class="pure-table pure-table-horizontal">
-                                    <tr>
-                                        <th>
-                                            Your Certificate
-                                        </th>
-                                        <td>
-                                            <a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                           Your Key 
-                                        </th>
-                                        <td>
-                                            <a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            Server Certificate
-                                        </th>
-                                        <td>
-                                            {{#if controllers.application.urls.ca_certificate}}
-                                                <a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a>
-                                            {{else}}
-                                                &mdash;
-                                            {{/if}}
-                                        </td>
-                                    </tr>
-                                </table>
-                                
-                                <p>
-                                    Add the following settings to your Taskwarrior configuration file (<code>~/.taskrc</code>).
-                                </p>
-
-                                <code class="para">taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a><br />
-                                    taskd.key=/path/to/<a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a><br />
-                                    taskd.ca=/path/to/<a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a><br />
-                                    taskd.server={{ controllers.application.user.taskd_server }}<br />
-                                    taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
-                                </code>
-
-                                <p>
-                                    <strong>If you are using Taskwarrior version 2.4 or newer</strong>, you will also need to add the following line to your
-                                    configuration file:
-                                </p>
-
-                                <code class="para">
-                                    taskd.trust=ignore hostname<br />
-                                </code>
-
-                                <p>
-                                    Synchronizing for the first time is as easy as running <code>task sync init</code> 
-                                    &mdash; running that command will instruct Taskwarrior to send all of its tasks to Inthe.AM.
-                                    After the initial synchronization, you can synchronize with Inthe.AM by running <code>task sync</code>.
-                                </p>
+                                {{partial "sync-instructions"}}
                             </div>
                             <div class="large-12 columns">
                                 <p class="input-note">
-                                    If you have previously configured Inthe.AM to use an external taskserver, you can click the below button to re-set your configuration such that it uses the built-in server.
+                                    If you have previously configured Inthe.AM to use an external taskserver,
+                                    you can click the below button to re-set your configuration such that it uses the built-in server.
                                 </p>
                                 <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset taskserver Settings to use the Built-In taskserver</a>
                                 <a href="" class="button radius alert" {{action "regenerate_taskd_certificate"}}>Re-generate taskserver certificate</a>
@@ -138,6 +74,16 @@
                         <div class="row">
                             <div class="large-12 columns">
                                 <h3 id="custom_task_server">Use a custom taskserver</h3>
+                                <div class="block error">
+                                    <p>
+                                        <strong>Deprecation Warning</strong>:
+                                        Using a custom taskserver
+                                        is deprecated and will become unavailable on or after April 1st, 2015.
+                                    </p>
+                                    <p>
+                                        <a href="https://github.com/coddingtonbear/inthe.am/issues/167">More information</a>
+                                    </p>
+                                </div>
                             </div>
                             <div class="large-12 columns">
                                 <label>Taskserver</label>

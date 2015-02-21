@@ -1,0 +1,64 @@
+<p class="input-note">
+    Note: You can make the process of configuring Taskwarrior
+    to synchronize with Inthe.AM a little easier by installing
+    and using the
+    <a href="http://github.com/coddingtonbear/taskwarrior-inthe.am">Taskwarrior Inthe.AM Utility</a>'s
+    <b>setup</b> command rather than following the below
+    instructions.
+</p>
+<table class="pure-table pure-table-horizontal">
+    <tr>
+        <th>
+            Your Certificate
+        </th>
+        <td>
+            <a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a>
+        </td>
+    </tr>
+    <tr>
+        <th>
+           Your Key 
+        </th>
+        <td>
+            <a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            Server Certificate
+        </th>
+        <td>
+            {{#if controllers.application.urls.ca_certificate}}
+                <a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a>
+            {{else}}
+                &mdash;
+            {{/if}}
+        </td>
+    </tr>
+</table>
+
+<p>
+    Add the following settings to your Taskwarrior configuration file (<code>~/.taskrc</code>).
+</p>
+
+<code class="para">taskd.certificate=/path/to/<a {{bind-attr href=controllers.application.urls.my_certificate }}>private.certificate.pem</a><br />
+    taskd.key=/path/to/<a {{bind-attr href=controllers.application.urls.my_key }}>private.key.pem</a><br />
+    taskd.ca=/path/to/<a {{bind-attr href=controllers.application.urls.ca_certificate}}>ca.cert.pem</a><br />
+    taskd.server={{ controllers.application.user.taskd_server }}<br />
+    taskd.credentials={{ controllers.application.user.taskd_credentials }}<br />
+</code>
+
+<p>
+    <strong>If you are using Taskwarrior version 2.4 or newer</strong>, you will also need to add the following line to your
+    configuration file:
+</p>
+
+<code class="para">
+    taskd.trust=ignore hostname<br />
+</code>
+
+<p>
+    Synchronizing for the first time is as easy as running <code>task sync init</code> 
+    &mdash; running that command will instruct Taskwarrior to send all of its tasks to Inthe.AM.
+    After the initial synchronization, you can synchronize with Inthe.AM by running <code>task sync</code>.
+</p>

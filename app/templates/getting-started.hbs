@@ -1,19 +1,28 @@
 <div class="row standalone">
     <div class="standalone-content">
-        <h2>Let's get started</h2>
-        <p>
-            <strong>Inthe.AM is designed to augment Taskwarrior, not to
-            replace it</strong>, so we recommend that you
-            {{#link-to "configure"}}configure Taskwarrior to
-            synchronize with Inthe.AM or configure Inthe.AM to synchronize
-            with a taskd server you are already using{{/link-to}}.
-            But, you can get started by creating a task right now by
-            clicking the <i class="fa fa-pencil-square-o">New</i> icon above.
-        </p>
-        <p>
-            After you've synchronized or created some tasks, you can see
-            them in your {{#link-to "tasks"}}task list{{/link-to}}.
-        </p>
+        <div class="row">
+            <div class="large-12 columns">
+                <h2>Let's get started</h2>
+                <p>
+                    <strong>Inthe.AM is designed to augment Taskwarrior, not to
+                    replace it</strong>, so we recommend that you set up
+                    Taskwarrior to synchronize with Inthe.AM by following
+                    the instructions below.
+                </p>
+                <p>
+                    If you'd like to instead get started right away, you can
+                    create a new task by clicking the
+                    <i class="fa fa-pencil-square-o">New</i> icon above; you'll
+                    be able to find instructions for synchronizing with Inthe.AM
+                    later in your {{#link-to "configure"}}configuration{{/link-to}}.
+                </p>
+            </div>
+            <div class="large-12 columns">
+                <div class="info-box">
+                    {{partial "sync-instructions"}}
+                </div>
+            </div>
+        </div>
         {{partial "footer"}}
     </div>
 </div>
