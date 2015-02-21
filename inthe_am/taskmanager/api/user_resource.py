@@ -271,6 +271,18 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
     def configure_taskd(self, request, store=None, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
+        if store.sync_uses_default_server:
+            return HttpResponse(
+                json.dumps({
+                    'error_message': (
+                        'This functionality is no longer available. '
+                        'See https://github.com/coddingtonbear/'
+                        'inthe.am/issues/167 for more information.'
+                    ),
+                }),
+                status=410,
+                content_type='application/json',
+            )
 
         form = forms.TaskdConfigurationForm(request.POST)
         if not form.is_valid():
