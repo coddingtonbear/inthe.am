@@ -148,6 +148,16 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         reset_taskd: function() {
+            var result = confirm(
+                `Are you sure you would like to configure your Inthe.AM ` +
+                `task list to synchronize with the built-in taskserver ` +
+                `rather than a custom one?  You will need to update your ` +
+                `Taskwarrior synchronization settings using the ` +
+                `instructions above after making this change.`
+            );
+            if(!result) {
+                return;
+            }
             var url = this.get('controllers.application').urls.taskd_reset;
             return this.ajaxRequest({
                 url: url,
