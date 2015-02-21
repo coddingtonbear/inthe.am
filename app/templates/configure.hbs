@@ -39,25 +39,18 @@
                                 instructions below for setting up your local
                                 taskwarrior client to synchronize with Inthe.AM.
                             </p>
-                            <p>
-                                If you would prefer to use an outside taskserver
-                                you are also able to configure Inthe.AM to
-                                synchronize with that server instead by
-                                changing the below selector to
-                                "Use a custom taskserver" and supplying
-                                the necessary details.
-                            </p>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="large-12 columns">
-                            {{view "select" value=controllers.application.user.taskd_server_is_default optionValuePath="content.value" optionLabelPath="content.human" content=taskd_server_settings id="id_taskd_server_is_default"}}
+                    {{#unless controllers.application.user.taskd_server_is_default}}
+                        <div class="row">
+                            <div class="large-12 columns">
+                                {{view "select" value=controllers.application.user.taskd_server_is_default optionValuePath="content.value" optionLabelPath="content.human" content=taskd_server_settings id="id_taskd_server_is_default"}}
+                            </div>
                         </div>
-                    </div>
+                    {{/unless}}
                     {{#if controllers.application.user.taskd_server_is_default}}
                         <div class="row">
                             <div class="large-12 columns">
-                                <h3 id="built_in_task_server">Using the built-in taskserver</h3>
                                 {{partial "sync-instructions"}}
                             </div>
                             <div class="large-12 columns">
@@ -73,7 +66,6 @@
                     {{#unless controllers.application.user.taskd_server_is_default}}
                         <div class="row">
                             <div class="large-12 columns">
-                                <h3 id="custom_task_server">Use a custom taskserver</h3>
                                 <div class="block error">
                                     <p>
                                         <strong>Deprecation Warning</strong>:
