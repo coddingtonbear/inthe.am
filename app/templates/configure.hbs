@@ -53,14 +53,6 @@
                             <div class="large-12 columns">
                                 {{partial "sync-instructions"}}
                             </div>
-                            <div class="large-12 columns">
-                                <p class="input-note">
-                                    If you have previously configured Inthe.AM to use an external taskserver,
-                                    you can click the below button to re-set your configuration such that it uses the built-in server.
-                                </p>
-                                <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset taskserver Settings to use the Built-In taskserver</a>
-                                <a href="" class="button radius alert" {{action "regenerate_taskd_certificate"}}>Re-generate taskserver certificate</a>
-                            </div>
                         </div>
                     {{/if}}
                     {{#unless controllers.application.user.taskd_server_is_default}}
@@ -538,6 +530,30 @@
                         </div>
                     </div>
                     <a href="" class="button radius alert" {{action "clear_lock"}}>Manually Unlock Task List</a>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Reset Taskserver Synchronization Settings</h3>
+                            <p>
+                                Strictly speaking, this isn't all that dangerous.
+                                Pressing this button will clear your Inthe.AM Taskserver
+                                account's information and reset your synchronization settings
+                                such that Inthe.AM will sync with the built-in Taskserver.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="" class="button radius alert" {{action "reset_taskd"}}>Reset taskserver Settings to use the Built-In taskserver</a>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3>Regenerate Taskserver Certificates</h3>
+                            <p>
+                                This button will simply re-generate your Taskserver
+                                certificates.  It is strongly recommended that you
+                                walk through the setup instructions described above
+                                in 'Synchronization Settings' after pressing this button.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="" class="button radius alert" {{action "regenerate_taskd_certificate"}}>Re-generate taskserver certificate</a>
                 </div>
             </li>
         </ul>
