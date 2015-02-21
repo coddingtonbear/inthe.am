@@ -247,6 +247,17 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
         store.reset_taskd_configuration()
+        store.clear_taskserver_data()
+        try:
+            os.unlink(
+                os.path.join(
+                    store.local_path,
+                    'backlog.data',
+                )
+            )
+        except OSError:
+            pass
+        store.client.sync(init=True)
         store.log_message("Taskd settings reset to default.")
         return HttpResponse(
             json.dumps({
@@ -497,19 +508,7 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
             return HttpResponseNotAllowed(request.method)
 
         ts = models.TaskStore.get_for_user(request.user)
-
-        try:
-            os.rename(
-                ts.taskd_data_path,
-                (
-                    ts.taskd_data_path
-                    + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                )
-            )
-        except OSError:
-            logger.exception(
-                "OSError encountered while removing taskd data."
-            )
+        ts.clear_taskserver_data()
 
         for path in os.listdir(ts.local_path):
             if os.path.splitext(path)[1] == '.data':

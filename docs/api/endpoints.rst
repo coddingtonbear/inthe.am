@@ -346,6 +346,20 @@ If you've changed your Taskserver settings, but you'd like to reset
 them such that Inthe.AM's built-in taskserver is utilized, send an empty
 ``POST`` request to this endpoint.
 
+.. note::
+
+   Using this endpoint does a number of things:
+
+   1. Resets your Taskserver synchronization settings such that Inthe.AM
+      will synchronize with the built-in Taskserver.
+   2. Clears any previously-synced tasks from your Inthe.AM Taskserver
+      account.  This is to make sure that you have a clean slate.
+   3. Clears the local Taskwarrior repository's ``backlog.data`` file.
+
+   None of these should be considered particularly dangerous, but this
+   is **not** an operation that can be undone without administrative
+   intervention.
+
 URL: ``https://inthe.am/api/v1/user/reset-taskd-configuration/``
 
 +----------+----------------------------------+

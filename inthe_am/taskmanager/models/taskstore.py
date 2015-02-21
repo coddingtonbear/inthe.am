@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import logging
 import os
@@ -545,6 +546,20 @@ class TaskStore(models.Model):
             'taskd.server': settings.TASKD_SERVER,
             'taskd.credentials': self.metadata['generated_taskd_credentials']
         })
+
+    def clear_taskserver_data(self):
+        try:
+            os.rename(
+                self.taskd_data_path,
+                (
+                    self.taskd_data_path
+                    + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                )
+            )
+        except OSError:
+            logger.exception(
+                "OSError encountered while removing taskd data."
+            )
 
     def autoconfigure_taskd(self):
         with git_checkpoint(self, 'Autoconfiguration'):
