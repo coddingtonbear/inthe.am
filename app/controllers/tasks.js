@@ -14,9 +14,9 @@ var controller = Ember.ArrayController.extend({
     ajaxRequest: function(params) {
         return this.get('controllers.application').ajaxRequest(params);
     },
-    refresh: function(after){
+    refresh: function(){
         // First, request a synchronous sync
-        this.ajaxRequest({
+        return this.ajaxRequest({
             url: this.get('controllers.application').urls.sync,
             type: 'POST',
         }).then(function(){
@@ -31,9 +31,6 @@ var controller = Ember.ArrayController.extend({
                         // pass
                     }
                 }.bind(this));
-                if(after) {
-                    after();
-                }
             }.bind(this));
         }.bind(this), function(msg){
             this.get('controllers.application').error_message(

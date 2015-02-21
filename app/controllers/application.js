@@ -484,6 +484,8 @@ var controller = Ember.Controller.extend({
             this.showLoading();
             this.get('controllers.tasks').refresh(function(){
                 this.hideLoading();
+            }.bind(this), function(){
+                this.hideLoading();
             }.bind(this));
         },
         home: function(){
