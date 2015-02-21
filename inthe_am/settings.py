@@ -266,7 +266,7 @@ SYNC_LISTENER_WARNING_TIMEOUT = 150
 TEST_RUNNER = 'django_behave.runner.DjangoBehaveTestSuiteRunner'
 
 BROKER_URL = 'redis://localhost:6379/1'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
+CELERYD_CONCURRENCY = 10
 CELERY_HIJACK_ROOT_LOGGER = False
 
 REDIS_HOST = 'localhost'
