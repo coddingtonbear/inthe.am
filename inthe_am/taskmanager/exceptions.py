@@ -1,0 +1,4 @@
+
+
+class NestedCheckpointError(RuntimeError):
+    pass

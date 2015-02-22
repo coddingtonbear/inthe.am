@@ -3,6 +3,7 @@ import logging
 import os
 import uuid
 
+from .exceptions import NestedCheckpointError
 from .lock import get_lock_name_for_store, redis_lock
 
 
@@ -17,6 +18,19 @@ def git_checkpoint(
     lock_name = get_lock_name_for_store(store)
     pre_work_sha = store.repository.head()
     checkpoint_id = uuid.uuid4()
+
+    if(hasattr(store, '_locked')):
+        exception_message = (
+            "Store %s attempted to acquire a checkpoint for '%s', but "
+            "the repository was already locked for '%s'."
+        ) % (
+            store,
+            message,
+            store._locked
+        )
+        raise NestedCheckpointError(exception_message)
+    store._locked = message
+
     with redis_lock(lock_name, message=message):
         git_index_lock_path = os.path.join(
             store.local_path,
