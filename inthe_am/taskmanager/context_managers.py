@@ -119,6 +119,8 @@ def git_checkpoint(
                     pre_work_sha
                 )
             raise
+
+    delattr(store, '_active_checkpoint')
     if hasattr(store, 'post_checkpoint_hook'):
         changes = store.repository.head() != pre_work_sha
         store.post_checkpoint_hook(changes=changes)
