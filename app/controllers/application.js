@@ -420,23 +420,44 @@ var controller = Ember.Controller.extend({
     statusActions: {
         'task_changed': function(evt) {
             Ember.run.once(this, function(){
-                if (this.store.hasRecordForId('task', evt.data)) {
-                    this.store.find('task', evt.data).then(function(record){
+                let taskData = {};
+                let taskType = 'task';
+                let taskId = null;
+                try {
+                    taskData = JSON.parse(evt.data);
+                    taskType = taskData.model;
+                    taskId = taskData.uuid;
+                } catch(e) {
+                    taskId = evt.data;
+                }
+                if (this.store.hasRecordForId(taskType, taskId)) {
+                    this.store.find(taskType, taskId).then(function(record){
                         if (record.get('isLoaded') && (!record.get('isDirty') && !record.get('isSaving'))) {
                             record.reload();
                         }
                     });
                 } else {
-                    this.store.find('task', evt.data);
+                    this.store.find(taskType, taskId);
                 }
             });
         },
         'head_changed': function(evt) {
-            this.set('statusUpdaterHead', evt.data);
+            if(!this.get('statusUpdaterHead')) {
+                this.set('statusUpdaterHead', {});
+            }
             try {
-                this.store.find('activity-log').update();
+                let headUpdateData = JSON.parse(evt.data);
+                this.set(
+                    'statusUpdaterHead.' + headUpdateData.repo,
+                    headUpdateData.head
+                );
             } catch(e) {
-                // Pass
+                this.set(
+                    'statusUpdaterHead', 
+                    {
+                        main: evt.data
+                    }
+                );
             }
         },
         'error_logged': function(evt) {
