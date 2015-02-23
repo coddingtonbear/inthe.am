@@ -19,17 +19,17 @@ def git_checkpoint(
     pre_work_sha = store.repository.head()
     checkpoint_id = uuid.uuid4()
 
-    if(hasattr(store, '_locked')):
+    if(hasattr(store, '_active_checkpoint')):
         exception_message = (
             "Store %s attempted to acquire a checkpoint for '%s', but "
             "the repository was already locked for '%s'."
         ) % (
             store,
             message,
-            store._locked
+            store._active_checkpoint
         )
         raise NestedCheckpointError(exception_message)
-    store._locked = message
+    store._active_checkpoint = message
 
     with redis_lock(lock_name, message=message):
         git_index_lock_path = os.path.join(
