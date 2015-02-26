@@ -460,7 +460,7 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
             task_info = body[4:]
 
             if not body.lower().startswith('add'):
-                if store.sms_reply >= store.REPLY_ERROR:
+                if store.sms_replies >= store.REPLY_ERROR:
                     r.sms("Bad Request: Unknown command.")
                 log_args = (
                     "Incoming SMS from %s had no recognized command: '%s'." % (
@@ -479,7 +479,7 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 )
                 logger.warning(*log_args)
                 store.log_error(*log_args)
-                if store.sms_reply >= store.REPLY_ERROR:
+                if store.sms_replies >= store.REPLY_ERROR:
                     r.sms("Bad Request: Empty task.")
             else:
                 task_uuid = str(uuid.uuid4())
@@ -491,7 +491,7 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 task_args.append('uuid:%s' % task_uuid)
                 result = store.client._execute_safe(*task_args)
                 stdout, stderr = result
-                if store.sms_reply >= store.REPLY_ALL:
+                if store.sms_replies >= store.REPLY_ALL:
                     r.sms("Added.")
 
                 log_args = (
