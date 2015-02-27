@@ -11,6 +11,16 @@ var controller = Ember.ObjectController.extend({
             var form = $("#new_annotation_form");
             var value = field.val();
 
+            // Debugging #179;
+            Raven.captureMessage(
+                form.length + ' annotation forms.',
+                {
+                    'form': form,
+                    'field': field,
+                    'value': value,
+                }
+            );
+
             if (annotations === null) {
                 annotations = [];
             }
