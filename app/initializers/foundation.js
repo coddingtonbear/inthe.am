@@ -15,5 +15,9 @@ export default {
                 );
             }.on('didInsertElement'),
         });
+
+        $(document).on('closed', '[data-reveal]', function(){
+            $('form.reveal-modal').html('');
+        });
     }
 };
