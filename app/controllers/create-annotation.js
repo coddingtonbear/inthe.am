@@ -13,7 +13,7 @@ var controller = Ember.ObjectController.extend({
 
             // Debugging #179;
             Raven.captureMessage(
-                'Annotation: ' + value + ' (' + $("#new_annotation_body").val() + ')'
+                'Annotation: ' + value + ' (' + $("#new_annotation_body")[0].value + ')'
             );
 
             if (annotations === null) {
