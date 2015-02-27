@@ -15,9 +15,8 @@ var controller = Ember.ObjectController.extend({
             Raven.captureMessage(
                 form.length + ' annotation forms.',
                 {
-                    'form': form,
-                    'field': field,
                     'value': value,
+                    'directValue': $('#new_annotation_body').val(),
                 }
             );
 
