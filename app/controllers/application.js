@@ -478,6 +478,9 @@ var controller = Ember.Controller.extend({
     closeModal: function(node) {
         if(node) {
             node.foundation('reveal', 'close');
+            setTimeout(function(){
+                $('.reveal-modal').remove();
+            }, 1500);
         }
         this.get('target').send('disconnectModalOutlet');
     },
