@@ -4,8 +4,7 @@ var controller = Ember.ObjectController.extend({
     needs: ['application'],
     actions: {
         'save': function() {
-            var self = this;
-            var application = self.get('controllers.application');
+            var application = this.get('controllers.application');
             var model = this.get('model');
             var annotations = model.get('annotations');
             var field = $("#new_annotation_body");
@@ -18,7 +17,7 @@ var controller = Ember.ObjectController.extend({
             if (!value) {
                 // If they didn't enter any text into the annotation
                 // form, just close the dialog and go about your day.
-                form.foundation('reveal', 'close');
+                application.closeModal(form);
                 return;
             }
 
@@ -27,9 +26,8 @@ var controller = Ember.ObjectController.extend({
             application.showLoading();
             model.save().then(function(){
                 application.hideLoading();
-                field.val('');
-                form.foundation('reveal', 'close');
-            }, function(msg) {
+                application.closeModal(form);
+            }.bind(this), function(msg) {
                 model.rollback();
                 model.reload();
                 application.hideLoading();
@@ -38,7 +36,7 @@ var controller = Ember.ObjectController.extend({
                     "saving this annotation.  Check your " +
                     "Activity Log for more information."
                 );
-            });
+            }.bind(this));
         }
     }
 });

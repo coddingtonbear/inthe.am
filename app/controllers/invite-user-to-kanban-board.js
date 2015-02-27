@@ -40,7 +40,7 @@ var controller = Ember.ObjectController.extend({
                 this.success_message(
                     `An invitation email has been sent to ${email}.`
                 );
-                $('#invite_user_form').foundation('reveal', 'close');
+                application.closeModal($('#invite_user_form'));
                 $("form#invite_user_form input[name='email_address']").val('');
             }.bind(this), function(msg){
                 application.hideLoading();

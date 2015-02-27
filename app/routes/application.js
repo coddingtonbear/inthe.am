@@ -12,6 +12,12 @@ var route = Ember.Route.extend({
         }
     },
     actions: {
+        disconnectModalOutlet: function(){
+            this.disconnectOutlet({
+                parentView: 'application',
+                outlet: 'modal'
+            });
+        },
         switch_to_kanban: function(){
             var memberships = this.controllerFor('application').user.kanban_memberships;
             if (memberships.length === 1) {

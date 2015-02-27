@@ -475,6 +475,12 @@ var controller = Ember.Controller.extend({
             }
         }
     },
+    closeModal: function(node) {
+        if(node) {
+            node.foundation('reveal', 'close');
+        }
+        this.get('target').send('disconnectModalOutlet');
+    },
     actions: {
         refresh: function(){
             if (this.get('_taskUpdateStreamStatus') === 'auto') {
@@ -599,7 +605,7 @@ var controller = Ember.Controller.extend({
         },
         focus_filter: function() {
                 $('#filter-string').focus();
-        }
+        },
     }
 });
 

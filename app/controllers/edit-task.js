@@ -15,7 +15,7 @@ var controller = Ember.ObjectController.extend({
             var self = this;
             application.showLoading();
             model.save().then(function(){
-                $('#new_task_form').foundation('reveal', 'close');
+                application.closeModal($('#new_task_form'));
                 application.hideLoading();
                 var currentPath = this.get('controllers.application').getHandlerPath();
                 if (currentPath !== 'application.kanban-board') {
