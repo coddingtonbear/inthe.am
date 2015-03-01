@@ -247,18 +247,6 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
         if request.method != 'POST':
             return HttpResponseNotAllowed(request.method)
         store.reset_taskd_configuration()
-        store.clear_taskserver_data()
-        try:
-            os.unlink(
-                os.path.join(
-                    store.local_path,
-                    'backlog.data',
-                )
-            )
-        except OSError:
-            pass
-        store.client.sync(init=True)
-        store.log_message("Taskd settings reset to default.")
         return HttpResponse(
             json.dumps({
                 'message': 'OK',

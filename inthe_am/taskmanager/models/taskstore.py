@@ -532,6 +532,10 @@ class TaskStore(models.Model):
         return True
 
     def reset_taskd_configuration(self):
+        self.sync_permitted = False
+        self.save()  # Just to make sure we don't sync while doing
+                     # these changes.
+
         self.taskrc.update({
             'taskd.certificate': os.path.join(
                 self.local_path,
@@ -546,6 +550,21 @@ class TaskStore(models.Model):
             'taskd.server': settings.TASKD_SERVER,
             'taskd.credentials': self.metadata['generated_taskd_credentials']
         })
+        self.generate_new_certificate()
+        self.clear_taskserver_data()
+        try:
+            os.unlink(
+                os.path.join(
+                    self.local_path,
+                    'backlog.data',
+                )
+            )
+        except OSError:
+            pass
+        self.client.sync(init=True)
+        self.sync_permitted = True
+        self.save()
+        self.log_message("Taskd settings reset to default.")
 
     def clear_taskserver_data(self):
         try:
