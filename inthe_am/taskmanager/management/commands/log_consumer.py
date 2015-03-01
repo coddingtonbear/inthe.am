@@ -136,14 +136,30 @@ class Command(BaseCommand):
         else:
             self.operations[operation_number] = operation
 
+    def get_file_inode(self, filename):
+        inode = subprocess.check_output(
+            [
+                'ls',
+                '-i',
+                filename,
+            ]
+        )
+        return inode.strip().split(' ')[0]
+
     def handle(self, *args, **kwargs):
         self.last_message_emitted = None
         last_announcement = None
         self.operations = {}
         self.highest_message = 0
 
+        starting_inode = self.get_file_inode(args[0])
         proc = subprocess.Popen(
-            ['tail', '-F', args[0]],
+            [
+                'tail',
+                '--max-unchanged-stats=5',
+                '-F',
+                args[0]
+            ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -178,10 +194,14 @@ class Command(BaseCommand):
                 )
             ):
                 last_announcement = now()
+                current_inode = self.get_file_inode(args[0])
                 logger.error(
                     "No messages have been emitted during the last %s "
                     "minutes; it is likely that something has gone awry "
-                    "our tail.  Suiciding; will be restarted automatically.",
-                    round((now() - self.last_message_emitted).seconds / 60.0)
+                    "our tail.  Original inode: %s; current: %s. "
+                    "Exiting; will be restarted automatically.",
+                    round((now() - self.last_message_emitted).seconds / 60.0),
+                    starting_inode,
+                    current_inode,
                 )
                 sys.exit(self.NO_RECENT_MESSAGES)
