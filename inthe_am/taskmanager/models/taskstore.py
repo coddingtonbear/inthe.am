@@ -633,9 +633,9 @@ class TaskStore(models.Model):
             with open(private_key_filename, 'w') as out:
                 out.write(private_key)
 
-        cert_filename = self.generate_new_certificate()
-
         with git_checkpoint(self, 'Save initial taskrc credentials'):
+            cert_filename = self.generate_new_certificate()
+
             # Save these details to the taskrc
             taskd_credentials = '%s/%s/%s' % (
                 settings.TASKD_ORG,
@@ -657,39 +657,38 @@ class TaskStore(models.Model):
             self.client.sync(init=True)
 
     def generate_new_certificate(self):
-        with git_checkpoint(self, 'Generate New Certificate'):
-            private_key_filename = os.path.join(
+        private_key_filename = os.path.join(
+            self.local_path,
+            self.DEFAULT_FILENAMES['key'],
+        )
+        cert_filename = self.taskrc.get(
+            'taskd.certificate',
+            os.path.join(
                 self.local_path,
-                self.DEFAULT_FILENAMES['key'],
+                self.DEFAULT_FILENAMES['certificate'],
             )
-            cert_filename = self.taskrc.get(
-                'taskd.certificate',
-                os.path.join(
-                    self.local_path,
-                    self.DEFAULT_FILENAMES['certificate'],
-                )
-            )
-            # Create and write a new certificate
-            cert_proc = subprocess.Popen(
-                [
-                    'certtool',
-                    '--generate-certificate',
-                    '--load-privkey',
-                    private_key_filename,
-                    '--load-ca-privkey',
-                    self.server_config['ca.key'],
-                    '--load-ca-certificate',
-                    self.server_config['ca.cert'],
-                    '--template',
-                    settings.TASKD_SIGNING_TEMPLATE,
-                ],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            cert = cert_proc.communicate()[0]
+        )
+        # Create and write a new certificate
+        cert_proc = subprocess.Popen(
+            [
+                'certtool',
+                '--generate-certificate',
+                '--load-privkey',
+                private_key_filename,
+                '--load-ca-privkey',
+                self.server_config['ca.key'],
+                '--load-ca-certificate',
+                self.server_config['ca.cert'],
+                '--template',
+                settings.TASKD_SIGNING_TEMPLATE,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        cert = cert_proc.communicate()[0]
 
-            with open(cert_filename, 'w') as out:
-                out.write(cert)
+        with open(cert_filename, 'w') as out:
+            out.write(cert)
         return cert_filename
 
     def _log_entry(self, message, error=False, params=None, silent=False):

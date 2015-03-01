@@ -526,6 +526,7 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
             content_type='application/json',
         )
 
+    @git_managed("Generating new certificate", gc=False)
     @process_authentication()
     def generate_new_certificate(self, request, **kwargs):
         if request.method != 'POST':
