@@ -56,10 +56,10 @@ class Status(BaseSseView):
                 ):
                     logger.info('Found new repository head -- %s' % new_head)
                     ids = store.get_changed_task_ids(head, new_head)
+                    self.sse.add_message("head_changed", new_head)
                     for id in ids:
                         self.sse.add_message("task_changed", id)
                     head = new_head
-                    self.sse.add_message("head_changed", new_head)
         except LockTimeout:
             # This is OK -- we'll check again on the next round.
             pass
