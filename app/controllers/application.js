@@ -136,6 +136,7 @@ var controller = Ember.Controller.extend({
             async: async
         }).then(function(data){
             this.set('user', data);
+            console.logIfDebug("Got user data", data);
             this.updateColorscheme();
             if(this.get('user').logged_in){
                 Raven.setUser({
@@ -197,11 +198,13 @@ var controller = Ember.Controller.extend({
     handlePostLoginRedirects: function() {
         if(window.localStorage && this.get('user.tos_up_to_date')) {
             var url = window.localStorage.getItem('redirect_to');
+            console.logIfDebug("Scheduling redirect", url);
             if(url) {
                 Ember.run.later(
                     this,
                     function(){
                         var url = window.localStorage.getItem('redirect_to');
+                        console.logIfDebug("Redirecting to", url);
                         window.localStorage.removeItem('redirect_to');
                         window.location.href = url;
                     },
@@ -213,6 +216,7 @@ var controller = Ember.Controller.extend({
         return false;
     },
     handleError: function(reason) {
+        console.logIfDebug("Error encountered", reason);
         if (reason.status === 401) {
             alert(
                 [
@@ -376,6 +380,7 @@ var controller = Ember.Controller.extend({
         }
     },
     startEventStream: function() {
+        console.logIfDebug("Starting event stream");
         var head = this.get('statusUpdaterHead');
         var log = this.get('statusUpdaterLog');
         this.set('statusUpdaterHeartbeat', new Date());
@@ -419,6 +424,7 @@ var controller = Ember.Controller.extend({
     },
     statusActions: {
         'task_changed': function(evt) {
+            console.logIfDebug(evt);
             Ember.run.once(this, function(){
                 if (this.store.hasRecordForId('task', evt.data)) {
                     this.store.find('task', evt.data).then(function(record){
@@ -432,6 +438,7 @@ var controller = Ember.Controller.extend({
             });
         },
         'head_changed': function(evt) {
+            console.logIfDebug(evt);
             this.set('statusUpdaterHead', evt.data);
             try {
                 this.store.find('activity-log').update();
@@ -440,12 +447,14 @@ var controller = Ember.Controller.extend({
             }
         },
         'error_logged': function(evt) {
+            console.logIfDebug(evt);
             $.growl.error({
                 title: 'Error',
                 message: evt.data
             });
         },
         'heartbeat': function(evt) {
+            console.logIfDebug(evt);
             this.set('statusUpdaterHeartbeat', new Date());
             var heartbeat_data = JSON.parse(evt.data);
             this.set('user.sync_enabled', heartbeat_data.sync_enabled);
