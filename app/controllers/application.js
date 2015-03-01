@@ -424,7 +424,7 @@ var controller = Ember.Controller.extend({
     },
     statusActions: {
         'task_changed': function(evt) {
-            console.logIfDebug(evt);
+            console.logIfDebug(evt.type, evt.data);
             Ember.run.once(this, function(){
                 if (this.store.hasRecordForId('task', evt.data)) {
                     this.store.find('task', evt.data).then(function(record){
@@ -438,7 +438,7 @@ var controller = Ember.Controller.extend({
             });
         },
         'head_changed': function(evt) {
-            console.logIfDebug(evt);
+            console.logIfDebug(evt.type, evt.data);
             this.set('statusUpdaterHead', evt.data);
             try {
                 this.store.find('activity-log').update();
@@ -447,14 +447,13 @@ var controller = Ember.Controller.extend({
             }
         },
         'error_logged': function(evt) {
-            console.logIfDebug(evt);
+            console.logIfDebug(evt.type, evt.data);
             $.growl.error({
                 title: 'Error',
                 message: evt.data
             });
         },
         'heartbeat': function(evt) {
-            console.logIfDebug(evt);
             this.set('statusUpdaterHeartbeat', new Date());
             var heartbeat_data = JSON.parse(evt.data);
             this.set('user.sync_enabled', heartbeat_data.sync_enabled);
