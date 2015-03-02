@@ -44,29 +44,7 @@ class Status(BaseSseView):
 
         return self._store
 
-    def check_head(self, head):
-        store = self.get_store()
-        new_head = store.repository.head()
-
-        try:
-            if head != new_head:
-                with redis_lock(
-                    get_lock_name_for_store(store),
-                    message="SSE Head Change"
-                ):
-                    logger.info('Found new repository head -- %s' % new_head)
-                    ids = store.get_changed_task_ids(head, new_head)
-                    self.sse.add_message("head_changed", new_head)
-                    for id in ids:
-                        self.sse.add_message("task_changed", id)
-                    head = new_head
-        except LockTimeout:
-            # This is OK -- we'll check again on the next round.
-            pass
-
-        return head
-
-    def beat_heart(self, store):
+    def beat_heart(self):
         heartbeat_interval = datetime.timedelta(
             seconds=settings.EVENT_STREAM_HEARTBEAT_INTERVAL
         )
@@ -81,7 +59,7 @@ class Status(BaseSseView):
                 json.dumps(
                     {
                         'timestamp': datetime.datetime.now().isoformat(),
-                        'sync_enabled': store.sync_enabled,
+                        'sync_enabled': True,  # This might be a lie!
                     }
                 )
             )
@@ -92,49 +70,68 @@ class Status(BaseSseView):
         while envelope:
             if envelope['type'] != 'message':
                 continue
+            try:
+                data = json.loads(envelope['data'])
+            except:
+                logger.exception(
+                    "Error decoding envelope data: %s",
+                    envelope['data'],
+                )
+                continue
+
+            if envelope['channel'].startswith('head_changed:'):
+                self.sse.add_message(
+                    "head_changed",
+                    data['new_head'],
+                )
+            elif envelope['channel'].startswith('task_changed:'):
+                self.sse.add_message(
+                    "task_changed",
+                    data['uuid'],
+                )
+            elif envelope['channel'].startswith('log:error:'):
+                self.sse.add_message(
+                    "error_logged",
+                    data["message"],
+                )
+
             # No message types are currently handled.
             envelope = subscription.get_message()
 
     def iterator(self):
-        last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
         store = self.get_store()
         if not store:
             return
 
-        subscription = get_announcements_subscription(store)
-        kwargs = {
-            'async': True,
-            'function': (
-                'views.Status.iterator'
-            )
-        }
-        store.sync(msg='Iterator initialization', **kwargs)
+        subscription = get_announcements_subscription(
+            store,
+            announcement_types=[
+                'head_changed',
+                'task_changed',
+                'log:error',
+            ]
+        )
         created = time.time()
-        head = self.request.GET.get('head', store.repository.head())
-        self.beat_heart(store)
-        while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
-            # Get Error/Log Messages
-            entries = TaskStoreActivityLog.objects.filter(
-                last_seen__gt=last_checked,
-                error=True,
-                silent=False,
-                store=store,
+
+        # Make sure that we are all in agreement about what the
+        # head should be:
+        repo_head = store.repository.head()
+        requested_head = self.request.GET.get('head', repo_head)
+        if requested_head != repo_head:
+            self.sse.add_message(
+                'head_changed',
+                repo_head,
             )
-            for entry in entries:
-                self.sse.add_message(
-                    'error_logged',
-                    entry.message
-                )
-            last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
 
-            # See if our head has changed, and queue messages if so
-            head = self.check_head(head)
-
+        # Periodically retrieve new messages from pubsub, and return
+        # those messages via SSE.
+        self.beat_heart()
+        while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
             self.process_messages(subscription)
 
             store = self.get_store(cached=False)
 
-            self.beat_heart(store)
+            self.beat_heart()
 
             yield
 

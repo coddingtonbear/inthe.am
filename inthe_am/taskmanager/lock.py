@@ -23,9 +23,9 @@ def get_lock_redis():
 
 
 def get_announcement_channel(store, announcement_type='general'):
-    return '%s.%s' % (
-        store.username,
+    return '%s:%s' % (
         announcement_type,
+        store.username,
     )
 
 

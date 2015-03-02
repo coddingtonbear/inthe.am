@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
         if not self._subscription:
             self._subscription = connection.pubsub()
-            self._subscription.psubscribe('sync.*')
+            self._subscription.psubscribe('sync:*')
 
         return self._subscription
 
@@ -74,6 +74,8 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         last_sync_queued = None
         last_announcement = None
+        connection = self.get_redis_connection()
+
         while True:
             message = self.get_next_message()
 
@@ -90,11 +92,33 @@ class Command(BaseCommand):
                 operation = json.loads(message['data'])
                 if self.operation_requires_sync(operation):
                     repo = self.get_taskstore_for_operation(operation)
+                    original_head = repo.head()
                     logger.info(
                         "Queueing sync for %s",
                         repo,
                     )
-                    repo.sync()
+                    repo.sync(async=False)
+
+                    final_head = repo.head()
+                    connection.publish(
+                        'head_changed:%s' % repo.username,
+                        json.dumps({
+                            'old_head': original_head,
+                            'new_head': final_head,
+                        })
+                    )
+                    if(original_head != final_head):
+                        changed_ids = repo.get_changed_task_ids(
+                            original_head,
+                            final_head,
+                        )
+                        for uuid in changed_ids:
+                            connection.publish(
+                                'task_changed:%s' % repo.username,
+                                json.dumps({
+                                    'uuid': uuid,
+                                })
+                            )
             except:
                 logger.exception(
                     "Error encountered while processing sync event."

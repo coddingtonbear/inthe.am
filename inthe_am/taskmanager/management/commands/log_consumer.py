@@ -83,7 +83,7 @@ class Command(BaseCommand):
 
     def _get_queue_name(self, username):
         group, username = username.split('/')
-        return 'sync.%s' % username
+        return 'sync:%s' % username
 
     def process_line(self, line):
         matched = self.PREFIX_RE.match(line)
