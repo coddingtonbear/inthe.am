@@ -57,6 +57,7 @@ var controller = Ember.Controller.extend({
         refresh: '/api/v1/task/refresh/',
         clear_lock: '/api/v1/task/lock/',
         sync_init: '/api/v1/task/sync-init/',
+        revert_to_last_commit: '/api/v1/task/revert/',
         sync: '/api/v1/task/sync/',
         status_feed: '/status/',
         feed_url: null,

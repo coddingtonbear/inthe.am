@@ -518,6 +518,27 @@
                     <a href="" class="button radius alert" {{action "clear_task_data"}}>Clear Task Data</a>
                     <div class="row">
                         <div class="large-12 columns">
+                            <h3>Revert task list to earlier version</h3>
+                            <p>
+                                In rare situations, the local task list that Inthe.AM uses for 
+                                interacting with your tasks may become corrupted.
+                                
+                                You can use this button to reset your task list to the
+                                state it was in right before the most recent change.
+                            </p>
+                            <p>
+                                This operation is not dangerous to use on task lists
+                                that are properly synchronized, but there are slight
+                                dangers that information might be lost.
+                                
+                                Please use this button only if you're absolutely sure
+                                it's necessary.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="" class="button radius alert" {{action "revert_to_last_commit"}}>Revert task list to earlier version</a>
+                    <div class="row">
+                        <div class="large-12 columns">
                             <h3>Manually unlock task list</h3>
                             <p>
                                 Pressing this button will unlock your task list.

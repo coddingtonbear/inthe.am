@@ -458,6 +458,28 @@ var controller = Ember.Controller.extend({
                     `attempting to enable sync: ${msg}`
                 );
             }.bind(this));
+        },
+        revert_to_last_commit: function(){
+            var url = this.get('controllers.application').urls.revert_to_last_commit;
+
+            return this.ajaxRequest({
+                url: url,
+                type: 'POST'
+            }).then(function(data){
+                this.success_message(
+                    `Your task list was successfully reverted to ` + 
+                    `an earlier state (${data.old_head} to ${data.new_head}).`
+                );
+                setTimeout(function(){
+                    window.location.reload();
+                }, 3000);
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `attempting to revert your task list ` +
+                    `to its earlier state: ${msg}`
+                );
+            }.bind(this));
         }
     }
 });

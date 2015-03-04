@@ -119,6 +119,13 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 name='refresh_tasks',
             ),
             url(
+                r"^(?P<resource_name>%s)/revert/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('revert_to_last_commit'),
+                name='revert_to_last_commit',
+            ),
+            url(
                 r"^(?P<resource_name>%s)/sync/?$" % (
                     self._meta.resource_name
                 ),
@@ -216,6 +223,33 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 status=404
             )
         return HttpResponseNotAllowed(request.method)
+
+    @requires_task_store
+    def revert_to_last_commit(self, request, store, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseBadRequest(request.method)
+
+        old_head = store.repository.head()
+        new_head = store.repository.get_object(old_head).parents[0]
+
+        with git_checkpoint(store, "Reverting to previous commit", sync=True):
+            store.git_reset(new_head)
+
+        store.log_message(
+            "Taskstore was reverted from %s to %s via user-initiated "
+            "revert operation.",
+            old_head,
+            new_head,
+        )
+
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+                'old_head': old_head,
+                'new_head': new_head
+            }),
+            content_type='application/json',
+        )
 
     @requires_task_store
     def sync_immediately(self, request, store, **kwargs):
