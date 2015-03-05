@@ -276,6 +276,7 @@ REDIS_DB = 2
 SERVER_EMAIL = 'no-reply@localhost'
 
 TASKWARRIOR_CONFIG_OVERRIDES = {
+    'gc': 'off',
     'uda': {
         'intheamattachments': {
             'type': 'string',
