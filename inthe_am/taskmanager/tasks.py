@@ -165,7 +165,10 @@ def process_email_message(self, message_id):
                 'uuid:%s' % task_id,
                 'intheamoriginalemailsubject:"%s"' % message.subject,
                 'intheamoriginalemailid:%s' % message.pk,
-            ] + additional_args + shlex.split(message.text)
+            ] + additional_args + shlex.split(
+                message.text.split('\n\n')[0]  # Only use text up to the first
+                                               # blank line.
+            )
             stdout, stderr = store.client._execute_safe(*task_args)
             task = store.client.get_task(uuid=task_id)[1]
 
