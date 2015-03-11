@@ -14,6 +14,14 @@ Inthe.AM
    api/index
    cookbook/index
 
+.. note::
+
+   Although posted on Github, the intention of this repository is to make it easier for
+   users to find bugs, prototype features, and generally use this as a model for
+   their own Django+Ember.JS sites.
+
+   Setting this up locally as a clone of Inthe.AM is, unfortunately, not supported.
+
 Found a bug, or want to suggest a new feature?
 Enter an issue on `Inthe.AM's issue tracker <https://github.com/coddingtonbear/inthe.am/issues>`_.
 
