@@ -275,7 +275,8 @@ class TaskStore(models.Model):
         if not tasks:
             return
         with git_checkpoint(
-            self, "Syncing tasks to kanban boards", sync=True
+            self, "Syncing tasks to kanban boards", sync=True,
+            process_post_checkpoint_hooks=False,
         ):
             for task in tasks:
                 try:

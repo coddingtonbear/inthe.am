@@ -52,7 +52,8 @@ class KanbanBoard(TaskStore):
         if not kanban_assigned_tasks:
             return
         with git_checkpoint(
-            self, "Syncing tasks to user task lists", sync=True
+            self, "Syncing tasks to user task lists", sync=True,
+            process_post_checkpoint_hooks=False,
         ):
             for kanban_task in kanban_assigned_tasks:
                 task_id = kanban_task['uuid']

@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 def git_checkpoint(
     store, message, function=None, args=None, kwargs=None,
     sync=False, gc=True, notify_rollback=True,
+    process_post_checkpoint_hooks=True,
 ):
     lock_name = get_lock_name_for_store(store)
     pre_work_sha = store.repository.head()
@@ -121,8 +122,23 @@ def git_checkpoint(
             raise
 
     delattr(store, '_active_checkpoint')
-    if hasattr(store, 'post_checkpoint_hook'):
-        changes = store.repository.head() != pre_work_sha
-        store.post_checkpoint_hook(changes=changes)
+    if (
+        process_post_checkpoint_hooks
+        and hasattr(store, 'post_checkpoint_hook')
+    ):
+        if hasattr(store, '_active_post_checkpoint_hook'):
+            logger.warning(
+                "Attempted to run post-checkpoint hooks while "
+                "running post-checkpoint hook.  This is likely "
+                "a logical bug!",
+                extra={
+                    'stack': True,
+                }
+            )
+        else:
+            changes = store.repository.head() != pre_work_sha
+            store._active_post_checkpoint_hook = True
+            store.post_checkpoint_hook(changes=changes)
+            delattr(store, '_active_post_checkpoint_hook')
     if sync:
         store.sync()
