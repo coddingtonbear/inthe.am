@@ -1,5 +1,5 @@
-organization = Inthe.AM
-cn = http://inthe.am/
+organization=Inthe.AM
+cn=taskwarrior.inthe.am
 tls_www_client
 encryption_key
 signing_key
