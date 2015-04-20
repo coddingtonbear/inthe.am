@@ -1,6 +1,15 @@
 What's New?
 ===========
 
+19 April 2015
+-------------
+
+Deprecations
+~~~~~~~~~~~~
+
+* Synchronization with non-local taskservers was deprecated.
+  See `#167: Deprecate synchronization using non-local Taskservers <https://github.com/coddingtonbear/inthe.am/issues/167>`_ for more information.
+
 19 February 2015
 ----------------
 
