@@ -44,17 +44,7 @@ def sync_repository(self, store_id, debounce_id=None):
             kwargs={'debounce_id': debounce_id},
         )
     except Exception as e:
-        if self.request.retries >= 2:
-            store.log_error(
-                "An unexpected error was encountered while synchronizing "
-                "your tasks with the taskd server. Synchronization has been "
-                "temporarily disabled for your account, and an administrator "
-                "has been notified."
-            )
-            store.sync_enabled = False
-            store.save()
-        else:
-            raise self.retry(exc=e)
+        raise self.retry(exc=e)
 
 
 @shared_task(
