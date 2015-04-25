@@ -51,7 +51,7 @@ class Command(RunserverCommand):
             started = time.time()
             connected = False
             while time.time() < started + 60:
-                result = s.connect_ex(('127.0.0.1', 8001, ))
+                result = s.connect_ex(('127.0.0.1', 8000, ))
                 if result == 0:
                     s.close()
                     connected = True
