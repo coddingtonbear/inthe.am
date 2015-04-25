@@ -11,16 +11,16 @@ apt-add-repository -y ppa:chris-lea/node.js
 apt-get update
 apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs firefox
 
-PHANTOMJS=phantomjs-1.9.7-linux-i686
-cd /usr/local/share/
-if [ ! -d $PHANTOMJS ]; then
-    wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOMJS.tar.bz2
-    tar -xjf $PHANTOMJS.tar.bz2
-    ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/share/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/bin/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/bin/phantomjs
-fi
-cd $STARTING_DIR
-
 if [ -z "$TRAVIS" ]; then
+    PHANTOMJS=phantomjs-1.9.7-linux-i686
+    cd /usr/local/share/
+    if [ ! -d $PHANTOMJS ]; then
+        wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOMJS.tar.bz2
+        tar -xjf $PHANTOMJS.tar.bz2
+        ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/share/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/bin/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/bin/phantomjs
+    fi
+    cd $STARTING_DIR
+
     # Set up virtual environment
     mkdir -p /var/www/envs
     if [ ! -d /var/www/envs/twweb ]; then
