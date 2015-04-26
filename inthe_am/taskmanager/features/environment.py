@@ -67,6 +67,8 @@ def before_all(context):
     context.browser.driver.set_window_size(1024, 800)
     context.browser.driver.implicitly_wait(10)
     context.browser.driver.set_page_load_timeout(60)
+    import requests
+    print requests.get(context.config.server_url)
     context.browser.visit(context.config.server_url)
     context.browser.execute_script(
         u"window.localStorage.setItem('disable_ticket_stream', 'yes');"

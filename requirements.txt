@@ -31,3 +31,4 @@ sphinx>=1.2.3
 django-storages==1.1.8
 boto==2.34.0
 x256==0.0.3
+requests==2.2.0
