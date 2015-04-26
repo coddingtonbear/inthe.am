@@ -45,6 +45,12 @@ else
     source ~/virtualenv/python2.7/bin/activate
     if [ -d /home/travis/.config ]; then
         chmod -R 777 /home/travis/.config
+        if [ -d /home/travis/.config/configstore ]; then
+            chmod -R 777 /home/travis/.config/configstore
+        else
+            mkdir /home/travis/.config/configstore
+            chmod 777 /home/travis/.config/configstore
+        fi
     fi
 fi
 
