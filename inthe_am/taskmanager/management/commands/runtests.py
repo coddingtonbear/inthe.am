@@ -23,7 +23,7 @@ class Command(RunserverCommand):
 
     def run_tests(self, *args):
         env = os.environ.copy()
-        env['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = 'localhost:8001'
+        env['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = 'localhost:8009'
 
         command = [
             'python',
