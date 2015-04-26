@@ -117,6 +117,8 @@ npm install -g ember-cli@0.1.7 bower@1.3.12
 npm install
 bower --config.interactive=false install --allow-root
 
+ember build
+
 # Install requirements
 source /var/www/envs/twweb/bin/activate
 pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements.txt
