@@ -41,75 +41,11 @@
                             </p>
                         </div>
                     </div>
-                    {{#unless controllers.application.user.taskd_server_is_default}}
-                        <div class="row">
-                            <div class="large-12 columns">
-                                {{view "select" value=controllers.application.user.taskd_server_is_default optionValuePath="content.value" optionLabelPath="content.human" content=taskd_server_settings id="id_taskd_server_is_default"}}
-                            </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            {{partial "sync-instructions"}}
                         </div>
-                    {{/unless}}
-                    {{#if controllers.application.user.taskd_server_is_default}}
-                        <div class="row">
-                            <div class="large-12 columns">
-                                {{partial "sync-instructions"}}
-                            </div>
-                        </div>
-                    {{/if}}
-                    {{#unless controllers.application.user.taskd_server_is_default}}
-                        <div class="row">
-                            <div class="large-12 columns">
-                                <div class="block error">
-                                    <p>
-                                        <strong>Deprecation Warning</strong>:
-                                        Using a custom taskserver
-                                        is deprecated and will become unavailable on or after April 1st, 2015.
-                                    </p>
-                                    <p>
-                                        <a href="https://github.com/coddingtonbear/inthe.am/issues/167">More information</a>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="large-12 columns">
-                                <label>Taskserver</label>
-                                {{input type="text" id="id_server" name="server" value=controllers.application.user.taskd_server}}
-                            </div>
-                            <div class="large-12 columns">
-                                <label>Taskserver Credentials</label>
-                                {{input type="text" id="id_credentials" name="credentials" value=controllers.application.user.taskd_credentials}}
-                            </div>
-                            <div class="large-12 columns">
-                                <label>Certificate</label>
-                                <input type="file" name="certificate" id="id_certificate">
-                                <p class="input-note">
-                                    {{controllers.application.user.taskd_files.taskd_certificate}}
-                                </p>
-                            </div>
-                            <div class="large-12 columns">
-                                <label>Key</label>
-                                <input type="file" name="key" id="id_key">
-                                <p class="input-note">
-                                    {{controllers.application.user.taskd_files.taskd_key}}
-                                </p>
-                            </div>
-                            <div class="large-12 columns">
-                                <label>CA Certificate</label>
-                                <p class="input-note">
-                                    If you select to trust the taskserver, you need not upload a CA Certificate,
-                                    but uploading a certificate and requesting that we validate the taskserver
-                                    using that certificate is safer.
-                                </p>
-                                {{view "select" value=controllers.application.user.taskd_files.taskd_trust optionValuePath="content.short" optionLabelPath="content.long" content=taskd_trust_settings id="id_trust"}}
-                                <input type="file" name="ca" id="id_ca">
-                                <p class="input-note">
-                                    {{controllers.application.user.taskd_files.taskd_ca}}
-                                </p>
-                            </div>
-                            <div class="large-12 columns">
-                                <a href="" class="button radius" {{action "save_taskd"}}>Save Settings and Pull Tasks</a>
-                                <a href="" class="button radius" {{action "save_taskd_and_init"}}>Save Settings and Push Existing Tasks</a>
-                            </div>
-                        </div>
-                    {{/unless}}
+                    </div>
                 </div>
             </li>
             <li class="accordion-navigation">
