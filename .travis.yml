@@ -7,7 +7,7 @@ before_install:
 install:
 - sudo bash scripts/vagrant/init_environment.sh
 - sudo /usr/local/bin/taskd server --data /var/taskd --daemon
-- sudo chmod -R 778 ./
+- sudo chmod -R 777 ./
 - sudo chmod -R 777 /var/taskd
 - git config --global user.email "gitbot@inthe.am"
 - git config --global user.name "Inthe.AM Git Bot"
