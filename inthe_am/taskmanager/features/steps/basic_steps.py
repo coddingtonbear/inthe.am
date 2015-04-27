@@ -145,7 +145,11 @@ def user_enters_credentials(context):
             settings.TESTING_LOGIN_PASSWORD
         )
         context.browser.find_by_id('signIn').first.click()
+    time.sleep(1)
 
+
+@when(u'the user accepts offline access if necessary')
+def accept_offline_access(context):
     needs_approval = context.browser.find_by_id('submit_approve_access')
     if needs_approval:
         time.sleep(1)

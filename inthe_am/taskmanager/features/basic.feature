@@ -6,6 +6,7 @@ Feature: Basic Use
         And the test account user does not exist
         When the user clicks the link "Log In"
         And the user enters his credentials if necessary
+        And the user accepts offline access if necessary
         Then a new account will be created using the test e-mail address
         And the page contains the heading "Terms and Conditions of Use of Inthe.AM"
         And the user accepts the terms and conditions
