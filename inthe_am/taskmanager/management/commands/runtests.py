@@ -19,6 +19,13 @@ class Command(RunserverCommand):
             default=False,
             help='Run only tests marked with @wip'
         ),
+        make_option(
+            '-x', '--failfast',
+            action='store_true',
+            dest='stop',
+            default=False,
+            help='Stop running tests at first failure'
+        ),
     )
 
     def run_tests(self, *args):
@@ -67,6 +74,8 @@ class Command(RunserverCommand):
             test_args = []
             if kwargs['wip']:
                 test_args.append('--behave_wip')
+            if kwargs['stop']:
+                test_args.append('--behave_stop')
 
             try:
                 result = self.run_tests(*test_args)
