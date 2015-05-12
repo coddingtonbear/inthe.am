@@ -18,6 +18,13 @@ after_script:
 - travis-artifacts upload --path logs/twweb.log
 - travis-artifacts upload --path logs/twweb.error.log
 - bash scripts/travis/upload_screenshots.sh
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/044a5b2d79b618dd1522
+    on_success: always  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: false     # default: false
 services:
 - memcached
 - redis-server
