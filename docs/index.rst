@@ -25,7 +25,7 @@ Inthe.AM
 Found a bug, or want to suggest a new feature?
 Enter an issue on `Inthe.AM's issue tracker <https://github.com/coddingtonbear/inthe.am/issues>`_.
 
-Questions?  Ask in ``##inthe.am`` on `Freenode <http://freenode.net/irc_servers.shtml>`_.
+Questions?  Ask on `Gitter <https://gitter.im/coddingtonbear/inthe.am>`_.
 
 Released under the `GNU AFFERO GENERAL PUBLIC LICENSE <http://www.gnu.org/licenses/agpl-3.0-standalone.html>`_.
 
