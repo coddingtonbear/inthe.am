@@ -74,50 +74,53 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         last_sync_queued = None
         last_announcement = None
-        while True:
-            message = self.get_next_message()
+        try:
+            while True:
+                message = self.get_next_message()
 
-            if not message:
-                time.sleep(0.1)
-                continue
-            elif message['type'] != 'pmessage':
-                continue
-            else:
-                # This was an actual message we'd like to use.
-                last_sync_queued = now()
+                if not message:
+                    time.sleep(0.1)
+                    continue
+                elif message['type'] != 'pmessage':
+                    continue
+                else:
+                    # This was an actual message we'd like to use.
+                    last_sync_queued = now()
 
-            try:
-                operation = json.loads(message['data'])
-                if self.operation_requires_sync(operation):
-                    repo = self.get_taskstore_for_operation(operation)
-                    logger.info(
-                        "Queueing sync for %s",
-                        repo,
+                try:
+                    operation = json.loads(message['data'])
+                    if self.operation_requires_sync(operation):
+                        repo = self.get_taskstore_for_operation(operation)
+                        logger.info(
+                            "Queueing sync for %s",
+                            repo,
+                        )
+                        repo.sync()
+                except:
+                    logger.exception(
+                        "Error encountered while processing sync event."
                     )
-                    repo.sync()
-            except:
-                logger.exception(
-                    "Error encountered while processing sync event."
-                )
 
-            if (
-                last_sync_queued and
-                (
-                    (now() - last_sync_queued) >
-                    datetime.timedelta(
-                        seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
+                if (
+                    last_sync_queued and
+                    (
+                        (now() - last_sync_queued) >
+                        datetime.timedelta(
+                            seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
+                        )
+                    ) and
+                    (
+                        not last_announcement or
+                        (now() - last_announcement).seconds > 300
                     )
-                ) and
-                (
-                    not last_announcement or
-                    (now() - last_announcement).seconds > 300
-                )
-            ):
-                last_announcement = now()
-                logger.error(
-                    "No synchronizations have been queued during the last %s "
-                    "minutes;  it is likely that something has gone awry. "
-                    "Suiciding; will be restarted automatically.",
-                    round((now() - last_sync_queued).seconds / 60.0)
-                )
-                sys.exit(11)
+                ):
+                    last_announcement = now()
+                    logger.error(
+                        "No synchronizations have been queued during the last "
+                        "%s minutes;  it is likely that something has gone "
+                        "awry; Suiciding; will be restarted automatically.",
+                        round((now() - last_sync_queued).seconds / 60.0)
+                    )
+                    sys.exit(11)
+        except Exception as e:
+            logger.exception('Fatal error encountered: %s', e)

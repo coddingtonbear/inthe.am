@@ -17,7 +17,6 @@ from inthe_am.taskmanager.lock import get_lock_redis
 
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 
 class Command(BaseCommand):
@@ -74,7 +73,10 @@ class Command(BaseCommand):
             message,
             cls=DjangoJSONEncoder
         )
-        logger.info("Emitting message: %s", serialized)
+        logger.info(
+            "Emitting sync notification for %s",
+            message.get('username')
+        )
         self.last_message_emitted = now()
         r.publish(
             self._get_queue_name(message['username']),
@@ -102,6 +104,11 @@ class Command(BaseCommand):
         # If we're back at zero, reset messages -- the remaining ones
         # will never be completed.
         if operation_number < self.highest_message:
+            logger.debug(
+                "Operation number has been reset; "
+                "clearing queued message parts: %s",
+                self.operations
+            )
             self.operations = {}
         if operation_number > self.highest_message:
             self.highest_message = operation_number
@@ -166,42 +173,47 @@ class Command(BaseCommand):
         poller = select.poll()
         poller.register(proc.stdout)
 
-        while True:
-            if poller.poll(1):
-                line = proc.stdout.readline()
-                try:
-                    self.process_line(line)
-                except:
-                    logger.exception(
-                        "An error was encountered while processing the "
-                        "logger line %s.",
-                        line,
-                    )
-            else:
-                time.sleep(0.1)
+        try:
+            while True:
+                if poller.poll(1):
+                    line = proc.stdout.readline()
+                    try:
+                        self.process_line(line)
+                    except:
+                        logger.exception(
+                            "An error was encountered while processing the "
+                            "logger line %s.",
+                            line,
+                        )
+                else:
+                    time.sleep(0.1)
 
-            if (
-                self.last_message_emitted and
-                (
-                    (now() - self.last_message_emitted) >
-                    datetime.timedelta(
-                        seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
+                if (
+                    self.last_message_emitted and
+                    (
+                        (now() - self.last_message_emitted) >
+                        datetime.timedelta(
+                            seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
+                        )
+                    ) and
+                    (
+                        not last_announcement or
+                        (now() - last_announcement).seconds > 300
                     )
-                ) and
-                (
-                    not last_announcement or
-                    (now() - last_announcement).seconds > 300
-                )
-            ):
-                last_announcement = now()
-                current_inode = self.get_file_inode(args[0])
-                logger.error(
-                    "No messages have been emitted during the last %s "
-                    "minutes; it is likely that something has gone awry "
-                    "our tail.  Original inode: %s; current: %s. "
-                    "Exiting; will be restarted automatically.",
-                    round((now() - self.last_message_emitted).seconds / 60.0),
-                    starting_inode,
-                    current_inode,
-                )
-                sys.exit(self.NO_RECENT_MESSAGES)
+                ):
+                    last_announcement = now()
+                    current_inode = self.get_file_inode(args[0])
+                    logger.error(
+                        "No messages have been emitted during the last %s "
+                        "minutes; it is likely that something has gone awry "
+                        "with our tail.  Original inode: %s; current: %s. "
+                        "Exiting; will be restarted automatically.",
+                        round(
+                            (now() - self.last_message_emitted).seconds / 60.0
+                        ),
+                        starting_inode,
+                        current_inode,
+                    )
+                    sys.exit(self.NO_RECENT_MESSAGES)
+        except Exception as e:
+            logger.exception('Fatal error encountered: %s', e)
