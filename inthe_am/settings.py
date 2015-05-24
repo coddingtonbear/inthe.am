@@ -178,20 +178,16 @@ LOGGING = {
             'level': 'WARNING',
             'class': 'raven.contrib.django.handlers.SentryHandler'
         },
-        'sync_management': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': (
-                os.path.join(BASE_DIR, 'logs/twweb.sync_management.log')
-            ),
-            'maxBytes': 1048576,
-            'backupCount': 5,
-            'formatter': 'verbose',
+        'syslog': {
+            'level': 'INFO',
+            'class': 'logging.handlers.SysLogHandler',
+            'facility': 'local7',
+            'formatter': 'verbose'
         }
     },
     'loggers': {
         '': {
-            'handlers': ['exception_log', 'store', 'sentry'],
+            'handlers': ['exception_log', 'store', 'sentry', 'syslog'],
             'propagate': True,
             'level': 'INFO',
         },
@@ -234,16 +230,6 @@ LOGGING = {
             'handlers': ['taskwarrior', 'sentry'],
             'level': 'INFO',
             'propagate': False,
-        },
-        'inthe_am.taskmanager.management.commands.log_consumer': {
-            'handlers': ['sync_management', ],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'inthe_am.taskmanager.management.commands.sync_listener': {
-            'handlers': ['sync_management', ],
-            'level': 'DEBUG',
-            'propagate': True,
         }
     }
 }
