@@ -693,9 +693,12 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 raise exceptions.NotFound()
 
             bundle.obj = self.get_empty_task(bundle.request)
+
             bundle = self.full_hydrate(bundle)
 
-            for k, v in bundle.obj.get_json().items():
+            data = bundle.obj.get_json()
+            for k in json.loads(bundle.request.body).keys():
+                v = data.get(k)
                 if (
                     (
                         k in original.FIELDS
