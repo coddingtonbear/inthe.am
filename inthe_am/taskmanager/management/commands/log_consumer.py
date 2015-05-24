@@ -110,6 +110,7 @@ class Command(BaseCommand):
                 self.operations
             )
             self.operations = {}
+            self.highest_message = -1
         if operation_number > self.highest_message:
             self.highest_message = operation_number
 
