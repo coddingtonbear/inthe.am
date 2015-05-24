@@ -161,11 +161,11 @@ class TaskFeed(Feed):
     def item_description(self, item):
         lines = []
         for k, v in item.items():
-            lines.append('{k}: {v}'.format(k=k, v=v))
+            lines.append(u'{k}: {v}'.format(k=k, v=v))
         return '\n'.join(lines)
 
     def item_link(self, item):
-        return '/tasks/{uuid}'.format(uuid=item.get('uuid'))
+        return u'/tasks/{uuid}'.format(uuid=item.get('uuid'))
 
     def items(self, store):
         tasks = store.client.filter_tasks({'status': 'pending'})[0:100]
@@ -178,7 +178,7 @@ class TaskFeed(Feed):
 
     def description(self, store):
         return (
-            "Highest urgency tasks on {first_name} {last_name}'s "
+            u"Highest urgency tasks on {first_name} {last_name}'s "
             "task list.".format(
                 first_name=store.user.first_name,
                 last_name=store.user.last_name
@@ -191,7 +191,7 @@ class TaskFeed(Feed):
         )
 
     def title(self, store):
-        return "{first_name} {last_name}'s tasks".format(
+        return u"{first_name} {last_name}'s tasks".format(
             first_name=store.user.first_name,
             last_name=store.user.last_name
         )
