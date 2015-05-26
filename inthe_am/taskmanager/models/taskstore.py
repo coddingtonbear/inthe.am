@@ -517,8 +517,8 @@ class TaskStore(models.Model):
             except (ValueError, TypeError):
                 expected_debounce_id = None
             if (
-                expected_debounce_id and debounce_id
-                and (float(debounce_id) < float(expected_debounce_id))
+                expected_debounce_id and debounce_id and
+                (float(debounce_id) < float(expected_debounce_id))
             ):
                 logger.warning(
                     "Debounce Failed: %s<%s; "
@@ -567,8 +567,7 @@ class TaskStore(models.Model):
 
     def reset_taskd_configuration(self):
         self.sync_permitted = False
-        self.save()  # Just to make sure we don't sync while doing
-                     # these changes.
+        self.save()  # Just to make sure we don't sync while this is going on
 
         self.taskrc.update({
             'taskd.certificate': os.path.join(
@@ -605,8 +604,8 @@ class TaskStore(models.Model):
             os.rename(
                 self.taskd_data_path,
                 (
-                    self.taskd_data_path
-                    + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                    self.taskd_data_path +
+                    datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                 )
             )
         except OSError:
