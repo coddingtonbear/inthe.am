@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import json
 import logging
 import os
 import re
@@ -15,6 +16,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 
@@ -169,6 +171,9 @@ class TaskStore(models.Model):
             return self.user.api_key
         except ObjectDoesNotExist:
             return ApiKey.objects.create(user=self.user)
+
+    def _get_queue_name(self):
+        return 'local_sync.%s' % self.user.username
 
     def _is_numeric(self, val):
         try:
@@ -541,6 +546,23 @@ class TaskStore(models.Model):
                 self.client.sync()
                 self.last_synced = now()
                 self.save()
+
+                logger.info(
+                    'Emitting local_sync pubsub event for %s\'s '
+                    'task store at %s',
+                    self.username,
+                    self.local_path
+                )
+                client.publish(
+                    self._get_queue_name(),
+                    json.dumps(
+                        {
+                            'username': self.username,
+                            'debounce_id': debounce_id,
+                        },
+                        cls=DjangoJSONEncoder
+                    )
+                )
         return True
 
     def reset_taskd_configuration(self):
