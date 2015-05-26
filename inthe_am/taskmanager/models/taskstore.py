@@ -172,8 +172,14 @@ class TaskStore(models.Model):
         except ObjectDoesNotExist:
             return ApiKey.objects.create(user=self.user)
 
-    def _get_queue_name(self):
-        return 'local_sync.%s' % self.user.username
+    def _get_queue_name(self, prefix='local_sync', suffix=None):
+        base = '%s.%s' % (
+            prefix,
+            self.user.username,
+        )
+        if suffix is not None:
+            return base + '.' + suffix
+        return base
 
     def _is_numeric(self, val):
         try:
@@ -539,6 +545,8 @@ class TaskStore(models.Model):
             checkpoint_msg = 'Synchronization'
             if msg:
                 checkpoint_msg = '%s: %s' % (checkpoint_msg, msg)
+
+            start = self.repository.head()
             with git_checkpoint(
                 self, checkpoint_msg, function=function,
                 args=args, kwargs=kwargs, notify_rollback=False
@@ -547,18 +555,38 @@ class TaskStore(models.Model):
                 self.last_synced = now()
                 self.save()
 
-                logger.info(
-                    'Emitting local_sync pubsub event for %s\'s '
-                    'task store at %s',
-                    self.username,
-                    self.local_path
+            head = self.repository.head()
+            logger.info(
+                'Emitting local_sync pubsub event for %s\'s '
+                'task store at %s',
+                self.username,
+                self.local_path
+            )
+            client.publish(
+                self._get_queue_name(),
+                json.dumps(
+                    {
+                        'username': self.username,
+                        'debounce_id': debounce_id,
+                        'start': start,
+                        'head': head,
+                    },
+                    cls=DjangoJSONEncoder
                 )
+            )
+            task_change_queue_name = self._get_queue_name(
+                prefix='changed_task'
+            )
+            for task_id in self.get_changed_task_ids(head, start=start):
                 client.publish(
-                    self._get_queue_name(),
+                    task_change_queue_name,
                     json.dumps(
                         {
                             'username': self.username,
                             'debounce_id': debounce_id,
+                            'start': start,
+                            'head': head,
+                            'task_id': task_id,
                         },
                         cls=DjangoJSONEncoder
                     )
