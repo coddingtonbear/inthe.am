@@ -156,7 +156,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self.last_message_emitted = None
-        last_announcement = None
         self.operations = {}
         self.highest_message = 0
 
@@ -196,13 +195,8 @@ class Command(BaseCommand):
                         datetime.timedelta(
                             seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
                         )
-                    ) and
-                    (
-                        not last_announcement or
-                        (now() - last_announcement).seconds > 300
                     )
                 ):
-                    last_announcement = now()
                     current_inode = self.get_file_inode(args[0])
                     logger.error(
                         "No messages have been emitted during the last %s "
