@@ -62,9 +62,11 @@ class Status(BaseSseView):
             self._last_heartbeat = datetime.datetime.now()
 
     def handle_local_sync(self, message):
-        self.head = json.loads(message['data'])['head']
+        new_head = json.loads(message['data'])['head']
 
-        self.sse.add_message('head_changed', self.head)
+        if new_head != self.head:
+            self.head = new_head
+            self.sse.add_message('head_changed', self.head)
 
     def handle_changed_task(self, message):
         self.sse.add_message(
