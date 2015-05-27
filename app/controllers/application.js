@@ -460,6 +460,12 @@ var controller = Ember.Controller.extend({
             this.set('statusUpdaterHeartbeat', new Date());
             var heartbeat_data = JSON.parse(evt.data);
             this.set('user.sync_enabled', heartbeat_data.sync_enabled);
+        },
+        'public_announcement': function(evt) {
+          console.logIfDebug(evt.type, evt.data);
+        },
+        'personal_announcement': function(evt) {
+          console.logIfDebug(evt.type, evt.data);
         }
     },
     isSmallScreen: function() {
