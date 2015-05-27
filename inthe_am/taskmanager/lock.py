@@ -22,28 +22,19 @@ def get_lock_redis():
     )
 
 
-def get_announcement_channel(store, announcement_type='general'):
-    return '%s.%s' % (
-        store.username,
-        announcement_type,
-    )
-
-
-def get_announcements_subscription(store, announcement_types=None):
-    if announcement_types is None:
-        announcement_types = []
-
+def get_announcements_subscription(store, **kwargs):
     client = get_lock_redis()
-
-    announcement_channels = [
-        get_announcement_channel(store, t) for t in announcement_types
-    ] + [
-        store.username,
-        settings.ANNOUNCEMENTS_CHANNEL,
-    ]
-
     subscription = client.pubsub(ignore_subscribe_messages=True)
-    subscription.subscribe(*announcement_channels)
+
+    final_channels = {}
+
+    for announcement_type, handler in kwargs.items():
+        name = announcement_type.format(
+            username=store.username.encode('utf8')
+        )
+        final_channels[name] = handler
+
+    subscription.subscribe(**final_channels)
 
     return subscription
 

@@ -4,7 +4,6 @@ import logging
 import time
 
 from django_sse.views import BaseSseView
-import pytz
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
@@ -12,12 +11,9 @@ from django.core.exceptions import SuspiciousOperation
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
 
-from .models import KanbanBoard, TaskStore, TaskStoreActivityLog
+from .models import KanbanBoard, TaskStore
 from .lock import (
     get_announcements_subscription,
-    get_lock_name_for_store,
-    redis_lock,
-    LockTimeout
 )
 
 
@@ -44,28 +40,6 @@ class Status(BaseSseView):
 
         return self._store
 
-    def check_head(self, head):
-        store = self.get_store()
-        new_head = store.repository.head()
-
-        try:
-            if head != new_head:
-                with redis_lock(
-                    get_lock_name_for_store(store),
-                    message="SSE Head Change"
-                ):
-                    logger.info('Found new repository head -- %s' % new_head)
-                    ids = store.get_changed_task_ids(head, new_head)
-                    self.sse.add_message("head_changed", new_head)
-                    for id in ids:
-                        self.sse.add_message("task_changed", id)
-                    head = new_head
-        except LockTimeout:
-            # This is OK -- we'll check again on the next round.
-            pass
-
-        return head
-
     def beat_heart(self, store):
         heartbeat_interval = datetime.timedelta(
             seconds=settings.EVENT_STREAM_HEARTBEAT_INTERVAL
@@ -87,21 +61,60 @@ class Status(BaseSseView):
             )
             self._last_heartbeat = datetime.datetime.now()
 
-    def process_messages(self, subscription):
-        envelope = subscription.get_message()
-        while envelope:
-            if envelope['type'] != 'message':
-                continue
-            # No message types are currently handled.
-            envelope = subscription.get_message()
+    def handle_local_sync(self, message):
+        self.sse.add_message(
+            'head_changed',
+            json.loads(message['data'])['head']
+        )
+
+    def handle_changed_task(self, message):
+        self.sse.add_message(
+            'task_changed',
+            json.loads(message['data'])['task_id']
+        )
+
+    def handle_log_message(self, message):
+        self.sse.add_message(
+            'error_logged',
+            json.loads(message['data'])['message']
+        )
+
+    def handle_personal_announcement(self, message):
+        self.sse.add_message(
+            'personal_announcement',
+            json.loads(message['data'])['message']
+        )
+
+    def handle_public_announcement(self, message):
+        self.sse.add_message(
+            'public_announcement',
+            json.loads(message['data'])['message']
+        )
 
     def iterator(self):
-        last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
         store = self.get_store()
         if not store:
             return
 
-        subscription = get_announcements_subscription(store)
+        subscription = get_announcements_subscription(
+            store,
+            {
+                'local_sync.{username}': self.handle_local_sync,
+                'changed_task.{username}': self.handle_changed_task,
+                'log_message.{username}': self.handle_log_message,
+                'public_announcement.{username}': (
+                    self.handle_public_announcement
+                ),
+                'personal_announcement.{username}': (
+                    self.handle_personal_announcement
+                ),
+                '{username}': self.handle_announcement,
+                settings.ANNOUNCEMENTS_CHANNEL: self.handle_announcement,
+            }
+        )
+        subscription_thread = subscription.run_in_thread(slep_time=0.01)
+
+        # Kick-off a sync just to be sure
         kwargs = {
             'async': True,
             'function': (
@@ -109,28 +122,22 @@ class Status(BaseSseView):
             )
         }
         store.sync(msg='Iterator initialization', **kwargs)
-        created = time.time()
-        head = self.request.GET.get('head', store.repository.head())
-        self.beat_heart(store)
-        while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
-            # Get Error/Log Messages
-            entries = TaskStoreActivityLog.objects.filter(
-                last_seen__gt=last_checked,
-                error=True,
-                silent=False,
-                store=store,
-            )
-            for entry in entries:
-                self.sse.add_message(
-                    'error_logged',
-                    entry.message
-                )
-            last_checked = datetime.datetime.now().replace(tzinfo=pytz.UTC)
 
+        # If our head doesn't match the current repository head,
+        # let the client know what has changed.
+        head = self.request.GET.get('head', store.repository.head())
+        if head != store.repository.head():
+            for task_id in store.get_changed_task_ids(head):
+                self.sse.add_message(
+                    'task_changed',
+                    task_id,
+                )
+
+        self.beat_heart(store)
+        created = time.time()
+        while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
             # See if our head has changed, and queue messages if so
             head = self.check_head(head)
-
-            self.process_messages(subscription)
 
             store = self.get_store(cached=False)
 
@@ -139,6 +146,8 @@ class Status(BaseSseView):
             yield
 
             time.sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
+
+        subscription_thread.stop()
 
 
 class TaskFeed(Feed):

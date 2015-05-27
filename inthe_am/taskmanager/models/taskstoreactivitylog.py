@@ -14,6 +14,21 @@ class TaskStoreActivityLog(models.Model):
     def __unicode__(self):
         return self.message.replace('\n', ' ')[0:50]
 
+    def save(self, *args, **kwargs):
+        self.store.publish_announcement(
+            'log_message',
+            {
+                'md5hash': self.md5hash,
+                'last_seen': self.last_seen,
+                'created': self.created,
+                'error': self.error,
+                'silent': self.silent,
+                'message': self.message,
+                'count': self.count,
+            }
+        )
+        return super(TaskStoreActivityLog, self).save(*args, **kwargs)
+
     class Meta:
         unique_together = ('store', 'md5hash', )
         app_label = 'taskmanager'

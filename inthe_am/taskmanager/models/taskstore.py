@@ -172,15 +172,6 @@ class TaskStore(models.Model):
         except ObjectDoesNotExist:
             return ApiKey.objects.create(user=self.user)
 
-    def _get_queue_name(self, prefix='local_sync', suffix=None):
-        base = '%s.%s' % (
-            prefix,
-            self.user.username,
-        )
-        if suffix is not None:
-            return base + '.' + suffix
-        return base
-
     def _is_numeric(self, val):
         try:
             float(val)
@@ -486,6 +477,29 @@ class TaskStore(models.Model):
     def sync_uses_default_server(self):
         return self.taskrc.get('taskd.server') == settings.TASKD_SERVER
 
+    def _get_queue_name(self, prefix='local_sync', suffix=None):
+        base = '%s.%s' % (
+            prefix,
+            self.user.username,
+        )
+        if suffix is not None:
+            return base + '.' + suffix
+        return base
+
+    def _get_announcement_connection(self):
+        if not hasattr(self, '_redis'):
+            self._redis = get_lock_redis()
+
+        return self._redis
+
+    def publish_announcement(self, prefix, message):
+        connection = self._get_announcement_connection()
+
+        connection.publish(
+            self._get_queue_name(prefix=prefix),
+            json.dumps(message, cls=DjangoJSONEncoder)
+        )
+
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None
     ):
@@ -562,35 +576,27 @@ class TaskStore(models.Model):
                 self.username,
                 self.local_path
             )
-            client.publish(
-                self._get_queue_name(),
-                json.dumps(
+            self.publish_announcement(
+                'local_sync',
+                {
+                    'username': self.username,
+                    'debounce_id': debounce_id,
+                    'start': start,
+                    'head': head,
+                }
+            )
+            for task_id in self.get_changed_task_ids(head, start=start):
+                self.publish_announcement(
+                    'changed_task',
                     {
                         'username': self.username,
                         'debounce_id': debounce_id,
                         'start': start,
                         'head': head,
+                        'task_id': task_id,
                     },
-                    cls=DjangoJSONEncoder
                 )
-            )
-            task_change_queue_name = self._get_queue_name(
-                prefix='changed_task'
-            )
-            for task_id in self.get_changed_task_ids(head, start=start):
-                client.publish(
-                    task_change_queue_name,
-                    json.dumps(
-                        {
-                            'username': self.username,
-                            'debounce_id': debounce_id,
-                            'start': start,
-                            'head': head,
-                            'task_id': task_id,
-                        },
-                        cls=DjangoJSONEncoder
-                    )
-                )
+
         return True
 
     def reset_taskd_configuration(self):
