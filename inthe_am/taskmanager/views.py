@@ -132,15 +132,14 @@ class Status(BaseSseView):
         self.beat_heart(store)
         created = time.time()
         while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
-            # See if our head has changed, and queue messages if so
-            head = self.check_head(head)
-
+            # Heartbeat
             store = self.get_store(cached=False)
-
             self.beat_heart(store)
 
+            # Emit queued messages
             yield
 
+            # Relax
             time.sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
 
         subscription_thread.stop()
