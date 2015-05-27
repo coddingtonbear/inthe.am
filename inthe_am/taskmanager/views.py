@@ -62,10 +62,9 @@ class Status(BaseSseView):
             self._last_heartbeat = datetime.datetime.now()
 
     def handle_local_sync(self, message):
-        self.sse.add_message(
-            'head_changed',
-            json.loads(message['data'])['head']
-        )
+        self.head = json.loads(message['data'])['head']
+
+        self.sse.add_message('head_changed', self.head)
 
     def handle_changed_task(self, message):
         self.sse.add_message(
@@ -121,9 +120,9 @@ class Status(BaseSseView):
 
         # If our head doesn't match the current repository head,
         # let the client know what has changed.
-        head = self.request.GET.get('head', store.repository.head())
-        if head != store.repository.head():
-            for task_id in store.get_changed_task_ids(head):
+        self.head = self.request.GET.get('head', store.repository.head())
+        if self.head != store.repository.head():
+            for task_id in store.get_changed_task_ids(self.head):
                 self.sse.add_message(
                     'task_changed',
                     task_id,
