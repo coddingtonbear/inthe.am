@@ -102,14 +102,10 @@ class Status(BaseSseView):
                 'local_sync.{username}': self.handle_local_sync,
                 'changed_task.{username}': self.handle_changed_task,
                 'log_message.{username}': self.handle_log_message,
-                'public_announcement.{username}': (
+                '{username}': self.handle_personal_announcement,
+                settings.ANNOUNCEMENTS_CHANNEL: (
                     self.handle_public_announcement
                 ),
-                'personal_announcement.{username}': (
-                    self.handle_personal_announcement
-                ),
-                '{username}': self.handle_announcement,
-                settings.ANNOUNCEMENTS_CHANNEL: self.handle_announcement,
             }
         )
         subscription_thread = subscription.run_in_thread(slep_time=0.01)
