@@ -98,7 +98,7 @@ class Status(BaseSseView):
 
         subscription = get_announcements_subscription(
             store,
-            {
+            **{
                 'local_sync.{username}': self.handle_local_sync,
                 'changed_task.{username}': self.handle_changed_task,
                 'log_message.{username}': self.handle_log_message,
