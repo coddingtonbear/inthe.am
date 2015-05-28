@@ -109,7 +109,7 @@ class Status(BaseSseView):
                 ),
             }
         )
-        subscription_thread = subscription.run_in_thread(sleep_time=0.01)
+        subscription_thread = subscription.run_in_thread(sleep_time=1)
 
         # Kick-off a sync just to be sure
         kwargs = {
