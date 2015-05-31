@@ -75,10 +75,12 @@ class Status(BaseSseView):
         )
 
     def handle_log_message(self, message):
-        self.sse.add_message(
-            'error_logged',
-            json.loads(message['data'])['message']
-        )
+        announcement = json.loads(message['data'])
+        if announcement['error'] and not announcement['silent']:
+            self.sse.add_message(
+                'error_logged',
+                announcement['message']
+            )
 
     def handle_personal_announcement(self, message):
         self.sse.add_message(
