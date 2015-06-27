@@ -11,7 +11,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
 
-from .models import KanbanBoard, TaskStore
+from .models import TaskStore
 from .lock import (
     get_announcements_subscription,
 )
@@ -26,17 +26,11 @@ class Status(BaseSseView):
             if not self.request.user.is_authenticated():
                 return None
 
-            if 'uuid' in self.kwargs:
-                store = KanbanBoard.objects.get(uuid=self.kwargs['uuid'])
-                if not store.user_is_member(self.request.user):
-                    return None
+            try:
+                store = TaskStore.objects.get(user=self.request.user)
                 setattr(self, '_store', store)
-            else:
-                try:
-                    store = TaskStore.objects.get(user=self.request.user)
-                    setattr(self, '_store', store)
-                except TaskStore.DoesNotExist:
-                    return None
+            except TaskStore.DoesNotExist:
+                return None
 
         return self._store
 

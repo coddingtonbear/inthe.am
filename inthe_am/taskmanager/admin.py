@@ -8,8 +8,6 @@ from django.utils.timezone import now
 
 from .models import (
     Announcement,
-    KanbanBoard,
-    KanbanMembership,
     TaskAttachment,
     TaskStore,
     TaskStoreActivityLog,
@@ -234,29 +232,3 @@ class AnnouncementAdmin(admin.ModelAdmin):
     search_fields = ('title', 'category', )
 
 admin.site.register(Announcement, AnnouncementAdmin)
-
-
-class KanbanBoardAdmin(TaskStoreAdmin):
-    search_fields = ('name', 'uuid', ) + TaskStoreAdmin.search_fields
-    list_display = ('name', 'uuid', ) + TaskStoreAdmin.list_display
-    default_filters = {}
-
-admin.site.register(KanbanBoard, KanbanBoardAdmin)
-
-
-class KanbanMembershipAdmin(admin.ModelAdmin):
-    raw_id_fields = ('kanban_board', 'sender', 'member', )
-    search_fields = (
-        'kanban_board', 'uuid', 'sender', 'member', 'invitee_email',
-    )
-    list_display = (
-        'uuid', 'kanban_board', 'member', 'role', 'created',
-        'accepted', 'valid',
-    )
-    list_filter = (
-        'role',
-        'accepted',
-        'valid',
-    )
-
-admin.site.register(KanbanMembership, KanbanMembershipAdmin)

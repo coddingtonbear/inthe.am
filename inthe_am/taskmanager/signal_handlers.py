@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django_mailbox.signals import message_received
 from tastypie.models import create_api_key
 
-from .models import KanbanBoard, TaskStore
+from .models import TaskStore
 from .tasks import process_email_message
 
 
@@ -48,15 +48,6 @@ def create_taskstore_for_user(sender, instance, **kwargs):
     dispatch_uid='configure_taskstore'
 )
 def autoconfigure_taskstore_for_user(sender, instance, **kwargs):
-    autoconfigure_taskd_if_necessary(instance)
-
-
-@receiver(
-    models.signals.post_save,
-    sender=KanbanBoard,
-    dispatch_uid='configure_kanbanboard'
-)
-def autoconfigure_kanbanboard_for_user(sender, instance, **kwargs):
     autoconfigure_taskd_if_necessary(instance)
 
 

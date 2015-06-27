@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand
 from django.utils.timezone import now
 
 from inthe_am.taskmanager.lock import get_lock_redis
-from inthe_am.taskmanager.models import KanbanBoard, TaskStore
+from inthe_am.taskmanager.models import TaskStore
 
 
 logger = logging.getLogger(__name__)
@@ -53,14 +53,9 @@ class Command(BaseCommand):
 
     def get_taskstore_for_operation(self, op):
         group, username = op['username'].split('/')
-        if username.startswith('taskstore'):
-            return KanbanBoard.objects.get(
-                pk=int(username[9:])
-            )
-        else:
-            return TaskStore.objects.get(
-                user__username=username
-            )
+        return TaskStore.objects.get(
+            user__username=username
+        )
 
     @property
     def local_ips(self):

@@ -380,38 +380,6 @@
                 </div>
             </li>
             <li class="accordion-navigation">
-                <a href="#kanban">Team Kanban Boards (BETA)</a>
-                <div id="kanban" class="content">
-                    <div class="row">
-                        <div class="large-12 columns">
-                            <h3>Team Kanban Boards (BETA)</h3>
-                            <div class="block warning">
-                                <p>
-                                    <strong>This feature is in BETA &mdash;</strong>
-                                    Kanban boards are currently in beta;
-                                    this feature may not be available on your account,
-                                    and if it is, it is very likely to be buggy.
-                                    Use this feature at your own risk!
-                                </p>
-                            </div>
-                            {{#if controllers.application.user.kanban_memberships}}
-                                <p>You are a member of the following Team Kanban Boards:</p>
-                                <ul>
-                                    {{#each controllers.application.user.kanban_memberships}}
-                                        <li>
-                                            <a class="delete-kanban-membership" {{action "leave_kanban_board" this}}>&#215;</a>
-                                            {{this.[0]}}
-                                        </li>
-                                    {{/each}}
-                                </ul>
-                            {{else}}
-                                <p>You are not a member of any Team Kanban Boards.
-                            {{/if}}
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="accordion-navigation">
                 <a href="#mirakel">Mirakel Configuration</a>
                 <div id="mirakel" class="content">
                     <div class="row">

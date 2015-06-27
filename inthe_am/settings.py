@@ -297,30 +297,6 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
             'type': 'numeric',
             'label': 'Inthe.AM E-mail ID',
         },
-        'intheamkanbanboarduuid': {
-            'type': 'string',
-            'label': 'Inthe.AM Kanban Board UUID',
-        },
-        'intheamkanbantaskuuid': {
-            'type': 'string',
-            'label': 'Inthe.AM Kanban Task UUID',
-        },
-        'intheamkanbancolumn': {
-            'type': 'string',
-            'label': 'Inthe.AM Kanban Board Column',
-        },
-        'intheamkanbancolor': {
-            'type': 'string',
-            'label': 'Inthe.AM Kanban Board Color',
-        },
-        'intheamkanbanassignee': {
-            'type': 'string',
-            'label': 'Inthe.AM Kanban Task Assignee',
-        },
-        'intheamkanbansortorder': {
-            'type': 'numeric',
-            'label': 'Inthe.AM Kanban Task Sort Order',
-        }
     }
 }
 

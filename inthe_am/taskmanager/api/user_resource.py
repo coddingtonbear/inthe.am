@@ -89,16 +89,6 @@ def get_published_properties(user, store, meta):
                 'secret_id': store.secret_id,
             }
         ),
-        'kanban_memberships': [
-            (s.kanban_board.name, reverse(
-                'kanban_members_detail',
-                kwargs={
-                    'uuid': s.kanban_board.uuid,
-                    'member_uuid': s.uuid,
-                },
-            ), )
-            for s in store.get_kanban_memberships()
-        ],
         'sync_enabled': store.sync_enabled,
         'pebble_cards_enabled': store.pebble_cards_enabled,
         'feed_enabled': store.feed_enabled,

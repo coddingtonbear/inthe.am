@@ -41,11 +41,6 @@
                 <li class="desktop-only" data-intro="alt+t">
                     {{#link-to "tasks" title="Tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
-                {{#if user.kanban_memberships}}
-                    <li class="desktop-only" data-intro="alt+k">
-                        <a href="#" title="Team" {{action "switch_to_kanban"}}><i class="fa fa-columns">Team</i></a>
-                    </li>
-                {{/if}}
                 <li class="desktop-only" data-intro="alt+n">
                     <a href="#" title="New" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
                 </li>
