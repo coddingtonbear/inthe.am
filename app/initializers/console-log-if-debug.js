@@ -1,3 +1,4 @@
+
 export default {
     name: 'console-log-if-debug',
     initialize: function(container, application) {
@@ -7,4 +8,4 @@ export default {
             }
         };
     }
-}
+};

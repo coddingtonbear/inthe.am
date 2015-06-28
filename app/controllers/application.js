@@ -207,7 +207,7 @@ var controller = Ember.Controller.extend({
                         var url = window.localStorage.getItem('redirect_to');
                         console.logIfDebug("Redirecting to", url);
                         window.localStorage.removeItem('redirect_to');
-                        if(window.location.pathname.indexOf(url) == -1) {
+                        if(window.location.pathname.indexOf(url) === -1) {
                             window.location.href = url;
                         }
                     },

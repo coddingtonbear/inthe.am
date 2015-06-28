@@ -141,6 +141,7 @@ def user_enters_credentials(context):
         context.browser.find_by_id('Email').type(
             settings.TESTING_LOGIN_USER
         )
+        context.browser.find_by_id('next').first.click()
         context.browser.find_by_id('Passwd').type(
             settings.TESTING_LOGIN_PASSWORD
         )

@@ -111,6 +111,7 @@ fi
 
 cd $MAIN_DIR
 npm install -g ember-cli@0.1.7 bower@1.3.12
+ember install
 npm install
 bower --config.interactive=false install --allow-root
 

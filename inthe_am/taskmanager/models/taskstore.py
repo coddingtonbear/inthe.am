@@ -253,10 +253,6 @@ class TaskStore(models.Model):
                         errored[key] = (value, message)
         return applied, errored
 
-    def post_checkpoint_hook(self, changes=False, *args, **kwargs):
-        if changes:
-            self.sync_related(*args, **kwargs)
-
     def save(self, *args, **kwargs):
         # Create the user directory
         if not self.local_path:
