@@ -264,6 +264,16 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
         )
         return
 
+    if not store.trello_auth_token:
+        logger.warning(
+            "'sync_trello_tasks' task received, but no Trello auth token "
+            "is available!",
+            extra={
+                'stack': True,
+            }
+        )
+        return
+
     open_local_tasks = {
         t['uuid']: t for t in store.client.filter_tasks({
             'or': [
