@@ -534,18 +534,6 @@ class TaskStore(models.Model):
                     'head': head,
                 }
             )
-            changed_task_ids = self.get_changed_task_ids(head, start=start)
-            for task_id in changed_task_ids:
-                self.publish_announcement(
-                    'changed_task',
-                    {
-                        'username': self.username,
-                        'debounce_id': debounce_id,
-                        'start': start,
-                        'head': head,
-                        'task_id': task_id,
-                    },
-                )
 
             if (
                 self.trello_auth_token and

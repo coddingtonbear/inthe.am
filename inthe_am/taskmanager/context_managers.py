@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def git_checkpoint(
     store, message, function=None, args=None, kwargs=None,
     sync=False, gc=True, notify_rollback=True,
-    process_post_checkpoint_hooks=True,
+    emit_announcements=True,
 ):
     lock_name = get_lock_name_for_store(store)
     pre_work_sha = store.repository.head()
@@ -33,6 +33,7 @@ def git_checkpoint(
     store._active_checkpoint = message
 
     with redis_lock(lock_name, message=message):
+        start_head = store.repository.head()
         git_index_lock_path = os.path.join(
             store.local_path,
             '.git/index.lock'
@@ -80,6 +81,21 @@ def git_checkpoint(
                 kwargs=kwargs,
                 checkpoint_id=checkpoint_id,
             )
+
+            end_head = store.repository.head()
+            if emit_announcements:
+                for task_id in store.get_changed_task_ids(
+                    end_head, start=start_head
+                ):
+                    store.publish_announcement(
+                        'changed_task',
+                        {
+                            'username': store.user.username,
+                            'start': start_head,
+                            'head': end_head,
+                            'task_id': task_id,
+                        }
+                    )
         except Exception as e:
             store.create_git_checkpoint(
                 str(e),
@@ -122,23 +138,6 @@ def git_checkpoint(
             raise
 
     delattr(store, '_active_checkpoint')
-    if (
-        process_post_checkpoint_hooks
-        and hasattr(store, 'post_checkpoint_hook')
-    ):
-        if hasattr(store, '_active_post_checkpoint_hook'):
-            logger.warning(
-                "Attempted to run post-checkpoint hooks while "
-                "running post-checkpoint hook.  This is likely "
-                "a logical bug!",
-                extra={
-                    'stack': True,
-                }
-            )
-        else:
-            changes = store.repository.head() != pre_work_sha
-            store._active_post_checkpoint_hook = True
-            store.post_checkpoint_hook(changes=changes)
-            delattr(store, '_active_post_checkpoint_hook')
+
     if sync:
         store.sync()
