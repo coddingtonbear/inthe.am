@@ -297,6 +297,10 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
             'type': 'numeric',
             'label': 'Inthe.AM E-mail ID',
         },
+        'intheamtrelloboardid': {
+            'type': 'string',
+            'label': 'Inthe.AM Trello Board ID',
+        },
         'intheamtrelloid': {
             'type': 'string',
             'label': 'Inthe.AM Trello Object ID',

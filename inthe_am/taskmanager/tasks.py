@@ -315,7 +315,15 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
         wait_column = store.trello_board.get_list_by_type(TrelloObject.WAITING)
         for task in open_local_tasks.values():
             is_pending = task.get('status') == 'pending'
-            if task.get('intheamtrelloid'):
+
+            # If this task has a trello board ID, but it doesn't match the
+            # board we're currently on, let's pretend that it doesn't have
+            # an id at all -- it was probably un-deleted or restored
+            task_board_id = task.get('intheamtrelloboardid')
+            if task_board_id and task_board_id != store.trello_board.id:
+                task['intheamtrelloid'] = ''
+
+            if not task.get('intheamtrelloid'):
                 tob = TrelloObject.create(
                     store=store,
                     type=TrelloObject.CARD,
@@ -323,6 +331,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
                     idList=todo_column.id if is_pending else wait_column.id,
                 )
                 task['intheamtrelloid'] = tob.id
+                task['intheamtrelloboardid'] = store.trello_board.id
                 store.client.task_update(task)
             else:
                 res = open_trello_cards.pop(task.get('intheamtrelloid'), None)
@@ -358,6 +367,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
             data = {
                 'description': name,
                 'intheamtrelloid': id,
+                'intheamtrelloboardid': store.trello_board.id,
             }
             store.client.task_add(**data),
 
