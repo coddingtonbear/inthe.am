@@ -344,7 +344,6 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
             content_type='application/json',
         )
 
-    @requires_task_store
     def trello_incoming(self, request, secret_id, **kwargs):
         try:
             store = models.TaskStore.objects.get(secret_id=secret_id)
