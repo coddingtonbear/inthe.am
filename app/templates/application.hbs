@@ -33,6 +33,11 @@
                 <li class="mobile-only" data-intro="alt+t">
                     {{#link-to "mobile-tasks" title="Tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
+                {{#if user.trello_board_url}}
+                    <li class="mobile-only" data-intro="alt+k">
+                        <a title="Trello" {{bind-attr href=user.trello_board_url}}><i class="fa fa-columns">Trello</i></a>
+                    </li>
+                {{/if}}
                 <li class="mobile-only" data-intro="alt+n">
                     {{#link-to "create-task" title="New"}}<i class="fa fa-pencil-square-o">New</i>{{/link-to}}
                 </li>
@@ -41,6 +46,11 @@
                 <li class="desktop-only" data-intro="alt+t">
                     {{#link-to "tasks" title="Tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
+                {{#if user.trello_board_url}}
+                    <li class="desktop-only" data-intro="alt+k">
+                        <a title="Trello" {{bind-attr href=user.trello_board_url}}><i class="fa fa-columns">Trello</i></a>
+                    </li>
+                {{/if}}
                 <li class="desktop-only" data-intro="alt+n">
                     <a href="#" title="New" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
                 </li>

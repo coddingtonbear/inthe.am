@@ -15,14 +15,14 @@ from tastypie.models import ApiKey
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 
 from ..context_managers import git_checkpoint
 from ..lock import get_debounce_name_for_store, get_lock_redis
-from ..tasks import sync_repository
+from ..tasks import sync_repository, sync_trello_tasks
 from ..taskstore_migrations import upgrade as upgrade_taskstore
 from ..taskwarrior_client import TaskwarriorClient
 from .taskrc import TaskRc
@@ -60,21 +60,28 @@ class TaskStore(models.Model):
         max_length=255,
         blank=True,
     )
-    twilio_auth_token = models.CharField(max_length=32, blank=True)
+
+    configured = models.BooleanField(default=False)
     secret_id = models.CharField(blank=True, max_length=36)
+    sync_enabled = models.BooleanField(default=True)
+    sync_permitted = models.BooleanField(default=True)
+    pebble_cards_enabled = models.BooleanField(default=False)
+    feed_enabled = models.BooleanField(default=False)
+
+    taskrc_extras = models.TextField(blank=True)
+
+    twilio_auth_token = models.CharField(max_length=32, blank=True)
+
+    trello_auth_token = models.CharField(max_length=32, blank=True)
+
     sms_whitelist = models.TextField(blank=True)
     sms_arguments = models.TextField(blank=True)
     sms_replies = models.PositiveIntegerField(
         choices=REPLY_CHOICES,
         default=REPLY_ALL
     )
+
     email_whitelist = models.TextField(blank=True)
-    taskrc_extras = models.TextField(blank=True)
-    configured = models.BooleanField(default=False)
-    sync_enabled = models.BooleanField(default=True)
-    sync_permitted = models.BooleanField(default=True)
-    pebble_cards_enabled = models.BooleanField(default=False)
-    feed_enabled = models.BooleanField(default=False)
 
     last_synced = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -171,6 +178,18 @@ class TaskStore(models.Model):
             return self.user.api_key
         except ObjectDoesNotExist:
             return ApiKey.objects.create(user=self.user)
+
+    @property
+    def trello_board(self):
+        from .trello_object import TrelloObject
+
+        try:
+            return TrelloObject.objects.get(
+                store=self,
+                type=TrelloObject.BOARD,
+            )
+        except TrelloObject.DoesNotExist:
+            return None
 
     def _is_numeric(self, val):
         try:
@@ -413,6 +432,21 @@ class TaskStore(models.Model):
             json.dumps(message, cls=DjangoJSONEncoder)
         )
 
+    def sync_trello(self):
+        debounce_key = get_debounce_name_for_store(self, 'trello')
+        defined_debounce_id = str(time.time())
+
+        client = get_lock_redis()
+        client.set(debounce_key, defined_debounce_id)
+        sync_trello_tasks.apply_async(
+            countdown=5,
+            expires=3600,
+            args=(self.pk, ),
+            kwargs={
+                'debounce_id': defined_debounce_id,
+            }
+        )
+
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None
     ):
@@ -460,6 +494,7 @@ class TaskStore(models.Model):
                     expected_debounce_id,
                     self.pk,
                 )
+                return
             elif expected_debounce_id and debounce_id:
                 client.delete(debounce_key)
                 logger.debug(
@@ -498,7 +533,8 @@ class TaskStore(models.Model):
                     'head': head,
                 }
             )
-            for task_id in self.get_changed_task_ids(head, start=start):
+            changed_task_ids = self.get_changed_task_ids(head, start=start)
+            for task_id in changed_task_ids:
                 self.publish_announcement(
                     'changed_task',
                     {
@@ -509,6 +545,9 @@ class TaskStore(models.Model):
                         'task_id': task_id,
                     },
                 )
+
+            if changed_task_ids and self.trello_board:
+                self.sync_trello()
 
         return True
 

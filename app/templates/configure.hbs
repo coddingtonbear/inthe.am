@@ -49,6 +49,43 @@
                 </div>
             </li>
             <li class="accordion-navigation">
+                <a href="#trello"><strong>BETA:</strong> Trello Boards</a>
+                <div id="trello" class="content">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <p>
+                                <strong>BETA:</strong> Inthe.AM provides Trello
+                                integration so you can manage your tasks on a
+                                Trello board, too.
+                            </p>
+                        </div>
+                    </div>
+                    {{#if controllers.application.user.trello_board_url}}
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <p>
+                                    Trello integration is currently turned on; you can access
+                                    your Trello board by clicking the 'Trello' button at the 
+                                    top of your screen, or by going to
+                                    <a {{bind-attr href=controllers.application.user.trello_board_url}}>{{controllers.application.user.trello_board_url}}</a>.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <a href="" class="button radius alert" {{action "reset_trello_settings"}}>Reset Trello settings</a>
+                            </div>
+                        </div>
+                    {{else}}
+                        <div class="row">
+                            <div class="large-12 columns">
+                                <a class="button radius" {{bind-attr href=controllers.application.urls.trello_authorization_url }}>Click here to get started</a>
+                            </div>
+                        </div>
+                    {{/if}}
+                </div>
+            </li>
+            <li class="accordion-navigation">
                 <a href="#interface">Interface &amp; Customizations</a>
                 <div id="interface" class="content">
                     <div class="row">

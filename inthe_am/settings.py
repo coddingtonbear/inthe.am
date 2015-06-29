@@ -297,6 +297,10 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
             'type': 'numeric',
             'label': 'Inthe.AM E-mail ID',
         },
+        'intheamtrelloid': {
+            'type': 'string',
+            'label': 'Inthe.AM Trello Object ID',
+        }
     }
 }
 
@@ -324,6 +328,8 @@ TASKD_SIGNING_TEMPLATE = '/var/taskd/cert.template'
 TASKD_SERVER = '127.0.0.1:53589'
 TASKD_ORG = 'testing'
 
+TRELLO_SUBSCRIPTION_DOMAIN = 'https://inthe.am'
+
 ANNOUNCEMENTS_CHANNEL = '__general__'
 
 # Streaming ticket updates enabled?
@@ -335,6 +341,8 @@ STREAMING_UPDATES_ENABLED = True
 #  AWS_ACCESS_KEY_ID
 #  AWS_SECRET_ACCESS_KEY
 #  AWS_STORAGE_BUCKET_NAME
+#  TRELLO_API_KEY
+#  TRELLO_API_SECRET
 ENVIRONMENT_SETTING_SUFFIXES = {
     '__BOOL': lambda x: bool(int(x)),
     '__INT': lambda x: int(x),

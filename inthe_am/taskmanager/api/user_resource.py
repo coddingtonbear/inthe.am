@@ -98,7 +98,10 @@ def get_published_properties(user, store, meta):
                 'label': v.label,
                 'type': v.__class__.__name__
             } for k, v in store.client.config.get_udas().items()
-        ]
+        ],
+        'trello_board_url': (
+            store.trello_board.meta['url'] if store.trello_board else None
+        )
     }
 
 

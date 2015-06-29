@@ -23,9 +23,8 @@ from twilio.util import RequestValidator
 from django.conf.urls import url
 from django.contrib.auth.models import User
 from django.http import (
-    HttpResponse, HttpResponseBadRequest,
-    HttpResponseNotAllowed, HttpResponseNotFound,
-    HttpResponseForbidden,
+    HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed,
+    HttpResponseRedirect, HttpResponseNotFound, HttpResponseForbidden,
 )
 
 from .. import models
@@ -38,6 +37,9 @@ from ..decorators import (
     requires_task_store
 )
 from ..task import Task
+from ..trello_utils import (
+    get_access_token, get_authorize_url, message_signature_is_valid
+)
 from .mixins import LockTimeoutMixin
 
 
@@ -138,6 +140,35 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 ),
                 self.wrap_view('sync_init'),
                 name='sync_init',
+            ),
+            url(
+                r"^(?P<resource_name>%s)/trello/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('trello_authorize'),
+                name='trello_authorize',
+            ),
+            url(
+                r"^(?P<resource_name>%s)/trello/callback/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('trello_callback'),
+                name='trello_callback',
+            ),
+            url(
+                r"^(?P<resource_name>%s)/trello/incoming/"
+                r"(?P<secret_id>[\w\d_.-]+)/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('trello_incoming'),
+                name='trello_incoming',
+            ),
+            url(
+                r"^(?P<resource_name>%s)/trello/reset/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('trello_reset'),
+                name='trello_reset',
             )
         ]
 
@@ -288,6 +319,90 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
             }),
             content_type='application/json',
         )
+
+    @requires_task_store
+    def trello_authorize(self, request, store, **kwargs):
+        if request.method != 'GET':
+            return HttpResponseNotAllowed(request.method)
+        return HttpResponseRedirect(get_authorize_url(request))
+
+    @requires_task_store
+    def trello_reset(self, request, store, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(request.method)
+
+        for obj in models.TrelloObject.objects.filter(store=store):
+            obj.delete()
+
+        store.trello_auth_token = ''
+        store.save()
+
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
+
+    @requires_task_store
+    def trello_incoming(self, request, secret_id, **kwargs):
+        try:
+            store = models.TaskStore.objects.get(secret_id=secret_id)
+        except:
+            return HttpResponseNotFound()
+
+        if not message_signature_is_valid(request):
+            # @TODO: Once this is verified, return
+            # HTTPRESPONSEBADREQUEST here.
+            pass
+
+        if request.method == 'POST':
+            store.sync_trello()
+
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
+
+    @requires_task_store
+    def trello_callback(self, request, store, **kwargs):
+        if request.method != 'GET':
+            return HttpResponseNotAllowed(request.method)
+
+        if 'trello_oauth_token' not in request.session:
+            return HttpResponseBadRequest(
+                'Arrived at Trello authorization URL without having '
+                'initiated a Trello authorization!'
+            )
+
+        token = get_access_token(request)
+
+        store.trello_auth_token = token[0]
+        if not store.trello_board:
+            board = models.TrelloObject.create(
+                store=store,
+                type=models.TrelloObject.BOARD,
+                name='Inthe.AM Tasks',
+                desc='Tasks listed on your Inthe.AM account'
+            )
+            board.client.new_list(board.id, 'Waiting')
+
+            for list_data in board.client.get_list(board.id):
+                obj = models.TrelloObject.objects.create(
+                    id=list_data.get('id'),
+                    store=store,
+                    type=models.TrelloObject.LIST,
+                    parent=board,
+                    meta=list_data
+                )
+                obj.subscribe()
+
+        store.save()
+        store.sync_trello()
+
+        return HttpResponseRedirect('/')
 
     @requires_task_store
     def refresh_tasks(self, request, store, **kwargs):

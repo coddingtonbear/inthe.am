@@ -13,6 +13,7 @@ from django.utils.timezone import now
 from django_mailbox.models import Message
 
 from .context_managers import git_checkpoint
+from .lock import get_debounce_name_for_store, get_lock_redis
 
 
 logger = logging.getLogger(__name__)
@@ -231,3 +232,119 @@ def process_email_message(self, message_id):
         )
         logger.info(*log_args)
         store.log_message(*log_args)
+
+
+@shared_task(
+    bind=True,
+    ignore_result=True,
+)
+def sync_trello_tasks(self, store_id, debounce_id=None):
+    from .models import TaskStore, TrelloObject
+    store = TaskStore.objects.get(pk=store_id)
+    client = get_lock_redis()
+
+    debounce_key = get_debounce_name_for_store(store, 'trello')
+    try:
+        expected_debounce_id = client.get(debounce_key)
+    except (ValueError, TypeError):
+        expected_debounce_id = None
+
+    if (
+        expected_debounce_id and debounce_id and
+        (float(debounce_id) < float(expected_debounce_id))
+    ):
+        logger.warning(
+            "Trello Debounce Failed: %s<%s; "
+            "skipping trello synchronization for %s",
+            debounce_id,
+            expected_debounce_id,
+            self.pk,
+        )
+        return
+
+    open_local_tasks = {
+        t['uuid']: t for t in store.client.filter_tasks({
+            'or': [
+                ('status', 'pending'),
+                ('status', 'waiting'),
+            ]
+        })
+    }
+    with git_checkpoint(store, 'Deleting non-pending tasks from trello'):
+        for task in store.client.filter_tasks({
+            'intheamtrelloid.any': None,
+            'or': [
+                ('status', 'done'),
+                ('status', 'deleted'),
+            ],
+        }):
+            try:
+                tob = TrelloObject.objects.get(
+                    id=task['intheamtrelloid'],
+                    store=store,
+                )
+                tob.delete()
+            except TrelloObject.NotFound:
+                pass
+
+    open_trello_cards = {
+        c['id']: c for c in store.trello_board.client.get_card_filter(
+            'open',
+            store.trello_board.id,
+        )
+    }
+    with git_checkpoint(
+        store,
+        'Adding pending tasks to Trello & deleting tasks remotely deleted'
+    ):
+        todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
+        wait_column = store.trello_board.get_list_by_type(TrelloObject.WAITING)
+        for task in open_local_tasks.values():
+            is_pending = task.get('status') == 'pending'
+            if task.get('intheamtrelloid') is None:
+                tob = TrelloObject.create(
+                    store=store,
+                    type=TrelloObject.CARD,
+                    name=task['description'],
+                    idList=todo_column.id if is_pending else wait_column.id,
+                )
+                task['intheamtrelloid'] = tob.id
+                store.client.task_update(task)
+            else:
+                res = open_trello_cards.pop(task.get('intheamtrelloid'), None)
+                if res is None:
+                    store.client.task_done(uuid=task.get('uuid'))
+                    continue
+
+                if task['status'] == 'waiting':
+                    try:
+                        tob = TrelloObject.objects.get(
+                            id=task['intheamtrelloid'],
+                            store=store,
+                        )
+                        tob.update_using_method(
+                            'update_idList',
+                            tob.id,
+                            wait_column.id,
+                        )
+                    except TrelloObject.DoesNotExist:
+                        logging.exception(
+                            "Attempted to update card status to waiting, "
+                            "but card was not found in database!"
+                        )
+
+    with git_checkpoint(
+        store,
+        'Add local tasks to match tasks created in Trello'
+    ):
+        for task in open_trello_cards.values():
+            name = task.get('name')
+            id = task.get('id')
+
+            data = {
+                'description': name,
+                'intheamtrelloid': id,
+            }
+            store.client.task_add(**data),
+
+    store.sync()

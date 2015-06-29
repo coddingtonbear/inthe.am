@@ -147,6 +147,22 @@ var controller = Ember.Controller.extend({
                 );
             }.bind(this));
         },
+        reset_trello_settings: function() {
+            var url = this.get('controllers.application').urls.trello_reset_url;
+            return this.ajaxRequest({
+                url: url,
+                type: 'POST',
+                data: {}
+            }).then(function(){
+                this.get('controllers.application').update_user_info();
+                this.success_message("Trello settings successfully reset.");
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `resetting your trello settings: ${msg}`
+                );
+            }.bind(this));
+        },
         reset_taskd: function() {
             var result = confirm(
                 `Are you sure you would like to configure your Inthe.AM ` +

@@ -11,10 +11,10 @@ from django.core.exceptions import SuspiciousOperation
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
 
-from .models import TaskStore
 from .lock import (
     get_announcements_subscription,
 )
+from .models import TaskStore
 
 
 logger = logging.getLogger(__name__)

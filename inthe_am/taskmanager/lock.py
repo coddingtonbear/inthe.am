@@ -39,8 +39,14 @@ def get_announcements_subscription(store, **kwargs):
     return subscription
 
 
-def get_debounce_name_for_store(store):
-    return store.username + '.sync.debounce'
+def get_debounce_name_for_store(store, subtype=None):
+    return '.'.join(
+        [
+            store.username,
+            subtype if subtype else 'sync',
+            'debounce',
+        ]
+    )
 
 
 def get_lock_name_for_store(store):
