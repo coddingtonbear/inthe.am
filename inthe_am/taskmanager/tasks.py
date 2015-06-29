@@ -298,7 +298,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
                     store=store,
                 )
                 tob.delete()
-            except TrelloObject.NotFound:
+            except TrelloObject.DoesNotExist:
                 pass
 
     open_trello_cards = {
