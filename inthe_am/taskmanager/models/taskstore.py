@@ -21,7 +21,11 @@ from django.template.loader import render_to_string
 from django.utils.timezone import now
 
 from ..context_managers import git_checkpoint
-from ..lock import get_debounce_name_for_store, get_lock_redis
+from ..lock import (
+    get_debounce_name_for_store,
+    get_lock_name_for_store,
+    get_lock_redis,
+)
 from ..tasks import sync_repository, sync_trello_tasks
 from ..taskstore_migrations import upgrade as upgrade_taskstore
 from ..taskwarrior_client import TaskwarriorClient
@@ -447,6 +451,17 @@ class TaskStore(models.Model):
                 'debounce_id': defined_debounce_id,
             }
         )
+
+    def set_lock_state(self, lock=None, seconds=3600):
+        lock_name = get_lock_name_for_store(self)
+        client = get_lock_redis()
+
+        if lock is True:
+            return client.set(lock_name, str(time.time() + seconds))
+        elif lock is False:
+            return client.delete(lock_name)
+        else:
+            return client.get(lock_name)
 
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None
