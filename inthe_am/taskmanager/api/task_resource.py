@@ -336,6 +336,7 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
 
         with git_checkpoint("Unsetting trello IDs for pending/waiting tasks."):
             for task in store.client.filter_tasks({
+                'intheamtrelloid.any': None,
                 'or': [
                     ('status', 'pending'),
                     ('status', 'waiting'),
