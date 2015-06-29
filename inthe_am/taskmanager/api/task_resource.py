@@ -334,7 +334,9 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
         for obj in models.TrelloObject.objects.filter(store=store):
             obj.delete()
 
-        with git_checkpoint("Unsetting trello IDs for pending/waiting tasks."):
+        with git_checkpoint(
+            store, "Reset trello IDs for pending/waiting tasks."
+        ):
             for task in store.client.filter_tasks({
                 'intheamtrelloid.any': None,
                 'or': [
