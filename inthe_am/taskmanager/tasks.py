@@ -364,6 +364,13 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
             name = task.get('name')
             id = task.get('id')
 
+            tob = TrelloObject.objects.create(
+                id=id,
+                store=store,
+                type=TrelloObject.CARD,
+                meta=task,
+            )
+            tob.subscribe()
             data = {
                 'description': name,
                 'intheamtrelloid': id,
