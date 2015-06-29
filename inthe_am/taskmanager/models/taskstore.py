@@ -73,6 +73,7 @@ class TaskStore(models.Model):
     twilio_auth_token = models.CharField(max_length=32, blank=True)
 
     trello_auth_token = models.CharField(max_length=200, blank=True)
+    trello_local_head = models.CharField(max_length=100, blank=True)
 
     sms_whitelist = models.TextField(blank=True)
     sms_arguments = models.TextField(blank=True)
@@ -546,7 +547,16 @@ class TaskStore(models.Model):
                     },
                 )
 
-            if changed_task_ids and self.trello_board:
+            if (
+                self.trello_auth_token and
+                (
+                    not self.trello_local_head or
+                    self.get_changed_task_ids(
+                        self.repository.head(),
+                        start=self.trello_local_head
+                    )
+                )
+            ):
                 self.sync_trello()
 
         return True
