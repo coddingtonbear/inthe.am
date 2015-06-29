@@ -84,6 +84,32 @@ class RegistrationRecency(admin.SimpleListFilter):
         )
 
 
+class TrelloEnabledFilter(admin.SimpleListFilter):
+    title = 'trello enabled'
+    parameter_name = 'trello_enabled'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', 'Yes', ),
+            ('0', 'No', ),
+        )
+
+    def queryset(self, request, queryset):
+        try:
+            value = int(self.value())
+        except (ValueError, TypeError):
+            return queryset
+
+        if value:
+            return queryset.exclude(
+                trello_auth_token=''
+            )
+        else:
+            return queryset.filter(
+                trello_auth_token=''
+            )
+
+
 class TwilioEnabledFilter(admin.SimpleListFilter):
     title = 'twilio enabled'
     parameter_name = 'twilio_enabled'
@@ -119,11 +145,12 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     list_display = (
         'user', 'created', 'last_synced',
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
-        'twilio_enabled', 'local_sync',
+        'twilio_enabled', 'trello_enabled', 'local_sync',
     )
     list_filter = (
         ActivityStatusListFilter,
         RegistrationRecency,
+        TrelloEnabledFilter,
         TwilioEnabledFilter,
         'created', 'last_synced',
         'sync_enabled', 'pebble_cards_enabled',
@@ -163,6 +190,10 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     def twilio_enabled(self, store):
         return True if store.twilio_auth_token else False
     twilio_enabled.boolean = True
+
+    def trello_enabled(self, store):
+        return True if store.trello_auth_token else False
+    trello_enabled.boolean = True
 
     def local_sync(self, store):
         return store.sync_uses_default_server
