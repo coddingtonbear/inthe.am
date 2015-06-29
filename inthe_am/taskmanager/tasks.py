@@ -339,22 +339,24 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
                     store.client.task_done(uuid=task.get('uuid'))
                     continue
 
-                if task['status'] == 'waiting':
-                    try:
-                        tob = TrelloObject.objects.get(
-                            id=task['intheamtrelloid'],
-                            store=store,
-                        )
+                try:
+                    tob = TrelloObject.objects.get(
+                        id=task['intheamtrelloid'],
+                        store=store,
+                    )
+                    if task['status'] == 'waiting':
                         tob.update_using_method(
                             'update_idList',
                             tob.id,
                             wait_column.id,
                         )
-                    except TrelloObject.DoesNotExist:
-                        logging.exception(
-                            "Attempted to update card status to waiting, "
-                            "but card was not found in database!"
-                        )
+                    tob.meta = res
+                    tob.save()
+                except TrelloObject.DoesNotExist:
+                    logging.exception(
+                        "Attempted to update card status but card "
+                        "was not found in database!"
+                    )
 
     with git_checkpoint(
         store,

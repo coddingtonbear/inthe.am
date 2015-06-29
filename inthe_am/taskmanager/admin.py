@@ -11,6 +11,7 @@ from .models import (
     TaskAttachment,
     TaskStore,
     TaskStoreActivityLog,
+    TrelloObject,
     UserMetadata
 )
 
@@ -263,3 +264,12 @@ class AnnouncementAdmin(admin.ModelAdmin):
     search_fields = ('title', 'category', )
 
 admin.site.register(Announcement, AnnouncementAdmin)
+
+
+class TrelloObjectAdmin(admin.ModelAdmin):
+    list_display = ('id', 'store', 'type')
+    list_filter = ('type', )
+    search_fields = ('id', 'store__user__username', )
+    raw_id_fields = ('store', 'parent', )
+
+admin.site.register(TrelloObject, TrelloObjectAdmin)
