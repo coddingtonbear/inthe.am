@@ -288,7 +288,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
         for task in store.client.filter_tasks({
             'intheamtrelloid.any': None,
             'or': [
-                ('status', 'done'),
+                ('status', 'completed'),
                 ('status', 'deleted'),
             ],
         }):
