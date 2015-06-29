@@ -334,6 +334,16 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
         for obj in models.TrelloObject.objects.filter(store=store):
             obj.delete()
 
+        with git_checkpoint("Unsetting trello IDs for pending/waiting tasks."):
+            for task in store.client.filter_tasks({
+                'or': [
+                    ('status', 'pending'),
+                    ('status', 'waiting'),
+                ]
+            }):
+                task['intheamtrelloid'] = ''
+                store.client.task_update(task)
+
         store.trello_auth_token = ''
         store.save()
 
