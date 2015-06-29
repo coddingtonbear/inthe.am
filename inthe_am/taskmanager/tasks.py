@@ -237,13 +237,15 @@ def process_email_message(self, message_id):
 @shared_task(
     bind=True,
     ignore_result=True,
+    max_retries=10,
+    default_retry_delay=60,
 )
 def sync_trello_tasks(self, store_id, debounce_id=None):
     from .models import TaskStore, TrelloObject
     store = TaskStore.objects.get(pk=store_id)
     client = get_lock_redis()
 
-    starting_head = self.store.repository.head()
+    starting_head = store.repository.head()
 
     debounce_key = get_debounce_name_for_store(store, 'trello')
     try:
@@ -260,7 +262,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
             "skipping trello synchronization for %s",
             debounce_id,
             expected_debounce_id,
-            self.pk,
+            store.pk,
         )
         return
 
@@ -313,7 +315,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
         wait_column = store.trello_board.get_list_by_type(TrelloObject.WAITING)
         for task in open_local_tasks.values():
             is_pending = task.get('status') == 'pending'
-            if task.get('intheamtrelloid') is None:
+            if task.get('intheamtrelloid'):
                 tob = TrelloObject.create(
                     store=store,
                     type=TrelloObject.CARD,
@@ -359,9 +361,9 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
             }
             store.client.task_add(**data),
 
-    ending_head = self.store.repository.head()
+    ending_head = store.repository.head()
     store.trello_local_head = ending_head
     store.save()
 
-    if self.store.get_changed_task_ids(ending_head, start=starting_head):
+    if store.get_changed_task_ids(ending_head, start=starting_head):
         store.sync()
