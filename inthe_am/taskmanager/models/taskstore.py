@@ -72,7 +72,7 @@ class TaskStore(models.Model):
 
     twilio_auth_token = models.CharField(max_length=32, blank=True)
 
-    trello_auth_token = models.CharField(max_length=32, blank=True)
+    trello_auth_token = models.CharField(max_length=200, blank=True)
 
     sms_whitelist = models.TextField(blank=True)
     sms_arguments = models.TextField(blank=True)
