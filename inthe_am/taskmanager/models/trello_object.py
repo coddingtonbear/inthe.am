@@ -128,7 +128,6 @@ class TrelloObject(models.Model):
         )
 
     def delete(self, *args, **kwargs):
-        super(TrelloObject, self).delete(*args, **kwargs)
         try:
             self.client.update_closed(self.id, 'true')
         except Exception as e:
@@ -136,6 +135,7 @@ class TrelloObject(models.Model):
                 'Error encountered while deleting remote Trello object: %s',
                 str(e)
             )
+        super(TrelloObject, self).delete(*args, **kwargs)
 
     class Meta:
         app_label = 'taskmanager'
