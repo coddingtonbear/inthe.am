@@ -276,6 +276,8 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
         )
         return
 
+    store.trello_board.reconcile()
+
     open_local_tasks = {
         t['uuid']: t for t in store.client.filter_tasks({
             'or': [
@@ -333,6 +335,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
                 task['intheamtrelloid'] = tob.id
                 task['intheamtrelloboardid'] = store.trello_board.id
                 store.client.task_update(task)
+                tob.reconcile()
             else:
                 res = open_trello_cards.pop(task.get('intheamtrelloid'), None)
                 if res is None:
@@ -344,14 +347,9 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
                         id=task['intheamtrelloid'],
                         store=store,
                     )
-                    if task['status'] == 'waiting':
-                        tob.update_using_method(
-                            'update_idList',
-                            tob.id,
-                            wait_column.id,
-                        )
                     tob.meta = res
                     tob.save()
+                    tob.reconcile()
                 except TrelloObject.DoesNotExist:
                     logging.exception(
                         "Attempted to update card status but card "

@@ -1,5 +1,6 @@
 import logging
 
+from dateutil.parser import parse
 from jsonfield import JSONField
 import trello
 
@@ -7,8 +8,9 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from ..trello_utils import subscribe_to_updates
+from .context_managers import git_checkpoint
 from .taskstore import TaskStore
+from ..trello_utils import subscribe_to_updates
 
 
 logger = logging.getLogger(__name__)
@@ -55,6 +57,76 @@ class TrelloObject(models.Model):
             settings.TRELLO_API_KEY,
             store.trello_auth_token,
         )
+
+    def reconcile(self):
+        if self.type == self.TASK:
+            return self.reconcile_task()
+        elif self.type == self.BOARD:
+            return self.reconcile_board()
+
+    def _reconcile_board(self):
+        known_lists = {
+            c.pk: c for c in self.children.all()
+        }
+
+        for list_data in self.client.get_list(self.id):
+            try:
+                obj = models.TrelloObject.objects.get(
+                    id=list_data.get('id')
+                )
+                obj.meta = list_data
+                obj.save()
+                known_lists.pop(obj.pk, None)
+            except models.TrelloObject.DoesNotExist:
+                obj = models.TrelloObject.objects.create(
+                    id=list_data.get('id'),
+                    store=self.store,
+                    type=models.TrelloObject.LIST,
+                    parent=self.store.trello_board,
+                    meta=list_data
+                )
+                obj.subscribe()
+
+        for deleted_list in known_lists.values():
+            deleted_list.delete()
+
+    def _reconcile_task(self):
+        try:
+            task = self.store.client.filter_tasks({
+                'intheamtrelloid': self.id,
+                'intheamtrelloboardid': self.store.trello_board.id,
+            })[0]
+        except IndexError:
+            logger.exception(
+                "Attempted to update task object for {trello_id}, "
+                "but no matching tasks were found in the store!".format(
+                    trello_id=self.id,
+                )
+            )
+            return
+
+        with git_checkpoint(self.store, 'Reconciling Trello task'):
+            task['description'] = self.meta['description']
+            task['intheamtrellodescription'] = self.meta['desc']
+            task['intheamtrellourl'] = self.meta['url']
+            if self.meta['badges']['due']:
+                task['due'] = parse(self.meta['badges']['due'])
+
+            try:
+                list_data = self.objects.get(id=self.meta['idList'])
+                task['intheamtrellolistname'] = list_data.meta['name']
+                task['intheamtrellolistid'] = list_data.id
+            except self.DoesNotExist:
+                task['intheamtrellolistname'] = ''
+                task['intheamtrellolistid'] = ''
+                logger.warning(
+                    "Unable to find list id %s when updating "
+                    "card id %s",
+                    self.meta['idList'],
+                    self.id,
+                )
+
+            self.store.client.task_update(task)
 
     @classmethod
     def create(cls, **kwargs):

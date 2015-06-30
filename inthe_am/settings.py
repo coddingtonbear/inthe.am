@@ -297,13 +297,30 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
             'type': 'numeric',
             'label': 'Inthe.AM E-mail ID',
         },
+
+        'intheamtrelloid': {
+            'type': 'string',
+            'label': 'Inthe.AM Trello Object ID',
+        },
         'intheamtrelloboardid': {
             'type': 'string',
             'label': 'Inthe.AM Trello Board ID',
         },
-        'intheamtrelloid': {
+        'intheamtrellolistid': {
             'type': 'string',
-            'label': 'Inthe.AM Trello Object ID',
+            'label': 'Inthe.AM Trello List ID',
+        },
+        'intheamtrellolistname': {
+            'type': 'string',
+            'label': 'Inthe.AM Trello List Name',
+        },
+        'intheamtrellourl': {
+            'type': 'string',
+            'label': 'Inthe.AM Trello URL',
+        },
+        'intheamtrellodescription': {
+            'type': 'string',
+            'label': 'Inthe.AM Trello Description',
         }
     }
 }
