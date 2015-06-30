@@ -279,9 +279,9 @@ admin.site.register(TrelloObject, TrelloObjectAdmin)
 
 
 class TrelloObjectActionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'type', 'model', 'occurred', )
+    list_display = ('id', 'action_id', 'type', 'model', 'occurred', )
     list_filter = ('type', )
-    search_fields = ('id', 'model__id', 'model__store__user__username', )
+    search_fields = ('id', 'action_id', 'model__id', 'model__store__user__username', )
     raw_id_fields = ('model', )
     ordering = ('-occurred', )
     list_select_related = True

@@ -8,8 +8,8 @@ from .trelloobject import TrelloObject
 
 
 class TrelloObjectAction(models.Model):
-    id = models.CharField(primary_key=True, max_length=100)
     type = models.CharField(max_length=100)
+    action_id = models.CharField(max_length=100)
     model = models.ForeignKey(
         TrelloObject,
         related_name='actions',
@@ -25,7 +25,7 @@ class TrelloObjectAction(models.Model):
     def create_from_request(cls, data):
         try:
             return cls.objects.create(
-                id=data['action']['id'],
+                action_id=data['action']['id'],
                 type=data['action']['type'],
                 model=TrelloObject.objects.get(pk=data['model']['id']),
                 occurred=parse(
@@ -35,7 +35,8 @@ class TrelloObjectAction(models.Model):
             )
         except IntegrityError:
             return cls.objects.get(
-                id=data['action']['id'],
+                action_id=data['action']['id'],
+                model=TrelloObject.objects.get(pk=data['model']['id']),
             )
 
     def __unicode__(self):
