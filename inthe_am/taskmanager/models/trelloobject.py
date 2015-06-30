@@ -77,11 +77,11 @@ class TrelloObject(models.Model):
                 obj.meta = list_data
                 obj.save()
                 known_lists.pop(obj.pk, None)
-            except models.TrelloObject.DoesNotExist:
-                obj = models.TrelloObject.objects.create(
+            except TrelloObject.DoesNotExist:
+                obj = TrelloObject.objects.create(
                     id=list_data.get('id'),
                     store=self.store,
-                    type=models.TrelloObject.LIST,
+                    type=TrelloObject.LIST,
                     parent=self.store.trello_board,
                     meta=list_data
                 )
