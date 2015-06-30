@@ -59,8 +59,8 @@ class TrelloObject(models.Model):
         )
 
     def reconcile(self):
-        if self.type == self.TASK:
-            return self.reconcile_task()
+        if self.type == self.CARD:
+            return self.reconcile_card()
         elif self.type == self.BOARD:
             return self.reconcile_board()
 
@@ -90,7 +90,7 @@ class TrelloObject(models.Model):
         for deleted_list in known_lists.values():
             deleted_list.delete()
 
-    def _reconcile_task(self):
+    def _reconcile_card(self):
         try:
             task = self.store.client.filter_tasks({
                 'intheamtrelloid': self.id,
