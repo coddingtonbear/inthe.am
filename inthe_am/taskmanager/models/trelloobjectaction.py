@@ -2,7 +2,7 @@ from dateutil.parser import parse
 from jsonfield import JSONField
 import pytz
 
-from django.db import models
+from django.db import IntegrityError, models
 
 from .trelloobject import TrelloObject
 
@@ -23,13 +23,20 @@ class TrelloObjectAction(models.Model):
 
     @classmethod
     def create_from_request(cls, data):
-        return cls.objects.create(
-            id=data['action']['id'],
-            type=data['action']['type'],
-            model=TrelloObject.objects.get(pk=data['model']['id']),
-            occurred=parse(data['action']['date']).replace(tzinfo=pytz.UTC),
-            meta=data,
-        )
+        try:
+            return cls.objects.create(
+                id=data['action']['id'],
+                type=data['action']['type'],
+                model=TrelloObject.objects.get(pk=data['model']['id']),
+                occurred=parse(
+                    data['action']['date']
+                ).replace(tzinfo=pytz.UTC),
+                meta=data,
+            )
+        except IntegrityError:
+            return cls.objects.get(
+                id=data['action']['id'],
+            )
 
     def __unicode__(self):
         return (

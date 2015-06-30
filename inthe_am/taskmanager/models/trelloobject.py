@@ -8,9 +8,9 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from .context_managers import git_checkpoint
-from .taskstore import TaskStore
+from ..context_managers import git_checkpoint
 from ..trello_utils import subscribe_to_updates
+from .taskstore import TaskStore
 
 
 logger = logging.getLogger(__name__)
