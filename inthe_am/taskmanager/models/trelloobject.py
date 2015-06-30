@@ -1,5 +1,6 @@
-from jsonfield import JSONField
 import logging
+
+from jsonfield import JSONField
 import trello
 
 from django.conf import settings
@@ -43,6 +44,9 @@ class TrelloObject(models.Model):
     )
     type = models.CharField(choices=TYPE_CHOIES, max_length=10)
     meta = JSONField()
+
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     @classmethod
     def get_client_for_type(cls, type_name, store):
@@ -120,13 +124,6 @@ class TrelloObject(models.Model):
     def get_data(self):
         return self.client.get(self.id)
 
-    def __unicode__(self):
-        return u'Trello {type} #{id} ({user})'.format(
-            type=self.type.title(),
-            id=self.id,
-            user=self.store.user.username,
-        )
-
     def delete(self, *args, **kwargs):
         try:
             self.client.update_closed(self.id, 'true')
@@ -136,6 +133,13 @@ class TrelloObject(models.Model):
                 str(e)
             )
         super(TrelloObject, self).delete(*args, **kwargs)
+
+    def __unicode__(self):
+        return u'Trello {type} #{id} ({user})'.format(
+            type=self.type.title(),
+            id=self.id,
+            user=self.store.user.username,
+        )
 
     class Meta:
         app_label = 'taskmanager'

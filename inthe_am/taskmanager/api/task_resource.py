@@ -37,6 +37,7 @@ from ..decorators import (
     requires_task_store
 )
 from ..task import Task
+from ..tasks import process_trello_action
 from ..trello_utils import (
     get_access_token, get_authorize_url, message_signature_is_valid
 )
@@ -370,6 +371,9 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
 
         if request.method == 'POST':
             store.sync_trello()
+            process_trello_action.apply_async(
+                args=(store.pk, json.loads(request.body))
+            )
 
         return HttpResponse(
             json.dumps({

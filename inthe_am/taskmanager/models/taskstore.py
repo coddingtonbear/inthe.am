@@ -186,7 +186,7 @@ class TaskStore(models.Model):
 
     @property
     def trello_board(self):
-        from .trello_object import TrelloObject
+        from .trelloobject import TrelloObject
 
         try:
             return TrelloObject.objects.get(

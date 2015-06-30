@@ -12,6 +12,7 @@ from .models import (
     TaskStore,
     TaskStoreActivityLog,
     TrelloObject,
+    TrelloObjectAction,
     UserMetadata
 )
 
@@ -267,9 +268,23 @@ admin.site.register(Announcement, AnnouncementAdmin)
 
 
 class TrelloObjectAdmin(admin.ModelAdmin):
-    list_display = ('id', 'store', 'type')
+    list_display = ('id', 'store', 'type', 'created', 'updated', )
     list_filter = ('type', )
     search_fields = ('id', 'store__user__username', )
     raw_id_fields = ('store', 'parent', )
+    ordering = ('-updated', )
+    date_hierarchy = 'updated'
 
 admin.site.register(TrelloObject, TrelloObjectAdmin)
+
+
+class TrelloObjectActionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'type', 'model', 'occurred', )
+    list_filter = ('type', )
+    search_fields = ('id', 'model__id', 'model__store__user__username', )
+    raw_id_fields = ('model', )
+    ordering = ('-occurred', )
+    list_select_related = True
+    date_hierarchy = 'occurred'
+
+admin.site.register(TrelloObjectAction, TrelloObjectActionAdmin)

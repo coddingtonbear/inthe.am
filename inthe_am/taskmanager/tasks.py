@@ -386,3 +386,13 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
 
     if store.get_changed_task_ids(ending_head, start=starting_head):
         store.sync()
+
+
+@shared_task(
+    bind=True,
+    ignore_result=True,
+)
+def process_trello_action(self, store_id, data):
+    from .models import TrelloObjectAction
+
+    action = TrelloObjectAction.create_from_request(data)
