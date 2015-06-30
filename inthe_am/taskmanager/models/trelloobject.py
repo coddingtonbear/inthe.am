@@ -106,7 +106,7 @@ class TrelloObject(models.Model):
             return
 
         with git_checkpoint(self.store, 'Reconciling Trello task'):
-            task['description'] = self.meta['description']
+            task['description'] = self.meta['name']
             task['intheamtrellodescription'] = self.meta['desc']
             task['intheamtrellourl'] = self.meta['url']
             if self.meta['badges']['due']:
