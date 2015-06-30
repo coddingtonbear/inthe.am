@@ -8,22 +8,23 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'TrelloObjectAction.action_id'
-        db.add_column(u'taskmanager_trelloobjectaction', 'action_id',
-                      self.gf('django.db.models.fields.CharField')(default=0, max_length=100),
-                      keep_default=False)
+        # Adding model 'TrelloObjectAction'
+        db.create_table(u'taskmanager_trelloobjectaction', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('type', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('action_id', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('model', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='actions', null=True, to=orm['taskmanager.TrelloObject'])),
+            ('meta', self.gf('jsonfield.fields.JSONField')()),
+            ('occurred', self.gf('django.db.models.fields.DateTimeField')()),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+        ))
+        db.send_create_signal('taskmanager', ['TrelloObjectAction'])
 
-
-        # Changing field 'TrelloObjectAction.id'
-        db.alter_column(u'taskmanager_trelloobjectaction', u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True))
 
     def backwards(self, orm):
-        # Deleting field 'TrelloObjectAction.action_id'
-        db.delete_column(u'taskmanager_trelloobjectaction', 'action_id')
+        # Deleting model 'TrelloObjectAction'
+        db.delete_table(u'taskmanager_trelloobjectaction')
 
-
-        # Changing field 'TrelloObjectAction.id'
-        db.alter_column(u'taskmanager_trelloobjectaction', 'id', self.gf('django.db.models.fields.CharField')(max_length=100, primary_key=True))
 
     models = {
         u'auth.group': {
