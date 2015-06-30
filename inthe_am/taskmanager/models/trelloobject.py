@@ -60,9 +60,9 @@ class TrelloObject(models.Model):
 
     def reconcile(self):
         if self.type == self.CARD:
-            return self.reconcile_card()
+            return self._reconcile_card()
         elif self.type == self.BOARD:
-            return self.reconcile_board()
+            return self._reconcile_board()
 
     def _reconcile_board(self):
         known_lists = {
