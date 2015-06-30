@@ -71,7 +71,7 @@ class TrelloObject(models.Model):
 
         for list_data in self.client.get_list(self.id):
             try:
-                obj = models.TrelloObject.objects.get(
+                obj = TrelloObject.objects.get(
                     id=list_data.get('id')
                 )
                 obj.meta = list_data
