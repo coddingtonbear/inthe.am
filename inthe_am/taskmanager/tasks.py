@@ -309,6 +309,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
             store.trello_board.id,
         )
     }
+    to_reconcile = []
     with git_checkpoint(
         store,
         'Adding pending tasks to Trello & deleting tasks remotely deleted'
@@ -335,7 +336,8 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
                 task['intheamtrelloid'] = tob.id
                 task['intheamtrelloboardid'] = store.trello_board.id
                 store.client.task_update(task)
-                tob.reconcile()
+
+                to_reconcile.append(tob)
             else:
                 res = open_trello_cards.pop(task.get('intheamtrelloid'), None)
                 if res is None:
@@ -349,12 +351,15 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
                     )
                     tob.meta = res
                     tob.save()
-                    tob.reconcile()
+                    to_reconcile.append(tob)
                 except TrelloObject.DoesNotExist:
                     logging.exception(
                         "Attempted to update card status but card "
                         "was not found in database!"
                     )
+
+    for task in to_reconcile:
+        task.reconcile()
 
     with git_checkpoint(
         store,
