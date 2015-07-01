@@ -128,6 +128,22 @@ class TrelloObject(models.Model):
 
             self.store.client.task_update(task)
 
+    def update_trello(self, task):
+        wait_column = self.store.trello_board.get_list_by_type(
+            TrelloObject.WAITING
+        )
+        kwargs = {
+            'name': task['description'],
+            'desc': task['intheamtrellodescription'],
+            'closed': task['status'] in ('closed', 'deleted', ),
+        }
+        if task['status'] == 'waiting':
+            kwargs['idList'] = wait_column.pk
+        self.client.update(
+            self.id,
+            **kwargs
+        )
+
     @classmethod
     def create(cls, **kwargs):
         store = kwargs.pop('store')

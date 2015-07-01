@@ -399,3 +399,79 @@ def process_trello_action(self, store_id, data):
     from .models import TrelloObjectAction
 
     action = TrelloObjectAction.create_from_request(data)
+
+
+@shared_task(
+    bind=True,
+    ignore_result=True,
+    max_retries=10,
+    default_retry_delay=15
+)
+def update_trello(self, store_id, debounce_id=None):
+    from .models import TaskStore, TrelloObject
+    store = TaskStore.objects.get(pk=store_id)
+    client = get_lock_redis()
+
+    debounce_key = get_debounce_name_for_store(store, 'trello_outgoing')
+    try:
+        expected_debounce_id = client.get(debounce_key)
+    except (ValueError, TypeError):
+        expected_debounce_id = None
+
+    if (
+        expected_debounce_id and debounce_id and
+        (float(debounce_id) < float(expected_debounce_id))
+    ):
+        logger.warning(
+            "Trello Outgoing Debounce Failed: %s<%s; "
+            "skipping trello outgoing updates for %s",
+            debounce_id,
+            expected_debounce_id,
+            store.pk,
+        )
+        return
+
+    ending_head = store.repository.head()
+    starting_head = store.trello_local_head
+
+    todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
+    requires_post_sync = False
+    for task_id in store.get_changed_task_ids(
+        ending_head,
+        start=starting_head
+    ):
+        try:
+            task = self.store.client.filter_tasks({
+                'uuid': task_id,
+            })[0]
+        except IndexError:
+            logger.exception(
+                "Attempted to update task object for {trello_id}, "
+                "but no matching tasks were found in the store!".format(
+                    trello_id=self.id,
+                )
+            )
+            return
+
+        try:
+            obj = TrelloObject.objects.get(pk=task['intheamtrelloid'])
+        except TrelloObject.DoesNotExist:
+            obj = TrelloObject.create(
+                store=store,
+                type=TrelloObject.CARD,
+                name=task['description'],
+                idList=todo_column.id
+            )
+            with git_checkpoint(store, "Create trello record for task."):
+                task['intheamtrelloid'] = obj.pk
+                task['intheamtrelloboardid'] = store.trello_board.pk
+                store.client.task_update(task)
+                requires_post_sync = True
+
+        obj.update_trello(task)
+
+    store.trello_local_head = ending_head
+    store.save()
+
+    if requires_post_sync:
+        store.sync()

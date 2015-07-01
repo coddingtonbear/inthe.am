@@ -24,7 +24,7 @@ class TrelloObjectAction(models.Model):
     @classmethod
     def create_from_request(cls, data):
         try:
-            return cls.objects.create(
+            instance = cls.objects.create(
                 action_id=data['action']['id'],
                 type=data['action']['type'],
                 model=TrelloObject.objects.get(pk=data['model']['id']),
@@ -34,10 +34,17 @@ class TrelloObjectAction(models.Model):
                 meta=data,
             )
         except IntegrityError:
-            return cls.objects.get(
+            instance = cls.objects.get(
                 action_id=data['action']['id'],
                 model=TrelloObject.objects.get(pk=data['model']['id']),
             )
+
+        model = instance.model
+        model.meta = data['model']
+        model.save()
+        model.reconcile()
+
+        return instance
 
     def __unicode__(self):
         return (

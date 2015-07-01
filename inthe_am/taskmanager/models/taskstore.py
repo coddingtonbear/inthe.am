@@ -26,7 +26,7 @@ from ..lock import (
     get_lock_name_for_store,
     get_lock_redis,
 )
-from ..tasks import sync_repository, sync_trello_tasks
+from ..tasks import sync_repository, sync_trello_tasks, update_trello
 from ..taskstore_migrations import upgrade as upgrade_taskstore
 from ..taskwarrior_client import TaskwarriorClient
 from .taskrc import TaskRc
@@ -437,14 +437,20 @@ class TaskStore(models.Model):
             json.dumps(message, cls=DjangoJSONEncoder)
         )
 
-    def sync_trello(self):
-        debounce_key = get_debounce_name_for_store(self, 'trello')
+    def sync_trello(self, two_way=False):
+        trello_sync_task = update_trello
+        debounce_key = 'trello_outgoing'
+
+        if two_way:
+            trello_sync_task = sync_trello_tasks
+            debounce_key = 'trello'
+
+        debounce_key = get_debounce_name_for_store(self, debounce_key)
         defined_debounce_id = str(time.time())
 
         client = get_lock_redis()
         client.set(debounce_key, defined_debounce_id)
-        sync_trello_tasks.apply_async(
-            countdown=5,
+        trello_sync_task.apply_async(
             expires=3600,
             args=(self.pk, ),
             kwargs={
