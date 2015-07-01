@@ -136,7 +136,7 @@ def message_signature_is_valid(request):
     callback_url = request.build_absolute_uri(request.path.encode('utf-8'))
     content = request.body + callback_url
 
-    actual_hash = b64_digest(b64_digest(content.encode('utf-8')))
+    actual_hash = b64_digest(b64_digest(content))
 
     if actual_hash != expected_hash:
         logger.warning(
