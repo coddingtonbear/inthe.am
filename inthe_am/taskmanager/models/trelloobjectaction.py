@@ -50,14 +50,14 @@ class TrelloObjectAction(models.Model):
     def reconcile_createCard(self):
         new_card_id = self.meta['action']['data']['card']['id']
 
-        to = TrelloObject.objects.create(
+        to, created = TrelloObject.objects.get_or_create(
             id=new_card_id,
             store=self.model.store,
             type=TrelloObject.CARD,
-            meta={}
         )
         to.update_data()
-        to.subscribe()
+        if created:
+            to.subscribe()
         to.save()
         to.reconcile()
 
