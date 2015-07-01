@@ -396,9 +396,11 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
     ignore_result=True,
 )
 def process_trello_action(self, store_id, data):
-    from .models import TrelloObjectAction
+    from .models import TaskStore, TrelloObjectAction
+    store = TaskStore.objects.get(pk=store_id)
 
-    action = TrelloObjectAction.create_from_request(data)
+    TrelloObjectAction.create_from_request(data)
+    store.sync()
 
 
 @shared_task(
