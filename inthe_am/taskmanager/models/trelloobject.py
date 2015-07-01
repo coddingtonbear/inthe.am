@@ -92,15 +92,15 @@ class TrelloObject(models.Model):
             deleted_list.delete()
 
     def _reconcile_card(self):
-        with git_checkpoint(self.store, 'Reconciling Trello task'):
-            try:
-                task = self.store.client.filter_tasks({
-                    'intheamtrelloid': self.id,
-                    'intheamtrelloboardid': self.store.trello_board.id,
-                })[0]
-            except IndexError:
-                pass
+        try:
+            task = self.store.client.filter_tasks({
+                'intheamtrelloid': self.id,
+                'intheamtrelloboardid': self.store.trello_board.id,
+            })[0]
+        except IndexError:
+            return
 
+        with git_checkpoint(self.store, 'Reconciling Trello task'):
             task['description'] = self.meta['name']
             task['intheamtrellodescription'] = self.meta['desc']
             task['intheamtrellourl'] = self.meta['url']
