@@ -42,9 +42,31 @@ class TrelloObjectAction(models.Model):
         model = instance.model
         model.meta = data['model']
         model.save()
-        model.reconcile()
+
+        instance.reconcile_action()
 
         return instance
+
+    def reconcile_createCard(self):
+        new_card_id = self.meta['action']['data']['card']['id']
+
+        to = TrelloObject.objects.create(
+            id=new_card_id,
+            store=self.model.store,
+            type=TrelloObject.CARD,
+            meta={}
+        )
+        to.update_data()
+        to.subscribe()
+        to.save()
+        to.reconcile()
+
+    def reconcile_action(self):
+        self.model.reconcile()
+
+        reconciliation_method = 'reconcile_%s' % self.type
+        if hasattr(self, reconciliation_method):
+            getattr(self, reconciliation_method)()
 
     def __unicode__(self):
         return (

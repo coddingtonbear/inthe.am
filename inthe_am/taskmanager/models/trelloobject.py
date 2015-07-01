@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from ..context_managers import git_checkpoint
+from ..task import Task
 from ..trello_utils import subscribe_to_updates
 from .taskstore import TaskStore
 
@@ -91,21 +92,24 @@ class TrelloObject(models.Model):
             deleted_list.delete()
 
     def _reconcile_card(self):
-        try:
-            task = self.store.client.filter_tasks({
-                'intheamtrelloid': self.id,
-                'intheamtrelloboardid': self.store.trello_board.id,
-            })[0]
-        except IndexError:
-            logger.exception(
-                "Attempted to update task object for {trello_id}, "
-                "but no matching tasks were found in the store!".format(
-                    trello_id=self.id,
-                )
-            )
-            return
-
         with git_checkpoint(self.store, 'Reconciling Trello task'):
+            try:
+                task = self.store.client.filter_tasks({
+                    'intheamtrelloid': self.id,
+                    'intheamtrelloboardid': self.store.trello_board.id,
+                })[0]
+            except IndexError:
+                task_data = {
+                    'intheamtrelloid': self.id,
+                    'intheamtrelloboardid': self.store.trello_board.id,
+                    'description': self.meta['name'],
+                    'intheamtrellodescription': self.meta['desc'],
+                }
+                task = Task(
+                    self.store.client.task_add(**task_data),
+                    store=self.store,
+                )
+
             task['description'] = self.meta['name']
             task['intheamtrellodescription'] = self.meta['desc']
             task['intheamtrellourl'] = self.meta['url']
@@ -213,6 +217,9 @@ class TrelloObject(models.Model):
 
     def get_data(self):
         return self.client.get(self.id)
+
+    def update_data(self):
+        self.meta = self.get_data()
 
     def delete(self, *args, **kwargs):
         try:
