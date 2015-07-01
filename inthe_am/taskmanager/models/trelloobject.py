@@ -134,7 +134,7 @@ class TrelloObject(models.Model):
         )
         kwargs = {
             'name': task['description'],
-            'desc': task['intheamtrellodescription'],
+            'desc': task.get('intheamtrellodescription', ''),
             'closed': task['status'] in ('closed', 'deleted', ),
         }
         if task['status'] == 'waiting':
