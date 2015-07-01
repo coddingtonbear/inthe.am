@@ -2,6 +2,7 @@ import logging
 
 from dateutil.parser import parse
 from jsonfield import JSONField
+from taskw.task import Task
 import trello
 
 from django.conf import settings
@@ -9,7 +10,6 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from ..context_managers import git_checkpoint
-from ..task import Task
 from ..trello_utils import subscribe_to_updates
 from .taskstore import TaskStore
 
@@ -107,7 +107,6 @@ class TrelloObject(models.Model):
                 }
                 task = Task(
                     self.store.client.task_add(**task_data),
-                    store=self.store,
                 )
 
             task['description'] = self.meta['name']
