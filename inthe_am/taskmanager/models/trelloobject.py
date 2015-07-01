@@ -134,11 +134,13 @@ class TrelloObject(models.Model):
         )
         kwargs = {
             'name': task['description'],
-            'desc': task.get('intheamtrellodescription', ''),
-            'closed': task['status'] in ('closed', 'deleted', ),
         }
+        if task.get('intheamtrellodescription'):
+            kwargs['desc'] = task.get['intheamtrellodescription']
         if task['status'] == 'waiting':
             kwargs['idList'] = wait_column.pk
+        if task['status'] in ('closed', 'deleted', ):
+            kwargs['closed'] = 'true'
         self.client.update(
             self.id,
             **kwargs
