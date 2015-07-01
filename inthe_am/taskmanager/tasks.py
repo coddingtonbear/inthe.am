@@ -441,14 +441,14 @@ def update_trello(self, store_id, debounce_id=None):
         start=starting_head
     ):
         try:
-            task = self.store.client.filter_tasks({
+            task = store.client.filter_tasks({
                 'uuid': task_id,
             })[0]
         except IndexError:
             logger.exception(
                 "Attempted to update task object for {trello_id}, "
                 "but no matching tasks were found in the store!".format(
-                    trello_id=self.id,
+                    trello_id=task_id,
                 )
             )
             return
