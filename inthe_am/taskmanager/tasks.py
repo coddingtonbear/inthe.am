@@ -456,7 +456,7 @@ def update_trello(self, store_id, debounce_id=None):
             return
 
         try:
-            obj = TrelloObject.objects.get(pk=task['intheamtrelloid'])
+            obj = TrelloObject.objects.get(pk=task.get('intheamtrelloid'))
         except TrelloObject.DoesNotExist:
             obj = TrelloObject.create(
                 store=store,
