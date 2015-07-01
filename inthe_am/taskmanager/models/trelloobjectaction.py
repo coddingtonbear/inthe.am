@@ -4,6 +4,7 @@ import pytz
 
 from django.db import IntegrityError, models
 
+from ..context_managers import git_checkpoint
 from .trelloobject import TrelloObject
 
 
@@ -48,6 +49,10 @@ class TrelloObjectAction(models.Model):
         return instance
 
     def reconcile_createCard(self):
+        # Run only for board events!
+        if not self.model.type == TrelloObject.BOARD:
+            return
+
         new_card_id = self.meta['action']['data']['card']['id']
 
         try:
@@ -60,9 +65,18 @@ class TrelloObjectAction(models.Model):
                 id=new_card_id,
                 store=self.model.store,
                 type=TrelloObject.CARD,
-                meta={}
+                meta=self.meta['action']['data']['card'],
             )
             to.subscribe()
+            with git_checkpoint(
+                self.model.store,
+                'Creating local task from Trello'
+            ):
+                self.model.store.client.task_add(
+                    description=to.meta['name'],
+                    intheamtrelloid=new_card_id,
+                    intheamtrelloboardid=self.model.store.trello_board.pk
+                )
 
         to.update_data()
         to.save()

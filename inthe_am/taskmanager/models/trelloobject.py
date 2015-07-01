@@ -99,15 +99,7 @@ class TrelloObject(models.Model):
                     'intheamtrelloboardid': self.store.trello_board.id,
                 })[0]
             except IndexError:
-                task_data = {
-                    'intheamtrelloid': self.id,
-                    'intheamtrelloboardid': self.store.trello_board.id,
-                    'description': self.meta['name'],
-                    'intheamtrellodescription': self.meta['desc'],
-                }
-                task = Task(
-                    self.store.client.task_add(**task_data),
-                )
+                pass
 
             task['description'] = self.meta['name']
             task['intheamtrellodescription'] = self.meta['desc']
