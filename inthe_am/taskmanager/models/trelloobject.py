@@ -2,7 +2,6 @@ import logging
 
 from dateutil.parser import parse
 from jsonfield import JSONField
-from taskw.task import Task
 import trello
 
 from django.conf import settings
@@ -139,6 +138,7 @@ class TrelloObject(models.Model):
             kwargs['idList'] = wait_column.pk
         if task['status'] in ('closed', 'deleted', ):
             kwargs['closed'] = 'true'
+        print kwargs
         try:
             self.client.update(
                 self.id,

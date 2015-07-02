@@ -1,6 +1,10 @@
 from .settings import *
 
 
+CELERYD_HIJACK_ROOT_LOGGER=False
+CELERY_REDIRECT_STDOUTS=True
+
+
 # Redirect celery logging elsewhere.
 for name, details in LOGGING['handlers'].items():
     if 'filename' in details:
