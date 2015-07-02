@@ -388,7 +388,11 @@ class TaskStore(models.Model):
     #  Taskd-related methods
 
     def has_active_checkpoint(self):
-        if hasattr(self, '_active_checkpoint'):
+        client = get_lock_redis()
+        lock_name = get_lock_name_for_store(self)
+
+        result = client.get(lock_name)
+        if result:
             return True
         return False
 
