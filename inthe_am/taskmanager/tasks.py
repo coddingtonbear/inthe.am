@@ -453,7 +453,7 @@ def update_trello(self, store_id, debounce_id=None):
                     trello_id=task_id,
                 )
             )
-            return
+            continue
 
         try:
             obj = TrelloObject.objects.get(pk=task.get('intheamtrelloid'))
@@ -470,7 +470,13 @@ def update_trello(self, store_id, debounce_id=None):
                 store.client.task_update(task)
                 requires_post_sync = True
 
-        obj.update_trello(task)
+        try:
+            obj.update_trello(task)
+        except Exception as e:
+            logger.exception(
+                "Error encountered while updating task: %s",
+                str(e)
+            )
 
     store.trello_local_head = ending_head
     store.save()
