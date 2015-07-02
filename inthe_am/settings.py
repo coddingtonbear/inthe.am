@@ -174,6 +174,14 @@ LOGGING = {
             'backupCount': 5,
             'formatter': 'verbose',
         },
+        'requests': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/twweb.requests.log'),
+            'maxBytes': 1048576,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
         'sentry': {
             'level': 'WARNING',
             'class': 'raven.contrib.django.handlers.SentryHandler'
@@ -204,6 +212,11 @@ LOGGING = {
         'gunicorn': {
             'handlers': ['null'],
             'level': 'INFO',
+            'propagate': True,
+        },
+        'requests': {
+            'handlers': ['requests'],
+            'level': 'DEBUG',
             'propagate': True,
         },
         'selenium': {
