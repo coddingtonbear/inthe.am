@@ -387,7 +387,6 @@ class TaskStore(models.Model):
 
     #  Taskd-related methods
 
-    @property
     def has_active_checkpoint(self):
         if hasattr(self, '_active_checkpoint'):
             return True
