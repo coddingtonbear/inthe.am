@@ -454,6 +454,10 @@ def update_trello(self, store_id, debounce_id=None):
                 )
                 continue
 
+            # Do not send recurring tasks to trello
+            if task['status'] == 'recurring':
+                continue
+
             try:
                 obj = TrelloObject.objects.get(pk=task.get('intheamtrelloid'))
             except TrelloObject.DoesNotExist:

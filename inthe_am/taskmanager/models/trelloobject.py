@@ -102,6 +102,10 @@ class TrelloObject(models.Model):
         except IndexError:
             return
 
+        # In case a recurring task was stored, clear that out
+        if task['status'] == 'recurring':
+            return
+
         task['description'] = self.meta['name']
         task['intheamtrellodescription'] = self.meta['desc']
         task['intheamtrellourl'] = self.meta['url']
