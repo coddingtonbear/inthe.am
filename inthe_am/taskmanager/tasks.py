@@ -32,7 +32,6 @@ def project_setup_logging(loglevel, logfile, format, colorize, **kwargs):
     time_limit=45,
     default_retry_delay=60,
     max_retries=10,  # We should always stop at two, anyway
-    ignore_result=True,
 )
 def sync_repository(self, store_id, debounce_id=None):
     from .models import TaskStore
@@ -50,7 +49,6 @@ def sync_repository(self, store_id, debounce_id=None):
 
 @shared_task(
     bind=True,
-    ignore_result=True,
 )
 def process_email_message(self, message_id):
     from .models import TaskAttachment, TaskStore
@@ -236,7 +234,6 @@ def process_email_message(self, message_id):
 
 @shared_task(
     bind=True,
-    ignore_result=True,
     max_retries=10,
     default_retry_delay=60,
 )
@@ -394,7 +391,6 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
 
 @shared_task(
     bind=True,
-    ignore_result=True,
 )
 def process_trello_action(self, store_id, data):
     from .models import TaskStore, TrelloObjectAction
@@ -407,7 +403,6 @@ def process_trello_action(self, store_id, data):
 
 @shared_task(
     bind=True,
-    ignore_result=True,
     max_retries=10,
     default_retry_delay=15
 )
