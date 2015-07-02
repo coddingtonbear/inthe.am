@@ -37,7 +37,7 @@ from ..decorators import (
     requires_task_store
 )
 from ..task import Task
-from ..tasks import process_trello_action
+from ..tasks import process_trello_action, sync_trello_tasks
 from ..trello_utils import (
     get_access_token, get_authorize_url, message_signature_is_valid
 )
@@ -163,6 +163,13 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 ),
                 self.wrap_view('trello_incoming'),
                 name='trello_incoming',
+            ),
+            url(
+                r"^(?P<resource_name>%s)/trello/resynchronize/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('trello_resynchronize'),
+                name='trello_resynchronize',
             ),
             url(
                 r"^(?P<resource_name>%s)/trello/reset/?$" % (
@@ -350,6 +357,20 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
 
         store.trello_auth_token = ''
         store.save()
+
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
+
+    @requires_task_store
+    def trello_resynchronize(self, request, store, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(request.method)
+
+        sync_trello_tasks.apply_async(args=(store.pk, ))
 
         return HttpResponse(
             json.dumps({

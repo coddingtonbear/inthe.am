@@ -147,6 +147,24 @@ var controller = Ember.Controller.extend({
                 );
             }.bind(this));
         },
+        trello_force_resynchronization: function() {
+            var url = this.get('controllers.application').urls.trello_force_resynchronization;
+            return this.ajaxRequest({
+                url: url,
+                type: 'POST',
+                data: {}
+            }).then(function(){
+                this.success_message(
+                  "Trello resynchronization requested.  It may take a few minutes before " +
+                  "you see any results."
+                );
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `requesting a resynchronization with Trello: ${msg}`
+                );
+            }.bind(this));
+        },
         reset_trello_settings: function() {
             var url = this.get('controllers.application').urls.trello_reset_url;
             return this.ajaxRequest({
