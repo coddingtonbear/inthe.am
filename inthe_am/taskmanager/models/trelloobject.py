@@ -123,6 +123,9 @@ class TrelloObject(models.Model):
 
             self.store.client.task_update(task)
 
+            if self.meta['closed']:
+                self.store.client.task_done(task)
+
     def update_trello(self, task):
         wait_column = self.store.trello_board.get_list_by_type(
             TrelloObject.WAITING
@@ -135,7 +138,7 @@ class TrelloObject(models.Model):
         if task['status'] == 'waiting':
             kwargs['idList'] = wait_column.pk
         if task['status'] in ('closed', 'deleted', ):
-            kwargs['closed'] = 'true'
+            kwargs['closed'] = True
         self.client.update(
             self.id,
             **kwargs
