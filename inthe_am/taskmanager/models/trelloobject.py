@@ -139,7 +139,7 @@ class TrelloObject(models.Model):
             'name': task['description'],
         }
         if task.get('intheamtrellodescription'):
-            kwargs['desc'] = task.get['intheamtrellodescription']
+            kwargs['desc'] = task['intheamtrellodescription']
         if task['status'] == 'waiting':
             kwargs['idList'] = wait_column.pk
         if task['status'] in ('closed', 'deleted', ):
