@@ -388,6 +388,12 @@ class TaskStore(models.Model):
     #  Taskd-related methods
 
     @property
+    def has_active_checkpoint(self):
+        if hasattr(self, '_active_checkpoint'):
+            return True
+        return False
+
+    @property
     def using_local_taskd(self):
         if not hasattr(self, '_local_taskd'):
             if self.taskrc['taskd.server'] == settings.TASKD_SERVER:

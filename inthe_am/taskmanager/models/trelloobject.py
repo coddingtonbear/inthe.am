@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from ..context_managers import git_checkpoint
+from ..exceptions import CheckpointNeeded
 from ..trello_utils import subscribe_to_updates
 from .taskstore import TaskStore
 
@@ -59,6 +59,9 @@ class TrelloObject(models.Model):
         )
 
     def reconcile(self):
+        if not self.store.has_active_checkpoint():
+            raise CheckpointNeeded()
+
         if self.type == self.CARD:
             return self._reconcile_card()
         elif self.type == self.BOARD:
@@ -99,31 +102,30 @@ class TrelloObject(models.Model):
         except IndexError:
             return
 
-        with git_checkpoint(self.store, 'Reconciling Trello task'):
-            task['description'] = self.meta['name']
-            task['intheamtrellodescription'] = self.meta['desc']
-            task['intheamtrellourl'] = self.meta['url']
-            if self.meta['badges']['due']:
-                task['due'] = parse(self.meta['badges']['due'])
+        task['description'] = self.meta['name']
+        task['intheamtrellodescription'] = self.meta['desc']
+        task['intheamtrellourl'] = self.meta['url']
+        if self.meta['badges']['due']:
+            task['due'] = parse(self.meta['badges']['due'])
 
-            try:
-                list_data = TrelloObject.objects.get(id=self.meta['idList'])
-                task['intheamtrellolistname'] = list_data.meta['name']
-                task['intheamtrellolistid'] = list_data.id
-            except self.DoesNotExist:
-                task['intheamtrellolistname'] = ''
-                task['intheamtrellolistid'] = ''
-                logger.warning(
-                    "Unable to find list id %s when updating "
-                    "card id %s",
-                    self.meta['idList'],
-                    self.id,
-                )
+        try:
+            list_data = TrelloObject.objects.get(id=self.meta['idList'])
+            task['intheamtrellolistname'] = list_data.meta['name']
+            task['intheamtrellolistid'] = list_data.id
+        except self.DoesNotExist:
+            task['intheamtrellolistname'] = ''
+            task['intheamtrellolistid'] = ''
+            logger.warning(
+                "Unable to find list id %s when updating "
+                "card id %s",
+                self.meta['idList'],
+                self.id,
+            )
 
-            self.store.client.task_update(task)
+        self.store.client.task_update(task)
 
-            if self.meta['closed']:
-                self.store.client.task_done(uuid=task['uuid'])
+        if self.meta['closed']:
+            self.store.client.task_done(uuid=task['uuid'])
 
     def update_trello(self, task):
         wait_column = self.store.trello_board.get_list_by_type(

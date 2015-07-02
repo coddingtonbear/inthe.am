@@ -4,7 +4,7 @@ import pytz
 
 from django.db import IntegrityError, models
 
-from ..context_managers import git_checkpoint
+from ..exceptions import CheckpointNeeded
 from .trelloobject import TrelloObject
 
 
@@ -68,21 +68,20 @@ class TrelloObjectAction(models.Model):
                 meta=self.meta['action']['data']['card'],
             )
             to.subscribe()
-            with git_checkpoint(
-                self.model.store,
-                'Creating local task from Trello'
-            ):
-                self.model.store.client.task_add(
-                    description=to.meta['name'],
-                    intheamtrelloid=new_card_id,
-                    intheamtrelloboardid=self.model.store.trello_board.pk
-                )
+            self.model.store.client.task_add(
+                description=to.meta['name'],
+                intheamtrelloid=new_card_id,
+                intheamtrelloboardid=self.model.store.trello_board.pk
+            )
 
         to.update_data()
         to.save()
         to.reconcile()
 
     def reconcile_action(self):
+        if not self.model.store.has_active_checkpoint():
+            raise CheckpointNeeded()
+
         self.model.reconcile()
 
         reconciliation_method = 'reconcile_%s' % self.type

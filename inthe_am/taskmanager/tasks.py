@@ -276,7 +276,8 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
         )
         return
 
-    store.trello_board.reconcile()
+    with git_checkpoint(store, 'Reconciling trello board'):
+        store.trello_board.reconcile()
 
     open_local_tasks = {
         t['uuid']: t for t in store.client.filter_tasks({
@@ -399,8 +400,9 @@ def process_trello_action(self, store_id, data):
     from .models import TaskStore, TrelloObjectAction
     store = TaskStore.objects.get(pk=store_id)
 
-    TrelloObjectAction.create_from_request(data)
-    store.sync()
+    with git_checkpoint(self.store, 'Processing Trello Action'):
+        TrelloObjectAction.create_from_request(data)
+        store.sync()
 
 
 @shared_task(
@@ -433,53 +435,54 @@ def update_trello(self, store_id, debounce_id=None):
         )
         return
 
-    ending_head = store.repository.head()
-    starting_head = store.trello_local_head
+    with git_checkpoint(store, "Create trello records for changed tasks."):
+        ending_head = store.repository.head()
+        starting_head = store.trello_local_head
 
-    todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
-    requires_post_sync = False
-    for task_id in store.get_changed_task_ids(
-        ending_head,
-        start=starting_head
-    ):
-        try:
-            task = store.client.filter_tasks({
-                'uuid': task_id,
-            })[0]
-        except IndexError:
-            logger.exception(
-                "Attempted to update task object for {trello_id}, "
-                "but no matching tasks were found in the store!".format(
-                    trello_id=task_id,
+        todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
+        requires_post_sync = False
+
+        for task_id in store.get_changed_task_ids(
+            ending_head,
+            start=starting_head
+        ):
+            try:
+                task = store.client.filter_tasks({
+                    'uuid': task_id,
+                })[0]
+            except IndexError:
+                logger.exception(
+                    "Attempted to update task object for {trello_id}, "
+                    "but no matching tasks were found in the store!".format(
+                        trello_id=task_id,
+                    )
                 )
-            )
-            continue
+                continue
 
-        try:
-            obj = TrelloObject.objects.get(pk=task.get('intheamtrelloid'))
-        except TrelloObject.DoesNotExist:
-            obj = TrelloObject.create(
-                store=store,
-                type=TrelloObject.CARD,
-                name=task['description'],
-                idList=todo_column.id
-            )
-            with git_checkpoint(store, "Create trello record for task."):
+            try:
+                obj = TrelloObject.objects.get(pk=task.get('intheamtrelloid'))
+            except TrelloObject.DoesNotExist:
+                obj = TrelloObject.create(
+                    store=store,
+                    type=TrelloObject.CARD,
+                    name=task['description'],
+                    idList=todo_column.id
+                )
                 task['intheamtrelloid'] = obj.pk
                 task['intheamtrelloboardid'] = store.trello_board.pk
                 store.client.task_update(task)
                 requires_post_sync = True
 
-        try:
-            obj.update_trello(task)
-        except Exception as e:
-            logger.exception(
-                "Error encountered while updating task: %s",
-                str(e)
-            )
+            try:
+                obj.update_trello(task)
+            except Exception as e:
+                logger.exception(
+                    "Error encountered while updating task: %s",
+                    str(e)
+                )
 
-    store.trello_local_head = ending_head
-    store.save()
+        store.trello_local_head = ending_head
+        store.save()
 
     if requires_post_sync:
         store.sync()
