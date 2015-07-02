@@ -138,11 +138,18 @@ class TrelloObject(models.Model):
         if task['status'] == 'waiting':
             kwargs['idList'] = wait_column.pk
         if task['status'] in ('closed', 'deleted', ):
-            kwargs['closed'] = True
-        self.client.update(
-            self.id,
-            **kwargs
-        )
+            kwargs['closed'] = 'true'
+        try:
+            self.client.update(
+                self.id,
+                **kwargs
+            )
+        except:
+            logger.exception(
+                "Unable to update ID: %s",
+                self.id
+            )
+            raise
 
     @classmethod
     def create(cls, **kwargs):
@@ -155,7 +162,7 @@ class TrelloObject(models.Model):
         meta = client.new(**kwargs)
 
         instance = cls.objects.create(
-            id=meta.get('id'),
+            id=meta['id'],
             store=store,
             parent=parent,
             type=type,
