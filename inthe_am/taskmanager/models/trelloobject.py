@@ -124,7 +124,7 @@ class TrelloObject(models.Model):
             self.store.client.task_update(task)
 
             if self.meta['closed']:
-                self.store.client.task_done(task)
+                self.store.client.task_done(uuid=task['uuid'])
 
     def update_trello(self, task):
         wait_column = self.store.trello_board.get_list_by_type(
