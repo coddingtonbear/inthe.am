@@ -478,12 +478,18 @@ def update_trello(self, store_id, debounce_id=None):
                     if list_requested.pk != task.get('intheamtrellolistid'):
                         task['intheamtrellolistid'] = list_requested.pk
                 except TrelloObject.DoesNotExist:
-                    list_actual = obj.store.trello_board.children.get(
-                        id=task['intheamtrellolistid']
-                    )
-                    task['intheamtrellolistname'] = list_actual.meta.get(
-                        'name'
-                    )
+                    try:
+                        list_actual = obj.store.trello_board.children.get(
+                            id=task['intheamtrellolistid']
+                        )
+                        task['intheamtrellolistname'] = list_actual.meta.get(
+                            'name'
+                        )
+                    except TrelloObject.DoesNotExist:
+                        task['intheamtrellolistid'] = todo_column.pk
+                        task['intheamtrellolistname'] = todo_column.meta.get(
+                            'name'
+                        )
 
                 store.client.task_update(task)
                 requires_post_sync = True
