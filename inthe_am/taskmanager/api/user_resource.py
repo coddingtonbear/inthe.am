@@ -115,9 +115,9 @@ def get_system_udas_as_config():
                 name=uda_name,
                 type=uda_properties.get('type'),
             ),
-            'uda.{name}.type={type}'.format(
+            'uda.{name}.label={label}'.format(
                 name=uda_name,
-                type=uda_properties.get('label'),
+                label=uda_properties.get('label'),
             )
         ])
     return '\n'.join(overrides)
