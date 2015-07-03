@@ -101,8 +101,26 @@ def get_published_properties(user, store, meta):
         ],
         'trello_board_url': (
             store.trello_board.meta['url'] if store.trello_board else None
-        )
+        ),
+        'system_udas': get_system_udas_as_config(),
     }
+
+
+def get_system_udas_as_config():
+    overrides = []
+    config_overrides = settings.TASKWARRIOR_CONFIG_OVERRIDES['uda']
+    for uda_name, uda_properties in config_overrides:
+        overrides.extend([
+            'uda.{name}.type={type}'.format(
+                name=uda_name,
+                type=uda_properties.get('type'),
+            ),
+            'uda.{name}.type={type}'.format(
+                name=uda_name,
+                type=uda_properties.get('label'),
+            )
+        ])
+    return '\n'.join(overrides)
 
 
 class UserResource(LockTimeoutMixin, resources.ModelResource):
