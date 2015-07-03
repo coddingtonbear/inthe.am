@@ -469,8 +469,6 @@ def update_trello(self, store_id, debounce_id=None):
                 )
                 task['intheamtrelloid'] = obj.pk
                 task['intheamtrelloboardid'] = store.trello_board.pk
-                store.client.task_update(task)
-                requires_post_sync = True
 
                 # Try changing lists, too, if requested
                 try:
@@ -480,11 +478,15 @@ def update_trello(self, store_id, debounce_id=None):
                     if list_requested.pk != task.get('intheamtrellolistid'):
                         task['intheamtrellolistid'] = list_requested.pk
                 except TrelloObject.DoesNotExist:
-                    logger.exception(
-                        "Unable to set list name to %s; does not exist!",
-                        task.get('intheamtrellolistname')
+                    list_actual = obj.store.trello_board.children.get(
+                        id=task['intheamtrellolistid']
                     )
-                    pass
+                    task['intheamtrellolistname'] = list_actual.meta.get(
+                        'name'
+                    )
+
+                store.client.task_update(task)
+                requires_post_sync = True
 
             try:
                 obj.update_trello(task)

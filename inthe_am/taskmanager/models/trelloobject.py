@@ -150,6 +150,12 @@ class TrelloObject(models.Model):
         if list_id and list_id != self.meta.get('idList'):
             kwargs['idList'] = kwargs['idList']
 
+        logger.info(
+            "Sending Trello update for task %s; Data: %s",
+            task['uuid'],
+            str(kwargs)
+        )
+
         self.client.update(
             self.id,
             **kwargs
