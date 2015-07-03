@@ -471,25 +471,26 @@ def update_trello(self, store_id, debounce_id=None):
                 task['intheamtrelloboardid'] = store.trello_board.pk
 
             # Try changing lists, too, if requested
-            try:
-                list_requested = obj.store.trello_board.get_list_by_type(
-                    task.get('intheamtrellolistname')
-                )
-                if list_requested.pk != task.get('intheamtrellolistid'):
-                    task['intheamtrellolistid'] = list_requested.pk
-            except TrelloObject.DoesNotExist:
+            if task.get('intheamtrellolistname'):
                 try:
-                    list_actual = obj.store.trello_board.children.get(
-                        id=task['intheamtrellolistid']
+                    list_requested = obj.store.trello_board.get_list_by_type(
+                        task.get('intheamtrellolistname')
                     )
-                    task['intheamtrellolistname'] = list_actual.meta.get(
-                        'name'
-                    )
+                    if list_requested.pk != task.get('intheamtrellolistid'):
+                        task['intheamtrellolistid'] = list_requested.pk
                 except TrelloObject.DoesNotExist:
-                    task['intheamtrellolistid'] = todo_column.pk
-                    task['intheamtrellolistname'] = todo_column.meta.get(
-                        'name'
-                    )
+                    try:
+                        list_actual = obj.store.trello_board.children.get(
+                            id=task.get('intheamtrellolistid')
+                        )
+                        task['intheamtrellolistname'] = list_actual.meta.get(
+                            'name'
+                        )
+                    except TrelloObject.DoesNotExist:
+                        task['intheamtrellolistid'] = todo_column.pk
+                        task['intheamtrellolistname'] = todo_column.meta.get(
+                            'name'
+                        )
 
             store.client.task_update(task)
             requires_post_sync = True
