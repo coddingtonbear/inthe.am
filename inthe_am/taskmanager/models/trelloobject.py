@@ -148,7 +148,7 @@ class TrelloObject(models.Model):
         # Set list if differs from current list
         list_id = task.get('intheamtrellolistid')
         if list_id and list_id != self.meta.get('idList'):
-            kwargs['idList'] = kwargs['idList']
+            kwargs['idList'] = list_id
 
         logger.info(
             "Sending Trello update for task %s; Data: %s",
