@@ -480,6 +480,10 @@ def update_trello(self, store_id, debounce_id=None):
                     if list_requested.pk != task.get('intheamtrellolistid'):
                         task['intheamtrellolistid'] = list_requested.pk
                 except TrelloObject.DoesNotExist:
+                    logger.exception(
+                        "Unable to set list name to %s; does not exist!",
+                        task.get('intheamtrellolistname')
+                    )
                     pass
 
             try:
