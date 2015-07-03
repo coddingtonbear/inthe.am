@@ -19,6 +19,7 @@ export TWWEB_TASKD_DATA=/var/taskd
 export TWWEB_TASKD_SIGNING_TEMPLATE=/var/taskd/cert.template
 export DJANGO_SETTINGS_MODULE=inthe_am.settings
 export PYTHONPATH=/var/www/twweb
+export TWWEB_DEFAULT_FILE_STORAGE=django.core.files.storage.FileSystemStorage
 
 # To more-accurately match production, set the following:
 #export TWWEB_DATABASE_ENGINE=django.db.backends.postgresql_psycopg2
