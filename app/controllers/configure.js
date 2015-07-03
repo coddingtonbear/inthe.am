@@ -148,7 +148,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         trello_force_resynchronization: function() {
-            var url = this.get('controllers.application').urls.trello_force_resynchronization;
+            var url = this.get('controllers.application').urls.trello_resynchronization_url;
             return this.ajaxRequest({
                 url: url,
                 type: 'POST',

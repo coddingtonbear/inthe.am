@@ -60,7 +60,7 @@ var controller = Ember.Controller.extend({
         revert_to_last_commit: '/api/v1/task/revert/',
         sync: '/api/v1/task/sync/',
         trello_authorization_url: '/api/v1/task/trello/',
-        trello_authorization_url: '/api/v1/task/trello/resynchronize/',
+        trello_resynchronization_url: '/api/v1/task/trello/resynchronize/',
         trello_reset_url: '/api/v1/task/trello/reset/',
         status_feed: '/status/',
         feed_url: null,
