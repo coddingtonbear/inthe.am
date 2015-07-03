@@ -9,7 +9,7 @@ apt-get update
 apt-get install -y python-software-properties
 apt-add-repository -y ppa:chris-lea/node.js
 apt-get update
-apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs firefox
+apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential libgnutls28-dev uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs firefox checkinstall
 
 if [ -z "$TRAVIS" ]; then
     PHANTOMJS=phantomjs-1.9.7-linux-i686
@@ -63,8 +63,10 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     if [ $? -ne 0 ]; then
         cmake .
         make
-        make install
+        checkinstall --default
+        cp taskd_1.0.0-1_i386.deb /tmp
     fi
+
 
     cd $TWWEB_TASKD_DATA
     export TASKDDATA=$TWWEB_TASKD_DATA
@@ -106,7 +108,8 @@ if [ $? -ne 0 ]; then
     cd task-2.3.0
     cmake .
     make
-    make install
+    checkinstall --default
+    cp task_2.3.0-1_i386.deb /tmp
 fi
 
 cd $MAIN_DIR
