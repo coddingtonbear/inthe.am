@@ -64,7 +64,7 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
         cmake .
         make
         checkinstall --default
-        cp taskd_1.0.0-1_i386.deb /tmp
+        cp  /var/taskd/src/taskd-1.0.0/taskd_1.0.0-1_amd64.deb /tmp
     fi
 
 
@@ -109,7 +109,7 @@ if [ $? -ne 0 ]; then
     cmake .
     make
     checkinstall --default
-    cp task_2.3.0-1_i386.deb /tmp
+    cp /var/taskd/src/task-2.3.0/task_2.3.0-1_i386.deb /tmp
 fi
 
 cd $MAIN_DIR
