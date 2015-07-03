@@ -109,7 +109,7 @@ def get_published_properties(user, store, meta):
 def get_system_udas_as_config():
     overrides = []
     config_overrides = settings.TASKWARRIOR_CONFIG_OVERRIDES['uda']
-    for uda_name, uda_properties in config_overrides:
+    for uda_name, uda_properties in config_overrides.items():
         overrides.extend([
             'uda.{name}.type={type}'.format(
                 name=uda_name,
