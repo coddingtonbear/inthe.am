@@ -145,6 +145,11 @@ class TrelloObject(models.Model):
         if task['status'] in ('closed', 'deleted', ):
             kwargs['closed'] = 'true'
 
+        # Set list if differs from current list
+        list_id = task.get('intheamtrellolistid')
+        if list_id and list_id != self.meta.get('idList'):
+            kwargs['idList'] = kwargs['idList']
+
         self.client.update(
             self.id,
             **kwargs

@@ -472,6 +472,16 @@ def update_trello(self, store_id, debounce_id=None):
                 store.client.task_update(task)
                 requires_post_sync = True
 
+                # Try changing lists, too, if requested
+                try:
+                    list_requested = obj.store.trello_board.get_list_by_type(
+                        task.get('intheamtrellolistname')
+                    )
+                    if list_requested.pk != task.get('intheamtrellolistid'):
+                        task['intheamtrellolistid'] = list_requested.pk
+                except TrelloObject.DoesNotExist:
+                    pass
+
             try:
                 obj.update_trello(task)
             except Exception as e:
