@@ -470,29 +470,29 @@ def update_trello(self, store_id, debounce_id=None):
                 task['intheamtrelloid'] = obj.pk
                 task['intheamtrelloboardid'] = store.trello_board.pk
 
-                # Try changing lists, too, if requested
+            # Try changing lists, too, if requested
+            try:
+                list_requested = obj.store.trello_board.get_list_by_type(
+                    task.get('intheamtrellolistname')
+                )
+                if list_requested.pk != task.get('intheamtrellolistid'):
+                    task['intheamtrellolistid'] = list_requested.pk
+            except TrelloObject.DoesNotExist:
                 try:
-                    list_requested = obj.store.trello_board.get_list_by_type(
-                        task.get('intheamtrellolistname')
+                    list_actual = obj.store.trello_board.children.get(
+                        id=task['intheamtrellolistid']
                     )
-                    if list_requested.pk != task.get('intheamtrellolistid'):
-                        task['intheamtrellolistid'] = list_requested.pk
+                    task['intheamtrellolistname'] = list_actual.meta.get(
+                        'name'
+                    )
                 except TrelloObject.DoesNotExist:
-                    try:
-                        list_actual = obj.store.trello_board.children.get(
-                            id=task['intheamtrellolistid']
-                        )
-                        task['intheamtrellolistname'] = list_actual.meta.get(
-                            'name'
-                        )
-                    except TrelloObject.DoesNotExist:
-                        task['intheamtrellolistid'] = todo_column.pk
-                        task['intheamtrellolistname'] = todo_column.meta.get(
-                            'name'
-                        )
+                    task['intheamtrellolistid'] = todo_column.pk
+                    task['intheamtrellolistname'] = todo_column.meta.get(
+                        'name'
+                    )
 
-                store.client.task_update(task)
-                requires_post_sync = True
+            store.client.task_update(task)
+            requires_post_sync = True
 
             try:
                 obj.update_trello(task)
