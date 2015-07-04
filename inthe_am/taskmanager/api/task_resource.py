@@ -515,7 +515,7 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 'status': 'pending',
             }
             field = 'due'
-        elif variant == 'wait':
+        elif variant == 'waiting':
             calendar_title = "Waiting Tasks"
             task_filter = {
                 'status': 'waiting',
