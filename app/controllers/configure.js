@@ -392,7 +392,6 @@ var controller = Ember.Controller.extend({
         },
         save_ical: function(value) {
             var url = this.get('controllers.application').urls.configure_ical;
-            debugger;
             var enabled = false;
             if(typeof(value) !== 'undefined') {
                 enabled = value;
