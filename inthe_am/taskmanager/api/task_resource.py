@@ -526,7 +526,9 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
         tasks = store.client.filter_tasks(task_filter)
 
         calendar = Calendar()
-        calendar['X-WR-CALNAME'] = calendar_title
+        calendar.add('version', '2.0')
+        calendar.add('prodid', '-//inthe.am//ical.%s//' % variant)
+        calendar.add('X-WR-CALNAME', calendar_title)
 
         for task in tasks:
             event = Event()
