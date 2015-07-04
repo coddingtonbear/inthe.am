@@ -21,10 +21,10 @@ after_script:
 notifications:
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/044a5b2d79b618dd1522
-    on_success: always  # options: [always|never|change] default: always
-    on_failure: always  # options: [always|never|change] default: always
-    on_start: false     # default: false
+    - https://webhooks.gitter.im/e/044a5b2d79b618dd1522
+    on_success: always
+    on_failure: always
+    on_start: false
 services:
 - memcached
 - redis-server
@@ -41,3 +41,5 @@ env:
   - secure: YrXxu+iCZDLeVtBP6VGA9QB0/aIPiXd/a42ncN32MZxgCuj5lzKauM2BVNdfhY28YsDyn5ss+FP1ZAujrO4thrVnacfh+79G01JDhJb2++vPeo0R9Atz0hgO24ImKSV5lltk/OMTvKga9D9+x39RlHfeid7ShR7qBvn9wbyBf6w=
   - secure: XZfSZv21G5E2EPqiIqCKMvrJnd+0tzfHqP961pBRUxST9y7A/QuJI/oOCuOCjCOyXEhc0S5D3PL+9Uo+v9EIuHN06eYcS935sQ9SZsPOGo8EiPStBL0NIoNEqXmcrrBNnwNaYh3UHql5qV5/4Qlg+t4krKMuQrw/hWEHbx+mAkU=
   - secure: CFwvj50tfRkzJJSB2lIIO4ULTKHup/P6FFjRx7Cv3lUkhm5WqyyVwk/9Fitld4T+2COidenubrvtPRTfaoLoj2nBMoqrMwaC/GLzf28o4tigFUQKI/x1LQEjK/AGav9JkJ2IiFFGusn5OQcfGUOGt2+YfUUxLCCuo+9YGn3AKjg=
+  - secure: ZAeT776kkOND5+0HcjXdsP4be2NWjH21Qt3PQhyRUCEJEm0bq05Xb4CkfL1cnAN1j1+Ke3A3z9pMXyCZXzUFGQoPrhPMeeRYDV3ut+cIsZUO3pgC19350As3T07akpzjxRF4rwMMqe0p60BObPhHLC9U+e+dFYGjpEXpRwEey/c=
+  - secure: jZmLhxtUHE+ItOgvQbpdcSOHCxQQa9yqV6d96JmGKh7t3WIw3UFyDLZUVTs2Kgr2Y4/8J9Nd+9TiInD7z/HHHW13Cf/zWNeeoXXfoGgrZHLshEh7xcrI0/4qaiuDXBu/y+sXB+xZ0S2x2yEpN6exRDNhXwGZsbeDhwC/mJhFaOk=
