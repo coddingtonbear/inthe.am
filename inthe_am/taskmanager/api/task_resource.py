@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import re
@@ -525,12 +526,16 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
         tasks = store.client.filter_tasks(task_filter)
 
         calendar = Calendar()
-        calendar['summary'] = calendar_title
+        calendar['X-WR-CALNAME'] = calendar_title
 
         for task in tasks:
             event = Event()
             event.add('uid', task['uuid'])
             event.add('dtstart', task[field].date())
+            event.add(
+                'dtend',
+                task[field].date() + datetime.timedelta(days=1)
+            )
             event.add(
                 'dtstamp',
                 task.get(
