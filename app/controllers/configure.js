@@ -390,12 +390,42 @@ var controller = Ember.Controller.extend({
                 );
             }.bind(this));
         },
+        save_ical: function(value) {
+            var url = this.get('controllers.application').urls.configure_ical;
+            debugger;
+            var enabled = false;
+            if(typeof(value) !== 'undefined') {
+                enabled = value;
+            } else if($("#id_ical_config").val() === "true") {
+                enabled = true;
+            }
+            
+            return this.ajaxRequest({
+                url: url,
+                type: 'POST',
+                data: {
+                    enabled: enabled ? 1 : 0,
+                },
+            }).then(function(){
+                this.set('controllers.application.user.ical_enabled', enabled);
+                if(enabled) {
+                    this.success_message("iCal feed enabled!");
+                } else {
+                    this.success_message("iCal feed disabled!");
+                }
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `attempting to configure your feed settings: ${msg}`
+                );
+            }.bind(this));
+        },
         save_feed: function(value) {
             var url = this.get('controllers.application').urls.configure_feed;
             var enabled = false;
             if(typeof(value) !== 'undefined') {
                 enabled = value;
-            } else if($("#id_feed_config").val() === true) {
+            } else if($("#id_feed_config").val() === "true") {
                 enabled = true;
             }
             
@@ -425,7 +455,7 @@ var controller = Ember.Controller.extend({
             if(typeof(value) !== 'undefined') {
                 enabled = value;
             }
-            else if($("#id_pebble_cards_config").val() === true) {
+            else if($("#id_pebble_cards_config").val() === "true") {
                 enabled = true;
             }
 

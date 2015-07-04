@@ -52,6 +52,7 @@ var controller = Ember.Controller.extend({
         mirakel_configuration: '/api/v1/user/mirakel-configuration/',
         configure_pebble_cards: '/api/v1/user/pebble-cards-config/',
         configure_feed: '/api/v1/user/feed-config/',
+        configure_ical: '/api/v1/user/ical-config/',
         user_status: '/api/v1/user/status/',
         announcements: '/api/v1/user/announcements/',
         refresh: '/api/v1/task/refresh/',
@@ -63,6 +64,8 @@ var controller = Ember.Controller.extend({
         trello_resynchronization_url: '/api/v1/task/trello/resynchronize/',
         trello_reset_url: '/api/v1/task/trello/reset/',
         status_feed: '/status/',
+        ical_waiting_url: null,
+        ical_due_url: null,
         feed_url: null,
         sms_url: null,
         pebble_card_url: null,
@@ -189,6 +192,8 @@ var controller = Ember.Controller.extend({
                 this.transitionToRoute('about');
             }
             this.set('urls.feed_url', this.get('user').feed_url);
+            this.set('urls.ical_waiting_url', this.get('user').ical_waiting_url);
+            this.set('urls.ical_due_url', this.get('user').ical_due_url);
             this.set('urls.sms_url', this.get('user').sms_url);
             this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
             this.set('statusUpdaterHead', this.get('user').repository_head);

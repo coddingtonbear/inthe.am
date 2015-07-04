@@ -6,6 +6,7 @@ import shlex
 import uuid
 
 from dateutil.parser import parse
+from icalendar import Calendar, Event
 from taskw.fields import DateField
 from taskw.task import Task as TaskwTask
 from tastypie import (
@@ -113,6 +114,14 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 ),
                 self.wrap_view('pebble_card'),
                 name='pebble_card_url',
+            ),
+            url(
+                r"^(?P<resource_name>%s)/ical/(?P<variant>\w+)/"
+                r"(?P<secret_id>[\w\d_.-]+)/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('ical_feed'),
+                name='ical_feed',
             ),
             url(
                 r"^(?P<resource_name>%s)/refresh/?$" % (
@@ -486,6 +495,52 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
         return HttpResponse(
             json.dumps(response),
             content_type='application/json',
+        )
+
+    def ical_feed(self, request, variant, secret_id, **kwargs):
+        if variant not in ('due', 'waiting'):
+            return HttpResponseNotFound()
+        try:
+            store = models.TaskStore.objects.get(secret_id=secret_id)
+        except:
+            return HttpResponseNotFound()
+        
+        if not store.ical_enabled:
+            return HttpResponseNotFound()
+
+        if variant == 'due':
+            calendar_title = "Tasks Due"
+            task_filter = {
+                'due.any': None,
+            }
+            field = 'due'
+        elif variant == 'wait':
+            calendar_title = "Waiting Tasks"
+            task_filter = {
+                'status': 'waiting',
+            }
+            field = 'wait'
+
+        tasks = store.client.filter_tasks(task_filter)
+
+        calendar = Calendar()
+        calendar['summary'] = calendar_title
+
+        for task in tasks:
+            event = Event()
+            event['uid'] = task['uuid']
+            event['dtstart'] = task[field]
+            event['dtstamp'] = task.get(
+                'modified',
+                task['entry']
+            )
+            event['summary'] = task['description']
+
+            calendar.add_component(event)
+
+        return HttpResponse(
+            calendar.to_ical(),
+            content_type='text/calendar',
         )
 
     def pebble_card(self, request, secret_id, **kwargs):

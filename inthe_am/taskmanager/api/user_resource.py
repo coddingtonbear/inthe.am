@@ -71,6 +71,24 @@ def get_published_properties(user, store, meta):
                 'uuid': store.secret_id,
             }
         ),
+        'ical_waiting_url': reverse(
+            'ical_feed',
+            kwargs={
+                'variant': 'waiting',
+                'api_name': 'v1',
+                'resource_name': 'task',
+                'secret_id': store.secret_id,
+            }
+        ),
+        'ical_due_url': reverse(
+            'ical_feed',
+            kwargs={
+                'variant': 'due',
+                'api_name': 'v1',
+                'resource_name': 'task',
+                'secret_id': store.secret_id,
+            }
+        ),
         'sms_url': reverse(
             'incoming_sms',
             kwargs={
@@ -92,6 +110,7 @@ def get_published_properties(user, store, meta):
         'sync_enabled': store.sync_enabled,
         'pebble_cards_enabled': store.pebble_cards_enabled,
         'feed_enabled': store.feed_enabled,
+        'ical_enabled': store.ical_enabled,
         'udas': [
             {
                 'field': k,
@@ -229,6 +248,12 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
                 self.wrap_view('configure_feed')
             ),
             url(
+                r"^(?P<resource_name>%s)/ical-config/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('configure_ical')
+            ),
+            url(
                 r"^(?P<resource_name>%s)/mirakel-configuration/?$" % (
                     self._meta.resource_name
                 ),
@@ -350,6 +375,27 @@ class UserResource(LockTimeoutMixin, resources.ModelResource):
 
         store = models.TaskStore.get_for_user(request.user)
         store.pebble_cards_enabled = True if enabled else False
+        store.save()
+
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
+
+    @process_authentication()
+    def configure_ical(self, request, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(request.method)
+
+        try:
+            enabled = int(request.POST.get('enabled', 0))
+        except (TypeError, ValueError):
+            return HttpResponseBadRequest()
+
+        store = models.TaskStore.get_for_user(request.user)
+        store.ical_enabled = True if enabled else False
         store.save()
 
         return HttpResponse(

@@ -185,8 +185,52 @@
                 </div>
             </li>
             <li class="accordion-navigation">
-                <a href="#feeds">RSS &amp; Pebble Feeds</a>
+                <a href="#feeds">iCal, RSS &amp; Pebble Feeds</a>
                 <div id="feeds" class="content">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <h3><strong>BETA:</strong> iCal Feed</h3>
+                            <p>
+                                Turn this feature on to gain access to two different
+                                iCal feeds that you can add to either your Google
+                                Calendar or any other calendaring application that
+                                supports the iCal standard.
+                            </p>
+                            {{#unless controllers.application.user.ical_enabled}}
+                                <div class="block warning">
+                                    <p>
+                                        For your security, your iCal feed is disabled
+                                        by default.  Although your iCal feed's URL is unique
+                                        and randomly generated, no authentication is used
+                                        to improve compatibility with iCal feed readers.
+                                        <a href="" {{action "save_ical" true}}>Enable your iCal Feed</a>.
+                                    </p>
+                                </div>
+                            {{else}}
+                                <table class="pure-table pure-table-horizontal">
+                                    <tr>
+                                        <th>
+                                            Due dates iCal Feed URL
+                                        </th>
+                                        <td>
+                                            https://inthe.am{{ controllers.application.urls.ical_due_url }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            Waiting dates iCal Feed URL
+                                        </th>
+                                        <td>
+                                            https://inthe.am{{ controllers.application.urls.ical_waiting_url }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            {{/unless}}
+                            <label>iCal Task Feed</label>
+                            {{view "select" value=controllers.application.user.ical_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI id="id_ical_config"}}
+                            <a href="" class="button radius" {{action "save_ical"}}>Save Settings</a>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="large-12 columns">
                             <h3>RSS Feed</h3>

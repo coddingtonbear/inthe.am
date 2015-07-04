@@ -71,6 +71,7 @@ class TaskStore(models.Model):
     sync_permitted = models.BooleanField(default=True)
     pebble_cards_enabled = models.BooleanField(default=False)
     feed_enabled = models.BooleanField(default=False)
+    ical_enabled = models.BooleanField(default=False)
 
     taskrc_extras = models.TextField(blank=True)
 
