@@ -59,9 +59,6 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     tar xzf taskd-1.0.0.tar.gz
     cd taskd-1.0.0
     if [ -z "$TRAVIS" ]; then
-        wget http://coddingtonbear-public.s3.amazonaws.com/travis/taskd_1.0.0-1_amd64.deb
-        dpkg -i taskd_1.0.0-1_amd64.deb
-    else
         which taskd
         if [ $? -ne 0 ]; then
             cmake .
@@ -69,6 +66,9 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
             checkinstall --default
             cp  /var/taskd/src/taskd-1.0.0/taskd_1.0.0-1*.deb /tmp
         fi
+    else
+        wget http://coddingtonbear-public.s3.amazonaws.com/travis/taskd_1.0.0-1_amd64.deb
+        dpkg -i taskd_1.0.0-1_amd64.deb
     fi
 
     cd $TWWEB_TASKD_DATA
@@ -110,13 +110,13 @@ if [ $? -ne 0 ]; then
     tar xzf task-2.3.0.tar.gz
     cd task-2.3.0
     if [ -z "$TRAVIS" ]; then
-        wget http://coddingtonbear-public.s3.amazonaws.com/travis/task_2.3.0-1_amd64.deb
-        dpkg -i task_2.3.0-1_amd64.deb
-    else
         cmake .
         make
         checkinstall --default
         cp /var/taskd/src/task-2.3.0/task_2.3.0-1*.deb /tmp
+    else
+        wget http://coddingtonbear-public.s3.amazonaws.com/travis/task_2.3.0-1_amd64.deb
+        dpkg -i task_2.3.0-1_amd64.deb
     fi
 fi
 
