@@ -529,13 +529,16 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
 
         for task in tasks:
             event = Event()
-            event['uid'] = task['uuid']
-            event['dtstart'] = task[field]
-            event['dtstamp'] = task.get(
-                'modified',
-                task['entry']
+            event.add('uid', task['uuid'])
+            event.add('dtstart', task[field].date())
+            event.add(
+                'dtstamp',
+                task.get(
+                    'modified',
+                    task['entry']
+                )
             )
-            event['summary'] = task['description']
+            event.add('summary', task['description'])
 
             calendar.add_component(event)
 
