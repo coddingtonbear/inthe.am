@@ -184,6 +184,15 @@ class TrelloObject(models.Model):
             **kwargs
         )
 
+        try:
+            possible_colors = set(LABEL_COLORS)
+            task_tags = set(task.get('tags'))
+            tags_to_add = ','.join(possible_colors & task_tags)
+            if tags_to_add:
+                self.client.new_label(self.id, tags_to_add)
+        except:
+            logger.exception("Error encountered while adding labels!")
+
     @classmethod
     def create(cls, **kwargs):
         store = kwargs.pop('store')
