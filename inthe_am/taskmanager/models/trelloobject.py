@@ -48,6 +48,7 @@ class TrelloObject(models.Model):
     type = models.CharField(choices=TYPE_CHOIES, max_length=10)
     meta = JSONField()
 
+    last_action = models.DateTimeField(null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 

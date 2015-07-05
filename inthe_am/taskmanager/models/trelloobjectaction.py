@@ -24,14 +24,15 @@ class TrelloObjectAction(models.Model):
 
     @classmethod
     def create_from_request(cls, data):
+        occurred = parse(
+            data['action']['date']
+        ).replace(tzinfo=pytz.UTC)
         try:
             instance = cls.objects.create(
                 action_id=data['action']['id'],
                 type=data['action']['type'],
                 model=TrelloObject.objects.get(pk=data['model']['id']),
-                occurred=parse(
-                    data['action']['date']
-                ).replace(tzinfo=pytz.UTC),
+                occurred=occurred,
                 meta=data,
             )
         except IntegrityError:
@@ -41,10 +42,13 @@ class TrelloObjectAction(models.Model):
             )
 
         model = instance.model
-        model.meta = data['model']
-        model.save()
 
-        instance.reconcile_action()
+        if not model.last_action or model.last_action < occurred:
+            model.meta = data['model']
+            model.last_action = occurred
+            model.save()
+
+            instance.reconcile_action()
 
         return instance
 
