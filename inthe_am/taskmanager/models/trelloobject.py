@@ -193,13 +193,13 @@ class TrelloObject(models.Model):
             ])
             task_tags = set(task.get('tags'))
             tags_to_add = (
-                (existing_labels - task_tags) & possible_colors
+                (task_tags - existing_labels) & possible_colors
             )
             if tags_to_add:
                 self.client.new_label(self.id, ','.join(tags_to_add))
 
             tags_to_delete = (
-                (task_tags - existing_labels) & possible_colors
+                (existing_labels - task_tags) & possible_colors
             )
             for tag_to_delete in tags_to_delete:
                 self.client.delete_label_color(
