@@ -21,6 +21,19 @@ AUTHORIZE_URL = "https://trello.com/1/OAuthAuthorizeToken"
 SUBSCRIPTION_URL = "https://trello.com/1/tokens/{user_token}/webhooks/"
 APP_NAME = "Inthe.AM"
 
+LABEL_COLORS = [
+    'blue',
+    'pink',
+    'purple',
+    'sky',
+    'yellow',
+    'green',
+    'orange',
+    'black',
+    'red',
+    'lime',
+]
+
 
 def get_oauth_client(request=None, **params):
     base_params = {

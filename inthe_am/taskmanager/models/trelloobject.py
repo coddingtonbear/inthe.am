@@ -1,4 +1,5 @@
 import logging
+import re
 
 from dateutil.parser import parse
 from jsonfield import JSONField
@@ -9,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from ..exceptions import CheckpointNeeded
-from ..trello_utils import subscribe_to_updates
+from ..trello_utils import LABEL_COLORS, subscribe_to_updates
 from .taskstore import TaskStore
 
 
@@ -125,6 +126,28 @@ class TrelloObject(models.Model):
                 self.meta['idList'],
                 self.id,
             )
+
+        task_tags = task.get('tags', [])
+
+        # Remove any color labels, we'll re-add them below if they still apply
+        for label_color in LABEL_COLORS:
+            if label_color in task_tags:
+                task_tags.remove(label_color)
+
+        # Now, let's re-add any relevant tags by color and name
+        for label in self.meta.get('labels', []):
+            if label.get('color'):
+                task_tags.append(label.get('color'))
+            if label.get('name'):
+                task_tags.append(
+                    re.sub(
+                        ur'[\W_]+', u'_',
+                        label.get('name'),
+                        flags=re.UNICODE
+                    )
+                )
+
+        task['tags'] = task_tags
 
         self.store.client.task_update(task)
 
