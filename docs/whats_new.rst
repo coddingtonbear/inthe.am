@@ -1,13 +1,46 @@
 What's New?
 ===========
 
+5 July 2015
+-----------
+
+Features
+~~~~~~~~
+
+* iCal feeds: In addition to our existing RSS and Pebble Cards feeds, you can
+  now enable two iCal feeds showing the due dates or waiting dates of your
+  tasks.
+* (Public Beta) Trello Integration: By turning on this feature,
+  Inthe.AM will create a new Trello board on your account, and will automatically
+  synchronize changes between your Trello board, Inthe.AM and your local
+  Taskwarrior task list. Relatedly, cancelled earlier Kanban Boards Project:
+  `#146 Kanban Board <https://github.com/coddingtonbear/inthe.am/issues/146>`.
+* Added `Gitter channel <https://gitter.im/coddingtonbear/inthe.am>`
+  replacing the existing Freenode IRC channel.
+
+Technical
+~~~~~~~~~
+
+* Altered the way synchronizations and task changes are announced within
+  the system for triggering synchronizations to use Redis' PubSub rather than
+  periodically synchronizing and announcing newly-found events.
+* Various changes to testing behavior to increase speed including enabling
+  fast-fail of tests, and installing Taskserver and Taskwarrior from
+  ``deb`` packages. 
+* Disabled full integration testing of the Google log-in process.  Google
+  has began requiring that the user walk through a verification process
+  after signing-in, and the complexities involved in making a bot able to
+  walk through that verification process outweighs the risks of the feature
+  breaking.
+* Began sending logging events to Loggly for easier analysis.
+
 19 April 2015
 -------------
 
 Deprecations
 ~~~~~~~~~~~~
 
-* Synchronization with non-local taskservers was deprecated.
+* Non-local Sync: Synchronization with non-local taskservers was deprecated.
   See `#167: Deprecate synchronization using non-local Taskservers <https://github.com/coddingtonbear/inthe.am/issues/167>`_ for more information.
 
 19 February 2015
