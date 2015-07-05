@@ -195,17 +195,14 @@ class TrelloObject(models.Model):
             tags_to_add = (
                 (task_tags - existing_labels) & possible_colors
             )
-            if tags_to_add:
-                self.client.new_label(self.id, ','.join(tags_to_add))
+            for tag_to_add in tags_to_add:
+                self.client.new_label(self.id, tag_to_add)
 
             tags_to_delete = (
                 (existing_labels - task_tags) & possible_colors
             )
             for tag_to_delete in tags_to_delete:
-                self.client.delete_label_color(
-                    tag_to_delete,
-                    self.id,
-                )
+                self.client.delete_label_color(tag_to_delete, self.id)
         except:
             logger.exception("Error encountered while adding labels!")
 
