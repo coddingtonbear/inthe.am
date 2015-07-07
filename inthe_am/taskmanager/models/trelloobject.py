@@ -128,7 +128,7 @@ class TrelloObject(models.Model):
                 self.id,
             )
 
-        task_tags = task.get('tags', [])
+        task_tags = set(task.get('tags', []))
 
         # Remove any color labels, we'll re-add them below if they still apply
         for label_color in LABEL_COLORS:
@@ -138,9 +138,9 @@ class TrelloObject(models.Model):
         # Now, let's re-add any relevant tags by color and name
         for label in self.meta.get('labels', []):
             if label.get('color'):
-                task_tags.append(label.get('color'))
+                task_tags.add(label.get('color'))
             if label.get('name'):
-                task_tags.append(
+                task_tags.add(
                     re.sub(
                         ur'[\W_]+', u'_',
                         label.get('name'),
@@ -148,7 +148,7 @@ class TrelloObject(models.Model):
                     )
                 )
 
-        task['tags'] = task_tags
+        task['tags'] = list(task_tags)
 
         self.store.client.task_update(task)
 
