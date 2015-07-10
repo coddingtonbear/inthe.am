@@ -148,7 +148,7 @@ class TrelloObject(models.Model):
                     )
                 )
 
-        task['tags'] = list(task_tags)
+        task['tags'] = sorted(list(task_tags))
 
         self.store.client.task_update(task)
 
