@@ -44,7 +44,6 @@ def synchronize(runlog, issue_generator, conf, main_section):
     tw = TaskwarriorClient(
         store.taskrc.path,
         config_overrides=all_config_overrides,
-        marshal=True,
     )
 
     legacy_matching = False
