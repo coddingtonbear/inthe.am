@@ -197,6 +197,17 @@ class TaskStore(models.Model):
         except TrelloObject.DoesNotExist:
             return None
 
+    @property
+    def bugwarrior_config(self):
+        from .bugwarriorconfig import BugwarriorConfig
+
+        try:
+            return BugwarriorConfig.objects.get(
+                store=self,
+            )
+        except BugwarriorConfig.DoesNotExist:
+            return None
+
     def _is_numeric(self, val):
         try:
             float(val)

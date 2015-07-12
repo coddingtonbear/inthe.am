@@ -6,3 +6,7 @@ class NestedCheckpointError(RuntimeError):
 
 class CheckpointNeeded(RuntimeError):
     pass
+
+
+class InvalidBugwarriorConfiguration(RuntimeError):
+    pass

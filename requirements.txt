@@ -36,3 +36,4 @@ trello==0.9.1
 oauthlib==0.7.2
 jsonfield==1.0.3
 icalendar==3.9.0
+bugwarrior==1.1.4
