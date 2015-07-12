@@ -57,7 +57,7 @@ def synchronize(runlog, issue_generator, conf, main_section):
 
     for issue in issue_generator:
         if isinstance(issue, tuple) and issue[0] == ABORT_PROCESSING:
-            runlog.add_output(issue[1])
+            runlog.add_output(str(issue[1]))
             raise RuntimeError(issue[1])
         try:
             existing_uuid = find_local_uuid(
