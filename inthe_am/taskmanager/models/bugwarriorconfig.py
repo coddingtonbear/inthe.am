@@ -14,6 +14,11 @@ from .taskstore import TaskStore
 
 class BugwarriorConfig(models.Model):
     CONFIG_SECTION = 'general'
+    CONFIG_OVERRIDES = {
+        CONFIG_SECTION: {
+            'development': 'true'
+        }
+    }
 
     store = models.ForeignKey(
         TaskStore,
@@ -31,6 +36,10 @@ class BugwarriorConfig(models.Model):
         if not hasattr(self, '_config'):
             config = SafeConfigParser()
             config.readfp(StringIO(self.serialized_config))
+            for section in self.CONFIG_OVERRIDES:
+                section_data = self.CONFIG_OVERRIDES.get(section, {})
+                for key, value in section_data.items():
+                    config.set(section, key, value)
             self._config = config
 
         return self._config
