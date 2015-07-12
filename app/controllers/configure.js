@@ -525,7 +525,7 @@ var controller = Ember.Controller.extend({
                     `attempting to request a bugwarrior synchronization: ${msg}`
                 );
             }.bind(this));
-        }
+        },
         revert_to_last_commit: function(){
             var url = this.get('controllers.application').urls.revert_to_last_commit;
 
