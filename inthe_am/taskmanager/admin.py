@@ -299,7 +299,7 @@ class BugwarriorConfigAdmin(admin.ModelAdmin):
     list_display = ('store', 'enabled', 'created', 'updated')
     raw_id_fields = ('store', )
     list_filter = ('enabled', )
-    ordering = ('-updated')
+    ordering = ('-updated', )
     search_fields = ('store__user__username', )
 
 admin.site.register(BugwarriorConfig, BugwarriorConfigAdmin)
