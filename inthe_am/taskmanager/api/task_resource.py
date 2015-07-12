@@ -167,6 +167,20 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 name='trello_callback',
             ),
             url(
+                r"^(?P<resource_name>%s)/bugwarrior/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('bugwarrior_config'),
+                name='bugwarrior_config',
+            ),
+            url(
+                r"^(?P<resource_name>%s)/bugwarrior/sync/?$" % (
+                    self._meta.resource_name
+                ),
+                self.wrap_view('bugwarrior_sync'),
+                name='bugwarrior_sync',
+            ),
+            url(
                 r"^(?P<resource_name>%s)/trello/incoming/"
                 r"(?P<secret_id>[\w\d_.-]+)/?$" % (
                     self._meta.resource_name
@@ -331,6 +345,67 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
             return HttpResponseNotAllowed(request.method)
 
         store.client.sync(init=True)
+        return HttpResponse(
+            json.dumps({
+                'message': 'OK',
+            }),
+            content_type='application/json',
+        )
+
+    @requires_task_store
+    def bugwarrior_config(self, request, store, **kwargs):
+        if request.method == 'DELETE':
+            config = store.bugwarrior_config
+            if not config:
+
+                return HttpResponseNotFound()
+
+            return HttpResponse(
+                json.dumps({
+                    'message': 'OK',
+                }),
+                content_type='application/json',
+            )
+        elif request.method == 'PUT':
+            config = store.bugwarrior_config
+            if not config:
+                config = models.BugwarriorConfig.objects.create(
+                    store=store,
+                    enabled=True,
+                )
+
+            config.serialized_config = request.body
+            try:
+                config.validate_configuration()
+                config.save()
+            except Exception as e:
+                return HttpResponseBadRequest(
+                    json.dumps({
+                        'message': unicode(e),
+                    }),
+                    content_type='application/json',
+                )
+
+            return HttpResponse(
+                json.dumps({
+                    'message': 'OK',
+                }),
+                content_type='application/json',
+            )
+        else:
+            return HttpResponseNotAllowed(request.method)
+
+    @requires_task_store
+    def bugwarrior_sync(self, request, store, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(request.method)
+
+        config = store.bugwarrior_config
+        if not config:
+            return HttpResponseNotFound()
+
+        store.sync_bugwarrior()
+
         return HttpResponse(
             json.dumps({
                 'message': 'OK',

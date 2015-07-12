@@ -22,6 +22,14 @@ class BugwarriorConfigRunLog(models.Model):
         self.output = '\n'.join(lines)
         self.save()
 
+    @property
+    def error_message(self):
+        if not self.stack_trace:
+            return None
+
+        lines = [line for line in self.stack_trace.split('\n') if line.strip()]
+        return lines.pop()
+
     def __unicode__(self):
         if self.success:
             category = 'Successful'

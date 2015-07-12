@@ -26,7 +26,12 @@ from ..lock import (
     get_lock_name_for_store,
     get_lock_redis,
 )
-from ..tasks import sync_repository, sync_trello_tasks, update_trello
+from ..tasks import (
+    sync_repository,
+    sync_trello_tasks,
+    synchronize_bugwarrior,
+    update_trello
+)
 from ..taskstore_migrations import upgrade as upgrade_taskstore
 from ..taskwarrior_client import TaskwarriorClient
 from .taskrc import TaskRc
@@ -207,6 +212,20 @@ class TaskStore(models.Model):
             )
         except BugwarriorConfig.DoesNotExist:
             return None
+
+    def sync_bugwarrior(self):
+        debounce_key = get_debounce_name_for_store(self, 'bugwarrior_sync')
+        defined_debounce_id = str(time.time())
+
+        client = get_lock_redis()
+        client.set(debounce_key, defined_debounce_id)
+        synchronize_bugwarrior.apply_async(
+            expires=3600,
+            args=(self.pk, ),
+            kwargs={
+                'debounce_id': defined_debounce_id,
+            }
+        )
 
     def _is_numeric(self, val):
         try:

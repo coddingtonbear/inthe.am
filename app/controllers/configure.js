@@ -479,7 +479,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         enable_sync: function() {
-            var url    = this.get('controllers.application').urls.enable_sync;
+            var url = this.get('controllers.application').urls.enable_sync;
 
             return this.ajaxRequest({
                 url: url,
@@ -494,6 +494,38 @@ var controller = Ember.Controller.extend({
                 );
             }.bind(this));
         },
+        delete_bugwarrior_configuration: function() {
+            var url = this.get('controllers.application').urls.bugwarrior_config;
+            return this.ajaxRequest({
+                url: url,
+                type: 'DELETE',
+            }).then(function(){
+                this.set('controllers.application.user.bugwarrior_configured', false);
+                this.success_message("Bugwarrior configuration deleted");
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `attempting to delete your bugwarrior configuration: ${msg}`
+                );
+            }.bind(this));
+        },
+        schedule_bugwarrior_synchronization: function() {
+            var url = this.get('controllers.application').urls.bugwarrior_sync;
+            return this.ajaxRequest({
+                url: url,
+                type: 'POST',
+            }).then(function(){
+                this.success_message(
+                    `Bugwarrior synchronization requested; it may take a ` +
+                    `few minutes for the synchronization to take place.`
+                  )
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `attempting to request a bugwarrior synchronization: ${msg}`
+                );
+            }.bind(this));
+        }
         revert_to_last_commit: function(){
             var url = this.get('controllers.application').urls.revert_to_last_commit;
 

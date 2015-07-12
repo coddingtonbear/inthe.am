@@ -99,11 +99,21 @@ class BugwarriorConfig(models.Model):
                 )
                 self.store.sync()
 
+            self.store.log_message(
+                "Bugwarrior tasks were synchronized successfully: %s",
+                log.output,
+            )
             log.success = True
         except Exception as e:
             log.add_output("Issue synchronization failed: %s." % unicode(e))
             log.stack_trace = traceback.format_exc()
             log.success = False
+            self.store.log_error(
+                "An error was encountered while synchronizing bugwarrior: "
+                "%s (Entry ID: %s)",
+                log.error_message,
+                log.pk,
+            )
 
         log.finished = timezone.now()
         log.save()

@@ -121,6 +121,11 @@ def get_published_properties(user, store, meta):
         'trello_board_url': (
             store.trello_board.meta['url'] if store.trello_board else None
         ),
+        'bugwarrior_configured': True if store.bugwarrior_config else False,
+        'bugwarrior_enabled': (
+            store.bugwarrior_config.enabled
+            if store.bugwarrior_config else False
+        ),
         'system_udas': get_system_udas_as_config(),
     }
 

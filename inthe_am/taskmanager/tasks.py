@@ -508,3 +508,36 @@ def update_trello(self, store_id, debounce_id=None):
 
     if requires_post_sync:
         store.sync()
+
+
+@shared_task(
+    bind=True,
+    max_retries=10,
+    default_retry_delay=15
+)
+def synchronize_bugwarrior(self, store_id, debounce_id=None):
+    from .models import TaskStore
+    store = TaskStore.objects.get(pk=store_id)
+    client = get_lock_redis()
+
+    debounce_key = get_debounce_name_for_store(store, 'bugwarrior_sync')
+    try:
+        expected_debounce_id = client.get(debounce_key)
+    except (ValueError, TypeError):
+        expected_debounce_id = None
+
+    if (
+        expected_debounce_id and debounce_id and
+        (float(debounce_id) < float(expected_debounce_id))
+    ):
+        logger.warning(
+            "Bugwarrior Sync Debounce Failed: %s<%s; "
+            "skipping trello outgoing updates for %s",
+            debounce_id,
+            expected_debounce_id,
+            store.pk,
+        )
+        return
+
+    config = store.bugwarrior_config
+    config.pull_issues()
