@@ -20,6 +20,7 @@ class BugwarriorConfigRunLog(models.Model):
         lines.append(new)
 
         self.output = '\n'.join(lines)
+        self.save()
 
     def __unicode__(self):
         if self.success:
