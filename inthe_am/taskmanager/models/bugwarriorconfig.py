@@ -28,7 +28,7 @@ class BugwarriorConfig(models.Model):
 
     @property
     def config(self):
-        if not hasattr(self._config):
+        if not hasattr(self, '_config'):
             config = SafeConfigParser()
             config.readfp(StringIO(self.serialized_config))
             self._config = config
