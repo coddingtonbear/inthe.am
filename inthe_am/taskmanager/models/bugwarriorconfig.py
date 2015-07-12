@@ -100,8 +100,10 @@ class BugwarriorConfig(models.Model):
                 self.store.sync()
 
             self.store.log_message(
-                "Bugwarrior tasks were synchronized successfully: %s",
+                "Bugwarrior tasks were synchronized successfully: %s "
+                "(Entry ID: %s)",
                 log.output,
+                log.pk,
             )
             log.success = True
         except Exception as e:
