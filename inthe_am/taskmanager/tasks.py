@@ -278,16 +278,14 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
 
     open_local_tasks = {
         t['uuid']: t for t in store.client.filter_tasks({
-            'or': [
-                ('status', 'pending'),
-                ('status', 'waiting'),
-            ]
+            'status': 'pending'
         })
     }
     with git_checkpoint(store, 'Deleting non-pending tasks from trello'):
         for task in store.client.filter_tasks({
             'intheamtrelloid.any': None,
             'or': [
+                ('status', 'waiting'),
                 ('status', 'completed'),
                 ('status', 'deleted'),
             ],
@@ -313,10 +311,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
         'Adding pending tasks to Trello & deleting tasks remotely deleted'
     ):
         todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
-        wait_column = store.trello_board.get_list_by_type(TrelloObject.WAITING)
         for task in open_local_tasks.values():
-            is_pending = task.get('status') == 'pending'
-
             # If this task has a trello board ID, but it doesn't match the
             # board we're currently on, let's pretend that it doesn't have
             # an id at all -- it was probably un-deleted or restored
@@ -329,7 +324,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
                     store=store,
                     type=TrelloObject.CARD,
                     name=task['description'],
-                    idList=todo_column.id if is_pending else wait_column.id,
+                    idList=todo_column.id,
                 )
                 task['intheamtrelloid'] = tob.id
                 task['intheamtrelloboardid'] = store.trello_board.id
@@ -492,9 +487,6 @@ def update_trello(self, store_id, debounce_id=None):
                             'name'
                         )
 
-            store.client.task_update(task)
-            requires_post_sync = True
-
             try:
                 obj.update_trello(task)
             except Exception as e:
@@ -502,6 +494,15 @@ def update_trello(self, store_id, debounce_id=None):
                     "Error encountered while updating task: %s",
                     str(e)
                 )
+
+            # Clear trello ID if we've just marked the task as closed;
+            # this will cause us to re-create the record if it ever
+            # enters the "pending" status.
+            if task['status'] in ('waiting', 'closed', 'deleted'):
+                task['intheamtrelloid'] = ''
+
+            store.client.task_update(task)
+            requires_post_sync = True
 
         store.trello_local_head = ending_head
         store.save()

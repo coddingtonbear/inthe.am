@@ -66,9 +66,13 @@
                                 <p>
                                     Trello integration is currently turned on; you can access
                                     your Trello board by clicking the 'Trello' button at the 
-                                    top of your screen, or by going to
-                                    <a {{bind-attr href=controllers.application.user.trello_board_url}}>{{controllers.application.user.trello_board_url}}</a>.
+                                    top of your screen, or by going to the following URL:
                                 </p>
+                                <ul>
+                                    <li>
+                                        <a {{bind-attr href=controllers.application.user.trello_board_url}}>{{controllers.application.user.trello_board_url}}</a>.
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                         <div class="row">
@@ -81,28 +85,29 @@
                         <div class="row">
                             <div class="large-12 columns">
                                 <p>
-                                    When Trello integration is turned on, Inthe.AM will automatically
+                                    Once Trello integration is turned on, Inthe.AM will automatically
                                     create a new Trello board on your account.  All of your pending
                                     and waiting tasks will be displayed on the board in various
                                     columns, and any changes you make on Inthe.AM, using any Taskwarrior
-                                    clients synchronizing with Inthe.AM, or Trello will automatically
-                                    be synchronized among one another.
+                                    clients synchronizing with Inthe.AM, or directly on your Trello
+                                    board will automatically be synchronized.
                                 </p>
                                 <p>
-                                    There are, though, some limitations.  Although you can feel
+                                    <strong>There are, though, some limitations.</strong>  Although you can feel
                                     free to create as many Trello lists as you would like, please do
                                     not remove either your "Waiting" or "To Do" lists -- Inthe.AM
-                                    will add your new tasks to those lists when they are created.
+                                    needs those lists for adding new tasks to when they are created.
                                 </p>
                                 <p>
                                     Also, note that not all information displayed on a Trello card
                                     is available on Inthe.AM or when using your local Taskwarrior
-                                    client.  Out of the information that is available, please don't
-                                    change the fields <span class="code">intheamtrelloid</span>,
+                                    client.  Out of the information that is available locally 
+                                    in your taskwarrior client, please don't change the fields
+                                    <span class="code">intheamtrelloid</span>,
                                     <span class=="code">intheamtrelloboardid</span>, or
                                     <span class=="code">intheamtrellourl</span> as changing those
-                                    fields could make it difficult for Inthe.AM to synchronize your
-                                    tasks with your Trello account.  The other fields, including
+                                    fields could limit the seamlessness of Inthe.AM's synchronization
+                                    of your tasks with Trello.  The other fields, including
                                     <span class=="code">intheamtrellolistname</span> (the name of
                                     the list on which the card is displayed) and 
                                     <span class=="code">intheamtrellodescription</span> (the
