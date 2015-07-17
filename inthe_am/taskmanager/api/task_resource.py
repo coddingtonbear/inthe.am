@@ -438,6 +438,8 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 ]
             }):
                 task['intheamtrelloid'] = ''
+                task['intheamtrelloboardid'] = ''
+                task['intheamtrellolistid'] = ''
                 store.client.task_update(task)
 
         store.trello_auth_token = ''
@@ -509,8 +511,6 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 name='Inthe.AM Tasks',
                 desc='Tasks listed on your Inthe.AM account'
             )
-            board.client.new_list(board.id, 'Waiting')
-
             for list_data in board.client.get_list(board.id):
                 obj = models.TrelloObject.objects.create(
                     id=list_data.get('id'),

@@ -30,7 +30,6 @@ class TrelloObject(models.Model):
 
     DOING = 'Doing'
     TO_DO = 'To Do'
-    WAITING = 'Waiting'
     CLOSED = 'Closed'
     DELETE = 'Delete'
 
@@ -104,10 +103,6 @@ class TrelloObject(models.Model):
         except IndexError:
             return
 
-        wait_column = self.store.trello_board.get_list_by_type(
-            TrelloObject.WAITING
-        )
-
         # In case a recurring task was stored, clear that out
         if task['status'] == 'recurring':
             return
@@ -131,16 +126,6 @@ class TrelloObject(models.Model):
                 self.meta['idList'],
                 self.id,
             )
-
-        # Unset waiting status for tasks that are no longer in
-        # the waiting column
-        list_id = task.get('intheamtrellolistid')
-        if (
-            task['status'] == 'waiting' and
-            list_id is not None and
-            list_id != wait_column.pk
-        ):
-            task['wait'] = None
 
         task_tags = set(task.get('tags', []))
 
@@ -170,17 +155,12 @@ class TrelloObject(models.Model):
             self.store.client.task_done(uuid=task['uuid'])
 
     def update_trello(self, task):
-        wait_column = self.store.trello_board.get_list_by_type(
-            TrelloObject.WAITING
-        )
         kwargs = {
             'name': task['description'],
         }
         if task.get('intheamtrellodescription'):
             kwargs['desc'] = task['intheamtrellodescription']
-        if task['status'] == 'waiting':
-            kwargs['idList'] = wait_column.pk
-        if task['status'] in ('closed', 'deleted', ):
+        if task['status'] in ('waiting', 'closed', 'deleted', ):
             kwargs['closed'] = 'true'
 
         # Set list if differs from current list
