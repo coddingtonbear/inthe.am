@@ -494,6 +494,22 @@ var controller = Ember.Controller.extend({
                 );
             }.bind(this));
         },
+        update_bugwarrior_config: function() {
+            var url = this.get('controllers.application').urls.bugwarrior_config;
+            var data = document.getElementById('id_bugwarrior_config').value;
+            return this.ajaxRequest({
+                url: url,
+                type: 'PUT',
+                data: data,
+            }).then(function(){
+                this.success_message("Bugwarrior configuration updated.");
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `attempting to updating your bugwarrior configuration: ${msg}`
+                );
+            }.bind(this));
+        },
         delete_bugwarrior_configuration: function() {
             var url = this.get('controllers.application').urls.bugwarrior_config;
             return this.ajaxRequest({

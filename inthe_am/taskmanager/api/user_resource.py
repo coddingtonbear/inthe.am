@@ -122,6 +122,10 @@ def get_published_properties(user, store, meta):
             store.trello_board.meta['url'] if store.trello_board else None
         ),
         'bugwarrior_configured': True if store.bugwarrior_config else False,
+        'bugwarrior_config': (
+            store.bugwarrior_config.serialized_config
+            if store.bugwarrior_config else ''
+        ),
         'bugwarrior_enabled': (
             store.bugwarrior_config.enabled
             if store.bugwarrior_config else False

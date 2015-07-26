@@ -473,9 +473,21 @@ var controller = Ember.Controller.extend({
         },
         'public_announcement': function(evt) {
           console.logIfDebug(evt.type, evt.data);
+          data = JSON.parse(evt.data);
+
+          $.growl[data.type || 'notice']({
+              title: data.title ? data.title : 'Public Announcement',
+              message: data.message,
+          })
         },
         'personal_announcement': function(evt) {
           console.logIfDebug(evt.type, evt.data);
+          data = JSON.parse(evt.data);
+
+          $.growl[data.type || 'notice']({
+              title: data.title ? data.title : 'Notice',
+              message: data.message,
+          })
         }
     },
     isSmallScreen: function() {

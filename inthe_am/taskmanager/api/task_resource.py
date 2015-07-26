@@ -381,7 +381,7 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
             except Exception as e:
                 return HttpResponseBadRequest(
                     json.dumps({
-                        'message': unicode(e),
+                        'error_message': unicode(e),
                     }),
                     content_type='application/json',
                 )
