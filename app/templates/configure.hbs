@@ -145,8 +145,21 @@
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            <a href="" class="button radius alert" {{action "delete_bugwarrior_configuration"}}>Delete Bugwarrior Configuration</a>
+                            <p>
+                                Your bugwarrior configuration:
+                            </p>
+                            {{textarea name="bugwarrior_config" id="id_bugwarrior_config" value=controllers.application.user.bugwarrior_config}}
+                            <p class="input-note">
+                                See <a href="http://bugwarrior.readthedocs.org/en/latest/common_configuration.html">Bugwarrior's Documentation</a> for information
+                                about how to configure synchronization with your services.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <a href="" class="button radius" {{action "update_bugwarrior_config"}}>Update Bugwarrior Configuration</a>
                             <a href="" class="button radius" {{action "schedule_bugwarrior_synchronization"}}>Resynchronize Now</a>
+                            <a href="" class="button radius alert" {{action "delete_bugwarrior_configuration"}}>Delete Bugwarrior Configuration</a>
                         </div>
                     </div>
                 </div>

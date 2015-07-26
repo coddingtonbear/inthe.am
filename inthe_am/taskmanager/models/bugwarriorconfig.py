@@ -16,7 +16,11 @@ class BugwarriorConfig(models.Model):
     CONFIG_SECTION = 'general'
     CONFIG_OVERRIDES = {
         CONFIG_SECTION: {
-            'development': 'true'
+            'development': 'true',
+            'shorten': 'false',
+            'inline_link': 'false',
+            'legacy_matching': 'false',
+            'log.level': 'DEBUG',
         }
     }
 
@@ -84,6 +88,16 @@ class BugwarriorConfig(models.Model):
                     )
                 )
 
+            for option in self.config.options(target):
+                if '@oracle' in self.config.get(target, option):
+                    raise InvalidBugwarriorConfiguration(
+                        "Target '%s' attempts to use @oracle for gathering "
+                        "the service's password, but @oracle is not available "
+                        "on Inthe.AM." % (
+                            target,
+                        )
+                    )
+
     def pull_issues(self):
         if not self.enabled:
             return False
@@ -114,6 +128,10 @@ class BugwarriorConfig(models.Model):
                 log.output,
                 log.pk,
             )
+            self.store.publish_personal_announcement({
+                'title': 'Bugwarrior',
+                'message': 'Synchronization completed successfully.'
+            })
             log.success = True
         except Exception as e:
             log.add_output("Issue synchronization failed: %s." % unicode(e))
