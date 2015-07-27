@@ -62,12 +62,14 @@ class TrelloObject(models.Model):
         )
 
     def add_log_data(self, message=None, data=None):
-        if not self.log:
-            self.log = {
+        log_data = self.log
+
+        if not log_data:
+            log_data = {
                 'changes': []
             }
 
-        changes = self.log.get('changes', [])
+        changes = log_data.get('changes', [])
 
         changes.append({
             'occurred': str(datetime.datetime.now()),
@@ -75,7 +77,8 @@ class TrelloObject(models.Model):
             'data': data,
         })
 
-        self.log['changes'] = changes
+        log_data['changes'] = changes
+        self.log = log_data
 
     def reconcile(self):
         self.add_log_data("Reconciliation initiated.")
