@@ -79,6 +79,7 @@ class TrelloObject(models.Model):
 
         log_data['changes'] = changes
         self.log = log_data
+        self.save()
 
     def reconcile(self):
         self.add_log_data("Reconciliation initiated.")
