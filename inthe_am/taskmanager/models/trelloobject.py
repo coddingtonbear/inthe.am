@@ -1,3 +1,4 @@
+import datetime
 import logging
 import re
 
@@ -46,6 +47,7 @@ class TrelloObject(models.Model):
     )
     type = models.CharField(choices=TYPE_CHOIES, max_length=10)
     meta = JSONField()
+    log = JSONField(null=True, blank=True)
 
     last_action = models.DateTimeField(null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
@@ -59,7 +61,24 @@ class TrelloObject(models.Model):
             store.trello_auth_token,
         )
 
+    def add_log_data(self, message=None, data=None):
+        if not self.log:
+            self.log = {
+                'changes': []
+            }
+
+        changes = self.log.get('changes', [])
+
+        changes.append({
+            'occurred': str(datetime.datetime.now()),
+            'message': message,
+            'data': data,
+        })
+
+        self.log['changes'] = changes
+
     def reconcile(self):
+        self.add_log_data("Reconciliation initiated.")
         if not self.store.has_active_checkpoint():
             raise CheckpointNeeded()
 
@@ -67,6 +86,7 @@ class TrelloObject(models.Model):
             return self._reconcile_card()
         elif self.type == self.BOARD:
             return self._reconcile_board()
+        self.add_log_data("Reconciliation completed.")
 
     def _reconcile_board(self):
         known_lists = {
@@ -78,6 +98,7 @@ class TrelloObject(models.Model):
                 obj = TrelloObject.objects.get(
                     id=list_data.get('id')
                 )
+                self.add_log_data("Updating list %s" % list_data.get('id'))
                 obj.meta = list_data
                 obj.save()
                 known_lists.pop(obj.pk, None)
@@ -89,6 +110,7 @@ class TrelloObject(models.Model):
                     parent=self.store.trello_board,
                     meta=list_data
                 )
+                self.add_log_data("Created list %s" % list_data.get('id'))
                 obj.subscribe()
 
         for deleted_list in known_lists.values():
@@ -101,10 +123,16 @@ class TrelloObject(models.Model):
                 'intheamtrelloboardid': self.store.trello_board.id,
             })[0]
         except IndexError:
+            self.add_log_data(
+                "Could not find matching task; aborting task reconciliation."
+            )
             return
 
         # In case a recurring task was stored, clear that out
         if task['status'] == 'recurring':
+            self.add_log_data(
+                "Matching task is recurring; aborting task reconciliation."
+            )
             return
 
         task['description'] = self.meta['name']
@@ -150,6 +178,7 @@ class TrelloObject(models.Model):
         task['tags'] = sorted(list(task_tags))
 
         self.store.client.task_update(task)
+        self.add_log_data("Task updated.")
 
         if self.meta['closed']:
             self.store.client.task_done(uuid=task['uuid'])
@@ -173,6 +202,7 @@ class TrelloObject(models.Model):
             task['uuid'],
             str(kwargs)
         )
+        self.add_log_data("Sending trello update data: %s" % str(kwargs))
 
         self.client.update(
             self.id,
@@ -218,6 +248,7 @@ class TrelloObject(models.Model):
             type=type,
             meta=meta,
         )
+        instance.add_log_data("Instance created.")
         instance.subscribe()
         return instance
 
@@ -245,6 +276,7 @@ class TrelloObject(models.Model):
                     }
                 )
             )
+            self.add_log_data("Subscribing to updates.")
         except RuntimeError as e:
             logger.exception(
                 "Error encountered while subscribing to Trello updates: %s",
@@ -274,6 +306,7 @@ class TrelloObject(models.Model):
 
     def delete(self, *args, **kwargs):
         try:
+            self.add_log_data("Deleting record.")
             self.client.update_closed(self.id, 'true')
         except Exception as e:
             logger.exception(
