@@ -1,6 +1,16 @@
 What's New?
 ===========
 
+25 July 2015
+------------
+
+Features
+~~~~~~~~
+
+* Bugwarrior: Bugwarrior is a tool that allows you to synchronize issues
+  assigned to you from JIRA, Github, and other services with your Taskwarrior
+  task list.  Now, you can use Bugwarrior directly with Inthe.AM.
+
 5 July 2015
 -----------
 
