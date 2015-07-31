@@ -393,7 +393,7 @@ class TaskStore(models.Model):
     def create_git_checkpoint(
         self, message, function=None,
         args=None, kwargs=None, pre_operation=False,
-        rollback=False, checkpoint_id=None
+        rollback=False, checkpoint_id=None, force_commit=False,
     ):
         self._simple_git_command('add', '-A')
         commit_message = render_to_string(
@@ -408,13 +408,19 @@ class TaskStore(models.Model):
                 'checkpoint_id': checkpoint_id,
             }
         )
-        self._simple_git_command(
+    
+        commit_args = [
             'commit',
             '--author',
             'Inthe.AM Git Bot <gitbot@inthe.am>',
             '-m',
             commit_message
-        )
+        ]
+
+        if force_commit:
+            commit_args.append('--allow-empty')
+
+        self._simple_git_command(*commit_args)
 
     #  Taskd-related methods
 

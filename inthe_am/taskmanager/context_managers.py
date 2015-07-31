@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 import logging
 import os
+import traceback
 import uuid
 
 from .exceptions import NestedCheckpointError
@@ -98,7 +99,7 @@ def git_checkpoint(
                     )
         except Exception as e:
             store.create_git_checkpoint(
-                str(e),
+                u'%s (%s)' % (message, e),
                 function=function,
                 args=args,
                 kwargs=kwargs,
@@ -108,6 +109,19 @@ def git_checkpoint(
             changes_were_stored = (
                 dangling_sha and dangling_sha != pre_work_sha
             )
+
+            # Create a second checkpoint, and force the commit to occur
+            # so we have a nice traceback.
+            store.create_git_checkpoint(
+                traceback.format_exc(),
+                function=function,
+                args=args,
+                kwargs=kwargs,
+                rollback=False,
+                force_commit=True,
+            )
+            dangling_sha = store.repository.head()
+
             if changes_were_stored:
                 logger.exception(
                     "An error occurred that required rolling-back "
