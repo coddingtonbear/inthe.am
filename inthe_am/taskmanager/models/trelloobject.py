@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 import re
 
@@ -16,6 +17,14 @@ from .taskstore import TaskStore
 
 
 logger = logging.getLogger(__name__)
+
+
+class OneWaySafeJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        try:
+            json.JSONEncoder.default(self, obj)
+        except:
+            return unicode(obj)
 
 
 class TrelloObject(models.Model):
@@ -68,6 +77,10 @@ class TrelloObject(models.Model):
             log_data = {
                 'changes': []
             }
+
+        data = json.loads(
+            json.dumps(data, cls=OneWaySafeJSONEncoder)
+        )
 
         changes = log_data.get('changes', [])
 
@@ -135,7 +148,8 @@ class TrelloObject(models.Model):
         # In case a recurring task was stored, clear that out
         if task['status'] == 'recurring':
             self.add_log_data(
-                "Matching task is recurring; aborting task reconciliation."
+                "Matching task is recurring; aborting task reconciliation.",
+                data=task,
             )
             return
 
@@ -182,7 +196,7 @@ class TrelloObject(models.Model):
         task['tags'] = sorted(list(task_tags))
 
         self.store.client.task_update(task)
-        self.add_log_data("Task updated.")
+        self.add_log_data("Task updated.", data=task)
 
         if self.meta['closed']:
             self.store.client.task_done(uuid=task['uuid'])
@@ -194,7 +208,7 @@ class TrelloObject(models.Model):
         if task.get('intheamtrellodescription'):
             kwargs['desc'] = task['intheamtrellodescription']
         if task['status'] in ('waiting', 'closed', 'deleted', ):
-            kwargs['closed'] = 'true'
+            return self.delete()
 
         # Set list if differs from current list
         list_id = task.get('intheamtrellolistid')
@@ -206,7 +220,10 @@ class TrelloObject(models.Model):
             task['uuid'],
             str(kwargs)
         )
-        self.add_log_data("Sending trello update data: %s" % str(kwargs))
+        self.add_log_data(
+            "Sending trello update data",
+            data=kwargs
+        )
 
         self.client.update(
             self.id,
