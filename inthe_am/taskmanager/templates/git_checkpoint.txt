@@ -1,6 +1,5 @@
 {% if rollback %}[ROLLED BACK] {% endif %}{% if preop %}[PRE-OPERATION] {% endif %}{{ message|safe }}
 
-* [message]: {{ message|safe }}
 * [function]: {{ function|safe }}
 * [args]: {{ args|safe }}
 * [kwargs]: {{ kwargs|safe }}

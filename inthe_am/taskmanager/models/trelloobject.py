@@ -199,7 +199,11 @@ class TrelloObject(models.Model):
         self.add_log_data("Task updated.", data=task)
 
         if self.meta['closed']:
-            self.store.client.task_done(uuid=task['uuid'])
+            try:
+                self.store.client.task_done(uuid=task['uuid'])
+            except ValueError:
+                # This just means the card was already closed.
+                pass
 
     def update_trello(self, task):
         kwargs = {
