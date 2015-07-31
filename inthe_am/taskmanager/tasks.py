@@ -388,11 +388,14 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
     bind=True,
 )
 def process_trello_action(self, store_id, data):
-    from .models import TaskStore, TrelloObjectAction
+    from .models import TaskStore, TrelloObject, TrelloObjectAction
     store = TaskStore.objects.get(pk=store_id)
 
     with git_checkpoint(store, 'Processing Trello Action'):
-        TrelloObjectAction.create_from_request(data)
+        try:
+            TrelloObjectAction.create_from_request(data)
+        except TrelloObject.DoesNotExist:
+            pass
         store.sync()
 
 
