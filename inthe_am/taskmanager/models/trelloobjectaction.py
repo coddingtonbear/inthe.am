@@ -27,6 +27,7 @@ class TrelloObjectAction(models.Model):
         occurred = parse(
             data['action']['date']
         ).replace(tzinfo=pytz.UTC)
+
         try:
             instance = cls.objects.create(
                 action_id=data['action']['id'],
