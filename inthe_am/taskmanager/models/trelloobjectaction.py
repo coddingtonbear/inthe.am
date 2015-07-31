@@ -52,6 +52,30 @@ class TrelloObjectAction(models.Model):
 
         return instance
 
+    def reconcile_updateCard(self):
+        # Run only for board events!
+        if not self.model.type == TrelloObject.BOARD:
+            return
+
+        card_data = (
+            self.meta.get('action', {})
+                .get('data', {})
+                .get('card', {})
+        )
+
+        if not card_data.get('closed', False):
+            return
+
+        try:
+            to = TrelloObject.objects.get(
+                id=card_data.get('id'),
+                store=self.model.store,
+            )
+            to.update_data()
+            to.reconcile()
+        except TrelloObject.DoesNotExist:
+            return
+
     def reconcile_createCard(self):
         # Run only for board events!
         if not self.model.type == TrelloObject.BOARD:
