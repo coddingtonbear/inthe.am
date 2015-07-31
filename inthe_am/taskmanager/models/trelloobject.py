@@ -207,7 +207,7 @@ class TrelloObject(models.Model):
         }
         if task.get('intheamtrellodescription'):
             kwargs['desc'] = task['intheamtrellodescription']
-        if task['status'] in ('waiting', 'closed', 'deleted', ):
+        if task['status'] in ('waiting', 'completed', 'deleted', ):
             return self.delete()
 
         # Set list if differs from current list
