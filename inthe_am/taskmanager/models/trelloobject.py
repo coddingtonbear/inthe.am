@@ -13,18 +13,11 @@ from django.db import models
 
 from ..exceptions import CheckpointNeeded
 from ..trello_utils import LABEL_COLORS, subscribe_to_updates
+from ..utils import OneWaySafeJSONEncoder
 from .taskstore import TaskStore
 
 
 logger = logging.getLogger(__name__)
-
-
-class OneWaySafeJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        try:
-            json.JSONEncoder.default(self, obj)
-        except:
-            return unicode(obj)
 
 
 class TrelloObject(models.Model):

@@ -34,6 +34,7 @@ from ..tasks import (
 )
 from ..taskstore_migrations import upgrade as upgrade_taskstore
 from ..taskwarrior_client import TaskwarriorClient
+from ..utils import OneWaySafeJSONEncoder
 from .taskrc import TaskRc
 from .metadata import Metadata
 from .taskstoreactivitylog import TaskStoreActivityLog
@@ -394,6 +395,7 @@ class TaskStore(models.Model):
         self, message, function=None,
         args=None, kwargs=None, pre_operation=False,
         rollback=False, checkpoint_id=None, force_commit=False,
+        data=None,
     ):
         self._simple_git_command('add', '-A')
         commit_message = render_to_string(
@@ -406,6 +408,12 @@ class TaskStore(models.Model):
                 'preop': pre_operation,
                 'rollback': rollback,
                 'checkpoint_id': checkpoint_id,
+                'data': json.dumps(
+                    data,
+                    indent=4,
+                    sort_keys=True,
+                    cls=OneWaySafeJSONEncoder,
+                )
             }
         )
     

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 def git_checkpoint(
     store, message, function=None, args=None, kwargs=None,
     sync=False, gc=True, notify_rollback=True,
-    emit_announcements=True,
+    emit_announcements=True, data=None
 ):
     lock_name = get_lock_name_for_store(store)
     pre_work_sha = store.repository.head()
@@ -81,6 +81,7 @@ def git_checkpoint(
                 args=args,
                 kwargs=kwargs,
                 checkpoint_id=checkpoint_id,
+                data=data,
             )
 
             end_head = store.repository.head()
