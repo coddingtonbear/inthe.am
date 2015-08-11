@@ -6,4 +6,4 @@
 * [pre_operation]: {% if preop %}True{% else %}False{% endif %}
 * [checkpoint_id]: {{ checkpoint_id }}
 
-{% if data %}{{data}}{% endif %}
+{% if data %}{{data|safe}}{% endif %}
