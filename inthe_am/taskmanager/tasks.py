@@ -391,7 +391,7 @@ def process_trello_action(self, store_id, data):
     from .models import TaskStore, TrelloObject, TrelloObjectAction
     store = TaskStore.objects.get(pk=store_id)
 
-    with git_checkpoint(store, 'Processing Trello Action'):
+    with git_checkpoint(store, 'Processing Trello Action', data=data):
         try:
             TrelloObjectAction.create_from_request(data)
         except TrelloObject.DoesNotExist:
