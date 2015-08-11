@@ -428,17 +428,21 @@ def update_trello(self, store_id, debounce_id=None):
         )
         return
 
-    with git_checkpoint(store, "Create trello records for changed tasks."):
-        ending_head = store.repository.head()
-        starting_head = store.trello_local_head
-
+    ending_head = store.repository.head()
+    starting_head = store.trello_local_head
+    changed_ids = store.get_changed_task_ids(
+        ending_head,
+        start=starting_head
+    )
+    with git_checkpoint(
+        store,
+        "Create trello records for changed tasks.",
+        data=changed_ids,
+    ):
         todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
         requires_post_sync = False
 
-        for task_id in store.get_changed_task_ids(
-            ending_head,
-            start=starting_head
-        ):
+        for task_id in changed_ids:
             try:
                 task = store.client.filter_tasks({
                     'uuid': task_id,
