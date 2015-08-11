@@ -478,7 +478,6 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
             pass
 
         if request.method == 'POST':
-            store.sync_trello()
             process_trello_action.apply_async(
                 args=(store.pk, json.loads(request.body.decode('utf-8')))
             )
