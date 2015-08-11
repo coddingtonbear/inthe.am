@@ -67,6 +67,7 @@ def git_checkpoint(
                 kwargs=kwargs,
                 pre_operation=True,
                 checkpoint_id=checkpoint_id,
+                data=data,
             )
             yield
             # We need to force taskw to garbage collect after engaging
