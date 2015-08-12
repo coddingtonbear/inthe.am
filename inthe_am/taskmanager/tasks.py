@@ -463,6 +463,15 @@ def update_trello(self, store_id, debounce_id=None):
             try:
                 obj = TrelloObject.objects.get(pk=task.get('intheamtrelloid'))
             except TrelloObject.DoesNotExist:
+                if task.get('intheamtrelloid'):
+                    logger.warning(
+                        "Unable to update task %s; assigned trello object "
+                        " %s is not tracked.  This should not happen.",
+                        task.get('uuid'),
+                        task.get('intheamtrelloid'),
+                    )
+                    continue
+
                 obj = TrelloObject.create(
                     store=store,
                     type=TrelloObject.CARD,
