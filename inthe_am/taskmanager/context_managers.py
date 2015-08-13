@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 @contextmanager
 def git_checkpoint(
     store, message, function=None, args=None, kwargs=None,
-    sync=False, gc=True, notify_rollback=True,
+    sync=None, gc=True, notify_rollback=True,
     emit_announcements=True, data=None
 ):
     lock_name = get_lock_name_for_store(store)
@@ -33,6 +33,8 @@ def git_checkpoint(
         raise NestedCheckpointError(exception_message)
     store._active_checkpoint = message
 
+    start_head = None
+    end_head = None
     with redis_lock(lock_name, message=message):
         start_head = store.repository.head()
         git_index_lock_path = os.path.join(
@@ -155,5 +157,11 @@ def git_checkpoint(
 
     delattr(store, '_active_checkpoint')
 
-    if sync:
+    if sync is True:
         store.sync()
+    elif sync is None and start_head and end_head:
+        changed_task_ids = store.get_changed_task_ids(
+            end_head, start=start_head
+        )
+        if changed_task_ids:
+            store.sync()

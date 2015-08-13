@@ -272,7 +272,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
         )
         return
 
-    with git_checkpoint(store, 'Reconciling trello board'):
+    with git_checkpoint(store, 'Reconciling trello board', sync=False):
         store.trello_board.reconcile()
 
     open_local_tasks = {
@@ -280,7 +280,9 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
             'status': 'pending'
         })
     }
-    with git_checkpoint(store, 'Deleting non-pending tasks from trello'):
+    with git_checkpoint(
+        store, 'Deleting non-pending tasks from trello', sync=False
+    ):
         for task in store.client.filter_tasks({
             'intheamtrelloid.any': None,
             'or': [
@@ -307,7 +309,8 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
     to_reconcile = []
     with git_checkpoint(
         store,
-        'Adding pending tasks to Trello & deleting tasks remotely deleted'
+        'Adding pending tasks to Trello & deleting tasks remotely deleted',
+        sync=False,
     ):
         todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
         for task in open_local_tasks.values():
@@ -355,7 +358,8 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
 
     with git_checkpoint(
         store,
-        'Add local tasks to match tasks created in Trello'
+        'Add local tasks to match tasks created in Trello',
+        sync=False,
     ):
         for task in open_trello_cards.values():
             name = task.get('name')
@@ -398,7 +402,6 @@ def process_trello_action(self, store_id, data, **kwargs):
                 TrelloObjectAction.create_from_request(data)
             except TrelloObject.DoesNotExist:
                 pass
-            store.sync()
     except LockTimeout as e:
         raise self.retry(exc=e)
 
@@ -444,7 +447,6 @@ def update_trello(self, store_id, debounce_id=None, **kwargs):
         data=changed_ids,
     ):
         todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
-        requires_post_sync = False
 
         for task_id in changed_ids:
             try:
@@ -522,13 +524,9 @@ def update_trello(self, store_id, debounce_id=None, **kwargs):
                 task['intheamtrelloid'] = ''
 
             store.client.task_update(task)
-            requires_post_sync = True
 
         store.trello_local_head = ending_head
         store.save()
-
-    if requires_post_sync:
-        store.sync()
 
 
 @shared_task(
