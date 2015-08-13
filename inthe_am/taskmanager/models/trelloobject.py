@@ -50,6 +50,7 @@ class TrelloObject(models.Model):
     type = models.CharField(choices=TYPE_CHOIES, max_length=10)
     meta = JSONField()
     log = JSONField(null=True, blank=True)
+    deleted = models.BooleanField(default=False)
 
     last_action = models.DateTimeField(null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
@@ -266,7 +267,13 @@ class TrelloObject(models.Model):
             type=type,
             meta=meta,
         )
-        instance.add_log_data("Instance created.")
+        instance.add_log_data(
+            "Instance created",
+            data={
+                'meta': meta,
+                'head': store.repository.head(),
+            }
+        )
         instance.subscribe()
         return instance
 
@@ -325,13 +332,15 @@ class TrelloObject(models.Model):
     def delete(self, *args, **kwargs):
         try:
             self.add_log_data("Deleting record.")
-            self.client.update_closed(self.id, 'true')
+            if not self.deleted:
+                self.client.update_closed(self.id, 'true')
+                self.deleted = True
+                self.save()
         except Exception as e:
             logger.exception(
                 'Error encountered while deleting remote Trello object: %s',
                 str(e)
             )
-        super(TrelloObject, self).delete(*args, **kwargs)
 
     def __unicode__(self):
         return u'Trello {type} #{id} ({user})'.format(

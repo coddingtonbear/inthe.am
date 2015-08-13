@@ -13,7 +13,7 @@ from django.utils.timezone import now
 from django_mailbox.models import Message
 
 from .context_managers import git_checkpoint
-from .lock import get_debounce_name_for_store, get_lock_redis
+from .lock import get_debounce_name_for_store, get_lock_redis, LockTimeout
 
 
 logger = logging.getLogger(__name__)
@@ -28,12 +28,11 @@ def project_setup_logging(loglevel, logfile, format, colorize, **kwargs):
 
 @shared_task(
     bind=True,
-    soft_time_limit=30,
-    time_limit=45,
-    default_retry_delay=60,
-    max_retries=10,  # We should always stop at two, anyway
+    time_limit=120,
+    default_retry_delay=120,
+    max_retries=10,
 )
-def sync_repository(self, store_id, debounce_id=None):
+def sync_repository(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore
     store = TaskStore.objects.get(pk=store_id)
     try:
@@ -234,10 +233,10 @@ def process_email_message(self, message_id):
 
 @shared_task(
     bind=True,
-    max_retries=10,
     default_retry_delay=60,
+    max_retries=10,
 )
-def sync_trello_tasks(self, store_id, debounce_id=None):
+def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore, TrelloObject
     store = TaskStore.objects.get(pk=store_id)
     client = get_lock_redis()
@@ -386,25 +385,30 @@ def sync_trello_tasks(self, store_id, debounce_id=None):
 
 @shared_task(
     bind=True,
+    default_retry_delay=30,
+    max_retries=10,
 )
-def process_trello_action(self, store_id, data):
+def process_trello_action(self, store_id, data, **kwargs):
     from .models import TaskStore, TrelloObject, TrelloObjectAction
     store = TaskStore.objects.get(pk=store_id)
 
-    with git_checkpoint(store, 'Processing Trello Action', data=data):
-        try:
-            TrelloObjectAction.create_from_request(data)
-        except TrelloObject.DoesNotExist:
-            pass
-        store.sync()
+    try:
+        with git_checkpoint(store, 'Processing Trello Action', data=data):
+            try:
+                TrelloObjectAction.create_from_request(data)
+            except TrelloObject.DoesNotExist:
+                pass
+            store.sync()
+    except LockTimeout as e:
+        raise self.retry(exc=e)
 
 
 @shared_task(
     bind=True,
+    default_retry_delay=30,
     max_retries=10,
-    default_retry_delay=15
 )
-def update_trello(self, store_id, debounce_id=None):
+def update_trello(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore, TrelloObject
     store = TaskStore.objects.get(pk=store_id)
     client = get_lock_redis()
@@ -529,10 +533,10 @@ def update_trello(self, store_id, debounce_id=None):
 
 @shared_task(
     bind=True,
+    default_retry_delay=30,
     max_retries=10,
-    default_retry_delay=15
 )
-def synchronize_bugwarrior(self, store_id, debounce_id=None):
+def synchronize_bugwarrior(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore
     store = TaskStore.objects.get(pk=store_id)
     client = get_lock_redis()
