@@ -411,7 +411,9 @@ def process_trello_action(self, store_id, data, **kwargs):
     default_retry_delay=30,
     max_retries=10,
 )
-def update_trello(self, store_id, debounce_id=None, **kwargs):
+def update_trello(
+    self, store_id, debounce_id=None, current_head=None, **kwargs
+):
     from .models import TaskStore, TrelloObject
     store = TaskStore.objects.get(pk=store_id)
     client = get_lock_redis()
@@ -475,6 +477,9 @@ def update_trello(self, store_id, debounce_id=None, **kwargs):
                         " %s is not tracked.  This should not happen.",
                         task.get('uuid'),
                         task.get('intheamtrelloid'),
+                        extra={
+                            'stack': True,
+                        }
                     )
                     continue
 
