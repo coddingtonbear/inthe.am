@@ -225,6 +225,7 @@ class TaskStore(models.Model):
             args=(self.pk, ),
             kwargs={
                 'debounce_id': defined_debounce_id,
+                'current_head': self.repository.head(),
             }
         )
 
@@ -515,6 +516,7 @@ class TaskStore(models.Model):
             args=(self.pk, ),
             kwargs={
                 'debounce_id': defined_debounce_id,
+                'current_head': self.repository.head(),
             }
         )
 
@@ -558,6 +560,7 @@ class TaskStore(models.Model):
                 args=(self.pk, ),
                 kwargs={
                     'debounce_id': defined_debounce_id,
+                    'current_head': self.repository.head(),
                 }
             )
         else:
@@ -618,6 +621,7 @@ class TaskStore(models.Model):
 
             if (
                 self.trello_auth_token and
+                self.trello_board and
                 (
                     not self.trello_local_head or
                     self.get_changed_task_ids(
