@@ -59,14 +59,11 @@ INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
     'django_behave',
     'storages',
-    'profiler',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'profiler.middleware.ProfilerMiddleware',
-    'profiler.middleware.StatProfMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
