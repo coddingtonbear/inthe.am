@@ -14,7 +14,7 @@ def logout_and_redirect(request):
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-    #url(r'^accounts/', include('django.contrib.auth.urls')),
+    url(r'^profiler/', include('profiler.urls')),
     url('^logout/', logout_and_redirect, name='logout'),
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('inthe_am.taskmanager.urls')),
