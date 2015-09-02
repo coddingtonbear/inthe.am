@@ -38,4 +38,3 @@ jsonfield==1.0.3
 icalendar==3.9.0
 -e git+https://github.com/coddingtonbear/bugwarrior.git@inthe.am#egg=bugwarrior
 jira==0.47
-django-speedbar==0.1.3
