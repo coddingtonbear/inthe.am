@@ -59,9 +59,11 @@ INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
     'django_behave',
     'storages',
+    'speedbar',
 )
 
 MIDDLEWARE_CLASSES = (
+    'speedbar.middleware.SpeedbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -368,6 +370,9 @@ ANNOUNCEMENTS_CHANNEL = '__general__'
 
 # Streaming ticket updates enabled?
 STREAMING_UPDATES_ENABLED = True
+
+SPEEDBAR_ENABLE = True
+SPEEDBAR_TRACE = True
 
 # Must be sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
