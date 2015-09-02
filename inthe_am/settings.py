@@ -63,7 +63,6 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'silk.middleware.SilkyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -371,6 +370,7 @@ ANNOUNCEMENTS_CHANNEL = '__general__'
 # Streaming ticket updates enabled?
 STREAMING_UPDATES_ENABLED = True
 
+SILKY_ENABLED = True
 SILKY_PYTHON_PROFILER = True
 SILKY_AUTHENTICATION = True  # User must login
 SILKY_AUTHORISATION = True  # User must have permissions
@@ -416,3 +416,9 @@ DATABASES = {
         'PORT': DATABASE_PORT
     }
 }
+
+if SILKY_ENABLED:
+    MIDDLEWARE_CLASSES.insert(
+        0,
+        'silk.middleware.SilkyMiddleware',
+    )
