@@ -374,6 +374,8 @@ SILKY_ENABLED = True
 #SILKY_PYTHON_PROFILER = True
 SILKY_AUTHENTICATION = True  # User must login
 SILKY_AUTHORISATION = True  # User must have permissions
+SILKY_MAX_REQUEST_BODY_SIZE = 1024  # Silk takes anything <0 as no limit
+SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # If response body>1024kb, ignore
 
 # Must be sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
