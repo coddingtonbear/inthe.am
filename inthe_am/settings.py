@@ -370,7 +370,7 @@ ANNOUNCEMENTS_CHANNEL = '__general__'
 # Streaming ticket updates enabled?
 STREAMING_UPDATES_ENABLED = True
 
-SILKY_ENABLED = True
+SILKY_ENABLED = False
 #SILKY_PYTHON_PROFILER = True
 SILKY_AUTHENTICATION = True  # User must login
 SILKY_AUTHORISATION = True  # User must have permissions
