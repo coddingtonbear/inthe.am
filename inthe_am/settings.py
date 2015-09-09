@@ -139,10 +139,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-        },
         'exception_log': {
             'level': 'WARNING',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -204,11 +200,6 @@ LOGGING = {
             'handlers': ['null'],
             'propagate': True,
             'level': 'INFO',
-        },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'INFO',
-            'propagate': True,
         },
         'gunicorn': {
             'handlers': ['null'],
