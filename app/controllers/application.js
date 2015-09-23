@@ -18,6 +18,7 @@ var controller = Ember.Controller.extend({
         'alt+n': 'show_create_task',
 
         'alt+r': 'refresh',
+        'alt+b': 'bugwarrior_sync',
 
         'alt+s': 'start_or_stop',
         'alt+a': 'add_annotation',
@@ -535,6 +536,10 @@ var controller = Ember.Controller.extend({
             }.bind(this), function(){
                 this.hideLoading();
             }.bind(this));
+        },
+        bugwarrior_sync: function(){
+            var configController = this.get('controllers.configure');
+            configController.send('schedule_bugwarrior_synchronization');
         },
         home: function(){
             window.location = '/';
