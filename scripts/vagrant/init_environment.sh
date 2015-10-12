@@ -112,13 +112,28 @@ if [ $? -ne 0 ]; then
     cp /var/taskd/src/task-2.3.0/task_2.3.0-1*.deb /tmp
 fi
 
-cd $MAIN_DIR
-npm install -g ember-cli@0.1.7 bower@1.3.12
-ember install
-npm install
-bower --config.interactive=false install --allow-root
+# copy MAIN_DIR into a temp folder and run npm there
+# to avoid EPERM errors on NFS shared folders in vagrant
+# See: https://github.com/npm/npm/issues/3565
+cd $STARTING_DIR
+cp -a $MAIN_DIR /tmp/twweb
+chown -R vagrant. /tmp/twweb
+cd /tmp/twweb
 
+echo "installing ember-cli and bower"
+npm install -g ember-cli bower
+echo "running npm install"
+npm install
+echo "running bower install"
+bower --config.interactive=false install --allow-root
+echo "running ember install"
+ember install
+echo "running ember build"
 ember build
+
+# Sync back node_modules to original place
+rsync --recursive --links --times /tmp/twweb/ $MAIN_DIR/
+cd $MAIN_DIR
 
 # Install requirements
 source /var/www/envs/twweb/bin/activate
