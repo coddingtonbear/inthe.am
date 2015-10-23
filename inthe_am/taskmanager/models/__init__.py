@@ -7,6 +7,7 @@ from .trelloobjectaction import TrelloObjectAction
 from .usermetadata import UserMetadata
 from .bugwarriorconfig import BugwarriorConfig
 from .bugwarriorconfigrunlog import BugwarriorConfigRunLog
+from .taskstoreactivity import TaskStoreActivity
 
 
 # This *must* be at the bottom of *this* file for complicated reasons

@@ -37,3 +37,5 @@ bin/*
 environment_variables.sh
 ghostdriver.log
 docs/_build
+pip-selfcheck.json
+tags

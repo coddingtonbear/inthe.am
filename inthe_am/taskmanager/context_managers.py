@@ -5,12 +5,27 @@ import traceback
 import uuid
 
 from django.conf import settings
+from django.utils.timezone import now
 
 from .exceptions import NestedCheckpointError
 from .lock import get_lock_name_for_store, redis_lock
+from .models import TaskStoreActivity
 
 
 logger = logging.getLogger(__name__)
+
+
+@contextmanager
+def timed_activity(store, activity):
+    record = TaskStoreActivity.objects.create(
+        store=store,
+        activity=activity,
+    )
+
+    yield record
+
+    record.duration_seconds = (now() - record.started).total_seconds()
+    record.save()
 
 
 @contextmanager
@@ -74,7 +89,8 @@ def git_checkpoint(
                 checkpoint_id=checkpoint_id,
                 data=data,
             )
-            yield
+            with timed_activity(store, message):
+                yield
             # We need to force taskw to garbage collect after engaging
             # in operations that might alter the task ID#s, otherwise
             # they'll hang out as uncommitted changes until the next

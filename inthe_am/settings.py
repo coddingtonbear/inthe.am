@@ -42,7 +42,7 @@ ALLOWED_HOSTS = [
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,17 +59,17 @@ INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
     'django_behave',
     'storages',
-    'silk',
-)
+]
 
-MIDDLEWARE_CLASSES = (
+
+MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+]
 
 AUTHENTICATION_BACKENDS = (
     'social.backends.google.GoogleOAuth2',
@@ -361,13 +361,6 @@ ANNOUNCEMENTS_CHANNEL = '__general__'
 # Streaming ticket updates enabled?
 STREAMING_UPDATES_ENABLED = True
 
-SILKY_ENABLED = True
-#SILKY_PYTHON_PROFILER = True
-SILKY_AUTHENTICATION = True  # User must login
-SILKY_AUTHORISATION = True  # User must have permissions
-SILKY_MAX_REQUEST_BODY_SIZE = 1024  # Silk takes anything <0 as no limit
-SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # If response body>1024kb, ignore
-
 # Must be sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
@@ -409,9 +402,3 @@ DATABASES = {
         'PORT': DATABASE_PORT
     }
 }
-
-if SILKY_ENABLED:
-    MIDDLEWARE_CLASSES.insert(
-        0,
-        'silk.middleware.SilkyMiddleware',
-    )

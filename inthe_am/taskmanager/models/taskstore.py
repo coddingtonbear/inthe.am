@@ -20,7 +20,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 
-from ..context_managers import git_checkpoint
+from ..context_managers import git_checkpoint, timed_activity
 from ..lock import (
     get_debounce_name_for_store,
     get_lock_name_for_store,
