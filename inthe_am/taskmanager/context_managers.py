@@ -9,7 +9,6 @@ from django.utils.timezone import now
 
 from .exceptions import NestedCheckpointError
 from .lock import get_lock_name_for_store, redis_lock
-from .models import TaskStoreActivity
 
 
 logger = logging.getLogger(__name__)
@@ -17,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 @contextmanager
 def timed_activity(store, activity):
+    from .models import TaskStoreActivity
+
     record = TaskStoreActivity.objects.create(
         store=store,
         activity=activity,
