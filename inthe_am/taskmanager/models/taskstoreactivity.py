@@ -17,7 +17,7 @@ class TaskStoreActivity(models.Model):
     started = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if not self.started:
+        if not self.started and self.duration_seconds:
             self.started = (
                 now() - datetime.timedelta(seconds=self.duration_seconds)
             )
