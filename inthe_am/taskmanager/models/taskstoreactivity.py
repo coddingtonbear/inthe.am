@@ -11,9 +11,7 @@ class TaskStoreActivity(models.Model):
     error = models.BooleanField(default=True)
     message = models.TextField()
 
-    duration_seconds = models.PositiveIntegerField(
-        null=True
-    )
+    duration_seconds = models.FloatField(null=True)
 
     updated = models.DateTimeField(auto_now=True)
     started = models.DateTimeField(auto_now_add=True)
