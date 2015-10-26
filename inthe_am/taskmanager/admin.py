@@ -318,7 +318,7 @@ admin.site.register(BugwarriorConfigRunLog, BugwarriorConfigRunLogAdmin)
 
 class TaskStoreActivityAdmin(admin.ModelAdmin):
     list_display = (
-        'store', 'activity', 'error', 'duration_seconds', 'created',
+        'store', 'activity', 'error', 'duration_seconds', 'started',
     )
     raw_id_fields = ('store', )
     list_filter = ('activity', )
