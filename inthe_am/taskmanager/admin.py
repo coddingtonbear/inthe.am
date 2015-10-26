@@ -12,6 +12,7 @@ from .models import (
     BugwarriorConfigRunLog,
     TaskAttachment,
     TaskStore,
+    TaskStoreActivity,
     TaskStoreActivityLog,
     TrelloObject,
     TrelloObjectAction,
@@ -313,3 +314,16 @@ class BugwarriorConfigRunLogAdmin(admin.ModelAdmin):
     search_fields = ('config__store__user__username', )
 
 admin.site.register(BugwarriorConfigRunLog, BugwarriorConfigRunLogAdmin)
+
+
+class TaskStoreActivityAdmin(admin.ModelAdmin):
+    list_display = (
+        'store', 'activity', 'error', 'duration_seconds', 'created',
+    )
+    raw_id_fields = ('store', )
+    list_filter = ('activity', )
+    ordering = ('-updated', )
+    search_fields = ('store__user__username', 'message', )
+
+
+admin.site.register(TaskStoreActivity, TaskStoreActivityAdmin)
