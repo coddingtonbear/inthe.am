@@ -174,6 +174,9 @@ var controller = Ember.Controller.extend({
             }).then(function(){
                 this.get('controllers.application').update_user_info();
                 this.success_message("Trello settings successfully reset.");
+                setTimeout(function(){
+                    window.location.reload();
+                }, 3000);
             }.bind(this), function(msg){
                 this.error_message(
                     `An error was encountered while ` +
