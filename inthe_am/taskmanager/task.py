@@ -26,7 +26,10 @@ class Task(object):
         if self._store:
             blocks = self._store.client.filter_tasks({
                 'depends.contains': uuid,
-                'status': 'pending',
+                'or': [
+                    ('status', 'pending'),
+                    ('status', 'waiting'),
+                ]
             })
             return [b['uuid'] for b in blocks]
         return []
