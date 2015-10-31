@@ -44,12 +44,15 @@ class TaskStoreActivity(models.Model):
         all_durations = [
             v['duration'] for v in metadata['taskwarrior']['execute']
         ]
-        metadata['taskwarrior']['statistics'] = {
-            'max': max(all_durations),
-            'min': min(all_durations),
-            'stddev': statistics.stdev(all_durations),
-            'mean': statistics.mean(all_durations),
-        }
+        stats = {}
+        if len(all_durations) > 1:
+            stats.update({
+                'max': max(all_durations),
+                'min': min(all_durations),
+                'stdev': statistics.stdev(all_durations),
+                'mean': statistics.mean(all_durations),
+            })
+        metadata['taskwarrior']['statistics'] = stats
 
         self.metadata = metadata
 
