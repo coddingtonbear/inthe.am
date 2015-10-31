@@ -201,6 +201,11 @@ class TaskStore(models.Model):
                         "callback: %s",
                         e
                     )
+        else:
+            logger.error(
+                "Unknown client message type %s",
+                name,
+            )
 
     @property
     def api_key(self):

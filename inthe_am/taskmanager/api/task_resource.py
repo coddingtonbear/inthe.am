@@ -31,7 +31,7 @@ from django.http import (
 
 from .. import models
 from ..api_fields import UUIDField
-from ..context_managers import git_checkpoint
+from ..context_managers import git_checkpoint, timed_activity
 from ..lock import get_lock_name_for_store, get_lock_redis
 from ..decorators import (
     git_managed,
@@ -911,16 +911,21 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
         filters.update(kwargs)
 
         objects = []
-        for task_json in store.client.filter_tasks({'status': self.TASK_TYPE}):
-            task = Task(task_json, store=store)
-            if self.passes_filters(task, filters):
-                objects.append(task)
+        with timed_activity(store, "Get task list"):
+            for task_json in store.client.filter_tasks(
+                {'status': self.TASK_TYPE}
+            ):
+                task = Task(task_json, store=store)
+                if self.passes_filters(task, filters):
+                    objects.append(task)
 
         return objects
 
     @requires_task_store
     def obj_get(self, bundle, store, **kwargs):
-        task = store.client.get_task(uuid=kwargs['pk'])[1]
+        with timed_activity(store, "Get task by ID"):
+            task = store.client.get_task(uuid=kwargs['pk'])[1]
+
         if not task:
             repository_head = store.repository.head()
             logger.warning(
