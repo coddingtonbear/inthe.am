@@ -192,7 +192,7 @@ class TaskStore(models.Model):
             if not hasattr(self, '_metadata_callbacks'):
                 return
 
-            for callback in self._metadata_callbacks:
+            for callback in self._metadata_callbacks.values():
                 try:
                     callback(*args, **kwargs)
                 except Exception as e:
