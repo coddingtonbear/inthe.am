@@ -21,11 +21,16 @@ class TaskStoreActivity(models.Model):
     started = models.DateTimeField(auto_now_add=True)
 
     def add_message_line(self, message):
+        if self.message is None:
+            self.message = ''
+
         message = message.strip()
         self.message = self.message + message + '\n'
 
     def handle_metadata_message(self, variant, *args, **kwargs):
         metadata = self.metadata
+        if metadata is None:
+            metadata = {}
 
         if variant == 'taskwarrior.execute':
             if 'taskwarrior' not in metadata:
