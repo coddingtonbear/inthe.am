@@ -23,7 +23,33 @@ def timed_activity(store, activity):
         activity=activity,
     )
 
+    def add_message_to_activity(message, *params):
+        try:
+            record.add_message_line(message % params)
+        except Exception:
+            logger.exception(
+                "Error formatting logging message: %s %% %s",
+                message,
+                params,
+            )
+
+    def add_metadata_to_activity(variant, *params):
+        try:
+            record.handle_metadata_message(variant, *params)
+        except Exception:
+            logger.exception(
+                "Error handling metadata message: %s %s",
+                variant,
+                params,
+            )
+
+    uid = store.register_logging_callback(add_message_to_activity)
+    m_uid = store.register_metadata_callback(add_metadata_to_activity)
+
     yield record
+
+    store.unregister_logging_callback(uid)
+    store.unregister_metadata_callback(m_uid)
 
     record.duration_seconds = (now() - record.started).total_seconds()
     record.save()

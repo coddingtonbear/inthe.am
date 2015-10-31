@@ -180,9 +180,27 @@ class TaskStore(models.Model):
         if not getattr(self, '_client', None):
             self._client = TaskwarriorClient(
                 self.taskrc.path,
-                config_overrides=settings.TASKWARRIOR_CONFIG_OVERRIDES
+                config_overrides=settings.TASKWARRIOR_CONFIG_OVERRIDES,
+                store=self,  # Note that this will be a weak reference
             )
         return self._client
+
+    def receive_client_message(self, name, *args, **kwargs):
+        if name == 'log':
+            self._log_entry(*args, **kwargs)
+        elif name == 'metadata':
+            if not hasattr(self, '_metadata_callbacks'):
+                return
+
+            for callback in self._metadata_callbacks.values():
+                try:
+                    callback(*args, **kwargs)
+                except Exception as e:
+                    logger.exception(
+                        "Error encountered while processing metadata "
+                        "callback: %s",
+                        e
+                    )
 
     @property
     def api_key(self):
@@ -793,9 +811,44 @@ class TaskStore(models.Model):
             out.write(cert)
         return cert_filename
 
+    def register_metadata_callback(self, callback):
+        if not hasattr(self, '_metadata_callbacks'):
+            self._metadata_callbacks = {}
+
+        random_uuid = str(uuid.uuid4())
+        self._metadata_callbacks[random_uuid] = callback
+
+        return random_uuid
+
+    def unregister_metadata_callback(self, uid):
+        del self._metadata_callbacks[uid]
+
+    def register_logging_callback(self, callback):
+        if not hasattr(self, '_logging_callbacks'):
+            self._logging_callbacks = {}
+
+        random_uuid = str(uuid.uuid4())
+        self._logging_callbacks[random_uuid] = callback
+
+        return random_uuid
+
+    def unregister_logging_callback(self, uid):
+        del self._logging_callbacks[uid]
+
     def _log_entry(self, message, error=False, params=None, silent=False):
         if params is None:
             params = []
+
+        if hasattr(self, '_logging_callbacks'):
+            for callback in self._logging_callbacks.values():
+                try:
+                    callback(message, *params)
+                except Exception as e:
+                    logger.exception(
+                        "Error invoking logging callback: %s",
+                        e
+                    )
+
         message_hash = hashlib.md5(
             self.local_path + message % params
         ).hexdigest()
