@@ -1,7 +1,7 @@
 import datetime
 
+from backports import statistics
 from jsonfield import JSONField
-import statistics
 
 from django.db import models
 from django.utils.timezone import now
