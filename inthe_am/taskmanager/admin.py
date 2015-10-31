@@ -322,8 +322,8 @@ class ActivityStatusListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ('yes', 'Include', )
-            ('no', 'Exclude', )
+            ('yes', 'Include', ),
+            ('no', 'Exclude', ),
         )
 
     def queryset(self, request, queryset):
@@ -334,7 +334,7 @@ class ActivityStatusListFilter(admin.SimpleListFilter):
         )
 
 
-class TaskStoreActivityAdmin(admin.ModelAdmin):
+class TaskStoreActivityAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     list_display = (
         'store', 'activity', 'error', 'duration_seconds', 'started',
     )
@@ -342,6 +342,9 @@ class TaskStoreActivityAdmin(admin.ModelAdmin):
     list_filter = (ActivityStatusListFilter, 'activity', )
     ordering = ('-updated', )
     search_fields = ('store__user__username', 'message', )
+    default_filters = {
+        'failed_incomplete': 'no',
+    }
 
 
 admin.site.register(TaskStoreActivity, TaskStoreActivityAdmin)
