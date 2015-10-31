@@ -10,7 +10,7 @@ from django.utils.timezone import now
 class TaskStoreActivity(models.Model):
     store = models.ForeignKey('TaskStore', related_name='syncs')
     activity = models.CharField(max_length=255)
-    metadata_version = models.CharField(max_length=10, default='v4')
+    metadata_version = models.CharField(max_length=10, default='v5')
 
     message = models.TextField(blank=True)
     metadata = JSONField(null=True, blank=True)
@@ -51,6 +51,7 @@ class TaskStoreActivity(models.Model):
                 'min': min(all_durations),
                 'stdev': statistics.stdev(all_durations),
                 'mean': statistics.mean(all_durations),
+                'sum': sum(all_durations),
             })
         metadata['taskwarrior']['statistics'] = stats
 
