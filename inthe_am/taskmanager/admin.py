@@ -316,12 +316,30 @@ class BugwarriorConfigRunLogAdmin(admin.ModelAdmin):
 admin.site.register(BugwarriorConfigRunLog, BugwarriorConfigRunLogAdmin)
 
 
+class ActivityStatusListFilter(admin.SimpleListFilter):
+    title = 'failed/incomplete'
+    parameter_name = 'failed_incomplete'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', 'Include', )
+            ('no', 'Exclude', )
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset
+        return queryset.exclude(
+            duration_seconds=None
+        )
+
+
 class TaskStoreActivityAdmin(admin.ModelAdmin):
     list_display = (
         'store', 'activity', 'error', 'duration_seconds', 'started',
     )
     raw_id_fields = ('store', )
-    list_filter = ('activity', )
+    list_filter = (ActivityStatusListFilter, 'activity', )
     ordering = ('-updated', )
     search_fields = ('store__user__username', 'message', )
 
