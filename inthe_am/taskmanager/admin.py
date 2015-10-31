@@ -322,16 +322,15 @@ class ActivityStatusListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ('yes', 'Include', ),
-            ('no', 'Exclude', ),
+            ('no', 'Exclude Failed/Incomplete', ),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset
-        return queryset.exclude(
-            duration_seconds=None
-        )
+        if self.value() == 'no':
+            return queryset.exclude(
+                duration_seconds=None
+            )
+        return queryset
 
 
 class TaskStoreActivityAdmin(DefaultFilterMixIn, admin.ModelAdmin):
