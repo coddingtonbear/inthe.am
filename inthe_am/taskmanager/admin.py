@@ -335,10 +335,11 @@ class ActivityStatusListFilter(admin.SimpleListFilter):
 
 class TaskStoreActivityAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     list_display = (
-        'store', 'activity', 'error', 'duration_seconds', 'started',
+        'store', 'metadata_version', 'activity',
+        'duration_seconds', 'started',
     )
     raw_id_fields = ('store', )
-    list_filter = (ActivityStatusListFilter, 'activity', )
+    list_filter = (ActivityStatusListFilter, 'metadata_version', 'activity', )
     ordering = ('-updated', )
     search_fields = ('store__user__username', 'message', )
     default_filters = {

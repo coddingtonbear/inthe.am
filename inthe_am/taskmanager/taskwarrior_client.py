@@ -1,8 +1,11 @@
 import curses.ascii
+import datetime
 import json
 import logging
+import pipes
 import subprocess
 import uuid
+import weakref
 
 import six
 from taskw import TaskWarriorShellout
@@ -19,7 +22,19 @@ class TaskwarriorError(Exception):
 
 class TaskwarriorClient(TaskWarriorShellout):
     def __init__(self, *args, **kwargs):
+        self.store = None
+        if 'store' in kwargs:
+            self.store = weakref.proxy(kwargs.pop('store'))
         super(TaskwarriorClient, self).__init__(*args, marshal=True, **kwargs)
+
+    def send_client_message(self, name, *args, **kwargs):
+        if not self.store:
+            return
+
+        try:
+            self.store.receive_client_message(name, *args, **kwargs)
+        except weakref.ReferenceError:
+            pass
 
     def _get_acceptable_properties(self):
         return TaskwTask.FIELDS.keys() + self.config.get_udas().keys()
@@ -103,6 +118,8 @@ class TaskwarriorClient(TaskWarriorShellout):
             if isinstance(command[i], six.text_type):
                 command[i] = command[i].encode('utf-8')
 
+        started = datetime.datetime.now()
+
         proc = subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
@@ -110,6 +127,26 @@ class TaskwarriorClient(TaskWarriorShellout):
         )
 
         stdout, stderr = proc.communicate()
+
+        total_seconds = (datetime.datetime.now() - started).total_seconds()
+
+        self.send_client_message(
+            'metadata',
+            'taskwarrior.execute',
+            {
+                'command': ' '.join(
+                    pipes.quote(c.decode('utf-8')) for c in command
+                ),
+                'arguments': ' '.join(
+                    pipes.quote(six.text_type(arg)) for arg in args
+                ),
+                'stderr': stderr,
+                'stdout': stdout,
+                'returncode': proc.returncode,
+                'duration': total_seconds,
+            }
+        )
+
         if proc.returncode != 0:
             logger.error(
                 'Non-zero return code returned from taskwarrior: %s; %s' % (
