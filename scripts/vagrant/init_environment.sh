@@ -61,7 +61,6 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     TASKD_VERSION="taskd-1.0.0"
     echo "installing $TASKD_VERSION and setup certificates"
     mkdir -p $TWWEB_TASKD_DATA/src
-    sudo chown -R vagrant. $TWWEB_TASKD_DATA
     cd $TWWEB_TASKD_DATA/src
 
     wget -nv http://taskwarrior.org/download/$TASKD_VERSION.tar.gz
@@ -103,8 +102,6 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     cp $MAIN_DIR/scripts/vagrant/simple_taskd_configuration.conf /var/taskd/config
     cp $MAIN_DIR/scripts/vagrant/certificate_signing_template.template /var/taskd/cert.template
 
-    sudo chown -R vagrant:vagrant $TASKDDATA
-
     if [ -z "$TRAVIS" ]; then
         service taskd start
     fi
@@ -131,7 +128,6 @@ fi
 # See: https://github.com/npm/npm/issues/3565
 cd $STARTING_DIR
 cp -a $MAIN_DIR /tmp/twweb
-chown -R vagrant. /tmp/twweb
 cd /tmp/twweb
 
 echo "installing ember-cli and bower"
