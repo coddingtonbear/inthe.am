@@ -445,9 +445,6 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 task['intheamtrellolistid'] = ''
                 store.client.task_update(task)
 
-        for obj in models.TrelloObject.objects.filter(store=store):
-            obj.delete()
-
         return HttpResponse(
             json.dumps({
                 'message': 'OK',
