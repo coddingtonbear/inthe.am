@@ -222,6 +222,7 @@ class TaskStore(models.Model):
             return TrelloObject.objects.get(
                 store=self,
                 type=TrelloObject.BOARD,
+                deleted=False,
             )
         except TrelloObject.DoesNotExist:
             return None

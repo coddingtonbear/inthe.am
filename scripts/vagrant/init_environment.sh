@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 STARTING_DIR=$(pwd)
 MAIN_DIR=/var/www/twweb
 if [ ! -z "$TRAVIS" ]; then
@@ -5,6 +8,7 @@ if [ ! -z "$TRAVIS" ]; then
 fi
 
 # Install necessary packages
+echo "installing depencencies"
 apt-get update
 apt-get install -y python-software-properties
 apt-add-repository -y ppa:chris-lea/node.js
@@ -13,18 +17,20 @@ apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essentia
 
 if [ -z "$TRAVIS" ]; then
     PHANTOMJS=phantomjs-1.9.7-linux-i686
+    echo "installing $PHANTOMJS"
     cd /usr/local/share/
     if [ ! -d $PHANTOMJS ]; then
-        wget https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOMJS.tar.bz2
+        wget -nv https://bitbucket.org/ariya/phantomjs/downloads/$PHANTOMJS.tar.bz2
         tar -xjf $PHANTOMJS.tar.bz2
         ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/share/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/local/bin/phantomjs; sudo ln -s /usr/local/share/$PHANTOMJS/bin/phantomjs /usr/bin/phantomjs
     fi
     cd $STARTING_DIR
 
     # Set up virtual environment
+    echo "setting up virtualenv"
     mkdir -p /var/www/envs
     if [ ! -d /var/www/envs/twweb ]; then
-        wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+        wget -nv https://raw.github.com/pypa/pip/master/contrib/get-pip.py
         python get-pip.py
         pip install virtualenv
         virtualenv /var/www/envs/twweb
@@ -52,21 +58,25 @@ mkdir -p $MAIN_DIR/logs
 if [ ! -d $TWWEB_TASKD_DATA ]; then
     # See environment variable TWWEB_TASKD_DATA
 
+    TASKD_VERSION="taskd-1.0.0"
+    echo "installing $TASKD_VERSION and setup certificates"
     mkdir -p $TWWEB_TASKD_DATA/src
+    sudo chown -R vagrant. $TWWEB_TASKD_DATA
     cd $TWWEB_TASKD_DATA/src
 
-    wget http://taskwarrior.org/download/taskd-1.0.0.tar.gz
-    tar xzf taskd-1.0.0.tar.gz
-    cd taskd-1.0.0
+    wget -nv http://taskwarrior.org/download/$TASKD_VERSION.tar.gz
+    tar xzf $TASKD_VERSION.tar.gz
+    cd $TASKD_VERSION
 
-    which taskd
-    if [ $? -ne 0 ]; then
+    set +e
+    which taskd; RETVAL=$?
+    set -e
+    if [ $RETVAL -ne 0 ]; then
         cmake .
         make
         checkinstall --default
-        cp  /var/taskd/src/taskd-1.0.0/taskd_1.0.0-1*.deb /tmp
+        cp  /var/taskd/src/$TASKD_VERSION/*.deb /tmp
     fi
-
 
     cd $TWWEB_TASKD_DATA
     export TASKDDATA=$TWWEB_TASKD_DATA
@@ -75,12 +85,12 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     taskd add org testing
     cp $MAIN_DIR/scripts/vagrant/simple_taskd_upstart.conf /etc/init/taskd.conf
 
-    if [ -z "$TRAVIS" ]; then
+    if [ -z "$TRAVIS" && -z "`pgrep -x taskd`" ]; then
         service taskd stop
     fi
 
     # generate certificates
-    cd $TWWEB_TASKD_DATA/src/taskd-1.0.0/pki
+    cd $TWWEB_TASKD_DATA/src/$TASKD_VERSION/pki
     ./generate
     cp client.cert.pem $TASKDDATA
     cp client.key.pem $TASKDDATA
@@ -98,33 +108,54 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     if [ -z "$TRAVIS" ]; then
         service taskd start
     fi
+
+    set +e
+    which task; RETVAL=$?
+    set -e
+    if [ $RETVAL -ne 0 ]; then
+        TASK_VERSION="task-2.3.0"
+        echo "installing $TASK_VERSION"
+        cd $TWWEB_TASKD_DATA/src
+        wget -nv http://taskwarrior.org/download/$TASK_VERSION.tar.gz
+        tar xzf $TASK_VERSION.tar.gz
+        cd $TASK_VERSION
+        cmake .
+        make
+        checkinstall --default
+        cp /var/taskd/src/$TASK_VERSION/*.deb /tmp
+    fi
 fi
 
-which task
-if [ $? -ne 0 ]; then
-    cd $TWWEB_TASKD_DATA/src
-    wget http://taskwarrior.org/download/task-2.3.0.tar.gz
-    tar xzf task-2.3.0.tar.gz
-    cd task-2.3.0
-    cmake .
-    make
-    checkinstall --default
-    cp /var/taskd/src/task-2.3.0/task_2.3.0-1*.deb /tmp
-fi
+# copy MAIN_DIR into a temp folder and run npm there
+# to avoid EPERM errors on NFS shared folders in vagrant
+# See: https://github.com/npm/npm/issues/3565
+cd $STARTING_DIR
+cp -a $MAIN_DIR /tmp/twweb
+chown -R vagrant. /tmp/twweb
+cd /tmp/twweb
 
-cd $MAIN_DIR
+echo "installing ember-cli and bower"
 npm install -g ember-cli@0.1.7 bower@1.3.12
-ember install
+echo "running npm install"
 npm install
+echo "running bower install"
 bower --config.interactive=false install --allow-root
-
+echo "running ember install"
+ember install
+echo "running ember build"
 ember build
 
+# Sync back node_modules to original place
+rsync --recursive --links --times /tmp/twweb/ $MAIN_DIR/
+cd $MAIN_DIR
+
 # Install requirements
+echo "installing python requirements"
 source /var/www/envs/twweb/bin/activate
 pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements.txt
 
 if [ -z "$TRAVIS" ]; then
+    echo "preparing application"
     pip install ipdb
     python $MAIN_DIR/manage.py syncdb --noinput
     python $MAIN_DIR/manage.py migrate --noinput

@@ -42,7 +42,7 @@ ALLOWED_HOSTS = [
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,8 +59,7 @@ INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
     'django_behave',
     'storages',
-    'silk',
-)
+]
 
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
