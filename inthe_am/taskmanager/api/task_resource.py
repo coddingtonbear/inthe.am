@@ -3,7 +3,6 @@ import json
 import logging
 import re
 import operator
-import shlex
 import uuid
 
 from dateutil.parser import parse
@@ -43,6 +42,7 @@ from ..tasks import process_trello_action, sync_trello_tasks
 from ..trello_utils import (
     get_access_token, get_authorize_url, message_signature_is_valid
 )
+from ..utils import shlex_without_quotes
 from .mixins import LockTimeoutMixin
 
 
@@ -811,8 +811,8 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
                 task_uuid = str(uuid.uuid4())
                 task_args = (
                     ['add'] +
-                    shlex.split(store.sms_arguments) +
-                    shlex.split(task_info)
+                    shlex_without_quotes(store.sms_arguments) +
+                    shlex_without_quotes(task_info)
                 )
                 task_args.append('uuid:%s' % task_uuid)
                 result = store.client._execute_safe(*task_args)
