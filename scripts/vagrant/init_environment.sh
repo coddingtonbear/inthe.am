@@ -147,7 +147,6 @@ cd $MAIN_DIR
 
 # Install requirements
 echo "installing python requirements"
-source /var/www/envs/twweb/bin/activate
 pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements.txt
 
 if [ -z "$TRAVIS" ]; then
