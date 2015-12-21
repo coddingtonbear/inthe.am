@@ -31,7 +31,10 @@ class Command(BaseCommand):
             '/tmp/async-disk-cache',
         ]
         for path in paths:
-            os.mkdir(path)
+            try:
+                os.mkdir(path)
+            except:
+                pass
             os.chmod(path, 0x777)
 
         proc = subprocess.Popen(
