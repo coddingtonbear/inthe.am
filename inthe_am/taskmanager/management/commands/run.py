@@ -25,6 +25,15 @@ class Command(BaseCommand):
 
     def run_ember(self, **kwargs):
         kwargs['env'] = os.environ.copy()
+
+        paths = [
+            '/tmp',
+            '/tmp/async-disk-cache',
+        ]
+        for path in paths:
+            os.mkdir(path)
+            os.chmod(path, 0x777)
+
         proc = subprocess.Popen(
             [
                 'ember',
