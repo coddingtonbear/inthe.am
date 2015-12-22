@@ -54,8 +54,6 @@ fi
 mkdir -p $MAIN_DIR/task_data
 mkdir -p $MAIN_DIR/logs
 
-chmod -R 755 $TWWEB_TASKD_DATA
-
 # Install Taskd and setup certificates
 if [ ! -d $TWWEB_TASKD_DATA ]; then
     # See environment variable TWWEB_TASKD_DATA
@@ -124,6 +122,7 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
         cp /var/taskd/src/$TASK_VERSION/*.deb /tmp
     fi
 fi
+chmod -R 755 $TWWEB_TASKD_DATA
 
 # copy MAIN_DIR into a temp folder and run npm there
 # to avoid EPERM errors on NFS shared folders in vagrant
