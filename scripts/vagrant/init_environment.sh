@@ -54,6 +54,8 @@ fi
 mkdir -p $MAIN_DIR/task_data
 mkdir -p $MAIN_DIR/logs
 
+chmod -R 755 $TWWEB_TASKD_DATA
+
 # Install Taskd and setup certificates
 if [ ! -d $TWWEB_TASKD_DATA ]; then
     # See environment variable TWWEB_TASKD_DATA
