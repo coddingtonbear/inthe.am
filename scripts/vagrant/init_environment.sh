@@ -124,6 +124,10 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
 fi
 # Simplify permissions for testing
 chmod -R 777 $TWWEB_TASKD_DATA
+set +e
+mkdir /tmp/async-disk-cache
+chmod -R 777 /tmp/async-disk-cache
+set -e
 
 # copy MAIN_DIR into a temp folder and run npm there
 # to avoid EPERM errors on NFS shared folders in vagrant
