@@ -122,7 +122,8 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
         cp /var/taskd/src/$TASK_VERSION/*.deb /tmp
     fi
 fi
-chmod -R 755 $TWWEB_TASKD_DATA
+# Simplify permissions for testing
+chmod -R 777 $TWWEB_TASKD_DATA
 
 # copy MAIN_DIR into a temp folder and run npm there
 # to avoid EPERM errors on NFS shared folders in vagrant
