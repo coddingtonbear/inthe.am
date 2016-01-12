@@ -405,7 +405,8 @@ DATABASES = {
         'USER': DATABASE_USER,
         'PASSWORD': DATABASE_PASSWORD,
         'HOST': DATABASE_HOST,
-        'PORT': DATABASE_PORT
+        'PORT': DATABASE_PORT,
+        'CONN_MAX_AGE': 600,
     }
 }
 
