@@ -1,5 +1,5 @@
 #!/bin/bash
-set -vx
+set -x
 set -e
 
 STARTING_DIR=$(pwd)
