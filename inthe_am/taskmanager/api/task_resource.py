@@ -605,6 +605,9 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
         calendar.add('X-WR-CALNAME', calendar_title)
 
         for task in tasks:
+            if field not in task:
+                continue
+
             event = Event()
             event.add('uid', task['uuid'])
             event.add('dtstart', task[field].date())
