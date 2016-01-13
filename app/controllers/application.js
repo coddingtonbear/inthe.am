@@ -474,7 +474,7 @@ var controller = Ember.Controller.extend({
         },
         'public_announcement': function(evt) {
           console.logIfDebug(evt.type, evt.data);
-          data = JSON.parse(evt.data);
+          var data = JSON.parse(evt.data);
 
           $.growl[data.type || 'notice']({
               title: data.title ? data.title : 'Public Announcement',
@@ -483,7 +483,7 @@ var controller = Ember.Controller.extend({
         },
         'personal_announcement': function(evt) {
           console.logIfDebug(evt.type, evt.data);
-          data = JSON.parse(evt.data);
+          var data = JSON.parse(evt.data);
 
           $.growl[data.type || 'notice']({
               title: data.title ? data.title : 'Notice',
