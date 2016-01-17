@@ -26,7 +26,7 @@ behave==1.2.5
 selenium==2.48.0
 splinter==0.7.3
 lxml==3.4.4
--e git+https://github.com/coddingtonbear/django-behave.git#egg=django_behave
+-e git+https://github.com/coddingtonbear/django-behave.git@79028d59f89c7a12255120d266f5c844656a6805#egg=django_behave
 ipdb==0.8
 python-dateutil>=2.2
 sphinx>=1.2.3
