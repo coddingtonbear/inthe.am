@@ -22,7 +22,7 @@ gevent>=0.12.2
 Celery>=3.1.10
 redis>=2.10.3
 subprocess32==3.2.5
-behave==1.2.3
+behave==1.2.5
 selenium==2.48.0
 splinter==0.7.3
 lxml==3.4.4
