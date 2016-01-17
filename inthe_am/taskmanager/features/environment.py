@@ -60,10 +60,10 @@ def save_page_details(context, step=None, prefix='demand'):
 
     if prefix == 'following':
         metadata = {
-            'js_errors': context.browser.execute(
+            'js_errors': context.browser.driver.execute(
                 "return json.dumps(JS_ERRORS)"
             ),
-            'console': context.browser.execute(
+            'console': context.browser.driver.execute(
                 "return json.dumps(CONSOLE)"
             )
         }
