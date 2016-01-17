@@ -58,7 +58,7 @@ def save_page_details(context, step=None, prefix='demand'):
     with open(os.path.join('/tmp', name + '.html'), 'w') as out:
         out.write(context.browser.html.encode('utf-8'))
 
-    if prefix == 'after':
+    if prefix == 'following':
         metadata = {
             'js_errors': context.browser.execute(
                 "return json.dumps(JS_ERRORS)"
