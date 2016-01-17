@@ -61,7 +61,7 @@ def save_page_details(context, step=None, prefix='demand'):
     if prefix == 'following':
         try:
             js_errors = context.browser.execute_script(
-                "return json.dumps(JS_ERRORS);"
+                "return JSON.stringify(JS_ERRORS);"
             )
         except Exception as e:
             print e
@@ -69,7 +69,7 @@ def save_page_details(context, step=None, prefix='demand'):
 
         try:
             console_log = context.browser.execute_script(
-                "return json.dumps(CONSOLE_LOG);"
+                "return json.stringify(CONSOLE_LOG);"
             )
         except Exception as e:
             print e
