@@ -1,4 +1,5 @@
 from collections import Counter
+import json
 import os
 import string
 from urlparse import urljoin
@@ -56,6 +57,22 @@ def save_page_details(context, step=None, prefix='demand'):
     context.browser.screenshot(name)
     with open(os.path.join('/tmp', name + '.html'), 'w') as out:
         out.write(context.browser.html.encode('utf-8'))
+
+    if prefix == 'after':
+        metadata = {
+            'js_errors': context.browser.execute(
+                "return json.dumps(JS_ERRORS)"
+            ),
+            'console': context.browser.execute(
+                "return json.dumps(CONSOLE)"
+            )
+        }
+
+        meta_name = name + '.meta.json'
+        with open(meta_name, 'w') as out:
+            out.write(
+                json.dumps(metadata)
+            )
 
 
 def before_all(context):
