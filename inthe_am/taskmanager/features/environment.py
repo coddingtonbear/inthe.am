@@ -3,10 +3,12 @@ import json
 import os
 import string
 from urlparse import urljoin
+import uuid
 
 from django.conf import settings
 from django.contrib.auth.models import User
-
+import lxml.html
+import requests
 from splinter.browser import Browser
 
 
@@ -26,6 +28,82 @@ def sanitize_name(name):
         if char == ' ':
             acceptable_letters.append('_')
     return ''.join(acceptable_letters)
+
+
+def calculate_absolute_path(context, url):
+    server_url = context.config.server_url
+
+    if '://' in url:
+        return url
+    elif url.startswith('/'):
+        return server_url + url.lstrip('/')
+
+    return server_url + url
+
+
+def save_full_page_details(context, output_path):
+    try:
+        js_errors = {
+            'result': json.loads(
+                context.browser.evaluate_script(
+                    "JSON.stringify(JS_ERRORS);"
+                )
+            )
+        }
+    except Exception as e:
+        print e
+        js_errors = {'error': str(e)}
+
+    try:
+        console_log = {
+            'result': json.loads(
+                context.browser.evaluate_script(
+                    "JSON.stringify(CONSOLE_LOG);"
+                )
+            )
+        }
+    except Exception as e:
+        print e
+        console_log = {'error': str(e)}
+
+    metadata = {
+        'js_errors': js_errors,
+        'console_log': console_log,
+    }
+
+    with open(os.path.join(output_path, 'meta.json'), 'w') as out:
+        out.write(
+            json.dumps(metadata).encode('utf8')
+        )
+
+    document = lxml.html.document_fromstring(
+        context.browser.html
+    )
+    resource_urls = {}
+    # Rewrite dom assets
+    selectors = [
+        ('//script', 'src', ),
+        ('//link', 'href', ),
+        ('//img', 'src', ),
+    ]
+    for selector, attribute in selectors:
+        for result in document.xpath(selector):
+            src = result.attrib.get(attribute)
+            if not src:
+                continue
+
+            url = calculate_absolute_path(context, src)
+            if url not in resource_urls:
+                _, extension = os.path.splitext(url)
+                resource_urls[url] = str(uuid.uuid4()) + extension
+            result.attrib[attribute] = resource_urls[url]
+
+    with open(os.path.join(output_path, 'index.html'), 'w') as out:
+        out.write(lxml.html.tostring(document))
+
+    for asset_url, name in resource_urls.items():
+        with open(os.path.join(output_path, name), 'w') as out:
+            out.write(requests.get(asset_url).content)
 
 
 def save_page_details(context, step=None, prefix='demand'):
@@ -58,43 +136,10 @@ def save_page_details(context, step=None, prefix='demand'):
     with open(os.path.join('/tmp', name + '.html'), 'w') as out:
         out.write(context.browser.html.encode('utf-8'))
 
-    if prefix == 'following':
-        try:
-            js_errors = {
-                'result': json.loads(
-                    context.browser.evaluate_script(
-                        "JSON.stringify(JS_ERRORS);"
-                    )
-                )
-            }
-        except Exception as e:
-            print e
-            js_errors = {'error': str(e)}
-
-        try:
-            console_log = {
-                'result': json.loads(
-                    context.browser.evaluate_script(
-                        "JSON.stringify(CONSOLE_LOG);"
-                    )
-                )
-            }
-        except Exception as e:
-            print e
-            console_log = {'error': str(e)}
-
-        metadata = {
-            'js_errors': js_errors,
-            'console_log': console_log,
-        }
-
-        with open(os.path.join('/tmp', name + '.meta.json'), 'w') as out:
-            try:
-                out.write(
-                    json.dumps(metadata).encode('utf8')
-                )
-            except Exception as e:
-                print e
+    if context.failed:
+        full_path = os.path.join('/tmp', name)
+        os.mkdir(full_path)
+        save_full_page_details(context, full_path)
 
 
 def before_all(context):

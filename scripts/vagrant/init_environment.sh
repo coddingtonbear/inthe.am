@@ -16,6 +16,12 @@ apt-add-repository -y ppa:chris-lea/node.js
 apt-get update
 apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs firefox checkinstall curl libcurl4-gnutls-dev libgnutls-dev libxml2-dev libxslt1-dev
 
+# Python prerequisites
+wget -nv https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+python get-pip.py
+pip install virtualenv
+pip install wheel
+
 if [ -z "$TRAVIS" ]; then
     PHANTOMJS=phantomjs-1.9.7-linux-i686
     echo "installing $PHANTOMJS"
@@ -31,9 +37,6 @@ if [ -z "$TRAVIS" ]; then
     echo "setting up virtualenv"
     mkdir -p /var/www/envs
     if [ ! -d /var/www/envs/twweb ]; then
-        wget -nv https://raw.github.com/pypa/pip/master/contrib/get-pip.py
-        python get-pip.py
-        pip install virtualenv
         virtualenv /var/www/envs/twweb
         printf "\n\nsource $MAIN_DIR/environment_variables.sh\n" >> /var/www/envs/twweb/bin/activate
         cp $MAIN_DIR/scripts/vagrant/environment_variables.sh $MAIN_DIR

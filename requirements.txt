@@ -25,7 +25,7 @@ subprocess32==3.2.5
 behave==1.2.3
 selenium==2.48.0
 splinter==0.7.3
-lxml==3.5.0
+lxml==3.4.4
 -e git+https://github.com/coddingtonbear/django-behave.git#egg=django_behave
 ipdb==0.8
 python-dateutil>=2.2
