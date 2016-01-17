@@ -61,18 +61,20 @@ def save_page_details(context, step=None, prefix='demand'):
     if prefix == 'following':
         metadata = {
             'js_errors': context.browser.driver.execute(
-                "return json.dumps(JS_ERRORS)"
+                "return json.dumps(JS_ERRORS);"
             ),
             'console': context.browser.driver.execute(
-                "return json.dumps(CONSOLE)"
+                "return json.dumps(CONSOLE);"
             )
         }
 
-        meta_name = name + '.meta.json'
-        with open(os.path.join('/tmp', meta_name), 'w') as out:
-            out.write(
-                json.dumps(metadata)
-            )
+        with open(os.path.join('/tmp', name + '.meta.json'), 'w') as out:
+            try:
+                out.write(
+                    json.dumps(metadata).encode('utf8')
+                )
+            except Exception as e:
+                print e
 
 
 def before_all(context):
