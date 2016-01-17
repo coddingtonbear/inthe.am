@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from collections import Counter
 import json
 import os
@@ -51,7 +53,7 @@ def save_full_page_details(context, output_path):
             )
         }
     except Exception as e:
-        print e
+        print(e)
         js_errors = {'error': str(e)}
 
     try:
@@ -63,7 +65,7 @@ def save_full_page_details(context, output_path):
             )
         }
     except Exception as e:
-        print e
+        print(e)
         console_log = {'error': str(e)}
 
     metadata = {
@@ -167,7 +169,7 @@ def before_step(context, step):
         try:
             save_page_details(context, step, 'before')
         except Exception as e:
-            print e
+            print(e)
 
 
 def after_step(context, step):
@@ -175,7 +177,7 @@ def after_step(context, step):
         try:
             save_page_details(context, step, 'following')
         except Exception as e:
-            print e
+            print(e)
 
 
 def before_scenario(context, step):

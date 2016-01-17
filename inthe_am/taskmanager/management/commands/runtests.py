@@ -36,7 +36,7 @@ class Command(RunserverCommand):
             'python',
             'manage.py',
             'test',
-            'taskmanager',
+            'inthe_am.taskmanager',
         ]
         command.extend(args)
 
