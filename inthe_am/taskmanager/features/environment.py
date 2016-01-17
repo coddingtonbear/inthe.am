@@ -69,7 +69,7 @@ def save_page_details(context, step=None, prefix='demand'):
         }
 
         meta_name = name + '.meta.json'
-        with open(meta_name, 'w') as out:
+        with open(os.path.join('/tmp', meta_name), 'w') as out:
             out.write(
                 json.dumps(metadata)
             )
