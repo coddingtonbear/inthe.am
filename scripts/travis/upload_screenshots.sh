@@ -1,4 +1,8 @@
 rm -rf /tmp/pip_cache
+rm -rf /tmp/npm-*
+rm -rf /tmp/async-disk-cache
+rm -rf /tmp/root
+rm -rf /tmp/twweb
 tar -czf /tmp/testing_artifacts.tar.gz --exclude '*.tar.gz' /tmp
 travis-artifacts upload --path /tmp/testing_artifacts.tar.gz
 tar -czf /tmp/task_data.tar.gz task_data
