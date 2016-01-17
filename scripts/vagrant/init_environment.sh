@@ -14,7 +14,7 @@ apt-get update
 apt-get install -y python-software-properties
 apt-add-repository -y ppa:chris-lea/node.js
 apt-get update
-apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs firefox checkinstall curl libcurl4-gnutls-dev libgnutls-dev
+apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs firefox checkinstall curl libcurl4-gnutls-dev libgnutls-dev libxml2-dev libxslt1-dev
 
 if [ -z "$TRAVIS" ]; then
     PHANTOMJS=phantomjs-1.9.7-linux-i686
