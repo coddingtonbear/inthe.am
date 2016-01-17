@@ -60,7 +60,7 @@ def save_page_details(context, step=None, prefix='demand'):
 
     if prefix == 'following':
         try:
-            js_errors = context.browser.driver.execute(
+            js_errors = context.browser.execute_script(
                 "return json.dumps(JS_ERRORS);"
             )
         except Exception as e:
@@ -68,7 +68,7 @@ def save_page_details(context, step=None, prefix='demand'):
             js_errors = str(e)
 
         try:
-            console_log = context.browser.driver.execute(
+            console_log = context.browser.execute_script(
                 "return json.dumps(CONSOLE_LOG);"
             )
         except Exception as e:
