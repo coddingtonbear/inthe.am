@@ -65,7 +65,7 @@ def save_page_details(context, step=None, prefix='demand'):
             )
         except Exception as e:
             print e
-            js_errors = []
+            js_errors = str(e)
 
         try:
             console_log = context.browser.driver.execute(
@@ -73,7 +73,7 @@ def save_page_details(context, step=None, prefix='demand'):
             )
         except Exception as e:
             print e
-            console_log = []
+            console_log = str(e)
 
         metadata = {
             'js_errors': js_errors,
