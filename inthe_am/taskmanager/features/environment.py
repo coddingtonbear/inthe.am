@@ -60,20 +60,24 @@ def save_page_details(context, step=None, prefix='demand'):
 
     if prefix == 'following':
         try:
-            js_errors = context.browser.execute_script(
-                "return JSON.stringify(JS_ERRORS);"
-            )
+            js_errors = {
+                'result': context.browser.execute_script(
+                    "return JSON.stringify(JS_ERRORS);"
+                )
+            }
         except Exception as e:
             print e
-            js_errors = str(e)
+            js_errors = {'error': str(e)}
 
         try:
-            console_log = context.browser.execute_script(
-                "return json.stringify(CONSOLE_LOG);"
-            )
+            console_log = {
+                'result': context.browser.execute_script(
+                    "return JSON.stringify(CONSOLE_LOG);"
+                )
+            }
         except Exception as e:
             print e
-            console_log = str(e)
+            console_log = {'error': str(e)}
 
         metadata = {
             'js_errors': js_errors,
