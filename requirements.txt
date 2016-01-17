@@ -24,7 +24,7 @@ redis>=2.10.3
 subprocess32==3.2.5
 behave==1.2.3
 -e git+https://github.com/SeleniumHQ/selenium.git@43ac6052e5e230ba2d437ced0f68fc206ee2afbd#egg=selenium
-splinter==0.7.2
+splinter==0.7.3
 -e git+https://github.com/coddingtonbear/django-behave.git#egg=django_behave
 ipdb==0.8
 python-dateutil>=2.2

@@ -43,7 +43,9 @@ class Command(RunserverCommand):
         return subprocess.call(command, env=env)
 
     def handle(self, *args, **kwargs):
-        with tempfile.NamedTemporaryFile(prefix='ember', delete=False) as out:
+        with tempfile.NamedTemporaryFile(
+            prefix='ember', suffix='.log', delete=False
+        ) as out:
             ember = threading.Thread(
                 target=self.run_ember,
                 kwargs={

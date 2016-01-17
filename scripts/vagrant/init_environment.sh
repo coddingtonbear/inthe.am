@@ -131,6 +131,7 @@ cd $STARTING_DIR
 cp -a $MAIN_DIR /tmp/twweb
 cd /tmp/twweb
 
+set +e
 echo "installing ember-cli and bower"
 npm install -g ember-cli@0.1.7 bower@1.3.12
 echo "running npm install"
@@ -139,6 +140,7 @@ echo "running bower install"
 bower --config.interactive=false install --allow-root
 echo "running ember install"
 ember install
+set -e
 echo "running ember build"
 ember build
 

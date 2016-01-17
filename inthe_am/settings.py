@@ -39,28 +39,6 @@ ALLOWED_HOSTS = [
     'inthe.am',
 ]
 
-
-# Application definition
-
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'social.apps.django_app.default',
-    'gunicorn',
-    'inthe_am.taskmanager',
-    'django_mailbox',
-    'south',
-    'tastypie',
-    'django_extensions',
-    'raven.contrib.django.raven_compat',
-    'django_behave',
-    'storages',
-]
-
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -113,130 +91,6 @@ LOGIN_REDIRECT_URL = '/'
 TASK_STORAGE_PATH = os.path.join(BASE_DIR, 'task_data')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'public/static')
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'verbose': {
-            'format': (
-                '%(levelname)s:%(name)s:%(asctime)s %(module)s %(process)d '
-                '%(thread)d %(message)s'
-            )
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-    },
-    'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-        'exception_log': {
-            'level': 'WARNING',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.error.log'),
-            'maxBytes': 1048576,
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'taskwarrior': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.taskwarrior.log'),
-            'maxBytes': 1048576,
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'tasks': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.tasks.log'),
-            'maxBytes': 1048576,
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'store': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.log'),
-            'maxBytes': 1048576,
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'requests': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.requests.log'),
-            'maxBytes': 1048576,
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'sentry': {
-            'level': 'WARNING',
-            'class': 'raven.contrib.django.handlers.SentryHandler'
-        },
-        'syslog': {
-            'level': 'INFO',
-            'class': 'logging.handlers.SysLogHandler',
-            'facility': 'local7',
-            'formatter': 'verbose'
-        }
-    },
-    'loggers': {
-        '': {
-            'handlers': ['exception_log', 'store', 'sentry', 'syslog'],
-            'propagate': True,
-            'level': 'INFO',
-        },
-        'django': {
-            'handlers': ['null'],
-            'propagate': True,
-            'level': 'INFO',
-        },
-        'gunicorn': {
-            'handlers': ['null'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'requests': {
-            'handlers': ['requests'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'selenium': {
-            'handlers': ['null'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'inthe_am.taskmanager.taskwarrior_client': {
-            'handlers': ['taskwarrior'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'inthe_am.taskmanager.tasks': {
-            'handlers': ['tasks', 'sentry'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'inthe_am.taskmanager.taskwarrior_client.export': {
-            'handlers': ['taskwarrior', 'sentry'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'inthe_am.taskmanager.taskwarrior_client.sync': {
-            'handlers': ['taskwarrior', 'sentry'],
-            'level': 'INFO',
-            'propagate': False,
-        }
-    }
-}
 
 CACHES = {
     'default': {
@@ -393,10 +247,163 @@ for key, value in os.environ.items():
             value
         )
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': (
+                '%(levelname)s:%(name)s:%(asctime)s %(module)s %(process)d '
+                '%(thread)d %(message)s'
+            )
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'exception_log': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/twweb.error.log'),
+            'maxBytes': 1048576,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'taskwarrior': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/twweb.taskwarrior.log'),
+            'maxBytes': 1048576,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'tasks': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/twweb.tasks.log'),
+            'maxBytes': 1048576,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'store': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/twweb.log'),
+            'maxBytes': 1048576,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'requests': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/twweb.requests.log'),
+            'maxBytes': 1048576,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'sentry': {
+            'level': 'WARNING',
+            'class': (
+                'raven.contrib.django.handlers.SentryHandler'
+                if RAVEN_DSN else
+                'logging.NullHandler'
+            )
+        },
+        'syslog': {
+            'level': 'INFO',
+            'class': 'logging.handlers.SysLogHandler',
+            'facility': 'local7',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        '': {
+            'handlers': ['exception_log', 'store', 'sentry', 'syslog'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'django': {
+            'handlers': ['null'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'gunicorn': {
+            'handlers': ['null'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'requests': {
+            'handlers': ['requests'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'selenium': {
+            'handlers': ['null'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'inthe_am.taskmanager.taskwarrior_client': {
+            'handlers': ['taskwarrior'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'inthe_am.taskmanager.tasks': {
+            'handlers': ['tasks', 'sentry'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'inthe_am.taskmanager.taskwarrior_client.export': {
+            'handlers': ['taskwarrior', 'sentry'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'inthe_am.taskmanager.taskwarrior_client.sync': {
+            'handlers': ['taskwarrior', 'sentry'],
+            'level': 'INFO',
+            'propagate': False,
+        }
+    }
+}
+
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'social.apps.django_app.default',
+    'gunicorn',
+    'inthe_am.taskmanager',
+    'django_mailbox',
+    'south',
+    'tastypie',
+    'django_extensions',
+    'django_behave',
+    'storages',
+]
 
 RAVEN_CONFIG = {
     'dsn': RAVEN_DSN
 }
+
+if RAVEN_DSN:
+    INSTALLED_APPS.append(
+        'raven.contrib.django.raven_compat',
+    )
 
 DATABASES = {
     'default': {
