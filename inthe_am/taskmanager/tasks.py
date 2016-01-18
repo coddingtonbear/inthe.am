@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from fnmatch import fnmatch as glob
 import logging
 import re
+import pytz
 import shlex
 import uuid
 
@@ -483,11 +484,22 @@ def update_trello(
                     )
                     continue
 
+                creation_kwargs = {
+                    'type': TrelloObject.CARD,
+                    'name': task['description'],
+                    'idList': todo_column.id
+                }
+                if task.get('due'):
+                    creation_kwargs['due'] = pytz.UTC.normalize(
+                        task['due']
+                    ).format(
+                        # 2016-01-31T20:00:00.000Z
+                        '%Y-%m-%dT%H:%M:%S.000Z'
+                    )
+
                 obj = TrelloObject.create(
                     store=store,
-                    type=TrelloObject.CARD,
-                    name=task['description'],
-                    idList=todo_column.id
+                    **creation_kwargs
                 )
                 task['intheamtrelloid'] = obj.pk
                 task['intheamtrelloboardid'] = store.trello_board.pk
