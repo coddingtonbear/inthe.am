@@ -215,7 +215,7 @@ class TrelloObject(models.Model):
             kwargs['idList'] = list_id
 
         if task.get('due'):
-            kwargs['due'] = pytz.UTC.normalize(task['due']).format(
+            kwargs['due'] = pytz.UTC.normalize(task['due']).strftime(
                 # 2016-01-31T20:00:00.000Z
                 '%Y-%m-%dT%H:%M:%S.000Z'
             )
