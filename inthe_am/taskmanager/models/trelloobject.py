@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+import pytz
 import re
 
 from dateutil.parser import parse
@@ -212,6 +213,12 @@ class TrelloObject(models.Model):
         list_id = task.get('intheamtrellolistid')
         if list_id and list_id != self.meta.get('idList'):
             kwargs['idList'] = list_id
+
+        if task.get('due'):
+            kwargs['due'] = pytz.UTC.normalize(task['due']).format(
+                # 2016-01-31T20:00:00.000Z
+                '%Y-%m-%dT%H:%M:%S.000Z'
+            )
 
         logger.info(
             "Sending Trello update for task %s; Data: %s",
