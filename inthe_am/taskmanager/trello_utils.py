@@ -132,35 +132,3 @@ def subscribe_to_updates(object_id, user_token, callback_url):
         raise RuntimeError(result.content)
 
     return True
-
-
-def message_signature_is_valid(request):
-    def b64_digest(data):
-        return base64.encodestring(
-            hmac.new(
-                settings.TRELLO_API_SECRET,
-                data,
-                hashlib.sha1
-            ).digest()
-        )
-
-    expected_hash = b64_digest(request.META.get('HTTP_X_TRELLO_WEBHOOK'))
-
-    callback_url = request.build_absolute_uri(request.path)
-    logger.warning("Trello callback URL: %s", callback_url)
-    content = request.body + callback_url.encode('utf8')
-
-    actual_hash = b64_digest(b64_digest(content))
-
-    if actual_hash != expected_hash:
-        logger.warning(
-            "Trello hash did not match: %s != %s.",
-            actual_hash,
-            expected_hash,
-            extra={
-                'stack': True,
-            }
-        )
-        return False
-
-    return True

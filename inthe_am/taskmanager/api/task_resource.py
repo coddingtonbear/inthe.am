@@ -39,9 +39,7 @@ from ..decorators import (
 )
 from ..task import Task
 from ..tasks import process_trello_action, sync_trello_tasks
-from ..trello_utils import (
-    get_access_token, get_authorize_url, message_signature_is_valid
-)
+from ..trello_utils import get_access_token, get_authorize_url
 from ..utils import shlex_without_quotes
 from .mixins import LockTimeoutMixin
 
@@ -471,11 +469,6 @@ class TaskResource(LockTimeoutMixin, resources.Resource):
             store = models.TaskStore.objects.get(secret_id=secret_id)
         except:
             return HttpResponseNotFound()
-
-        if not message_signature_is_valid(request):
-            # @TODO: Once this is verified, return
-            # HTTPRESPONSEBADREQUEST here.
-            pass
 
         if request.method == 'POST':
             process_trello_action.apply_async(
