@@ -138,7 +138,7 @@ def save_page_details(context, step=None, prefix='demand'):
     with open(os.path.join('/tmp', name + '.html'), 'w') as out:
         out.write(context.browser.html.encode('utf-8'))
 
-    if context.failed:
+    if context.failed or settings.TEST_ALWAYS_SAVE_FULL_PAGE_DETAILS:
         full_path = os.path.join('/tmp', name)
         os.mkdir(full_path)
         save_full_page_details(context, full_path)
