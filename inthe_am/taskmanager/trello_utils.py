@@ -146,8 +146,9 @@ def message_signature_is_valid(request):
 
     expected_hash = b64_digest(request.META.get('HTTP_X_TRELLO_WEBHOOK'))
 
-    callback_url = request.build_absolute_uri(request.path.encode('utf-8'))
-    content = request.body + callback_url
+    callback_url = request.build_absolute_uri(request.path)
+    logger.warning("Trello callback URL: %s", callback_url)
+    content = request.body + callback_url.encode('utf8')
 
     actual_hash = b64_digest(b64_digest(content))
 
