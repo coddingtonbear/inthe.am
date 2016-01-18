@@ -105,7 +105,12 @@ def save_full_page_details(context, output_path):
 
     for asset_url, name in resource_urls.items():
         with open(os.path.join(output_path, name), 'w') as out:
-            out.write(requests.get(asset_url).content)
+            try:
+                out.write(
+                    requests.get(asset_url, timeout=5).content
+                )
+            except Exception as e:
+                out.write(str(e))
 
 
 def save_page_details(context, step=None, prefix='demand'):
@@ -140,8 +145,17 @@ def save_page_details(context, step=None, prefix='demand'):
 
     if context.failed or settings.TEST_ALWAYS_SAVE_FULL_PAGE_DETAILS:
         full_path = os.path.join('/tmp', name)
-        os.mkdir(full_path)
-        save_full_page_details(context, full_path)
+        do_save = False
+        try:
+            os.mkdir(full_path)
+            do_save = True
+        except Exception as e:
+            print(
+                "Error encountered when saving full page details: %s" % e
+            )
+
+        if do_save:
+            save_full_page_details(context, full_path)
 
 
 def before_all(context):
