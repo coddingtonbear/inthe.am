@@ -3,6 +3,7 @@ import json
 import logging
 import pytz
 import re
+import requests
 
 from dateutil.parser import parse
 from jsonfield import JSONField
@@ -63,6 +64,16 @@ class TrelloObject(models.Model):
         return cls(
             settings.TRELLO_API_KEY,
             store.trello_auth_token,
+        )
+
+    def client_request(self, method, url, data):
+        client = self.client
+
+        return requests.request(
+            method,
+            'https://trello.com' + url,
+            params=dict(key=client._apikey, token=client._token),
+            data=data,
         )
 
     def add_log_data(self, message=None, data=None):

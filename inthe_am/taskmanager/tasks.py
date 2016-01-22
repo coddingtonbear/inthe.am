@@ -489,6 +489,21 @@ def update_trello(
                     name=task['description'],
                     idList=todo_column.id
                 )
+                result = obj.client_request(
+                    'PUT',
+                    '/1/cards/%s/pos' % obj.id,
+                    data={'value': 'top'},
+                )
+                if not (200 <= result.status_code < 300):
+                    logger.warning(
+                        "Unable to set card position: %s",
+                        result.content,
+                        extra={
+                            'data': {
+                                'result': result.json(),
+                            }
+                        }
+                    )
                 task['intheamtrelloid'] = obj.pk
                 task['intheamtrelloboardid'] = store.trello_board.pk
 
