@@ -93,7 +93,7 @@ var controller = Ember.Controller.extend({
         }.bind(this));
     },
     showLoading: function() {
-        $('#loading').show();
+        $('#loading').show(400);
     },
     hideLoading: function() {
         Ember.run.next(this, '_hideLoading');
@@ -111,7 +111,7 @@ var controller = Ember.Controller.extend({
         });
     },
     _hideLoading: function() {
-        $('#loading').hide();
+        $('#loading').hide(400);
     },
     reportError: function(error) {
         if (typeof(error) === 'object') {
