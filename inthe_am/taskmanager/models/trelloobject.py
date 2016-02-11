@@ -247,6 +247,21 @@ class TrelloObject(models.Model):
         )
 
         try:
+            reformatter = re.compile(r'\W+')
+            try:
+                label_names = self.store.trello_board.meta.get(
+                    'labelNames', {}
+                )
+            except (TypeError, AttributeError, ValueError):
+                logger.exception("Error encountered while building label map.")
+                label_names = {}
+            # Maps string tag names to color names so we can know what
+            # tags to add for whatever names.
+            color_map = {
+                reformatter.sub('_', v): k
+                for (k, v) in label_names.items() if k
+            }
+
             possible_colors = set(LABEL_COLORS)
             existing_labels = set([
                 l.get('color')
@@ -254,6 +269,10 @@ class TrelloObject(models.Model):
                 if l.get('color')
             ])
             task_tags = set(task.get('tags'))
+            for tag in task.get('tags'):
+                if tag in color_map:
+                    task_tags.add(color_map[tag])
+
             tags_to_add = (
                 (task_tags - existing_labels) & possible_colors
             )
