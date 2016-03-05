@@ -265,6 +265,11 @@ class TaskStore(models.Model):
             return True
         return False
 
+    def _is_valid_priority(self, val):
+        if val in ('H', 'M', 'L'):
+            return True
+        return False
+
     def _get_extra_safely(self, key, val):
         valid_patterns = [
             (
@@ -286,6 +291,10 @@ class TaskStore(models.Model):
             (
                 re.compile('^urgency\.uda\.[^.]+\.coefficient$'),
                 self._is_numeric
+            ),
+            (
+                re.compile('^uda\.priority\.default$'),
+                self._is_valid_priority
             ),
             (
                 re.compile('^uda\.[^.]+\.type$'),
