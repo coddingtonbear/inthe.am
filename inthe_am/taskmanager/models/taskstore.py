@@ -297,6 +297,10 @@ class TaskStore(models.Model):
                 self._is_valid_priority
             ),
             (
+                re.compile('^priority\.default$'),
+                self._is_valid_priority
+            ),
+            (
                 re.compile('^uda\.[^.]+\.type$'),
                 self._is_valid_type
             ),
