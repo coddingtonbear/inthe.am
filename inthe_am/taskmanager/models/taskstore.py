@@ -568,6 +568,20 @@ class TaskStore(models.Model):
         else:
             return client.get(lock_name)
 
+    def get_repository_size(self):
+        total_size = 0
+        for dirpath, dirnames, filenames in os.walk(self.local_path):
+            for f in filenames:
+                fp = os.path.join(dirpath, f)
+                total_size += os.path.getsize(fp)
+
+        return total_size
+
+    def gc(self):
+        with git_checkpoint(self, "Garbage Collection", notify_rollback=False):
+            self._git_command('reflog', 'expire', '--expire=now', '--all')
+            self._git_command('gc', '--prune=now')
+
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None
     ):
