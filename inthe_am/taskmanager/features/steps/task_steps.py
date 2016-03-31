@@ -7,13 +7,19 @@ from behave import given, when, then, step
 import pytz
 
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from inthe_am.taskmanager.merge_tasks import merge_tasks
 from inthe_am.taskmanager.models import TaskStore
 
 
 def get_store():
-    return TaskStore.objects.get(user__email=settings.TESTING_LOGIN_USER)
+    u = User.objects.get(email=settings.TESTING_LOGIN_USER)
+    store = TaskStore.get_for_user(u)
+    if not store.configured:
+        store.autoconfigure_taskd()
+
+    return store
 
 
 def get_json_value(value):
