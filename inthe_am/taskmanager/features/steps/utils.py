@@ -1,8 +1,12 @@
 import time
 
+from django.conf import settings
+from django.contrib.auth.models import User
 from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
+
+from inthe_am.taskmanager.models import TaskStore
 
 
 def find_element_and_do(
@@ -51,3 +55,23 @@ def monkey_patch_browser(context):
             window.JS_ERRORS.push(errorMessage)
         }
     """.replace('\n', ''))
+
+
+def get_user():
+    u, _ = User.objects.get_or_create(
+        username='integration-test',
+        email=settings.TESTING_LOGIN_USER
+    )
+    u.set_password(settings.TESTING_LOGIN_PASSWORD)
+    u.save()
+
+    return u
+
+
+def get_store():
+    u = get_user()
+    store = TaskStore.get_for_user(u)
+    if not store.configured:
+        store.autoconfigure_taskd()
+
+    return store

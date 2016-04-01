@@ -7,18 +7,8 @@ from behave import given, when, then, step
 import pytz
 
 from inthe_am.taskmanager.merge_tasks import merge_tasks
-from inthe_am.taskmanager.models import TaskStore
 
-from .basic_steps import get_user
-
-
-def get_store():
-    u = get_user()
-    store = TaskStore.get_for_user(u)
-    if not store.configured:
-        store.autoconfigure_taskd()
-
-    return store
+from utils import get_store
 
 
 def get_json_value(value):

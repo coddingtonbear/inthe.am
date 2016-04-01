@@ -12,18 +12,7 @@ from django.utils.timezone import now
 from inthe_am.taskmanager.models import TaskStore, UserMetadata
 from inthe_am.taskmanager.debug_utils import artificial_login
 
-from .utils import find_element_and_do, monkey_patch_browser
-
-
-def get_user():
-    u, _ = User.objects.get_or_create(
-        username='integration-test',
-        email=settings.TESTING_LOGIN_USER
-    )
-    u.set_password(settings.TESTING_LOGIN_PASSWORD)
-    u.save()
-
-    return u
+from .utils import find_element_and_do, get_user, monkey_patch_browser
 
 
 @step(u'the user accesses the url "{url}"')
