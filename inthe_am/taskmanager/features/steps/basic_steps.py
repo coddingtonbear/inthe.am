@@ -15,6 +15,17 @@ from inthe_am.taskmanager.debug_utils import artificial_login
 from .utils import find_element_and_do, monkey_patch_browser
 
 
+def get_user():
+    u, _ = User.objects.get_or_create(
+        username='integration-test',
+        email=settings.TESTING_LOGIN_USER
+    )
+    u.set_password(settings.TESTING_LOGIN_PASSWORD)
+    u.save()
+
+    return u
+
+
 @step(u'the user accesses the url "{url}"')
 def user_accesses_the_url(context, url):
     if url != '/':
@@ -33,12 +44,7 @@ def user_is_logged_in(context):
     context.execute_steps(u'''
         when the user accesses the url "/"
     ''')
-    u = User.objects.create(
-        username='integration-test',
-        email=settings.TESTING_LOGIN_USER
-    )
-    u.set_password(settings.TESTING_LOGIN_PASSWORD)
-    u.save()
+    u = get_user()
 
     store = TaskStore.get_for_user(u)
     if not store.configured:

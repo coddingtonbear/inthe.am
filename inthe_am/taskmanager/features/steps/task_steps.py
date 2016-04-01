@@ -6,15 +6,14 @@ import time
 from behave import given, when, then, step
 import pytz
 
-from django.conf import settings
-from django.contrib.auth.models import User
-
 from inthe_am.taskmanager.merge_tasks import merge_tasks
 from inthe_am.taskmanager.models import TaskStore
 
+from .basic_steps import get_user
+
 
 def get_store():
-    u = User.objects.get(email=settings.TESTING_LOGIN_USER)
+    u = get_user()
     store = TaskStore.get_for_user(u)
     if not store.configured:
         store.autoconfigure_taskd()
