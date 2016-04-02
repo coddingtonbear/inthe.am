@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "inthe_am",
   "dependencies": {
     "ember": "~2.4.3",
     "ember-cli-shims": "0.1.1",
@@ -9,7 +9,7 @@
     "moment": "~2.9.0",
     "javascript-linkify": "latest",
     "growl": "https://github.com/ksylvest/jquery-growl.git#~1.2.4",
-    "datetimepicker": "~2.4.1",
+    "datetimepicker": "2.4.5",
     "fontawesome": "~4.3.0",
     "foundation": "^5.5.0",
     "ember-data-tastypie-adapter": "https://github.com/escalant3/ember-data-tastypie-adapter.git#2d426535d1fba5f0caa86980e6adab45f5c520ae",

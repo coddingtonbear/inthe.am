@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'frontend',
+    modulePrefix: 'inthe_am',
     environment: environment,
     baseURL: '/',
     locationType: 'history',
