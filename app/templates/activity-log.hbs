@@ -13,11 +13,7 @@
             </thead>
             <tbody>
                 {{#each msg in controller}}
-                    {{#if msg.error}}
-                        <tr class="error">
-                    {{else}}
-                        <tr class="info">
-                    {{/if}}
+                    <tr class="info">
                         <td class="last_seen">{{moment-fromnow msg.last_seen}}</td>
                         <td class="created">{{moment-fromnow msg.created}}</td>
                         <td class="message">
@@ -33,7 +29,7 @@
                                             {{/link-to}}
                                         </li>
                                     {{/each}}
-                                </li>
+                                </ul>
                             {{/if}}
                         </td>
                         <td class="count">{{msg.count}}</td>
