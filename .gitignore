@@ -39,3 +39,4 @@ ghostdriver.log
 docs/_build
 pip-selfcheck.json
 tags
+messages/*
