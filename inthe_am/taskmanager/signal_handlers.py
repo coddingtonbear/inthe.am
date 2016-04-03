@@ -5,19 +5,13 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.dispatch import receiver
 from django_mailbox.signals import message_received
-from tastypie.models import create_api_key
+from rest_framework.authtoken.models import Token
 
 from .models import TaskStore
 from .tasks import process_email_message
 
 
 logger = logging.getLogger(__name__)
-
-
-# Generate an API key automatically
-models.signals.post_save.connect(
-    create_api_key, sender=User, dispatch_uid='generate_api'
-)
 
 
 def autoconfigure_taskd_if_necessary(instance):
@@ -39,7 +33,8 @@ def autoconfigure_taskd_if_necessary(instance):
 )
 def create_taskstore_for_user(sender, instance, **kwargs):
     # This just makes sure that the task store exists.
-    instance = TaskStore.get_for_user(instance)
+    TaskStore.get_for_user(instance)
+    Token.objects.get_or_create(user=instance)
 
 
 @receiver(

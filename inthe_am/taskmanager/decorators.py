@@ -31,12 +31,10 @@ def requires_task_store(f):
             # Other Tastypie Views
             request = kwargs['bundle'].request
 
-        self._meta.authentication.is_authenticated(request)
-
         if not request.user.is_authenticated():
             raise PermissionDenied()
 
-        store = self.get_task_store(request)
+        store = models.TaskStore.get_for_user(request.user)
         kwargs['store'] = store
         result = f(self, *args, **kwargs)
         return result

@@ -9,18 +9,16 @@ import tempfile
 import time
 import uuid
 
-from dulwich.repo import Repo
-from tastypie.models import ApiKey
-
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 from django.utils.timezone import now
+from dulwich.repo import Repo
+from rest_framework.authtoken.models import Token
 
-from ..context_managers import git_checkpoint, timed_activity
+from ..context_managers import git_checkpoint
 from ..lock import (
     get_debounce_name_for_store,
     get_lock_name_for_store,
@@ -209,10 +207,8 @@ class TaskStore(models.Model):
 
     @property
     def api_key(self):
-        try:
-            return self.user.api_key
-        except ObjectDoesNotExist:
-            return ApiKey.objects.create(user=self.user)
+        token, _ = Token.objects.get_or_create(user=self.user)
+        return token
 
     @property
     def trello_board(self):

@@ -3,18 +3,22 @@ import json
 import logging
 import time
 
-from django_sse.views import BaseSseView
-
 from django.conf import settings
 from django.contrib.syndication.views import Feed
-from django.core.exceptions import SuspiciousOperation
+from django.core.exceptions import (
+    ObjectDoesNotExist, PermissionDenied, SuspiciousOperation,
+)
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
+from django_sse.views import BaseSseView
+from rest_framework.response import Response
+from rest_framework.views import exception_handler as drf_exception_handler
 
 from .lock import (
-    get_announcements_subscription,
+    get_announcements_subscription, LockTimeout
 )
 from .models import TaskStore
+from .taskwarrior_client import TaskwarriorError
 
 
 logger = logging.getLogger(__name__)
@@ -222,3 +226,48 @@ def debug_login(request):
     for name, value in cookies.items():
         response.set_cookie(name, value)
     return response
+
+
+def rest_exception_handler(e, context):
+    response = drf_exception_handler(e, context)
+    request = context['request']
+
+    if isinstance(e, TaskwarriorError):
+        # Note -- this error message will be printed to the USER's
+        # error log regardless of whether or not the error that occurred
+        # was a problem with their task list, or that of a Kanban board.
+        store = TaskStore.get_for_user(request.user)
+        message = '(%s) %s' % (
+            e.code,
+            e.stderr,
+        )
+        store.log_silent_error(
+            'Taskwarrior Error: %s' % message
+        )
+        return Response(
+            {
+                'error_message': message
+            },
+            status=400,
+        )
+    elif isinstance(e, LockTimeout):
+        message = (
+            'Your task list is currently in use; please try again later.'
+        )
+        store = TaskStore.get_for_user(request.user)
+        store.log_error(message)
+        return Response(
+            {
+                'error_message': (
+                    'Your task list is currently in use; please try '
+                    'again later.'
+                )
+            },
+            status=409
+        )
+    elif isinstance(e, PermissionDenied):
+        return Response(status=401)
+    elif isinstance(e, ObjectDoesNotExist):
+        return Response(status=404)
+    else:
+        return response

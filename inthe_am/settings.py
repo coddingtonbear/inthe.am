@@ -390,12 +390,21 @@ INSTALLED_APPS = [
     'gunicorn',
     'inthe_am.taskmanager',
     'django_mailbox',
-    'south',
-    'tastypie',
+    'rest_framework',
+    'rest_framework.authtoken',
     'django_extensions',
     'django_behave',
     'storages',
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        'rest_framework.authtoken',
+    ],
+    'EXCEPTION_HANDLER': 'inthe_am.taskmanager.views.rest_exception_handler',
+}
 
 RAVEN_CONFIG = {
     'dsn': RAVEN_DSN
