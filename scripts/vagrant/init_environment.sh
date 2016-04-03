@@ -134,7 +134,8 @@ cd $MAIN_DIR
 set +e
 echo "installing ember-cli and bower"
 npm install -g npm@2.5.1
-npm install -g node@5.0.0
+npm install -g n
+n 5.0.0
 npm install -g ember-cli@2.4.3 bower@1.7.6
 echo "running npm install"
 npm install
