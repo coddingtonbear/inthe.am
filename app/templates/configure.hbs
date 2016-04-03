@@ -4,28 +4,30 @@
         <div id="settings_alerts">
         </div>
 
-        {{#unless applicationController.user.sync_enabled}}
-            <div class="block error">
-                <p>
-                    Inthe.AM encountered a problem synchronizing your tasks with
-                    the taskserver you have asked us to use, and
-                    synchronization has been disabled for your account.
-                </p>
-                <p>
-                    This can occur if either your taskserver synchronization settings
-                    below are incorrect, or if the server you are synchronizing
-                    with encountered a temporary outage.
-                </p>
-                <p>
-                    Please take a moment to verify that you have entered the
-                    correct settings, then re-enable synchronization by
-                    clicking the button below.
-                </p>
-                <a href="" class="button radius alert" {{action "enable_sync"}}>
-                    Re-enable Synchronization
-                </a>
-            </div>
-        {{/unless}}
+        {{#if applicationController.user.username}}
+            {{#unless applicationController.user.sync_enabled}}
+                <div class="block error">
+                    <p>
+                        Inthe.AM encountered a problem synchronizing your tasks with
+                        the taskserver you have asked us to use, and
+                        synchronization has been disabled for your account.
+                    </p>
+                    <p>
+                        This can occur if either your taskserver synchronization settings
+                        below are incorrect, or if the server you are synchronizing
+                        with encountered a temporary outage.
+                    </p>
+                    <p>
+                        Please take a moment to verify that you have entered the
+                        correct settings, then re-enable synchronization by
+                        clicking the button below.
+                    </p>
+                    <a href="" class="button radius alert" {{action "enable_sync"}}>
+                        Re-enable Synchronization
+                    </a>
+                </div>
+            {{/unless}}
+        {{/if}}
 
         <ul class="accordion" data-accordion>
             <li class="accordion-navigation">
