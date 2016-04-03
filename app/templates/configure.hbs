@@ -4,7 +4,7 @@
         <div id="settings_alerts">
         </div>
 
-        {{#unless controllers.application.user.sync_enabled}}
+        {{#unless applicationController.user.sync_enabled}}
             <div class="block error">
                 <p>
                     Inthe.AM encountered a problem synchronizing your tasks with
@@ -62,7 +62,7 @@
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{#if controllers.application.user.trello_board_url}}
+                            {{#if applicationController.user.trello_board_url}}
                                 <p>
                                     Trello integration is currently turned on; you can access
                                     your Trello board by clicking the 'Trello' button at the 
@@ -70,7 +70,7 @@
                                 </p>
                                 <ul>
                                     <li>
-                                        <a {{bind-attr href=controllers.application.user.trello_board_url}}>{{controllers.application.user.trello_board_url}}</a>.
+                                        <a {{bind-attr href=applicationController.user.trello_board_url}}>{{applicationController.user.trello_board_url}}</a>.
                                     </li>
                                 </ul>
                             {{else}}
@@ -119,11 +119,11 @@
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
-                            {{#if controllers.application.user.trello_board_url}}
+                            {{#if applicationController.user.trello_board_url}}
                                 <a href="" class="button radius alert" {{action "reset_trello_settings"}}>Reset Trello settings</a>
                                 <a href="" class="button radius" {{action "trello_force_resynchronization"}}>Force Resynchronization</a>
                             {{else}}
-                                <a class="button radius" {{bind-attr href=controllers.application.urls.trello_authorization_url }}>Click here to get started</a>
+                                <a class="button radius" {{bind-attr href=applicationController.urls.trello_authorization_url }}>Click here to get started</a>
                             {{/if}}
                         </div>
                     </div>
@@ -147,7 +147,7 @@
                             <p>
                                 Your bugwarrior configuration:
                             </p>
-                            {{textarea name="bugwarrior_config" id="id_bugwarrior_config" value=controllers.application.user.bugwarrior_config}}
+                            {{textarea name="bugwarrior_config" id="id_bugwarrior_config" value=applicationController.user.bugwarrior_config}}
                             <p class="input-note">
                                 See <a href="http://bugwarrior.readthedocs.org/en/latest/common_configuration.html">Bugwarrior's Documentation</a> for information
                                 about how to configure synchronization with your services.
@@ -174,21 +174,21 @@
                                 you would like to use or see the values of these locally, add
                                 the following settings to your <span class="code">.taskrc</span>.
                             </p>
-                            <pre class="para">{{controllers.application.user.system_udas}}</pre>
+                            <pre class="para">{{applicationController.user.system_udas}}</pre>
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
                             <h3>Color Scheme</h3>
                             <label>Color Scheme</label>
-                            {{view "select" value=controllers.application.user.colorscheme optionValuePath="content.file" optionLabelPath="content.name" content=themeOptions id="id_theme"}}
+                            {{view "select" value=applicationController.user.colorscheme optionValuePath="content.file" optionLabelPath="content.name" content=themeOptions id="id_theme"}}
                             <a href="" class="button radius" {{action "save_colorscheme"}}>Save Color Scheme</a>
                         </div>
                     </div>
                     <div class="row">
                         <div class="large-12 columns">
                             <h3>Custom <span class="code">.taskrc</span></h3>
-                            {{textarea name="custom_taskrc" value=controllers.application.user.taskrc_extras cols="80" rows="10" }}
+                            {{textarea name="custom_taskrc" value=applicationController.user.taskrc_extras cols="80" rows="10" }}
                             <p class="input-note">
                                 Only configuration values relating to urgency or UDA definitions
                                 will have an effect,
@@ -217,7 +217,7 @@
                                         API Key
                                     </th>
                                     <td>
-                                        {{ controllers.application.user.username }}:{{ controllers.application.user.api_key }}
+                                        {{ applicationController.user.username }}:{{ applicationController.user.api_key }}
                                     </td>
                                 </tr>
                             </table>
@@ -241,7 +241,7 @@
                                 Calendar or any other calendaring application that
                                 supports the iCal standard.
                             </p>
-                            {{#unless controllers.application.user.ical_enabled}}
+                            {{#unless applicationController.user.ical_enabled}}
                                 <div class="block warning">
                                     <p>
                                         For your security, your iCal feed is disabled
@@ -258,7 +258,7 @@
                                             Task Due Dates iCal Feed URL
                                         </th>
                                         <td>
-                                            https://inthe.am{{ controllers.application.urls.ical_due_url }}
+                                            https://inthe.am{{ applicationController.urls.ical_due_url }}
                                         </td>
                                     </tr>
                                     <tr>
@@ -266,13 +266,13 @@
                                             Task Waiting Dates iCal Feed URL
                                         </th>
                                         <td>
-                                            https://inthe.am{{ controllers.application.urls.ical_waiting_url }}
+                                            https://inthe.am{{ applicationController.urls.ical_waiting_url }}
                                         </td>
                                     </tr>
                                 </table>
                             {{/unless}}
                             <label>iCal Task Feed</label>
-                            {{view "select" value=controllers.application.user.ical_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI id="id_ical_config"}}
+                            {{view "select" value=applicationController.user.ical_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI id="id_ical_config"}}
                             <a href="" class="button radius" {{action "save_ical"}}>Save Settings</a>
                         </div>
                     </div>
@@ -283,7 +283,7 @@
                                 Turn this feature on to gain access to an RSS feed
                                 listing your most urgent tasks.
                             </p>
-                            {{#unless controllers.application.user.feed_enabled}}
+                            {{#unless applicationController.user.feed_enabled}}
                                 <div class="block warning">
                                     <p>
                                         For your security, your feed is disabled
@@ -300,13 +300,13 @@
                                             Feed URL
                                         </th>
                                         <td>
-                                            https://inthe.am{{ controllers.application.urls.feed_url }}
+                                            https://inthe.am{{ applicationController.urls.feed_url }}
                                         </td>
                                     </tr>
                                 </table>
                             {{/unless}}
                             <label>RSS Task Feed</label>
-                            {{view "select" value=controllers.application.user.feed_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI id="id_feed_config"}}
+                            {{view "select" value=applicationController.user.feed_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI id="id_feed_config"}}
                             <a href="" class="button radius" {{action "save_feed"}}>Save Settings</a>
                         </div>
                     </div>
@@ -321,7 +321,7 @@
                                 sun will set today.  Inthe.AM provides a URL you can use with
                                 Pebble Cards for displaying your current highest priority task.
                             </p>
-                            {{#unless controllers.application.user.pebble_cards_enabled}}
+                            {{#unless applicationController.user.pebble_cards_enabled}}
                                 <div class="block warning">
                                     <p>
                                         For your security, your Pebble Cards URL is disabled
@@ -338,13 +338,13 @@
                                             Pebble Cards URL
                                         </th>
                                         <td>
-                                            https://inthe.am{{ controllers.application.urls.pebble_card_url }}
+                                            https://inthe.am{{ applicationController.urls.pebble_card_url }}
                                         </td>
                                     </tr>
                                 </table>
                             {{/unless}}
                             <label>Pebble Cards URL</label>
-                            {{view "select" value=controllers.application.user.pebble_cards_enabled optionValuePath="content.value" optionLabelPath="content.human" content=pebbleCardsEnabledUI id="id_pebble_cards_config"}}
+                            {{view "select" value=applicationController.user.pebble_cards_enabled optionValuePath="content.value" optionLabelPath="content.human" content=pebbleCardsEnabledUI id="id_pebble_cards_config"}}
                             <a href="" class="button radius" {{action "save_pebble_cards"}}>Save Settings</a>
                         </div>
                     </div>
@@ -359,7 +359,7 @@
                             <p>
                                 Inthe.AM can receive and add items to your task list via email.
                             </p>
-                            {{#unless controllers.application.user.email_whitelist}}
+                            {{#unless applicationController.user.email_whitelist}}
                                 <div class="block warning">
                                     <p>
                                         For your security, the ability to receive tasks via email
@@ -375,13 +375,13 @@
                                             Your Inthe.AM email address
                                         </th>
                                         <td>
-                                            {{create-mailto controllers.application.user.task_creation_email_address}}
+                                            {{create-mailto applicationController.user.task_creation_email_address}}
                                         </td>
                                     </tr>
                                 </table>
                                 <p>
                                     Simply send an email to
-                                    {{create-mailto controllers.application.user.task_creation_email_address}}
+                                    {{create-mailto applicationController.user.task_creation_email_address}}
                                     with either an empty subject or the word <strong>New</strong>, and a
                                     body containing the text you would use on the command-line to create a task.
                                 </p>
@@ -389,8 +389,8 @@
                                     For example:
                                 </p>
                                 <blockquote>
-                                    From: {{controllers.application.user.email}}<br />
-                                    To: {{controllers.application.user.task_creation_email_address}}<br />
+                                    From: {{applicationController.user.email}}<br />
+                                    To: {{applicationController.user.task_creation_email_address}}<br />
                                     Subject: New<br />
                                     <br />
                                     Find local source for flux capacitor parts.  project:time_machine priority:h +delorean
@@ -404,16 +404,16 @@
                                 <p>
                                     For example, to automatically add the tag "alpha" to an incoming
                                     task, you can send an email to
-                                    {{create-mailto controllers.application.user.task_creation_email_address suffix="+alpha"}},
+                                    {{create-mailto applicationController.user.task_creation_email_address suffix="+alpha"}},
                                     or to set the project to "time_machine" you could send an email to
-                                    {{create-mailto controllers.application.user.task_creation_email_address suffix="__project=time_machine"}}.
+                                    {{create-mailto applicationController.user.task_creation_email_address suffix="__project=time_machine"}}.
                                 </p>
                                 <p>
                                     Tags and task attributes can be assigned simultaneously for any task
                                     attribute including any UDAs you might have specified, and you may
                                     specify any number of them simultaneously (for example, this one sets priority,
                                     project and adds two tags:
-                                    {{create-mailto controllers.application.user.task_creation_email_address suffix="+one__project=time_machine__priority=H+two"}}
+                                    {{create-mailto applicationController.user.task_creation_email_address suffix="+one__project=time_machine__priority=H+two"}}
                                     ) just be sure to
                                     follow the following format:
                                 </p>
@@ -434,7 +434,7 @@
                         </div>
                         <div class="large-12 columns">
                             <label>Email Address Whitelist</label>
-                            {{textarea name="email_whitelist" id="id_email_whitelist" value=controllers.application.user.email_whitelist placeholder="me@somesite.com"}}
+                            {{textarea name="email_whitelist" id="id_email_whitelist" value=applicationController.user.email_whitelist placeholder="me@somesite.com"}}
                             <p class="input-note">
                                 Only email messages recieved from addresses matching one of the above whitelisted email addresses will be accepted.
                                 Please enter only one email address per line.
@@ -469,7 +469,7 @@
                                 </li>
                                 <li>
                                     From your phone number's configuration screen, set the field "Messaging Request URL" to
-                                    your personal incoming SMS URL: <code>https://inthe.am{{ controllers.application.urls.sms_url }}</code>.
+                                    your personal incoming SMS URL: <code>https://inthe.am{{ applicationController.urls.sms_url }}</code>.
                                 </li>
                                 <li>
                                     Press save.
@@ -486,7 +486,7 @@
                                 contents:
                                 <pre>add project:birthday due:tomorrow priority:h It's my birthday</pre>
                             </p>
-                            {{#unless controllers.application.user.twilio_auth_token}}
+                            {{#unless applicationController.user.twilio_auth_token}}
                                 <div class="block warning">
                                     <p>
                                         For your security, the ability to send task messages via
@@ -508,7 +508,7 @@
                                             Twilio Messaging Request URL <strong>(POST)</strong>
                                         </th>
                                         <td>
-                                            https://inthe.am{{ controllers.application.urls.sms_url }}
+                                            https://inthe.am{{ applicationController.urls.sms_url }}
                                         </td>
                                     </tr>
                                 </table>
@@ -516,11 +516,11 @@
                         </div>
                         <div class="large-12 columns">
                             <label>Twilio Auth Token</label>
-                            {{input type="text" id="id_twilio_auth_token" name="twilio_auth_token" value=controllers.application.user.twilio_auth_token}}
+                            {{input type="text" id="id_twilio_auth_token" name="twilio_auth_token" value=applicationController.user.twilio_auth_token}}
                         </div>
                         <div class="large-12 columns">
                             <label>Automatic Arguments</label>
-                            {{input type="text" id="id_sms_arguments" name="sms_arguments" value=controllers.application.user.sms_arguments}}
+                            {{input type="text" id="id_sms_arguments" name="sms_arguments" value=applicationController.user.sms_arguments}}
                             <p class='input-note'>
                                 Arguments to add to the 'add' command.
                                 For example, you could use "+sms" to add
@@ -531,7 +531,7 @@
                             <label>Replies</label>
                             {{
                                 view "select"
-                                value=controllers.application.user.sms_replies
+                                value=applicationController.user.sms_replies
                                 optionValuePath="content.short"
                                 optionLabelPath="content.long"
                                 content=smsRepliesSettings
@@ -540,7 +540,7 @@
                         </div>
                         <div class="large-12 columns">
                             <label>Phone Number Whitelist</label>
-                            {{textarea name="sms_whitelist" id="id_sms_whitelist" value=controllers.application.user.sms_whitelist placeholder="+15555555555"}}
+                            {{textarea name="sms_whitelist" id="id_sms_whitelist" value=applicationController.user.sms_whitelist placeholder="+15555555555"}}
                             <p class='input-note'>
                                 One phone number per line.  Leave empty to allow messages from any phone number.
                             </p>
@@ -573,7 +573,7 @@
                             </p>
                         </div>
                     </div>
-                    <a {{bind-attr href=controllers.application.urls.mirakel_configuration }} class="button radius">Download</a>
+                    <a {{bind-attr href=applicationController.urls.mirakel_configuration }} class="button radius">Download</a>
                 </div>
             </li>
             <li class="accordion-navigation">
