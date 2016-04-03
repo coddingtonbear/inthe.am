@@ -375,7 +375,9 @@
                                             Your Inthe.AM email address
                                         </th>
                                         <td>
-                                            {{create-mailto applicationController.user.task_creation_email_address}}
+                                            <a href="mailto:{{applicationController.user.task_creation_email_address}}">
+                                                {{applicationController.user.task_creation_email_address}}
+                                            </a>
                                         </td>
                                     </tr>
                                 </table>
