@@ -33,6 +33,9 @@ if [ -z "$TRAVIS" ]; then
     fi
     cd $STARTING_DIR
 
+    # Increase watch count
+    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
     # Set up virtual environment
     echo "setting up virtualenv"
     mkdir -p /var/www/envs
@@ -127,29 +130,17 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     fi
 fi
 
-# copy MAIN_DIR into a temp folder and run npm there
-# to avoid EPERM errors on NFS shared folders in vagrant
-# See: https://github.com/npm/npm/issues/3565
-cd $STARTING_DIR
-cp -a $MAIN_DIR /tmp/twweb
-cd /tmp/twweb
-
+cd $MAIN_DIR
 set +e
 echo "installing ember-cli and bower"
-npm install -g ember-cli@0.1.7 bower@1.3.12
+npm install -g ember-cli@2.4.3 bower@1.7.6
 echo "running npm install"
 npm install
 echo "running bower install"
 bower --config.interactive=false install --allow-root
-echo "running ember install"
-ember install
 set -e
 echo "running ember build"
 ember build
-
-# Sync back node_modules to original place
-rsync --recursive --links --times /tmp/twweb/ $MAIN_DIR/
-cd $MAIN_DIR
 
 # Install requirements
 echo "installing python requirements"

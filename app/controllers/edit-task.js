@@ -1,7 +1,8 @@
 import Ember from "ember";
+import ObjectController from 'ember-legacy-controllers/object'
 
-var controller = Ember.ObjectController.extend({
-    needs: ['application', 'tasks'],
+var controller = ObjectController.extend({
+    applicationController: Ember.inject.controller('application'),
     priorities: [
         {short: '', long: '(none)'},
         {short: 'L', long: 'Low'},
@@ -11,7 +12,7 @@ var controller = Ember.ObjectController.extend({
     actions: {
         'save': function() {
             var model = this.get('model');
-            var application = this.get('controllers.application');
+            var application = this.get('applicationController');
             var self = this;
             application.showLoading();
             model.save().then(function(){

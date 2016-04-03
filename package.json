@@ -30,19 +30,23 @@
     "ember-cli-inject-live-reload": "^1.4.0",
     "ember-cli-qunit": "^1.4.0",
     "ember-cli-release": "0.2.8",
+    "ember-cli-sass": "5.3.1",
+    "ember-cli-showdown": "2.5.0",
     "ember-cli-sri": "^2.1.0",
     "ember-cli-uglify": "^1.2.0",
     "ember-data": "^2.4.2",
+    "ember-django-adapter": "1.1.2",
     "ember-export-application-global": "^1.0.5",
+    "ember-font-awesome": "2.1.0",
     "ember-legacy-controllers": "0.1.0",
     "ember-legacy-views": "0.2.0",
     "ember-load-initializers": "^0.5.1",
     "ember-resolver": "^2.0.3",
-    "loader.js": "^4.0.1",
     "express": "^4.8.5",
     "glob": "4.0.5",
-    "rimraf": "2.2.8",
-    "http-proxy": "^1.8.1",
-    "morgan": "^1.5.1"
+    "http-proxy": "^1.13.2",
+    "loader.js": "^4.0.1",
+    "morgan": "^1.5.1",
+    "rimraf": "2.2.8"
   }
 }

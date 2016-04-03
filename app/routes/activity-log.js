@@ -4,7 +4,7 @@ var route = Ember.Route.extend({
     model: function() {
         var application = this.controllerFor('application');
         application.showLoading();
-        return this.store.find('activity-log').then(function(data){
+        return this.store.findAll('activity-log').then(function(data){
             application.hideLoading();
             return data;
         });

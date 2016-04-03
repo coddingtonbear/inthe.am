@@ -67,7 +67,7 @@ class TaskViewSet(viewsets.ViewSet):
                 },
                 status=403
             )
-        super(TaskViewSet, self).dispatch(request, *args, **kwargs)
+        return super(TaskViewSet, self).dispatch(request, *args, **kwargs)
 
     def passes_filters(self, task, filters):
         passes = True

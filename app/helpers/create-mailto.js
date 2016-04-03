@@ -1,6 +1,6 @@
 import Ember from "ember";
 
-export default Ember.Handlebars.makeBoundHelper(function(emailAddress, label, option) {
+export default Ember.Helper.helper(function([emailAddress, label]) {
     if(typeof(label) === 'object') {
         option = label;
     }

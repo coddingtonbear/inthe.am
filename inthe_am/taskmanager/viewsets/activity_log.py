@@ -1,10 +1,12 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .. import models
 from ..serializers.activity_log import ActivityLogSerializer
 
 
 class ActivityLogViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly, )
     serializer_class = ActivityLogSerializer
 
     def get_queryset(self):

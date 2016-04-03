@@ -1,7 +1,7 @@
 import Ember from "ember";
 
-export default Ember.Handlebars.makeBoundHelper(function(date, options) {
+export default Ember.Helper.helper(function([date]) {
     if (date) {
-        return new Handlebars.SafeString('<span class="calendar date" title="' + moment(date).format('LLLL') + '">' + moment(date).calendar() + "</span>");
+        return new Ember.Handlebars.SafeString('<span class="calendar date" title="' + moment(date).format('LLLL') + '">' + moment(date).calendar() + "</span>");
     }
 });

@@ -1,13 +1,13 @@
 import Ember from "ember";
 
 var controller = Ember.Controller.extend({
-    needs: ['application'],
     urls: {
         web_ui: '/web_ui.png',
     },
+    applicationController: Ember.inject.controller('application'),
     actions: {
         login: function(){
-            window.location = this.get('controllers.application.urls.login');
+            window.location = this.get('applicationController.urls.login');
         },
     }
 });

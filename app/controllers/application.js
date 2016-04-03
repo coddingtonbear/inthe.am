@@ -4,10 +4,14 @@ import Task from "../models/task";
 import Router from "../router";
 
 var controller = Ember.Controller.extend({
-    needs: ['task', 'tasks', 'activity-log', 'configure'],
+    taskController: Ember.inject.controller('task'),
+    tasksController: Ember.inject.controller('tasks'),
+    indexController: Ember.inject.controller('index'),
+    configureController: Ember.inject.controller('configure'),
     logo: '',
     applicationName: 'Local Installation',
     user: null,
+    initialized: false,
     shortcuts: {
         'alt+h': 'show_help',
         'alt+l': 'show_log',
@@ -37,35 +41,35 @@ var controller = Ember.Controller.extend({
         login: '/login/google-oauth2/',
         logout: '/logout/',
         about: '/about/',
-        generate_new_certificate: '/api/v1/user/generate-new-certificate/',
-        ca_certificate: '/api/v1/user/ca-certificate/',
-        my_certificate: '/api/v1/user/my-certificate/',
-        my_key: '/api/v1/user/my-key/',
-        taskrc_extras: '/api/v1/user/taskrc/',
-        taskd_settings: '/api/v1/user/configure-taskd/',
-        taskd_reset: '/api/v1/user/reset-taskd-configuration/',
-        email_integration: '/api/v1/user/email-integration/',
-        twilio_integration: '/api/v1/user/twilio-integration/',
-        tos_accept: '/api/v1/user/tos-accept/',
-        clear_task_data: '/api/v1/user/clear-task-data/',
-        set_colorscheme: '/api/v1/user/colorscheme/',
-        enable_sync: '/api/v1/user/enable-sync/',
-        mirakel_configuration: '/api/v1/user/mirakel-configuration/',
-        configure_pebble_cards: '/api/v1/user/pebble-cards-config/',
-        configure_feed: '/api/v1/user/feed-config/',
-        configure_ical: '/api/v1/user/ical-config/',
-        user_status: '/api/v1/user/status/',
-        announcements: '/api/v1/user/announcements/',
-        refresh: '/api/v1/task/refresh/',
-        clear_lock: '/api/v1/task/lock/',
-        sync_init: '/api/v1/task/sync-init/',
-        revert_to_last_commit: '/api/v1/task/revert/',
-        sync: '/api/v1/task/sync/',
-        trello_authorization_url: '/api/v1/task/trello/',
-        trello_resynchronization_url: '/api/v1/task/trello/resynchronize/',
-        trello_reset_url: '/api/v1/task/trello/reset/',
-        bugwarrior_config: '/api/v1/task/bugwarrior/',
-        bugwarrior_sync: '/api/v1/task/bugwarrior/sync/',
+        generate_new_certificate: '/api/v2/user/generate-new-certificate/',
+        ca_certificate: '/api/v2/user/ca-certificate/',
+        my_certificate: '/api/v2/user/my-certificate/',
+        my_key: '/api/v2/user/my-key/',
+        taskrc_extras: '/api/v2/user/taskrc/',
+        taskd_settings: '/api/v2/user/configure-taskd/',
+        taskd_reset: '/api/v2/user/reset-taskd-configuration/',
+        email_integration: '/api/v2/user/email-integration/',
+        twilio_integration: '/api/v2/user/twilio-integration/',
+        tos_accept: '/api/v2/user/tos-accept/',
+        clear_task_data: '/api/v2/user/clear-task-data/',
+        set_colorscheme: '/api/v2/user/colorscheme/',
+        enable_sync: '/api/v2/user/enable-sync/',
+        mirakel_configuration: '/api/v2/user/mirakel-configuration/',
+        configure_pebble_cards: '/api/v2/user/pebble-cards-config/',
+        configure_feed: '/api/v2/user/feed-config/',
+        configure_ical: '/api/v2/user/ical-config/',
+        user_status: '/api/v2/user/status/',
+        announcements: '/api/v2/user/announcements/',
+        refresh: '/api/v2/task/refresh/',
+        clear_lock: '/api/v2/task/lock/',
+        sync_init: '/api/v2/task/sync-init/',
+        revert_to_last_commit: '/api/v2/task/revert/',
+        sync: '/api/v2/task/sync/',
+        trello_authorization_url: '/api/v2/task/trello/',
+        trello_resynchronization_url: '/api/v2/task/trello/resynchronize/',
+        trello_reset_url: '/api/v2/task/trello/reset/',
+        bugwarrior_config: '/api/v2/task/bugwarrior/',
+        bugwarrior_sync: '/api/v2/task/bugwarrior/sync/',
         status_feed: '/status/',
         ical_waiting_url: null,
         ical_due_url: null,
@@ -132,18 +136,16 @@ var controller = Ember.Controller.extend({
     },
     taskUpdateStreamEnabled: function() {
         var enabled = this.get('user.streaming_enabled');
-        var compatible = this.get('controllers.configure.taskUpdateStreamCompatible');
+        var compatible = this.get('configureController.taskUpdateStreamCompatible');
         return enabled && compatible;
     }.property(),
     isHomePage: function() {
         return this.get('currentPath') === "about";
     }.property('currentPath'),
-    update_user_info: function(sync) {
-        var async = !sync;
+    update_user_info: function() {
         return this.ajaxRequest({
             url: this.get('urls.user_status'),
             dataType: 'json',
-            async: async
         }).then(function(data){
             this.set('user', data);
             console.logIfDebug("Got user data", data);
@@ -200,6 +202,9 @@ var controller = Ember.Controller.extend({
             this.set('urls.sms_url', this.get('user').sms_url);
             this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
             this.set('statusUpdaterHead', this.get('user').repository_head);
+
+            this.get('indexController').notifyUserLoaded();
+            this.notifyUserLoaded()
         }.bind(this), function(msg){
             this.error_message(
                 `An error was encountered while ` +
@@ -207,74 +212,7 @@ var controller = Ember.Controller.extend({
             );
         }.bind(this));
     },
-    handlePostLoginRedirects: function() {
-        if(window.localStorage && this.get('user.tos_up_to_date')) {
-            var url = window.localStorage.getItem('redirect_to');
-            console.logIfDebug("Scheduling redirect", url);
-            if(url) {
-                Ember.run.later(
-                    this,
-                    function(){
-                        var url = window.localStorage.getItem('redirect_to');
-                        console.logIfDebug("Redirecting to", url);
-                        window.localStorage.removeItem('redirect_to');
-                        if(window.location.pathname.indexOf(url) === -1) {
-                            window.location.href = url;
-                        }
-                    },
-                    5000
-                );
-                return true;
-            }
-        }
-        return false;
-    },
-    handleError: function(reason) {
-        console.logIfDebug("Error encountered", reason);
-        if (reason.status === 401) {
-            alert(
-                [
-                    "We're sorry, but your session appears to have expired.\n",
-                    "Press OK log-in again.",
-                ].join('\n')
-            );
-            window.location = this.get('urls.login');
-        }
-    },
-    init: function(){
-        var self = this;
-        // Load all tasks; the views are all populated by promises
-        // so whenever this is fulfilled, they'll automatically be populated
-        this.showLoading();
-        this.store.find('task').then(function(data) {
-            this.hideLoading();
-            if(data.get('length') === 0) {
-                Ember.run.next(
-                    this,
-                    function(){
-                        if(this.getHandlerPath() !== "application.fourOhFour") {
-                            this.transitionToRoute('getting-started');
-                        }
-                    }
-                );
-            }
-        }.bind(this), function() {
-                this.hideLoading();
-        }.bind(this));
-
-        if(window.location.hostname === 'inthe.am') {
-            this.set('logo', '/static/logo.png');
-            this.set('applicationName', 'Inthe.AM');
-        }
-        document.title = this.get('applicationName');
-
-        // Set up error reporting
-        Ember.onerror = this.reportError;
-        Ember.RSVP.configure('onerror', this.reportError);
-
-        // Fetch user information
-        this.update_user_info(true);
-
+    notifyUserLoaded: function() {
         this.ajaxRequest({
             url: this.get('urls.announcements'),
             dataType: 'json',
@@ -327,6 +265,73 @@ var controller = Ember.Controller.extend({
                 );
             }
         }
+    },
+    handlePostLoginRedirects: function() {
+        if(window.localStorage && this.get('user.tos_up_to_date')) {
+            var url = window.localStorage.getItem('redirect_to');
+            console.logIfDebug("Scheduling redirect", url);
+            if(url) {
+                Ember.run.later(
+                    this,
+                    function(){
+                        var url = window.localStorage.getItem('redirect_to');
+                        console.logIfDebug("Redirecting to", url);
+                        window.localStorage.removeItem('redirect_to');
+                        if(window.location.pathname.indexOf(url) === -1) {
+                            window.location.href = url;
+                        }
+                    },
+                    5000
+                );
+                return true;
+            }
+        }
+        return false;
+    },
+    handleError: function(reason) {
+        console.logIfDebug("Error encountered", reason);
+        if (reason.status === 401) {
+            alert(
+                [
+                    "We're sorry, but your session appears to have expired.\n",
+                    "Press OK log-in again.",
+                ].join('\n')
+            );
+            window.location = this.get('urls.login');
+        }
+    },
+    init: function(){
+        var self = this;
+        // Load all tasks; the views are all populated by promises
+        // so whenever this is fulfilled, they'll automatically be populated
+        this.showLoading();
+        this.store.findAll('task').then(function(data) {
+            this.hideLoading();
+            if(data.get('length') === 0) {
+                Ember.run.next(
+                    this,
+                    function(){
+                        if(this.getHandlerPath() !== "application.fourOhFour") {
+                            this.transitionToRoute('getting-started');
+                        }
+                    }
+                );
+            }
+        }.bind(this), function() {
+                this.hideLoading();
+        }.bind(this));
+
+        if(window.location.hostname === 'inthe.am') {
+            this.set('logo', '/static/logo.png');
+            this.set('applicationName', 'Inthe.AM');
+        }
+        document.title = this.get('applicationName');
+
+        // Set up error reporting
+        Ember.onerror = this.reportError;
+        Ember.RSVP.configure('onerror', this.reportError);
+
+        this.update_user_info();
     },
     taskUpdateStreamStatusMessage: function(){
         var state = this.get('_taskUpdateStreamStatus');
@@ -424,7 +429,7 @@ var controller = Ember.Controller.extend({
     updateColorscheme: function() {
         var scheme = this.get('user').colorscheme;
         if(scheme) {
-            $("#colorscheme").attr('href', '/colorschemes/' + scheme + '.css');
+            $("#colorscheme").attr('href', '/assets/colorschemes/' + scheme + '.css');
         }
     },
     bindStatusActions: function(updater) {
@@ -441,13 +446,13 @@ var controller = Ember.Controller.extend({
             console.logIfDebug(evt.type, evt.data);
             Ember.run.once(this, function(){
                 if (this.store.hasRecordForId('task', evt.data)) {
-                    this.store.find('task', evt.data).then(function(record){
+                    this.store.findRecord('task', evt.data).then(function(record){
                         if (record.get('isLoaded') && (!record.get('isDirty') && !record.get('isSaving'))) {
                             record.reload();
                         }
                     });
                 } else {
-                    this.store.find('task', evt.data);
+                    this.store.findRecord('task', evt.data);
                 }
             });
         },
@@ -455,7 +460,7 @@ var controller = Ember.Controller.extend({
             console.logIfDebug(evt.type, evt.data);
             this.set('statusUpdaterHead', evt.data);
             try {
-                this.store.find('activity-log').update();
+                this.store.findAll('activity-log').update();
             } catch(e) {
                 // Pass
             }
@@ -496,11 +501,7 @@ var controller = Ember.Controller.extend({
     },
     getHandlerPath: function() {
         var path_parts = [];
-        var handlers = Router.router.currentHandlerInfos;
-        for(var i = 0; i < handlers.length; i++) {
-                path_parts.push(handlers[i].name);
-        }
-        return path_parts.join('.');
+        return this.get('currentRouteName');
     },
     bindKeyboardEvents: function() {
         var controller = this;
@@ -531,14 +532,14 @@ var controller = Ember.Controller.extend({
                 return;
             }
             this.showLoading();
-            this.get('controllers.tasks').refresh(function(){
+            this.get('tasksController').refresh(function(){
                 this.hideLoading();
             }.bind(this), function(){
                 this.hideLoading();
             }.bind(this));
         },
         bugwarrior_sync: function(){
-            var configController = this.get('controllers.configure');
+            var configController = this.get('configureController');
             configController.send('schedule_bugwarrior_synchronization');
         },
         home: function(){
@@ -615,7 +616,7 @@ var controller = Ember.Controller.extend({
             }
         },
         start_or_stop: function() {
-            var taskController = this.get('controllers.task');
+            var taskController = this.get('taskController');
             var model = taskController.get('model');
             if(model.get('start')) {
                 taskController.send('stop');
@@ -624,34 +625,34 @@ var controller = Ember.Controller.extend({
             }
         },
         add_annotation: function() {
-            var taskController = this.get('controllers.task');
+            var taskController = this.get('taskController');
             taskController.send('add_annotation');
         },
         complete_task: function() {
-            var taskController = this.get('controllers.task');
+            var taskController = this.get('taskController');
             taskController.send('complete');
         },
         delete_task: function() {
-            var taskController = this.get('controllers.task');
+            var taskController = this.get('taskController');
             taskController.send('delete');
         },
         prev_task: function() {
-            var tasksController = this.get('controllers.tasks');
+            var tasksController = this.get('tasksController');
             tasksController.send('prev_task');
         },
         next_task: function() {
-            var tasksController = this.get('controllers.tasks');
+            var tasksController = this.get('tasksController');
             tasksController.send('next_task');
         },
         show_task: function() {
-                var taskController = this.get('controllers.task');
-                var task = taskController.get('model');
-                if(task) {
-                        this.transitionToRoute('task', task);
-                }
+            var taskController = this.get('taskController');
+            var task = taskController.get('model');
+            if(task) {
+                    this.transitionToRoute('task', task);
+            }
         },
         focus_filter: function() {
-                $('#filter-string').focus();
+            $('#filter-string').focus();
         },
     }
 });

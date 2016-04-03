@@ -1,31 +1,31 @@
-{{#if description}}
+{{#if model.description}}
 <div class="row" id="task-header">
     <div class="medium-12">
         <h1 class="title">
-            {{description}}
+            {{model.description}}
         </h1>
-        {{#if project}}
-            <p class="subtitle" {{bind-attr title="project"}}>
-                <span class="project">{{to-propercase project}}</span>
+        {{#if model.project}}
+            <p class="subtitle" title="{{model.project}}">
+                <span class="project">{{to-propercase model.project}}</span>
             </p>
         {{/if}}
         <div class="tags">
-            {{#if this.due}}
+            {{#if model.due}}
                 <i class="fa fa-clock-o">
-                    {{moment-fromnow this.due}}
+                    {{moment-fromnow model.due}}
                 </i>
             {{/if}}
-            {{#each tags}}
-                <i class="fa fa-tag">{{this}}</i>
+            {{#each model.tags as |tag_name|}}
+                <i class="fa fa-tag">{{tag_name}}</i>
             {{/each}}
         </div>
     </div>
 </div>
 <div class="row" id="task-action-bar">
     <div class="medium-12">
-        {{#if editable}}
+        {{#if model.editable}}
             <ul id="task-actions" class="inline-list">
-                {{#if start}}
+                {{#if model.start}}
                     <li data-intro="alt+s">
                         <a href="#" {{action "stop"}}>
                             <i class="fa fa-star-o">Stop</i>
@@ -66,28 +66,28 @@
     <div class="medium-6 columns details_table">
         <table class="details">
             <tbody>
-                {{#if dependent_tickets}}
+                {{#if model.dependent_tickets}}
                     <tr>
                         <th>Depends Upon</th>
                         <td>
                             <ul class="depends_tickets">
-                                {{#each dependent_tickets}}
-                                    <li {{bind-attr class="this.status"}}>
-                                        {{#link-to 'task' this}}{{this.description}}{{/link-to}}
+                                {{#each model.dependent_tickets as |ticket|}}
+                                    <li class="{{ticket.status}}">
+                                        {{#link-to 'task' ticket}}{{ticket.description}}{{/link-to}}
                                     </li>
                                 {{/each}}
                             </ul>
                         </td>
                     </tr>
                 {{/if}}
-                {{#if blocked_tickets}}
+                {{#if model.blocked_tickets}}
                     <tr>
                         <th>Blocks</th>
                         <td>
                             <ul class="blocked_tickets">
-                                {{#each blocked_tickets}}
-                                    <li {{bind-attr class="this.status"}}>
-                                        {{#link-to 'task' this}}{{this.description}}{{/link-to}}
+                                {{#each model.blocked_tickets as |ticket|}}
+                                    <li class="{{ticket.status}}">
+                                        {{#link-to 'task' ticket}}{{ticket.description}}{{/link-to}}
                                     </li>
                                 {{/each}}
                             </ul>
@@ -96,64 +96,64 @@
                 {{/if}}
                 <tr>
                     <th>Description</th>
-                    <td>{{description}}</td>
+                    <td>{{model.description}}</td>
                 </tr>
                 <tr>    
                     <th>Project</th>
-                    <td><span class="project">{{project}}</span></td>
+                    <td><span class="project">{{model.project}}</span></td>
                 </tr>
                 <tr>
                     <th>Status</th>
-                    <td>{{to-propercase status}}</td>
+                    <td>{{to-propercase model.status}}</td>
                 </tr>
                 <tr>
                     <th>Tags</th>
                     <td>
-                        {{#each tags}}
-                            <i class="fa fa-tag">{{this}}</i>
+                        {{#each model.tags as |tag_name|}}
+                            <i class="fa fa-tag">{{tag_name}}</i>
                         {{/each}}
                     </td>
                 </tr>
                 <tr>
                     <th>Urgency</th>
-                    <td>{{urgency}}</td>
+                    <td>{{model.urgency}}</td>
                 </tr>
                 <tr>
                     <th>Priority</th>
-                    <td>{{priority}}</td>
+                    <td>{{model.priority}}</td>
                 </tr>
                 <tr>
                     <th>Due</th>
-                    <td>{{moment-calendar due}}</td>
+                    <td>{{moment-calendar model.due}}</td>
                 </tr>
                 <tr>
                     <th>Entered</th>
-                    <td>{{moment-calendar entry}}</td>
+                    <td>{{moment-calendar model.entry}}</td>
                 </tr>
                 <tr>
                     <th>Started</th>
-                    <td>{{moment-calendar start}}</td>
+                    <td>{{moment-calendar model.start}}</td>
                 </tr>
                 <tr>
                     <th>Wait</th>
-                    <td>{{moment-calendar wait}}</td>
+                    <td>{{moment-calendar model.wait}}</td>
                 </tr>
                 <tr>
                     <th>Scheduled</th>
-                    <td>{{moment-calendar scheduled}}</td>
+                    <td>{{moment-calendar model.scheduled}}</td>
                 </tr>
                 <tr>
                     <th>Modified</th>
-                    <td>{{moment-calendar modified}}</td>
+                    <td>{{moment-calendar model.modified}}</td>
                 </tr>
                 <tr>
                     <th>UUID</th>
-                    <td><span class="uuid">{{uuid}}</span></td>
+                    <td><span class="uuid">{{model.uuid}}</span></td>
                 </tr>
-                {{#each definedUDAs}}
+                {{#each model.definedUDAs as |uda|}}
                     <tr>
                         <th>{{label}}</th>
-                        <td>{{render-uda-value this}}</td>
+                        <td>{{render-uda-value uda}}</td>
                     </tr>
                 {{/each}}
             </tbody>
@@ -161,12 +161,12 @@
     </div>
     <div class="medium-6 columns annotations_list">
         <ul class='annotation_list'>
-            {{#each annotations}}
+            {{#each model.annotations as |annotation|}}
                 <li>
                     <span class="annotation_tools">
-                        <a class="delete-annotation-link" {{action "delete_annotation" this}}>&#215;</a>
+                        <a class="delete-annotation-link" {{action "delete_annotation" annotation}}>&#215;</a>
                     </span>
-                    {{render-markdown this}}
+                    {{markdown-to-html markdown=annotation}}
                 </li>
             {{/each}}
         </ul>

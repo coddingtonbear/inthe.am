@@ -42,3 +42,4 @@ icalendar==3.9.0
 jira==0.47
 newrelic==2.54.0.41
 backports.statistics==0.1.0
+django-cors-headers==1.1.0

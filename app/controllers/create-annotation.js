@@ -1,10 +1,11 @@
 import Ember from "ember";
+import ObjectController from 'ember-legacy-controllers/object'
 
-var controller = Ember.ObjectController.extend({
-    needs: ['application'],
+var controller = ObjectController.extend({
+    applicationController: Ember.inject.controller('application'),
     actions: {
         'save': function() {
-            var application = this.get('controllers.application');
+            var application = this.get('applicationController');
             var model = this.get('model');
             var annotations = model.get('annotations');
             var field = $("#new_annotation_body");

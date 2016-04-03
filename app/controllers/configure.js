@@ -1,7 +1,7 @@
 import Ember from "ember";
 
 var controller = Ember.Controller.extend({
-    needs: ['application'],
+    applicationController: Ember.inject.controller('application'),
     taskd_trust_settings: [
         {short: 'no', long: 'Validate taskserver using an uploaded CA Certificate'},
         {short: 'yes', long: 'Trust taskserver implicitly; do not validate using a CA Certificate'},
@@ -48,16 +48,16 @@ var controller = Ember.Controller.extend({
         return true;
     }.property(),
     ajaxRequest: function(params) {
-        return this.get('controllers.application').ajaxRequest(params);
+        return this.get('applicationController').ajaxRequest(params);
     },
     sync_with_init: function() {
-        var url = this.get('controllers.application').urls.sync_init;
+        var url = this.get('applicationController').urls.sync_init;
 
         return this.ajaxRequest({
             url: url,
             type: 'POST',
         }).then(function(){
-            this.get('controllers.application').update_user_info();
+            this.get('applicationController').update_user_info();
             this.success_message(
                 "Initial sync completed successfully."
             );
@@ -79,7 +79,7 @@ var controller = Ember.Controller.extend({
         ) {
             return;
         }
-        var url = this.get('controllers.application').urls.taskd_settings;
+        var url = this.get('applicationController').urls.taskd_settings;
         var self = this;
 
         $.ajax({
@@ -87,7 +87,7 @@ var controller = Ember.Controller.extend({
             type: 'POST',
             data: data,
             success: function(){
-                self.get('controllers.application').update_user_info();
+                self.get('applicationController').update_user_info();
                 self.success_message("Taskserver settings saved.");
                 if(after) {
                     after();
@@ -104,17 +104,17 @@ var controller = Ember.Controller.extend({
         });
     },
     error_message: function(message) {
-        this.get('controllers.application').error_message(message);
+        this.get('applicationController').error_message(message);
     },
     success_message: function(message) {
-        this.get('controllers.application').success_message(message);
+        this.get('applicationController').success_message(message);
     },
     growl_message: function(type, opts) {
         $.growl[type || 'notice'](opts || {});
     },
     actions: {
         save_taskrc: function() {
-            var url = this.get('controllers.application').urls.taskrc_extras;
+            var url = this.get('applicationController').urls.taskrc_extras;
             var value = $('textarea[name=custom_taskrc]').val();
             return this.ajaxRequest({
                 url: url,
@@ -122,7 +122,7 @@ var controller = Ember.Controller.extend({
                 dataType: 'text',
                 data: value
             }).then(function(response) {
-                this.get('controllers.application').update_user_info();
+                this.get('applicationController').update_user_info();
                 this.success_message("Taskrc settings saved");
             }.bind(this), function(msg) {
                 this.error_message(
@@ -132,13 +132,13 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         regenerate_taskd_certificate: function() {
-            var url = this.get('controllers.application').urls.generate_new_certificate;
+            var url = this.get('applicationController').urls.generate_new_certificate;
             return this.ajaxRequest({
                 url: url,
                 type: 'POST',
                 data: {}
             }).then(function(){
-                this.get('controllers.application').update_user_info();
+                this.get('applicationController').update_user_info();
                 this.success_message("New taskserver certificate generated!");
             }.bind(this), function(msg){
                 this.error_message(
@@ -148,7 +148,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         trello_force_resynchronization: function() {
-            var url = this.get('controllers.application').urls.trello_resynchronization_url;
+            var url = this.get('applicationController').urls.trello_resynchronization_url;
             return this.ajaxRequest({
                 url: url,
                 type: 'POST',
@@ -166,13 +166,13 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         reset_trello_settings: function() {
-            var url = this.get('controllers.application').urls.trello_reset_url;
+            var url = this.get('applicationController').urls.trello_reset_url;
             return this.ajaxRequest({
                 url: url,
                 type: 'POST',
                 data: {}
             }).then(function(){
-                this.get('controllers.application').update_user_info();
+                this.get('applicationController').update_user_info();
                 this.success_message("Trello settings successfully reset.");
                 setTimeout(function(){
                     window.location.reload();
@@ -193,13 +193,13 @@ var controller = Ember.Controller.extend({
             if(!result) {
                 return;
             }
-            var url = this.get('controllers.application').urls.taskd_reset;
+            var url = this.get('applicationController').urls.taskd_reset;
             return this.ajaxRequest({
                 url: url,
                 type: 'POST',
                 data: {}
             }).then(function(){
-                this.get('controllers.application').update_user_info();
+                this.get('applicationController').update_user_info();
                 this.success_message("Taskserver settings reset to default.");
             }.bind(this), function(msg){
                 this.error_message(
@@ -304,7 +304,7 @@ var controller = Ember.Controller.extend({
             var data = {
                 'email_whitelist': document.getElementById('id_email_whitelist').value,
             };
-            var url = this.get('controllers.application').urls.email_integration;
+            var url = this.get('applicationController').urls.email_integration;
 
             return this.ajaxRequest({
                 url: url,
@@ -326,7 +326,7 @@ var controller = Ember.Controller.extend({
                 'sms_arguments': document.getElementById('id_sms_arguments').value,
                 'sms_replies': document.getElementById('id_sms_replies').value,
             };
-            var url    = this.get('controllers.application').urls.twilio_integration;
+            var url    = this.get('applicationController').urls.twilio_integration;
 
             return this.ajaxRequest({
                 url: url,
@@ -342,7 +342,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         clear_task_data: function() {
-            var url    = this.get('controllers.application').urls.clear_task_data;
+            var url    = this.get('applicationController').urls.clear_task_data;
 
             return this.ajaxRequest({
                 url: url,
@@ -360,7 +360,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         clear_lock: function() {
-            var url    = this.get('controllers.application').urls.clear_lock;
+            var url    = this.get('applicationController').urls.clear_lock;
 
             return this.ajaxRequest({
                 url: url,
@@ -376,15 +376,15 @@ var controller = Ember.Controller.extend({
         },
         save_colorscheme: function() {
             var value = $('#id_theme').val();
-            var url    = this.get('controllers.application').urls.set_colorscheme;
+            var url    = this.get('applicationController').urls.set_colorscheme;
 
             return this.ajaxRequest({
                 url: url,
                 type: 'PUT',
                 data: value,
             }).then(function(){
-                this.set('controllers.application.user.colorscheme', value);
-                this.get('controllers.application').updateColorscheme();
+                this.set('applicationController.user.colorscheme', value);
+                this.get('applicationController').updateColorscheme();
                 this.success_message("Colorscheme saved!");
             }.bind(this), function(msg){
                 this.error_message(
@@ -394,7 +394,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         save_ical: function(value) {
-            var url = this.get('controllers.application').urls.configure_ical;
+            var url = this.get('applicationController').urls.configure_ical;
             var enabled = false;
             if(typeof(value) !== 'undefined') {
                 enabled = value;
@@ -409,7 +409,7 @@ var controller = Ember.Controller.extend({
                     enabled: enabled ? 1 : 0,
                 },
             }).then(function(){
-                this.set('controllers.application.user.ical_enabled', enabled);
+                this.set('applicationController.user.ical_enabled', enabled);
                 if(enabled) {
                     this.success_message("iCal feed enabled!");
                 } else {
@@ -423,7 +423,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         save_feed: function(value) {
-            var url = this.get('controllers.application').urls.configure_feed;
+            var url = this.get('applicationController').urls.configure_feed;
             var enabled = false;
             if(typeof(value) !== 'undefined') {
                 enabled = value;
@@ -438,7 +438,7 @@ var controller = Ember.Controller.extend({
                     enabled: enabled ? 1 : 0,
                 },
             }).then(function(){
-                this.set('controllers.application.user.feed_enabled', enabled);
+                this.set('applicationController.user.feed_enabled', enabled);
                 if(enabled) {
                     this.success_message("Feed enabled!");
                 } else {
@@ -452,7 +452,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         save_pebble_cards: function(value) {
-            var url    = this.get('controllers.application').urls.configure_pebble_cards;
+            var url    = this.get('applicationController').urls.configure_pebble_cards;
             var enabled = false;
             if(typeof(value) !== 'undefined') {
                 enabled = value;
@@ -468,7 +468,7 @@ var controller = Ember.Controller.extend({
                     enabled: enabled ? 1 : 0,
                 },
             }).then(function(){
-                this.set('controllers.application.user.pebble_cards_enabled', enabled);
+                this.set('applicationController.user.pebble_cards_enabled', enabled);
                 if(enabled) {
                     this.success_message("Pebble Cards URL enabled!");
                 } else {
@@ -482,13 +482,13 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         enable_sync: function() {
-            var url = this.get('controllers.application').urls.enable_sync;
+            var url = this.get('applicationController').urls.enable_sync;
 
             return this.ajaxRequest({
                 url: url,
                 type: 'POST',
             }).then(function(){
-                this.set('controllers.application.user.sync_enabled', true);
+                this.set('applicationController.user.sync_enabled', true);
                 this.success_message("Sync re-enabled!");
             }.bind(this), function(msg){
                 this.error_message(
@@ -498,7 +498,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         update_bugwarrior_config: function() {
-            var url = this.get('controllers.application').urls.bugwarrior_config;
+            var url = this.get('applicationController').urls.bugwarrior_config;
             var data = document.getElementById('id_bugwarrior_config').value;
             return this.ajaxRequest({
                 url: url,
@@ -514,12 +514,12 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         delete_bugwarrior_configuration: function() {
-            var url = this.get('controllers.application').urls.bugwarrior_config;
+            var url = this.get('applicationController').urls.bugwarrior_config;
             return this.ajaxRequest({
                 url: url,
                 type: 'DELETE',
             }).then(function(){
-                this.set('controllers.application.user.bugwarrior_configured', false);
+                this.set('applicationController.user.bugwarrior_configured', false);
                 this.success_message("Bugwarrior configuration deleted");
             }.bind(this), function(msg){
                 this.error_message(
@@ -529,7 +529,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         schedule_bugwarrior_synchronization: function() {
-            var url = this.get('controllers.application').urls.bugwarrior_sync;
+            var url = this.get('applicationController').urls.bugwarrior_sync;
             return this.ajaxRequest({
                 url: url,
                 type: 'POST',
@@ -546,7 +546,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         revert_to_last_commit: function(){
-            var url = this.get('controllers.application').urls.revert_to_last_commit;
+            var url = this.get('applicationController').urls.revert_to_last_commit;
 
             return this.ajaxRequest({
                 url: url,

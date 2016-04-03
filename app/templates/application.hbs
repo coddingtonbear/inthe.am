@@ -1,12 +1,12 @@
-{{#unless controller.isHomePage}}
+{{#unless isHomePage}}
 <nav class="top-bar" data-topbar>
     <ul class="title-area">
         <li class="name">
-            <h1><a href="#" {{action "home"}}>{{#if controller.logo}}<img {{bind-attr src="controller.logo"}} />{{/if}}{{ controller.applicationName }}</a></h1>
+            <h1><a href="#" {{action "home"}}>{{#if logo}}<img src="{{logo}}" />{{/if}}{{applicationName}}</a></h1>
         </li>
     </ul>
 
-    {{#if controller.user.name}}
+    {{#if user.username}}
         <section class="top-bar-section">
             <!-- Right Nav Section -->
             <ul class="right">
@@ -35,7 +35,7 @@
                 </li>
                 {{#if user.trello_board_url}}
                     <li class="mobile-only" data-intro="alt+k">
-                        <a title="Trello" {{bind-attr href=user.trello_board_url}}><i class="fa fa-columns">Trello</i></a>
+                        <a title="Trello" href="{{user.trello_board_url}}"><i class="fa fa-columns">Trello</i></a>
                     </li>
                 {{/if}}
                 <li class="mobile-only" data-intro="alt+n">
@@ -48,7 +48,7 @@
                 </li>
                 {{#if user.trello_board_url}}
                     <li class="desktop-only" data-intro="alt+k">
-                        <a title="Trello" {{bind-attr href=user.trello_board_url}}><i class="fa fa-columns">Trello</i></a>
+                        <a title="Trello" href="{{user.trello_board_url}}"><i class="fa fa-columns">Trello</i></a>
                     </li>
                 {{/if}}
                 <li class="desktop-only" data-intro="alt+n">
@@ -61,15 +61,7 @@
                     </li>
                 {{/if}}
                 <li id="refresh-link" data-intro="alt+r">
-                    <a href="#" {{bind-attr title="taskUpdateStreamStatusMessage"}} {{action "refresh"}}><i {{bind-attr class=":fa :fa-refresh taskUpdateStreamClass"}}></i></a>
-                </li>
-            </ul>
-        </section>
-    {{else}}
-        <section class="top-bar-section">
-            <ul class="left">
-                <li>
-                    <a href="#" {{action "login"}}><i class="fa fa-sign-in">Log In with Google</i></a>
+                    <a href="#" title="{{taskUpdateStreamStatusMessage}}" {{action "refresh"}}><i class="fa fa-refresh {{taskUpdateStreamClass}}"></i></a>
                 </li>
             </ul>
         </section>

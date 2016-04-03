@@ -1,6 +1,7 @@
 import Ember from "ember";
+import ArrayController from 'ember-legacy-controllers/array'
 
-var controller = Ember.ArrayController.extend({
+var controller = ArrayController.extend({
     refresh: function(){
         try {
             this.get('content').update();

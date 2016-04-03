@@ -1,5 +1,7 @@
-// To use it create some files under `routes/`
-// e.g. `server/routes/ember-hamsters.js`
+/*jshint node:true*/
+
+// To use it create some files under `mocks/`
+// e.g. `server/mocks/ember-hamsters.js`
 //
 // module.exports = function(app) {
 //   app.get('/ember-hamsters', function(req, res) {
@@ -18,4 +20,5 @@ module.exports = function(app) {
 
   mocks.forEach(function(route) { route(app); });
   proxies.forEach(function(route) { route(app); });
+
 };

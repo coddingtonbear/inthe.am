@@ -41,6 +41,7 @@ ALLOWED_HOSTS = [
 
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -215,12 +216,9 @@ ANNOUNCEMENTS_CHANNEL = '__general__'
 # Streaming ticket updates enabled?
 STREAMING_UPDATES_ENABLED = True
 
-SILKY_ENABLED = False
-#SILKY_PYTHON_PROFILER = True
-SILKY_AUTHENTICATION = True  # User must login
-SILKY_AUTHORISATION = True  # User must have permissions
-SILKY_MAX_REQUEST_BODY_SIZE = 1024  # Silk takes anything <0 as no limit
-SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # If response body>1024kb, ignore
+if DEBUG:
+    CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
 
 # Must be sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
@@ -386,6 +384,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'social.apps.django_app.default',
     'gunicorn',
     'inthe_am.taskmanager',
@@ -426,9 +425,3 @@ DATABASES = {
         'CONN_MAX_AGE': 30,
     }
 }
-
-if SILKY_ENABLED:
-    MIDDLEWARE_CLASSES.insert(
-        0,
-        'silk.middleware.SilkyMiddleware',
-    )

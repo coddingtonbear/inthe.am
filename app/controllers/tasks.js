@@ -1,8 +1,10 @@
 import Ember from "ember";
+import ArrayController from 'ember-legacy-controllers/array'
 
-var controller = Ember.ArrayController.extend({
-    needs: ['application', 'task'],
-    sortProperties: ['urgency'],
+var controller = ArrayController.extend({
+    taskController: Ember.inject.controller('task'),
+    applicationController: Ember.inject.controller('application'),
+    sortProperties: ['urgency:desc'],
     sortAscending: false,
     defaultFilter: {
         fields: {
@@ -12,17 +14,17 @@ var controller = Ember.ArrayController.extend({
         tags: [],
     },
     ajaxRequest: function(params) {
-        return this.get('controllers.application').ajaxRequest(params);
+        return this.get('applicationController').ajaxRequest(params);
     },
     refresh: function(){
         // First, request a synchronous sync
         return this.ajaxRequest({
-            url: this.get('controllers.application').urls.sync,
+            url: this.get('applicationController').urls.sync,
             type: 'POST',
         }).then(function(){
             // Then, request a new list from the endpoint to make sure
             // we gather any new tasks, too.
-            this.store.find('task').then(function(){
+            this.store.findAll('task').then(function(){
                 // Refresh each entry to see if it has been closed.
                 this.get('content').forEach(function(model){
                     try {
@@ -33,7 +35,7 @@ var controller = Ember.ArrayController.extend({
                 }.bind(this));
             }.bind(this));
         }.bind(this), function(msg){
-            this.get('controllers.application').error_message(
+            this.get('applicationController').error_message(
                 `An error was encountered while ` +
                 `attempting to synchronize your task list: ${msg}`
             );
@@ -42,9 +44,9 @@ var controller = Ember.ArrayController.extend({
     collectionObserver: function() {
         // If the collection has changed, and we're currently on the tasks
         // view, transition to showing the first task.
-        var path = this.get('controllers.application').getHandlerPath();
+        var path = this.get('applicationController').getHandlerPath();
         if(path === 'application.tasks.tasks.index') {
-                Ember.run.debounce(this, 'transitionToFirstTask', 100);
+            Ember.run.debounce(this, 'transitionToFirstTask', 100);
         }
     }.observes('model.length'),
     transitionToFirstTask: function() {
@@ -78,7 +80,7 @@ var controller = Ember.ArrayController.extend({
         });
         return filters;
     }.property('filterString'),
-    pendingTasks: function() {
+    unsortedPendingTasks: function() {
         var filters = this.get('enteredFilters');
         var result = this.get('model').filter(function(item, idx, enumerable) {
             var ok = true;
@@ -125,19 +127,12 @@ var controller = Ember.ArrayController.extend({
             return ok;
         });
 
-        var sortedResult = Ember.ArrayProxy.createWithMixins(
-            Ember.SortableMixin,
-            {
-                content:result,
-                sortProperties: this.sortProperties,
-                sortAscending: false
-            }
-        );
-        return sortedResult;
+        return result;
     }.property('model.@each.status'),
+    pendingTasks: Ember.computed.sort('unsortedPendingTasks', 'sortProperties'),
     actions: {
         prev_task: function() {
-            var current_id = this.get('controllers.task.model.id');
+            var current_id = this.get('taskController.model.id');
             var array = this.get('pendingTasks');
             var last_task = null;
             var target_task = null;
@@ -152,7 +147,7 @@ var controller = Ember.ArrayController.extend({
             }
         },
         next_task: function() {
-            var current_id = this.get('controllers.task.model.id');
+            var current_id = this.get('taskController.model.id');
             var array = this.get('pendingTasks');
             var found_my_id = false;
             var target_task = null;

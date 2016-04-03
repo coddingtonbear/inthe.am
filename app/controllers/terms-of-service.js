@@ -1,21 +1,21 @@
 import Ember from "ember";
 
 var controller = Ember.Controller.extend({
-    needs: ['application'],
+    applicationController: Ember.inject.controller('application'),
     actions: {
         accept: function(version) {
-            return this.get('controllers.application').ajaxRequest({
-                url: this.get('controllers.application').urls.tos_accept,
+            return this.get('applicationController').ajaxRequest({
+                url: this.get('applicationController').urls.tos_accept,
                 type: 'POST',
                 data: {
                     version: version
                 },
             }).then(function(){
-                this.get('controllers.application').update_user_info();
-                this.get('controllers.application').handlePostLoginRedirects();
+                this.get('applicationController').update_user_info();
+                this.get('applicationController').handlePostLoginRedirects();
                 this.transitionToRoute('getting-started');
             }.bind(this), function(msg){
-                this.get('controllers.application').error_message(
+                this.get('applicationController').error_message(
                     `An error was encountered while ` +
                     `attempting to accept the terms of service: ${msg}`
                 );

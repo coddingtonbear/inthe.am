@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default {
     name: "foundation",
-    initialize: function() {
+    initialize: function(application) {
         Ember.View.reopen({
             _initializeFoundation: function() {
                 $(document).foundation();

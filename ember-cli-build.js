@@ -21,8 +21,6 @@ module.exports = function(defaults) {
     app.import('bower_components/growl/stylesheets/jquery.growl.css');
     app.import('bower_components/datetimepicker/jquery.datetimepicker.js');
     app.import('bower_components/datetimepicker/jquery.datetimepicker.css');
-    app.import('bower_components/fontawesome/css/font-awesome.css');
-    app.import('bower_components/ember-data-tastypie-adapter/dist/global/ember-data-tastypie-adapter.js');
     app.import('bower_components/raven-js/dist/raven.js');
     app.import('bower_components/fastclick/lib/fastclick.js');
     app.import('bower_components/chardin.js/chardinjs.js');
@@ -30,24 +28,6 @@ module.exports = function(defaults) {
     app.import('bower_components/Sortable/Sortable.js');
     app.import('vendor/touchwipe/jquery.touchwipe.1.1.1.js');
     app.import('bower_components/jquery.hotkeys/jquery.hotkeys.js');
-
-    /* Fontawesome Fonts */
-    app.import('bower_components/fontawesome/fonts/fontawesome-webfont.woff', {
-            destDir: 'fonts/'
-        }
-    );
-    app.import('bower_components/fontawesome/fonts/fontawesome-webfont.ttf', {
-            destDir: 'fonts/'
-        }
-    );
-    app.import('bower_components/fontawesome/fonts/fontawesome-webfont.svg', {
-            destDir: 'fonts/'
-        }
-    );
-    app.import('bower_components/fontawesome/fonts/fontawesome-webfont.eot', {
-            destDir: 'fonts/'
-        }
-    );
 
     return app.toTree();
 };

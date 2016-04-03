@@ -42,8 +42,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "./", "/var/www/twweb/", type: "nfs", nfs_udp: true
-  config.vm.synced_folder "./", "/vagrant", type: "nfs", nfs_udp: true
+  config.vm.synced_folder "./", "/var/www/twweb/", type: "rsync",
+    rsync__exclude: [
+        "tmp/", ".git/", "lib/", "bin", "bin/", "include/", "logs/",
+        ".vagrant/", "node_modules/", "bower_components/",
+        "taskd/", "task_data/", "*.pyc", "*.swp", "dist/", "db.sqlite3",
+    ],
+    rsync__verbose: true
+  config.vm.synced_folder "./", "/vagrant", type: "nfs"
+
+  # Configure the window for gatling to coalesce writes.
+  if Vagrant.has_plugin?("vagrant-gatling-rsync")
+    config.gatling.latency = 0.7
+    config.gatling.time_format = "%H:%M:%S"
+    config.gatling.rsync_on_startup = true
+  end
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.

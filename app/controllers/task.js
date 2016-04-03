@@ -1,22 +1,24 @@
 import Ember from "ember";
+import ObjectController from 'ember-legacy-controllers/object'
 
-var controller = Ember.ObjectController.extend({
-    needs: ['application', 'tasks'],
+var controller = ObjectController.extend({
+    applicationController: Ember.inject.controller('application'),
+    tasksController: Ember.inject.controller('tasks'),
     ajaxRequest: function(params) {
-        return this.get('controllers.application').ajaxRequest(params);
+        return this.get('applicationController').ajaxRequest(params);
     },
     actions: {
         'complete': function(){
             var result = confirm("Are you sure you would like to mark this task as completed?");
             if(result) {
                 var self = this;
-                this.get('controllers.application').showLoading();
+                this.get('applicationController').showLoading();
                 this.get('model').destroyRecord().then(function(){
-                    self.get('controllers.application').hideLoading();
+                    self.get('applicationController').hideLoading();
                     self.transitionToRoute('tasks');
                 }, function(){
-                    self.get('controllers.application').hideLoading();
-                    self.get('controllers.application').error_message(
+                    self.get('applicationController').hideLoading();
+                    self.get('applicationController').error_message(
                             "Could not complete task!"
                     );
                 });
@@ -26,7 +28,7 @@ var controller = Ember.ObjectController.extend({
             var model = this.get('model');
             var self = this;
             var annotations = model.get('annotations');
-            this.get('controllers.application').showLoading();
+            this.get('applicationController').showLoading();
 
             // Sometimes, for some unknown reason, some browsers receive
             // the annotation value as an array-like object :-\
@@ -39,12 +41,12 @@ var controller = Ember.ObjectController.extend({
             }
             model.set('annotations', annotations);
             model.save().then(function(model) {
-                self.get('controllers.application').hideLoading();
+                self.get('applicationController').hideLoading();
                 model.reload();
             }, function(reason) {
                 model.rollback();
-                self.get('controllers.application').hideLoading();
-                self.get('controllers.application').error_message(
+                self.get('applicationController').hideLoading();
+                self.get('applicationController').error_message(
                     "Could not delete annotation!"
                 );
             });
@@ -60,7 +62,7 @@ var controller = Ember.ObjectController.extend({
                 model.reload();
             }.bind(this), function(msg){
                 model.reload();
-                this.get('controllers.application').error_message(
+                this.get('applicationController').error_message(
                     `An error was encountered while ` +
                     `attempting to start your task: ${msg}`
                 );
@@ -77,7 +79,7 @@ var controller = Ember.ObjectController.extend({
                 model.reload();
             }.bind(this), function(msg){
                 model.reload();
-                this.get('controllers.application').error_message(
+                this.get('applicationController').error_message(
                     `An error was encountered while ` +
                     `attempting to stop your task: ${msg}`
                 );
@@ -88,18 +90,18 @@ var controller = Ember.ObjectController.extend({
             if(result) {
                 var model = this.get('model');
                 var url = this.store.adapterFor('task').buildURL('task', this.get('uuid')) + 'delete/';
-                this.get('controllers.application').showLoading();
+                this.get('applicationController').showLoading();
 
                 return this.ajaxRequest({
                     url: url,
                     type: 'POST',
                 }).then(function(){
                     model.reload();
-                    this.get('controllers.tasks').refresh();
+                    this.get('tasksController').refresh();
                     this.transitionToRoute('tasks');
                 }.bind(this), function(msg){
                     model.reload();
-                    this.get('controllers.application').error_message(
+                    this.get('applicationController').error_message(
                         `An error was encountered while ` +
                         `attempting to delete your task: ${msg}`
                     );

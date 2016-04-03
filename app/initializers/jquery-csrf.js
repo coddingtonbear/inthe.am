@@ -1,6 +1,6 @@
 export default {
     name: 'jquery-csrf',
-    initialize: function(container, application) {
+    initialize: function(application) {
         var getCookie = function(name) {
             var cookieValue = null;
             if (document.cookie && document.cookie !== '') {

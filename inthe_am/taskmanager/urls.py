@@ -14,9 +14,9 @@ from .viewsets.user import UserViewSet
 
 
 router = routers.SimpleRouter()
-router.register('task', TaskViewSet, base_name='task')
+router.register('tasks', TaskViewSet, base_name='task')
 router.register('user', UserViewSet, base_name='user')
-router.register('activityLog', ActivityLogViewSet, base_name='activity_log')
+router.register('activity-logs', ActivityLogViewSet, base_name='activity_log')
 
 
 def fallback(request):

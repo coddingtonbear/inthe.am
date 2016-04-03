@@ -6,13 +6,27 @@ Prerequisites
 
 * `Vagrant <https://www.vagrantup.com/>`_
 * `Virtualbox <https://www.virtualbox.org/>`_ or another Virtual Machine host supported by Vagrant
+* The `vagrant-gatling-rsync <https://github.com/smerrill/vagrant-gatling-rsync>`_ plugin; you can install this by running::
+
+    vagrant plugin install vagrant-gatling-rsync
 
 Setup
 -----
 
-From a your clone of the Inthe.AM repository, run the following commands::
+From a your clone of the Inthe.AM repository, run the following command to
+bring up your development environment::
 
     vagrant up
+
+That console window will now stop, showing "Watching: " until discovering
+any filesystem changes.  For as long as that window is open, changes you
+make to files in the repository will be automatically synchronized with
+the development environment, and a message like "Rsyncing folder:" will
+be displayed.
+
+From another shell, go the folder where you've cloned the Inthe.AM repository
+and run::
+
     vagrant ssh
 
 After running ``vagrant ssh``, you're automatically SSH'd into your virtual machine,

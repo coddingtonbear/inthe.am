@@ -130,7 +130,7 @@ var model = DS.Model.extend({
         if (value) {
             for (var i = 0; i < value.length; i++) {
                 promises.pushObject(
-                    this.store.find('task', value[i])
+                    this.store.findRecord('task', value[i])
                 );
             }
         }

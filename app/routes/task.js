@@ -6,7 +6,7 @@ var route = Ember.Route.extend({
         if(!this.store.hasRecordForId('task', params.uuid)) {
             application.showLoading();
         }
-        return this.store.find('task', params.uuid);
+        return this.store.findRecord('task', params.uuid);
     },
     afterModel: function() {
         var application = this.controllerFor('application');

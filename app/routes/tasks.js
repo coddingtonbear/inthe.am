@@ -2,7 +2,7 @@ import Ember from "ember";
 
 var route = Ember.Route.extend({
     model: function() {
-        return this.store.all('task');
+        return this.store.findAll('task');
     },
     afterModel: function(tasks, transition) {
         if (transition.targetName === "tasks.index" || transition.targetName === "tasks") {
