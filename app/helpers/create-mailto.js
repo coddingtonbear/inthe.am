@@ -1,14 +1,11 @@
 import Ember from "ember";
 
-export default Ember.Helper.helper(function([emailAddress, label]) {
-    if(typeof(label) === 'object') {
-        option = label;
-    }
-    if(option.hash.suffix) {
+export default Ember.Helper.helper(function([emailAddress, label], hash) {
+    if(hash.suffix) {
         var emailAddressParts = emailAddress.split('@');
         emailAddress = [
             emailAddressParts[0],
-            option.hash.suffix,
+            hash.suffix,
             '@',
             emailAddressParts[1],
         ].join('');

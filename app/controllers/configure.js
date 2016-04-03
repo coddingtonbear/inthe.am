@@ -499,7 +499,7 @@ var controller = Ember.Controller.extend({
         },
         update_bugwarrior_config: function() {
             var url = this.get('applicationController').urls.bugwarrior_config;
-            var data = document.getElementById('id_bugwarrior_config').value;
+            var data = document.getElementById('id_bugwarrior_config_entry').value;
             return this.ajaxRequest({
                 url: url,
                 type: 'PUT',
