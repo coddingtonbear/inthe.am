@@ -157,7 +157,7 @@ ember build
 
 # Install requirements
 echo "installing python requirements"
-pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements.txt
+pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements-frozen.txt
 
 if [ -z "$TRAVIS" ]; then
     echo "preparing application"
