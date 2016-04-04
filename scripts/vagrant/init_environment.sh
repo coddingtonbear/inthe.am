@@ -133,9 +133,16 @@ fi
 cd $MAIN_DIR
 set +e
 echo "installing ember-cli and bower"
+if [ -z "$TRAVIS" ]; then
+    # Install a modern version of node
+    npm install -g n
+    n 5.0.0
+else
+    . $HOME/.nvm/nvm.sh
+    nvm install 5
+    nvm use 5
+fi
 npm install -g npm@2.5.1
-npm install -g n
-n 5.0.0
 npm install -g ember-cli@2.4.3 bower@1.7.6
 echo "running npm install"
 npm install
