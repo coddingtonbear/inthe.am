@@ -149,7 +149,7 @@
                             <p>
                                 Your bugwarrior configuration:
                             </p>
-                            {{textarea name="bugwarrior_config" id="id_bugwarrior_config" value=applicationController.user.bugwarrior_config}}
+                            {{textarea name="bugwarrior_config" value=applicationController.user.bugwarrior_config}}
                             <p class="input-note">
                                 See <a href="http://bugwarrior.readthedocs.org/en/latest/common_configuration.html">Bugwarrior's Documentation</a> for information
                                 about how to configure synchronization with your services.
@@ -183,7 +183,7 @@
                         <div class="large-12 columns">
                             <h3>Color Scheme</h3>
                             <label>Color Scheme</label>
-                            {{view "select" value=applicationController.user.colorscheme optionValuePath="content.file" optionLabelPath="content.name" content=themeOptions id="id_theme"}}
+                            {{view "select" value=applicationController.user.colorscheme optionValuePath="content.file" optionLabelPath="content.name" content=themeOptions name="theme_selector"}}
                             <a href="" class="button radius" {{action "save_colorscheme"}}>Save Color Scheme</a>
                         </div>
                     </div>
@@ -274,7 +274,7 @@
                                 </table>
                             {{/unless}}
                             <label>iCal Task Feed</label>
-                            {{view "select" value=applicationController.user.ical_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI id="id_ical_config"}}
+                            {{view "select" value=applicationController.user.ical_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI name="ical_config"}}
                             <a href="" class="button radius" {{action "save_ical"}}>Save Settings</a>
                         </div>
                     </div>
@@ -308,7 +308,7 @@
                                 </table>
                             {{/unless}}
                             <label>RSS Task Feed</label>
-                            {{view "select" value=applicationController.user.feed_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI id="id_feed_config"}}
+                            {{view "select" value=applicationController.user.feed_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI name="feed_config"}}
                             <a href="" class="button radius" {{action "save_feed"}}>Save Settings</a>
                         </div>
                     </div>
@@ -346,7 +346,7 @@
                                 </table>
                             {{/unless}}
                             <label>Pebble Cards URL</label>
-                            {{view "select" value=applicationController.user.pebble_cards_enabled optionValuePath="content.value" optionLabelPath="content.human" content=pebbleCardsEnabledUI id="id_pebble_cards_config"}}
+                            {{view "select" value=applicationController.user.pebble_cards_enabled optionValuePath="content.value" optionLabelPath="content.human" content=pebbleCardsEnabledUI name="pebble_cards_config"}}
                             <a href="" class="button radius" {{action "save_pebble_cards"}}>Save Settings</a>
                         </div>
                     </div>
@@ -436,7 +436,7 @@
                         </div>
                         <div class="large-12 columns">
                             <label>Email Address Whitelist</label>
-                            {{textarea name="email_whitelist" id="id_email_whitelist" value=applicationController.user.email_whitelist placeholder="me@somesite.com"}}
+                            {{textarea name="email_whitelist" value=applicationController.user.email_whitelist placeholder="me@somesite.com"}}
                             <p class="input-note">
                                 Only email messages recieved from addresses matching one of the above whitelisted email addresses will be accepted.
                                 Please enter only one email address per line.
@@ -518,11 +518,11 @@
                         </div>
                         <div class="large-12 columns">
                             <label>Twilio Auth Token</label>
-                            {{input type="text" id="id_twilio_auth_token" name="twilio_auth_token" value=applicationController.user.twilio_auth_token}}
+                            {{input type="text" name="twilio_auth_token" value=applicationController.user.twilio_auth_token}}
                         </div>
                         <div class="large-12 columns">
                             <label>Automatic Arguments</label>
-                            {{input type="text" id="id_sms_arguments" name="sms_arguments" value=applicationController.user.sms_arguments}}
+                            {{input type="text" name="sms_arguments" value=applicationController.user.sms_arguments}}
                             <p class='input-note'>
                                 Arguments to add to the 'add' command.
                                 For example, you could use "+sms" to add
@@ -537,12 +537,12 @@
                                 optionValuePath="content.short"
                                 optionLabelPath="content.long"
                                 content=smsRepliesSettings
-                                id="id_sms_replies"
+                                name="sms_replies"
                             }}
                         </div>
                         <div class="large-12 columns">
                             <label>Phone Number Whitelist</label>
-                            {{textarea name="sms_whitelist" id="id_sms_whitelist" value=applicationController.user.sms_whitelist placeholder="+15555555555"}}
+                            {{textarea name="sms_whitelist" value=applicationController.user.sms_whitelist placeholder="+15555555555"}}
                             <p class='input-note'>
                                 One phone number per line.  Leave empty to allow messages from any phone number.
                             </p>

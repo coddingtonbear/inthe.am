@@ -142,8 +142,9 @@ else
     nvm install 5
     nvm use 5
 fi
-npm install -g npm@2.5.1
+npm install -g npm@3.8.3
 npm install -g ember-cli@2.4.3 bower@1.7.6
+ember-cli --version
 echo "running npm install"
 npm install
 echo "running bower install"

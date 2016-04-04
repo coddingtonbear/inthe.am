@@ -209,100 +209,10 @@ var controller = Ember.Controller.extend({
                 );
             }.bind(this));
         },
-        save_taskd_and_init: function() {
-            var self = this;
-            this.send(
-                'save_taskd',
-                function() {
-                    self.sync_with_init();
-                }
-            );
-        },
-        save_taskd: function(after) {
-            var data = {
-                server: document.getElementById('id_server').value,
-                credentials: document.getElementById('id_credentials').value,
-                trust: document.getElementById('id_trust').value,
-            };
-            var self = this;
-
-            // Load Cert
-            var cert_reader = new window.FileReader();
-            cert_reader.onload = function(evt){
-                data.certificate = evt.target.result;
-                self.submit_taskd(data, after);
-            };
-            cert_reader.onerror = function(evt) {
-                data.certificate = false;
-                self.submit_taskd(data);
-            };
-            cert_reader.onabort = function(evt) {
-                data.certificate = false;
-                self.submit_taskd(data);
-            };
-            var cert_file = document.getElementById('id_certificate').files[0];
-            if (cert_file === undefined) {
-                self.error_message("Please select a certificate");
-            }
-            try {
-                cert_reader.readAsBinaryString(cert_file);
-            } catch(e) {
-                self.error_message("An error was encountered while reading your certificate.");
-            }
-
-            // Load Key
-            var key_reader = new window.FileReader();
-            key_reader.onload = function(evt){
-                data.key = evt.target.result;
-                self.submit_taskd(data, after);
-            };
-            key_reader.onerror = function(evt) {
-                data.key = false;
-                self.submit_taskd(data);
-            };
-            key_reader.onabort = function(evt) {
-                data.key = false;
-                self.submit_taskd(data);
-            };
-            var key_file = document.getElementById('id_key').files[0];
-            if (key_file === undefined) {
-                self.error_message("Please select a key");
-            }
-            try {
-                key_reader.readAsBinaryString(key_file);
-            } catch(e) {
-                self.error_message("An error was encountered while reading your key.");
-            }
-
-            // Load CA Certificate
-            if (data.trust === 'no') {
-                var ca_reader = new window.FileReader();
-                ca_reader.onload = function(evt){
-                    data.ca = evt.target.result;
-                    self.submit_taskd(data, after);
-                };
-                ca_reader.onerror = function(evt) {
-                    data.ca = false;
-                    self.submit_taskd(data);
-                };
-                ca_reader.onabort = function(evt) {
-                    data.ca = false;
-                    self.submit_taskd(data);
-                };
-                var ca_file = document.getElementById('id_ca').files[0];
-                if (ca_file === undefined) {
-                    self.error_message("Please select a CA Certificate");
-                }
-                try {
-                    ca_reader.readAsBinaryString(ca_file);
-                }catch(e) {
-                    self.error_message("An error was encountered while reading your CA Certificate.");
-                }
-            }
-        },
         save_email: function() {
+            var value = $('textarea[name=email_whitelist]').val();
             var data = {
-                'email_whitelist': document.getElementById('id_email_whitelist').value,
+                'email_whitelist': value,
             };
             var url = this.get('applicationController').urls.email_integration;
 
@@ -320,11 +230,12 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         save_twilio: function() {
+            var sms_whitelist = $('textarea[name=sms_whitelist]').val();
             var data = {
-                'twilio_auth_token': document.getElementById('id_twilio_auth_token').value,
-                'sms_whitelist': document.getElementById('id_sms_whitelist').value,
-                'sms_arguments': document.getElementById('id_sms_arguments').value,
-                'sms_replies': document.getElementById('id_sms_replies').value,
+                'twilio_auth_token': $('input[name=twilio_auth_token]').val(),
+                'sms_whitelist': $('textarea[name=sms_whitelist]').val(),
+                'sms_arguments': $('input[name=sms_arguments]').val(),
+                'sms_replies': $('select[name=sms_replies]').val()
             };
             var url    = this.get('applicationController').urls.twilio_integration;
 
@@ -375,7 +286,7 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         save_colorscheme: function() {
-            var value = $('#id_theme').val();
+            var value = $('select[name=theme_selector]').val();
             var url    = this.get('applicationController').urls.set_colorscheme;
 
             return this.ajaxRequest({
@@ -398,7 +309,7 @@ var controller = Ember.Controller.extend({
             var enabled = false;
             if(typeof(value) !== 'undefined') {
                 enabled = value;
-            } else if($("#id_ical_config").val() === "true") {
+            } else if($("select[name=ical_config]").val() === "true") {
                 enabled = true;
             }
             
@@ -427,7 +338,7 @@ var controller = Ember.Controller.extend({
             var enabled = false;
             if(typeof(value) !== 'undefined') {
                 enabled = value;
-            } else if($("#id_feed_config").val() === "true") {
+            } else if($("select[name=feed_config]").val() === "true") {
                 enabled = true;
             }
             
@@ -457,7 +368,7 @@ var controller = Ember.Controller.extend({
             if(typeof(value) !== 'undefined') {
                 enabled = value;
             }
-            else if($("#id_pebble_cards_config").val() === "true") {
+            else if($("select[name=pebble_cards_config]").val() === "true") {
                 enabled = true;
             }
 
@@ -499,7 +410,7 @@ var controller = Ember.Controller.extend({
         },
         update_bugwarrior_config: function() {
             var url = this.get('applicationController').urls.bugwarrior_config;
-            var data = document.getElementById('id_bugwarrior_config_entry').value;
+            var data = $('textarea[name=bugwarrior_config]').val();
             return this.ajaxRequest({
                 url: url,
                 type: 'PUT',
