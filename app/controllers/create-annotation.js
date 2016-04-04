@@ -12,7 +12,7 @@ var controller = ObjectController.extend({
             var form = $("#new_annotation_form");
             var value = field.val();
 
-            if (annotations === null) {
+            if (! annotations) {
                 annotations = [];
             }
             if (!value) {

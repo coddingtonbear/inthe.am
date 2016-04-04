@@ -47,7 +47,7 @@ def task_with_details(context, status):
         assert task.get(key) == get_json_value(value), (
             "Task field %s's value is %s, not %s" % (
                 key,
-                task[key],
+                task.get(key),
                 value,
             )
         )
