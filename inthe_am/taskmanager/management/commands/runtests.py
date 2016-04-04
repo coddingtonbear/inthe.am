@@ -73,7 +73,7 @@ class Command(RunserverCommand):
                 print out.read()
                 sys.exit(1)
 
-            test_args = []
+            test_args = list(args)
             if kwargs['wip']:
                 test_args.append('--behave_wip')
             if kwargs['stop']:

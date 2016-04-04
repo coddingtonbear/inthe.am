@@ -17,7 +17,12 @@ class TaskwarriorError(Exception):
         self.stderr = stderr.strip()
         self.stdout = stdout.strip()
         self.code = code
-        super(TaskwarriorError, self).__init__(self.stderr)
+        message = "%s: %s :: %s" % (
+            self.code,
+            self.stdout,
+            self.stderr
+        )
+        super(TaskwarriorError, self).__init__(message)
 
 
 class TaskwarriorClient(TaskWarriorShellout):
