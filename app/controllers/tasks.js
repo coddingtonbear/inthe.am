@@ -80,7 +80,7 @@ var controller = ArrayController.extend({
         });
         return filters;
     }.property('filterString'),
-    unsortedPendingTasks: function() {
+    unsortedPendingTasks: Ember.computed('enteredFilters', 'model.@each.status', function() {
         var filters = this.get('enteredFilters');
         var result = this.get('model').filter(function(item, idx, enumerable) {
             var ok = true;
@@ -128,7 +128,7 @@ var controller = ArrayController.extend({
         });
 
         return result;
-    }.property('model.@each.status'),
+    }),
     pendingTasks: Ember.computed.sort('unsortedPendingTasks', 'sortProperties'),
     actions: {
         prev_task: function() {
