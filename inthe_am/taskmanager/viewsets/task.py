@@ -105,7 +105,7 @@ class TaskViewSet(viewsets.ViewSet):
         serializer = TaskSerializer(data=cleaned_values, store=store)
         serializer.is_valid(raise_exception=True)
 
-        task = serializer.create(store, **serializer.validated_data)
+        task = serializer.create(store, serializer.validated_data)
         store.log_message(
             'New task created: %s.',
             json.dumps(task)
@@ -139,7 +139,7 @@ class TaskViewSet(viewsets.ViewSet):
         task, changes = serializer.update(
             store,
             pk,
-            **serializer.validated_data
+            serializer.validated_data
         )
         store.log_message(
             'Task %s updated: %s.',
