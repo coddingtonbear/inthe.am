@@ -17,7 +17,7 @@ def get_tasks_from_sidebar(context):
 
 @when(u'the filter "{value}" is supplied')
 def supply_filter(context, value):
-    context.browser.find_by_id("filter-string").type(value)
+    context.browser.find_by_id("filter-string").first.type(value)
     time.sleep(1)
 
 
