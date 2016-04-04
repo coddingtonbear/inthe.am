@@ -47,10 +47,6 @@ class TaskSerializer(serializers.Serializer):
         return [b['uuid'] for b in blocks]
 
     def update(self, store, pk, data):
-        for k, v in data.items():
-            if not v:
-                data.pop(k, None)
-
         original = store.client.get_task(uuid=pk)[1]
         for k, v in data.items():
             original[k] = v
