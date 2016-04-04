@@ -8,7 +8,7 @@ var controller = ObjectController.extend({
             var application = this.get('applicationController');
             var model = this.get('model');
             var annotations = model.get('annotations');
-            var field = $("#new_annotation_body");
+            var field = $("textarea[name=annotation]");
             var form = $("#new_annotation_form");
             var value = field.val();
 

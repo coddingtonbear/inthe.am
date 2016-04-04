@@ -8,7 +8,6 @@ var controller = Ember.Controller.extend({
     tasksController: Ember.inject.controller('tasks'),
     indexController: Ember.inject.controller('index'),
     configureController: Ember.inject.controller('configure'),
-    logo: '',
     applicationName: 'Local Installation',
     user: null,
     initialized: false,
@@ -246,10 +245,10 @@ var controller = Ember.Controller.extend({
         // Set up left-right swipe for returning to the task list
         $("body").touchwipe({
             wipeRight: function() {
-                if (self.isSmallScreen()) {
-                    self.transitionToRoute('mobile-tasks');
+                if (this.isSmallScreen()) {
+                    this.transitionToRoute('mobile-tasks');
                 }
-            },
+            }.bind(this),
             min_move_x: 100,
             preventDefaultEvents: false
         });
@@ -269,8 +268,8 @@ var controller = Ember.Controller.extend({
     handlePostLoginRedirects: function() {
         if(window.localStorage && this.get('user.tos_up_to_date')) {
             var url = window.localStorage.getItem('redirect_to');
-            console.logIfDebug("Scheduling redirect", url);
             if(url) {
+                console.logIfDebug("Scheduling redirect", url);
                 Ember.run.later(
                     this,
                     function(){
@@ -301,7 +300,6 @@ var controller = Ember.Controller.extend({
         }
     },
     init: function(){
-        var self = this;
         // Load all tasks; the views are all populated by promises
         // so whenever this is fulfilled, they'll automatically be populated
         this.showLoading();
@@ -519,11 +517,7 @@ var controller = Ember.Controller.extend({
     closeModal: function(node) {
         if(node) {
             node.foundation('reveal', 'close');
-            setTimeout(function(){
-                $('.reveal-modal').remove();
-            }, 1500);
         }
-        this.get('target').send('disconnectModalOutlet');
     },
     actions: {
         refresh: function(){
