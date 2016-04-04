@@ -8,7 +8,7 @@ was "MYAPIKEY", you would add the following header:
 
 .. code-block:: none
 
-  Authorization: ApiKey MYAPIKEY
+  Authorization: Token MYAPIKEY
 
 You can find your API key in the "API Access" section of your Inthe.AM Configuration.
 

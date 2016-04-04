@@ -18,7 +18,7 @@
   },
   "author": "Adam Coddington",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "broccoli-asset-rev": "^2.4.2",
     "ember-ajax": "0.7.1",
     "ember-cli": "2.4.3",
@@ -34,7 +34,8 @@
     "ember-cli-showdown": "2.5.0",
     "ember-cli-sri": "^2.1.0",
     "ember-cli-uglify": "^1.2.0",
-    "ember-data": "^2.4.2",
+    "ember-data": "^2.4.3",
+    "ember-inflector": "^1.9.4",
     "ember-django-adapter": "1.1.2",
     "ember-export-application-global": "^1.0.5",
     "ember-font-awesome": "2.1.0",

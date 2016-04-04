@@ -66,19 +66,18 @@ task:
 
     {
         "annotations": [
-            {"description": "Chapter 1", "entry": "Mon, 3 Feb 2014 01:52:51 +0000"},
-            {"description": "Chapter 2", "entry": "Mon, 3 Feb 2014 01:52:53 +0000"}
+            "Chapter 1",
+            "Chapter 2",
         ],
         "depends": null,
         "description": "The wheels on the bus go round and round",
         "due": null,
-        "entry": "Mon, 3 Feb 2014 01:52:51 +0000",
+        "entry": "2014-02-03T01:52:51Z",
         "id": 1,
         "imask": null,
-        "modified": "Mon, 3 Feb 2014 01:52:52 +0000",
+        "modified": "2014-02-03T01:52:51Z",
         "priority": null,
         "project": "Alphaville",
-        "resource_uri": "/api/v1/task/b8d05cfe-8464-44ef-9d99-eb3e7809d337/",
         "scheduled": null,
         "start": null,
         "status": "waiting",
@@ -93,12 +92,7 @@ task:
    If you neglect to supply a timezone offset in a supplied date string, the incoming date string will be
    interpreted to be a UTC timestamp.
 
-.. [#datestring] Although datetime fields are encoded using RFC2822 date strings in UTC, you
+.. [#datestring] Although datetime fields are encoded using ISO-8601 date strings in UTC, you
    may supply date strings using any format accepted by
    `dateutil's parse method <http://labix.org/python-dateutil#head-c0e81a473b647dfa787dc11e8c69557ec2c3ecd2>`_;
    that being said, using ISO 8601 or RFC 2822 date strings *is* recommended.
-
-.. [#annotations] Annotations returned from Taskwarrior as a dictionary having keys 
-   ``entry`` (the time at which this annotation was added) and ``description`` (the annotation text itself),
-   but you are also able update or create task entries by supplying simply a
-   list of string annotations you would like your updated or created task to have.
