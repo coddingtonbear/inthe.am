@@ -144,7 +144,7 @@ else
 fi
 npm install -g npm@3.8.3
 npm install -g ember-cli@2.4.3 bower@1.7.6
-ember-cli --version
+ember --version
 echo "running npm install"
 npm install
 echo "running bower install"
