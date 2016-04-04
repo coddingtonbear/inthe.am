@@ -106,12 +106,11 @@ class TaskViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
 
         task = serializer.create(store, serializer.validated_data)
+        serializer = TaskSerializer(task, store=store)
         store.log_message(
             'New task created: %s.',
-            json.dumps(task)
+            serializer.data,
         )
-
-        serializer = TaskSerializer(task, store=store)
         return Response(serializer.data)
 
     @requires_task_store
