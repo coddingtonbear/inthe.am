@@ -15,7 +15,6 @@ from icalendar import Calendar, Event
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from twilio.util import RequestValidator
@@ -98,8 +97,12 @@ class TaskViewSet(viewsets.ViewSet):
     @requires_task_store
     @git_managed('Create task', sync=True)
     def create(self, request, store=None):
-        data = JSONParser().parse(request.read())
-        serializer = TaskSerializer(data, store=store)
+        cleaned_values = {}
+        for key, value in request.data.items():
+            if value is not None:
+                cleaned_values[key] = value
+
+        serializer = TaskSerializer(data=cleaned_values, store=store)
         serializer.is_valid(raise_exception=True)
 
         task = serializer.create(store, **serializer.validated_data)
@@ -125,8 +128,12 @@ class TaskViewSet(viewsets.ViewSet):
     @requires_task_store
     @git_managed('Update task', sync=True)
     def update(self, request, store=None, pk=None):
-        data = JSONParser().parse(request.read())
-        serializer = TaskSerializer(data, store=store)
+        cleaned_values = {}
+        for key, value in request.data.items():
+            if value is not None:
+                cleaned_values[key] = value
+
+        serializer = TaskSerializer(data=cleaned_values, store=store)
         serializer.is_valid(raise_exception=True)
 
         task, changes = serializer.update(
