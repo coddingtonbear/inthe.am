@@ -7,6 +7,34 @@ var controller = ObjectController.extend({
     ajaxRequest: function(params) {
         return this.get('applicationController').ajaxRequest(params);
     },
+    udaList: Ember.computed('udas', 'applicationController.user', function() {
+        var fieldNameMap = {};
+        var userUdas = this.get('applicationController.user.udas');
+        for(var udaIdx in userUdas) {
+            var uda = userUdas[udaIdx];
+            fieldNameMap[uda.field] = {
+                'label': uda.label,
+                'type': uda['type'],
+            }
+        }
+
+        if(fieldNameMap) {
+          debugger;
+        }
+
+        var udas = [];
+        var modelUdas = this.get('model.udas');
+        for(var defined_uda in modelUdas) {
+            udas.push({
+              'field_name': defined_uda,
+              'value': modelUdas[defined_uda],
+              'label': fieldNameMap[defined_uda].label,
+              'type': fieldNameMap[defined_uda]['type'],
+            })
+        }
+
+        return udas;
+    }),
     actions: {
         'complete': function(){
             var result = confirm("Are you sure you would like to mark this task as completed?");

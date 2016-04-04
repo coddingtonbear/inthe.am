@@ -8,7 +8,7 @@ export default Ember.Helper.helper(function([uda]) {
             );
         }
     } else if (uda.type === 'StringField') {
-        return new Ember.Handlebars.SafeString(linkify(markdown.toHTML(uda.value)));
+        return new Ember.Handlebars.SafeString(linkify(uda.value));
     }
     return uda.value;
 });

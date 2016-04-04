@@ -150,9 +150,9 @@
                     <th>UUID</th>
                     <td><span class="uuid">{{model.uuid}}</span></td>
                 </tr>
-                {{#each model.definedUDAs as |uda|}}
+                {{#each udaList as |uda|}}
                     <tr>
-                        <th>{{label}}</th>
+                        <th>{{uda.label}}</th>
                         <td>{{render-uda-value uda}}</td>
                     </tr>
                 {{/each}}

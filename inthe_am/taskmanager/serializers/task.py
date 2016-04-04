@@ -27,6 +27,7 @@ class TaskSerializer(serializers.Serializer):
     )
     tags = serializers.ListField(child=serializers.CharField(), required=False)
     imask = serializers.CharField(read_only=True)
+    udas = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
         self._store = kwargs.pop('store')
@@ -35,6 +36,14 @@ class TaskSerializer(serializers.Serializer):
     @property
     def store(self):
         return self._store
+
+    def get_udas(self, obj):
+        udas = {}
+        for field in self.store.client.config.get_udas().keys():
+            if field in obj:
+                udas[field] = obj[field]
+
+        return udas
 
     def get_blocks(self, obj):
         blocks = self.store.client.filter_tasks({

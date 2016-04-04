@@ -20,6 +20,7 @@ var model = DS.Model.extend({
     blocks: DS.attr(),
     project: DS.attr('string'),
     imask: DS.attr('number'),
+    udas: DS.attr(),
 
     editable: function(){
         if (this.get('status') === 'pending') {
@@ -41,28 +42,6 @@ var model = DS.Model.extend({
             return 'fa-circle-o';
         }
     }.property('status', 'start', 'due'),
-
-    definedUDAs: function() {
-        var fields = [];
-        var length = 0;
-        if(this.udas) {
-                length = this.udas.length;
-        }
-        for(var i = 0; i < length || 0; i++) {
-            var this_uda = this.udas[i];
-            var value = this.get(this_uda.field);
-            if(value) {
-                fields.push({
-                    label: this_uda.label,
-                    field: this_uda.field,
-                    type: this_uda.type,
-                    value: value,
-                    processedValue: value,
-                });
-            }
-        }
-        return fields;
-    }.property().volatile(),
 
     taskwarrior_class: function() {
         this.get('calculateIsBlocked').bind(this)();
