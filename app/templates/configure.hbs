@@ -232,7 +232,7 @@
                 </div>
             </li>
             <li class="accordion-navigation">
-                <a href="#feeds">iCal, RSS &amp; Pebble Feeds</a>
+                <a href="#feeds">iCal &amp; RSS Feeds</a>
                 <div id="feeds" class="content">
                     <div class="row">
                         <div class="large-12 columns">
@@ -310,44 +310,6 @@
                             <label>RSS Task Feed</label>
                             {{view "select" value=applicationController.user.feed_enabled optionValuePath="content.value" optionLabelPath="content.human" content=feedEnabledUI name="feed_config"}}
                             <a href="" class="button radius" {{action "save_feed"}}>Save Settings</a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="large-12 columns">
-                            <h3>Pebble Cards URL</h3>
-                            <p> 
-                                <a href="http://keanulee.com/pebblecards/">Pebble Cards</a> is a
-                                <a href="https://getpebble.com/">Pebble</a> application
-                                allowing one quick access to information like
-                                one's upcoming appointments, the local weather, and when the
-                                sun will set today.  Inthe.AM provides a URL you can use with
-                                Pebble Cards for displaying your current highest priority task.
-                            </p>
-                            {{#unless applicationController.user.pebble_cards_enabled}}
-                                <div class="block warning">
-                                    <p>
-                                        For your security, your Pebble Cards URL is disabled
-                                        by default.  Although your Pebble Cards URL is unique
-                                        and randomly generated, due to limitations in Pebble
-                                        Cards, no authentication is used.
-                                        <a href="" {{action "save_pebble_cards" true}}>Enable your Pebble Cards URL</a>.
-                                    </p>
-                                </div>
-                            {{else}}
-                                <table class="pure-table pure-table-horizontal">
-                                    <tr>
-                                        <th>
-                                            Pebble Cards URL
-                                        </th>
-                                        <td>
-                                            https://inthe.am{{ applicationController.urls.pebble_card_url }}
-                                        </td>
-                                    </tr>
-                                </table>
-                            {{/unless}}
-                            <label>Pebble Cards URL</label>
-                            {{view "select" value=applicationController.user.pebble_cards_enabled optionValuePath="content.value" optionLabelPath="content.human" content=pebbleCardsEnabledUI name="pebble_cards_config"}}
-                            <a href="" class="button radius" {{action "save_pebble_cards"}}>Save Settings</a>
                         </div>
                     </div>
                 </div>
