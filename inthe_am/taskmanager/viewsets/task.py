@@ -19,6 +19,7 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from twilio.util import RequestValidator
+from twilio.twiml import Response as TwilioResponse
 
 from .. import models
 from ..context_managers import git_checkpoint, timed_activity
@@ -439,7 +440,7 @@ def incoming_sms(request, username):
     except User.DoesNotExist:
         return HttpResponse(status=404)
 
-    r = Response()
+    r = TwilioResponse()
 
     # This request is unauthenticated; we'll need to fetch the user's
     # store directly rather than looking it up via the auth cookie.
