@@ -6,18 +6,18 @@ backports.statistics==0.1.0
 behave==1.2.5
 billiard==3.3.0.22
 boto==2.34.0
--e git+https://github.com/coddingtonbear/bugwarrior.git@c614f6ba99e380b097c12235d6b1dc7c3b980636#egg=bugwarrior-origin_inthe.am
+-e git+https://github.com/coddingtonbear/bugwarrior.git@c614f6ba99e380b097c12235d6b1dc7c3b980636#egg=bugwarrior
 celery==3.1.19
 click==6.2
 contextlib2==0.5.1
 decorator==4.0.6
 Django==1.8.12
--e git+https://github.com/coddingtonbear/django-behave.git@79028d59f89c7a12255120d266f5c844656a6805#egg=django_behave-master
+-e git+https://github.com/coddingtonbear/django-behave.git@79028d59f89c7a12255120d266f5c844656a6805#egg=django_behave
 django-cors-headers==1.1.0
 django-extensions==1.6.1
 django-filter==0.13.0
 django-mailbox==4.4.5
--e git+https://github.com/niwinz/django-sse.git@1351b1387250c412e1adfc33aef0bc9d888d5bbf#egg=django-sse
+-e git+https://github.com/niwinz/django-sse.git@1351b1387250c412e1adfc33aef0bc9d888d5bbf#egg=django_sse
 django-storages==1.1.8
 django-tastypie==0.13.3
 django-twilio==0.4
@@ -67,7 +67,7 @@ python-dateutil==2.4.2
 python-memcached==1.53
 python-mimeparse==0.1.4
 python-openid==2.2.5
--e git+https://github.com/latestrevision/python-social-auth.git@f435f73a8e296d19531b3a240bffae96ab79903b#egg=python_social_auth-origin_add_dropbox_oauth2
+-e git+https://github.com/latestrevision/python-social-auth.git@f435f73a8e296d19531b3a240bffae96ab79903b#egg=python_social_auth
 pytz==2015.7
 pyxdg==0.25
 raven==5.10.0
@@ -84,12 +84,12 @@ sphinx-rtd-theme==0.1.9
 splinter==0.7.3
 sse==1.2
 subprocess32==3.2.5
--e git+https://github.com/latestrevision/taskw@8ebfae0243044b231d91f482d8956cd5df0952eb#egg=taskw-origin_inthe_am
+-e git+https://github.com/latestrevision/taskw@8ebfae0243044b231d91f482d8956cd5df0952eb#egg=taskw
 tlslite==0.4.9
 traitlets==4.1.0
 trello==0.9.1
 Twiggy==0.4.7
 twilio==5.2.0
+uWSGI==2.0.12
 webcolors==1.4
-wheel==0.26.0
 x256==0.0.3
