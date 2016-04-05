@@ -24,7 +24,7 @@ def deploy():
         run('bower install')
         run('npm install')
         run('ember build --environment=production')
-        virtualenv('pip install -r /var/www/twweb/requirements.txt')
+        virtualenv('pip install -r /var/www/twweb/requirements-frozen.txt')
         virtualenv('python manage.py collectstatic --noinput')
         virtualenv('python manage.py migrate')
     sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)
