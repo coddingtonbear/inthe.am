@@ -25,12 +25,14 @@ var controller = ObjectController.extend({
         var udas = [];
         var modelUdas = this.get('model.udas');
         for(var defined_uda in modelUdas) {
-            udas.push({
-              'field_name': defined_uda,
-              'value': modelUdas[defined_uda],
-              'label': fieldNameMap[defined_uda].label,
-              'type': fieldNameMap[defined_uda]['type'],
-            })
+            if(fieldNameMap[defined_uda]) {
+                udas.push({
+                  'field_name': defined_uda,
+                  'value': modelUdas[defined_uda],
+                  'label': fieldNameMap[defined_uda].label,
+                  'type': fieldNameMap[defined_uda]['type'],
+                })
+            }
         }
 
         return udas;
