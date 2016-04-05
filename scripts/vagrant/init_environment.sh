@@ -157,7 +157,7 @@ ember build
 
 # Install requirements
 echo "installing python requirements"
-pip install --download-cache=/tmp/pip_cache -r $MAIN_DIR/requirements-frozen.txt
+pip install -r $MAIN_DIR/requirements-frozen.txt
 
 if [ -z "$TRAVIS" ]; then
     echo "preparing application"
@@ -172,6 +172,8 @@ if [ -z "$TRAVIS" ]; then
 
     service taskd-celery restart
     service taskd restart
+
+    chown -R vagrant:vagrant $MAIN_DIR
 else
     if [ -d /home/travis/.config ]; then
         chmod -R 777 /home/travis/.config

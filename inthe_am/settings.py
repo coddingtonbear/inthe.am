@@ -185,15 +185,18 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
     }
 }
 
-VERSION = check_output(
-    [
-        'git',
-        '--work-tree=%s' % BASE_DIR,
-        '--git-dir=%s' % os.path.join(BASE_DIR, '.git'),
-        'rev-parse',
-        'HEAD'
-    ]
-).strip()
+if os.path.exists(os.path.join(BASE_DIR, '.git')):
+    VERSION = check_output(
+        [
+            'git',
+            '--work-tree=%s' % BASE_DIR,
+            '--git-dir=%s' % os.path.join(BASE_DIR, '.git'),
+            'rev-parse',
+            'HEAD'
+        ]
+    ).strip()
+else:
+    VERSION = 'development'
 
 if TESTING:
     CELERY_ALWAYS_EAGER = True
