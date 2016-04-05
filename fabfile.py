@@ -13,7 +13,7 @@ def virtualenv(command, user=None):
 
 
 @task
-def deploy():
+def deploy(install='yes', build='yes'):
     local('git push origin development')
     local('git checkout master')
     local('git merge development')
@@ -21,10 +21,12 @@ def deploy():
     with cd('/var/www/twweb'):
         run('git fetch origin')
         run('git merge origin/master')
-        run('bower install')
-        run('npm install')
-        run('ember build --environment=production')
-        virtualenv('pip install -r /var/www/twweb/requirements-frozen.txt')
+        if install == 'yes':
+            run('bower install')
+            run('npm install')
+            virtualenv('pip install -r /var/www/twweb/requirements-frozen.txt')
+        if build == 'yes':
+            run('ember build --environment=production')
         virtualenv('python manage.py collectstatic --noinput')
         virtualenv('python manage.py migrate')
     sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)

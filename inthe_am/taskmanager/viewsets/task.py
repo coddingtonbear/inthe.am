@@ -11,6 +11,7 @@ from django.http import (
     HttpResponseNotFound,
     HttpResponseRedirect,
 )
+from django.views.decorators.csrf import csrf_exempt
 from icalendar import Calendar, Event
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route, list_route
@@ -411,6 +412,7 @@ def ical_feed(request, variant, secret_id):
     )
 
 
+@csrf_exempt
 def incoming_trello(request, secret_id):
     try:
         store = models.TaskStore.objects.get(secret_id=secret_id)
@@ -430,6 +432,7 @@ def incoming_trello(request, secret_id):
     )
 
 
+@csrf_exempt
 def incoming_sms(request, username):
     try:
         user = User.objects.get(username=username)
