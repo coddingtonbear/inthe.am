@@ -42,7 +42,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    ENV.APP.API_HOST = 'http://inthe.am/';
+    ENV.APP.API_HOST = 'https://inthe.am/';
   }
 
   return ENV;
