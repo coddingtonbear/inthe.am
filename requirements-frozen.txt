@@ -17,7 +17,7 @@ django-cors-headers==1.1.0
 django-extensions==1.6.1
 django-filter==0.13.0
 django-mailbox==4.4.5
-django-sse==0.4.1
+-e git+https://github.com/niwinz/django-sse.git@1351b1387250c412e1adfc33aef0bc9d888d5bbf#egg=django-sse
 django-storages==1.1.8
 django-tastypie==0.13.3
 django-twilio==0.4

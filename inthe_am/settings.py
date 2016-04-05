@@ -217,7 +217,7 @@ TRELLO_SUBSCRIPTION_DOMAIN = 'https://inthe.am'
 ANNOUNCEMENTS_CHANNEL = '__general__'
 
 # Streaming ticket updates enabled?
-STREAMING_UPDATES_ENABLED = False
+STREAMING_UPDATES_ENABLED = True
 
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True

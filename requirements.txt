@@ -14,7 +14,7 @@ django-twilio==0.4
 dulwich==0.9.4
 raven>=4.0.4
 mock>=1.0.1
-django-sse>=0.4.1
+-e git+https://github.com/niwinz/django-sse.git@1351b1387250c412e1adfc33aef0bc9d888d5bbf#egg=django-sse
 sse>=1.2
 psycopg2>=2.5.2
 django-extensions>=1.3.3
