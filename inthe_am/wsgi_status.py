@@ -138,7 +138,6 @@ class Application(object):
             # Let the client know the head has changed if they've asked
             # for a different head than the one we're on:
             if self.head != self.store.repository.head():
-                self.add_message('head_changed', self.store.repository.head())
                 for task_id in self.store.get_changed_task_ids(self.head):
                     self.add_message('task_changed', task_id)
 
