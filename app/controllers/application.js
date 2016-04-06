@@ -353,10 +353,7 @@ var controller = Ember.Controller.extend({
             lastHeartbeat = now;
             this.set('statusUpdaterHeartbeat', lastHeartbeat);
         }
-        if (
-            (statusUpdater.readyState !== window.EventSource.OPEN) ||
-            ((now - lastHeartbeat) > flatlineDelay)
-        ) {
+        if ((now - lastHeartbeat) > flatlineDelay) {
             console.logIfDebug("Event stream has failed; restarting...");
             console.logIfDebug("Last heartbeat: ", lastHeartbeat)
             this.set('taskUpdateStreamConnected', false);
