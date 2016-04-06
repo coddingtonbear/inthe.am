@@ -342,7 +342,7 @@ class TaskViewSet(viewsets.ViewSet):
         return Response()
 
     @requires_task_store
-    @list_route(methods=['put'], url_path='bugwarrior/sync')
+    @list_route(methods=['post'], url_path='bugwarrior/sync')
     def bugwarrior_sync(self, request, store=None):
         config = store.bugwarrior_config
         if not config:
