@@ -355,7 +355,10 @@ var controller = Ember.Controller.extend({
         }
         if ((now - lastHeartbeat) > flatlineDelay) {
             console.logIfDebug("Event stream has failed; restarting...");
-            console.logIfDebug("Last heartbeat: ", lastHeartbeat)
+            console.logIfDebug("Now: ", now);
+            console.logIfDebug("Last heartbeat: ", lastHeartbeat);
+            console.logIfDebug("Difference: ", now - lastHeartbeat);
+            console.logIfDebug("Flatline delay: ", flatlineDelay);
             this.set('taskUpdateStreamConnected', false);
             this.set('statusUpdaterErrorred', true);
             var since = this.get('taskUpdateStreamConnectionLost');
