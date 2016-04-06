@@ -98,7 +98,7 @@ class Application(object):
             query = urlparse.parse_qs(
                 urlparse.urlparse(
                     wsgiref_utils.request_uri(env)
-                )
+                ).query
             )
             taskstore_id = self.signer.unsign(query['key'][0])
             self.store = TaskStore.objects.get(pk=int(taskstore_id))
