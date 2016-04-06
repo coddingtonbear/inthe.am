@@ -143,7 +143,7 @@ class Application(object):
 
             self.initialized = True
         except Exception as e:
-            logger.exception("Error starting event stream: %s" % e)
+            logger.exception("Error starting event stream: %s", str(e))
 
     def __iter__(self):
         if not self.initialized:
@@ -176,4 +176,10 @@ class Application(object):
 
         self.subscription_thread.stop()
 
-application = Application
+try:
+    application = Application
+except Exception as e:
+    logging.exception(
+        'Event stream terminated by uncaught exception: %s',
+        str(e)
+    )
