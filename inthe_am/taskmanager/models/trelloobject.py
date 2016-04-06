@@ -330,7 +330,7 @@ class TrelloObject(models.Model):
                 self.id,
                 self.store.trello_auth_token,
                 reverse(
-                    'trello_incoming',
+                    'incoming_trello',
                     kwargs={
                         'secret_id': self.store.secret_id,
                     }
