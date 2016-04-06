@@ -418,6 +418,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
         'rest_framework.authtoken',
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
     'EXCEPTION_HANDLER': 'inthe_am.taskmanager.views.rest_exception_handler',
 }
 
