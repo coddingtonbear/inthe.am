@@ -165,10 +165,9 @@ class Application(object):
                     yield 'event: {name}\n'.format(
                         name=message['name'].encode('utf8')
                     )
-                if message.get('data'):
-                    yield 'data: {data}\n'.format(
-                        data=message['data'].encode('utf8')
-                    )
+                yield 'data: {data}\n'.format(
+                    data=message.get('data', '').encode('utf8')
+                )
                 yield '\n'
 
             # Relax
