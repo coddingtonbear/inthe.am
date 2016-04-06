@@ -8,7 +8,7 @@ import os
 import time
 from Queue import Queue
 import urlparse
-import wsgiref
+from wsgiref import util as wsgiref_utils
 
 from django.conf import settings
 from django.core.signing import Signer
@@ -97,7 +97,7 @@ class Application(object):
         try:
             query = urlparse.parse_qs(
                 urlparse.urlparse(
-                    wsgiref.request_uri(env)
+                    wsgiref_utils.request_uri(env)
                 )
             )
             taskstore_id = self.signer.unsign(query['key'][0])
