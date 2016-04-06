@@ -420,7 +420,6 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
     ],
     'EXCEPTION_HANDLER': 'inthe_am.taskmanager.views.rest_exception_handler',
 }
