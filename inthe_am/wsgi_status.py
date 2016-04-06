@@ -100,6 +100,8 @@ class Application(object):
                     wsgiref_utils.request_uri(env)
                 ).query
             )
+            if 'key' not in query:
+                return
             taskstore_id = self.signer.unsign(query['key'][0])
             self.store = TaskStore.objects.get(pk=int(taskstore_id))
             try:
@@ -145,12 +147,11 @@ class Application(object):
             logger.exception("Error starting event stream: %s" % e)
 
     def __iter__(self):
-        self.beat_heart()
-
         if not self.initialized:
             yield 'retry: %s\n\n' % self.ERROR_RETRY_DELAY
             return
 
+        self.beat_heart()
         created = time.time()
         while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
             self.beat_heart()
