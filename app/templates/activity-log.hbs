@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each msg in controller}}
+                {{#each controller.model as |msg| }}
                     <tr class="info">
                         <td class="last_seen">{{moment-fromnow msg.last_seen}}</td>
                         <td class="created">{{moment-fromnow msg.created}}</td>
