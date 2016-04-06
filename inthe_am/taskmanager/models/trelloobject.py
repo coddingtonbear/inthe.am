@@ -332,8 +332,6 @@ class TrelloObject(models.Model):
                 reverse(
                     'trello_incoming',
                     kwargs={
-                        'api_name': 'v1',
-                        'resource_name': 'task',
                         'secret_id': self.store.secret_id,
                     }
                 )
