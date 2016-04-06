@@ -458,6 +458,7 @@ var controller = Ember.Controller.extend({
             });
         },
         'heartbeat': function(evt) {
+            console.logIfDebug('Heartbeat...');
             this.set('statusUpdaterHeartbeat', new Date());
         },
         'public_announcement': function(evt) {
