@@ -154,18 +154,21 @@ class Command(BaseCommand):
         )
         return inode.strip().split(' ')[0]
 
-    def handle(self, *args, **kwargs):
+    def add_arguments(self, parser):
+        parser.add_argument('file_path', nargs='?', type=str)
+
+    def handle(self, *args, **options):
         self.last_message_emitted = None
         self.operations = {}
         self.highest_message = 0
 
-        starting_inode = self.get_file_inode(args[0])
+        starting_inode = self.get_file_inode(options['file_path'])
         proc = subprocess.Popen(
             [
                 'tail',
                 '--max-unchanged-stats=5',
                 '-F',
-                args[0]
+                options['file_path'],
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
