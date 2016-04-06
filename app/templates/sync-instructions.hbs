@@ -12,7 +12,7 @@
             Your Certificate
         </th>
         <td>
-            <a {{bind-attr href=applicationController.urls.my_certificate }}>private.certificate.pem</a>
+            <a href="{{applicationController.urls.my_certificate }}">private.certificate.pem</a>
         </td>
     </tr>
     <tr>
@@ -20,7 +20,7 @@
            Your Key 
         </th>
         <td>
-            <a {{bind-attr href=applicationController.urls.my_key }}>private.key.pem</a>
+            <a href="{{applicationController.urls.my_key }}">private.key.pem</a>
         </td>
     </tr>
     <tr>
@@ -29,7 +29,7 @@
         </th>
         <td>
             {{#if applicationController.urls.ca_certificate}}
-                <a {{bind-attr href=applicationController.urls.ca_certificate}}>ca.cert.pem</a>
+                <a href="{{applicationController.urls.ca_certificate}}">ca.cert.pem</a>
             {{else}}
                 &mdash;
             {{/if}}
@@ -41,9 +41,9 @@
     Add the following settings to your Taskwarrior configuration file (<code>~/.taskrc</code>).
 </p>
 
-<code class="para">taskd.certificate=/path/to/<a {{bind-attr href=applicationController.urls.my_certificate }}>private.certificate.pem</a><br />
-    taskd.key=/path/to/<a {{bind-attr href=applicationController.urls.my_key }}>private.key.pem</a><br />
-    taskd.ca=/path/to/<a {{bind-attr href=applicationController.urls.ca_certificate}}>ca.cert.pem</a><br />
+<code class="para">taskd.certificate=/path/to/<a href="{{applicationController.urls.my_certificate }}">private.certificate.pem</a><br />
+    taskd.key=/path/to/<a href="{{applicationController.urls.my_key }}">private.key.pem</a><br />
+    taskd.ca=/path/to/<a href="{{applicationController.urls.ca_certificate}}">ca.cert.pem</a><br />
     taskd.server={{ applicationController.user.taskd_server }}<br />
     taskd.credentials={{ applicationController.user.taskd_credentials }}<br />
 </code>
