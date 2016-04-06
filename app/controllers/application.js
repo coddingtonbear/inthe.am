@@ -353,12 +353,14 @@ var controller = Ember.Controller.extend({
             lastHeartbeat = now;
             this.set('statusUpdaterHeartbeat', lastHeartbeat);
         }
-        if ((now - lastHeartbeat) > flatlineDelay) {
-            console.logIfDebug("Event stream has failed; restarting...");
-            console.logIfDebug("Now: ", now);
-            console.logIfDebug("Last heartbeat: ", lastHeartbeat);
-            console.logIfDebug("Difference: ", now - lastHeartbeat);
-            console.logIfDebug("Flatline delay: ", flatlineDelay);
+        if (
+            (statusUpdater.readyState !== window.EventSource.OPEN) ||
+            ((now - lastHeartbeat) > flatlineDelay)
+        ) {
+            console.logIfDebug(
+                "Event stream has failed; last heartbeat: ",
+                lastHeartbeat
+            );
             this.set('taskUpdateStreamConnected', false);
             this.set('statusUpdaterErrorred', true);
             var since = this.get('taskUpdateStreamConnectionLost');
@@ -458,7 +460,6 @@ var controller = Ember.Controller.extend({
             });
         },
         'heartbeat': function(evt) {
-            console.logIfDebug('Heartbeat...');
             this.set('statusUpdaterHeartbeat', new Date());
         },
         'public_announcement': function(evt) {
