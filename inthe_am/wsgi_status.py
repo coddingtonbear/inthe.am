@@ -1,14 +1,179 @@
 """
-WSGI config for twweb project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
+WSGI config for Inthe.AM's status server.
 """
-
+import datetime
+import json
+import logging
 import os
+import time
+from Queue import Queue
+import urlparse
+import wsgiref
+
+from django.conf import settings
+from django.core.signing import Signer
+
+from inthe_am.taskmanager.models import TaskStore
+from inthe_am.taskmanager.lock import get_announcements_subscription
+
+
+logger = logging.getLogger(__name__)
+logging.config.dictConfig(settings.LOGGING)
+
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "inthe_am.settings")
 
-from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+
+class Application(object):
+    HEADERS = [
+        ('Content-Type', 'text/event-stream'),
+    ]
+    ERROR_RETRY_DELAY = 60 * 1000
+
+    def add_message(self, name, data=None):
+        if data is None:
+            data = ''
+
+        self.queue.put(
+            {
+                'name': name,
+                'data': data,
+            }
+        )
+
+    def handle_local_sync(self, message):
+        new_head = json.loads(message['data'])['head']
+
+        if new_head != self.head:
+            self.head = new_head
+            self.add_message('head_changed', self.head)
+
+    def handle_changed_task(self, message):
+        self.add_message(
+            'task_changed',
+            json.loads(message['data'])['task_id']
+        )
+
+    def handle_log_message(self, message):
+        announcement = json.loads(message['data'])
+        if announcement['error'] and not announcement['silent']:
+            self.add_message(
+                'error_logged',
+                announcement['message']
+            )
+
+    def handle_personal_announcement(self, message):
+        self.add_message(
+            'personal_announcement',
+            json.loads(message['data'])['message']
+        )
+
+    def handle_public_announcement(self, message):
+        self.add_message(
+            'public_announcement',
+            json.loads(message['data'])['message']
+        )
+
+    def beat_heart(self):
+        heartbeat_interval = datetime.timedelta(
+            seconds=settings.EVENT_STREAM_HEARTBEAT_INTERVAL
+        )
+        if (
+            not self.last_heartbeat or
+            self.last_heartbeat + heartbeat_interval < datetime.datetime.now()
+        ):
+            self.add_message("heartbeat")
+            self.last_heartbeat = datetime.datetime.now()
+
+    def __init__(self, env, start_response):
+        start_response('200 OK', self.HEADERS)
+        self.last_heartbeat = None
+        self.env = env
+        self.response = env
+        self.signer = Signer()
+        self.initialized = False
+        self.queue = Queue()
+
+        try:
+            query = urlparse.parse_qs(
+                urlparse.urlparse(
+                    wsgiref.request_uri(env)
+                )
+            )
+            taskstore_id = self.signer.unsign(query['key'][0])
+            self.store = TaskStore.objects.get(pk=int(taskstore_id))
+            try:
+                self.repository_head = query['head'][0]
+            except (KeyError, IndexError):
+                self.repository_head = self.store.repository.head()
+
+            # Subscribe to the event stream
+            self.subscription = get_announcements_subscription(
+                self.store,
+                **{
+                    'local_sync.{username}': self.handle_local_sync,
+                    'changed_task.{username}': self.handle_changed_task,
+                    'log_message.{username}': self.handle_log_message,
+                    '{username}': self.handle_personal_announcement,
+                    settings.ANNOUNCEMENTS_CHANNEL: (
+                        self.handle_public_announcement
+                    ),
+                }
+            )
+            self.subscription_thread = self.subscription.run_in_thread(
+                sleep_time=1
+            )
+
+            # Kick-off a sync just to be sure
+            kwargs = {
+                'async': True,
+                'function': (
+                    'views.Status.iterator'
+                )
+            }
+            self.store.sync(msg='Iterator initialization', **kwargs)
+
+            # Let the client know the head has changed if they've asked
+            # for a different head than the one we're on:
+            if self.head != self.store.repository.head():
+                self.add_message('head_changed', self.store.repository.head())
+                for task_id in self.store.get_changed_task_ids(self.head):
+                    self.add_message('task_changed', task_id)
+
+            self.initialized = True
+        except Exception as e:
+            logger.exception("Error starting event stream: %s" % e)
+
+    def __iter__(self):
+        self.beat_heart()
+
+        if not self.initialized:
+            yield 'retry: %s\n\n' % self.ERROR_RETRY_DELAY
+            return
+
+        created = time.time()
+        while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
+            self.beat_heart()
+
+            # Emit queued messages
+            while not self.queue.empty():
+                message = self.queue.get(False)
+                if not message:
+                    continue
+
+                if message.get('name'):
+                    yield 'event: {name}\n'.format(
+                        name=message['name'].encode('utf8')
+                    )
+                if message.get('data'):
+                    yield 'data: {data}\n'.format(
+                        name=message['data'].encode('utf8')
+                    )
+                yield '\n'
+
+            # Relax
+            time.sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
+
+        self.subscription_thread.stop()
+
+application = Application

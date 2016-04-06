@@ -2,6 +2,7 @@ import os
 import textwrap
 
 from django.conf import settings
+from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.utils.timezone import now
 from rest_framework import viewsets
@@ -18,6 +19,8 @@ from ..serializers.user import UserSerializer
 
 
 def get_published_properties(user, store, meta):
+    signer = Signer()
+
     return {
         'logged_in': True,
         'uid': user.pk,
@@ -36,6 +39,7 @@ def get_published_properties(user, store, meta):
             settings.STREAMING_UPDATES_ENABLED and
             store.sync_uses_default_server
         ),
+        'streaming_key': signer.sign(str(store.pk)),
         'taskd_files': store.taskd_certificate_status,
         'twilio_auth_token': store.twilio_auth_token,
         'sms_whitelist': store.sms_whitelist,

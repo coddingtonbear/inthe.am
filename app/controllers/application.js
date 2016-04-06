@@ -384,6 +384,7 @@ var controller = Ember.Controller.extend({
         console.logIfDebug("Starting event stream");
         var head = this.get('statusUpdaterHead');
         var log = this.get('statusUpdaterLog');
+        var key = this.get('user.streaming_key');
         this.set('statusUpdaterHeartbeat', new Date());
         log.pushObject(
             [new Date(), 'Starting with HEAD ' + head]
@@ -395,7 +396,7 @@ var controller = Ember.Controller.extend({
         ){
             var url = this.get('urls.status_feed');
             if(head && typeof(head) === 'string') {
-                url = url + "?head=" +    head;
+                url = url + "?head=" +  head + "&key=" + key;
             }
             statusUpdater = new window.EventSource(url);
             this.bindStatusActions(statusUpdater);
@@ -456,8 +457,6 @@ var controller = Ember.Controller.extend({
         },
         'heartbeat': function(evt) {
             this.set('statusUpdaterHeartbeat', new Date());
-            var heartbeat_data = JSON.parse(evt.data);
-            this.set('user.sync_enabled', heartbeat_data.sync_enabled);
         },
         'public_announcement': function(evt) {
           console.logIfDebug(evt.type, evt.data);

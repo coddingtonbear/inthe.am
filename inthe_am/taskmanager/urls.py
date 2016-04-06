@@ -5,7 +5,7 @@ from django.conf.urls import include, patterns, url
 from django.http import HttpResponse, HttpResponseNotFound
 from rest_framework import routers
 
-from .views import debug_login, Status, TaskFeed
+from .views import debug_login, TaskFeed
 from .viewsets.activity_log import ActivityLogViewSet
 from .viewsets.task import (
     TaskViewSet, ical_feed, incoming_trello, incoming_sms,
@@ -56,8 +56,6 @@ urlpatterns = patterns(
         TaskFeed(),
         name='feed'
     ),
-    url('^status/(?P<uuid>[^/]+)/', Status.as_view(), name='status'),
-    url('^status/', Status.as_view(), name='status'),
     url('^', fallback),
 )
 
