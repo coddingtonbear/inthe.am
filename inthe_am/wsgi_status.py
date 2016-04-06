@@ -168,7 +168,7 @@ class Application(object):
                     )
                 if message.get('data'):
                     yield 'data: {data}\n'.format(
-                        name=message['data'].encode('utf8')
+                        data=message['data'].encode('utf8')
                     )
                 yield '\n'
 
