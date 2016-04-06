@@ -105,9 +105,9 @@ class Application(object):
             taskstore_id = self.signer.unsign(query['key'][0])
             self.store = TaskStore.objects.get(pk=int(taskstore_id))
             try:
-                self.repository_head = query['head'][0]
+                self.head = query['head'][0]
             except (KeyError, IndexError):
-                self.repository_head = self.store.repository.head()
+                self.head = self.store.repository.head()
 
             # Subscribe to the event stream
             self.subscription = get_announcements_subscription(
