@@ -13,7 +13,6 @@ from wsgiref import util as wsgiref_utils
 from django import db
 from django.conf import settings
 from django.core.signing import Signer
-from gevent.monkey import monkey_patch_all
 from psycogreen.gevent import patch_psycopg
 from uwsgi import async_sleep
 
@@ -22,7 +21,6 @@ from inthe_am.taskmanager.lock import get_announcements_subscription
 
 
 patch_psycopg()
-monkey_patch_all()
 
 
 logger = logging.getLogger(__name__)
