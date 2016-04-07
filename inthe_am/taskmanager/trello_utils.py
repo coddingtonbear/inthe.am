@@ -1,6 +1,3 @@
-import base64
-import hmac
-import hashlib
 import logging
 
 import oauthlib.oauth1
@@ -41,13 +38,7 @@ def get_oauth_client(request=None, **params):
     }
     if request:
         base_params['callback_uri'] = request.build_absolute_uri(
-            reverse(
-                'trello_callback',
-                kwargs={
-                    'api_name': 'v1',
-                    'resource_name': 'task',
-                }
-            )
+            reverse('api:task-trello/callback')
         )
 
     base_params.update(params)
