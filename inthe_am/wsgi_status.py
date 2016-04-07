@@ -13,6 +13,7 @@ from wsgiref import util as wsgiref_utils
 from django import db
 from django.conf import settings
 from django.core.signing import Signer
+from uwsgi import async_sleep
 
 from inthe_am.taskmanager.models import TaskStore
 from inthe_am.taskmanager.lock import get_announcements_subscription
@@ -178,7 +179,7 @@ class Application(object):
                 yield '\n'
 
             # Relax
-            time.sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
+            async_sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
 
         self.subscription_thread.stop()
 
