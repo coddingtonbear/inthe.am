@@ -10,6 +10,7 @@ from Queue import Queue
 import urlparse
 from wsgiref import util as wsgiref_utils
 
+from django import db
 from django.conf import settings
 from django.core.signing import Signer
 
@@ -29,6 +30,10 @@ class Application(object):
         ('Content-Type', 'text/event-stream'),
     ]
     ERROR_RETRY_DELAY = 60 * 1000
+
+    def close_connection(self):
+        for connection in db.connections.all():
+            connection.close()
 
     def add_message(self, name, data=None):
         if data is None:
@@ -140,6 +145,8 @@ class Application(object):
             if self.head != self.store.repository.head():
                 for task_id in self.store.get_changed_task_ids(self.head):
                     self.add_message('task_changed', task_id)
+
+            self.close_connection()
 
             self.initialized = True
         except Exception as e:
