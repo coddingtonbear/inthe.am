@@ -58,6 +58,7 @@ path.py==8.1.2
 pbr==1.8.1
 pexpect==4.0.1
 pickleshare==0.5
+psycogreen==1.0
 psycopg2==2.6.1
 ptyprocess==0.5
 pycurl==7.21.5
