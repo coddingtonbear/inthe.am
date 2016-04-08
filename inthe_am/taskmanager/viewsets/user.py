@@ -4,6 +4,7 @@ import textwrap
 from django.conf import settings
 from django.core.signing import Signer
 from django.core.urlresolvers import reverse
+from django.http.response import HttpResponse
 from django.utils.timezone import now
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
@@ -140,15 +141,14 @@ class UserViewSet(viewsets.ViewSet):
             raise NotFound()
 
         with open(filepath, 'r') as outfile:
-            return Response(
+            response = HttpResponse(
                 outfile.read(),
-                content_type=content_type,
-                headers={
-                    'Content-Disposition': 'attachment; filename="%s"' % (
-                        os.path.basename(filepath)
-                    )
-                }
+                content_type=content_type
             )
+            response['Content-Disposition'] = (
+                'attachment; filename="%s"' % os.path.basename(filepath)
+            )
+            return response
 
     @list_route(methods=['get'])
     def status(self, request):
