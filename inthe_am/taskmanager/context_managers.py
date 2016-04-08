@@ -52,7 +52,12 @@ def timed_activity(store, activity):
     store.unregister_metadata_callback(m_uid)
 
     record.duration_seconds = (now() - record.started).total_seconds()
-    record.save()
+    try:
+        record.save()
+    except Exception:
+        logger.exception(
+            "Error encountered recording outcome of timed activity."
+        )
 
 
 @contextmanager
