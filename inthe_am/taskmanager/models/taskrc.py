@@ -121,6 +121,11 @@ class TaskRc(object):
             self.includes.append(item)
         self._write()
 
+    def remove_include(self, item):
+        if item in self.includes:
+            self.includes.remove(item)
+        self._write()
+
     def __unicode__(self):
         return u'.taskrc at %s' % self.path
 
