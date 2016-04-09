@@ -20,7 +20,7 @@ var controller = ObjectController.extend({
                 application.hideLoading();
                 self.transitionToRoute('task', model);
             }.bind(this), function(reason){
-                model.rollback();
+                model.rollbackAttributes();
                 model.reload();
                 application.hideLoading();
                 application.error_message(

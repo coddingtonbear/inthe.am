@@ -74,7 +74,7 @@ var controller = ObjectController.extend({
                 self.get('applicationController').hideLoading();
                 model.reload();
             }, function(reason) {
-                model.rollback();
+                model.rollbackAttributes();
                 self.get('applicationController').hideLoading();
                 self.get('applicationController').error_message(
                     "Could not delete annotation!"

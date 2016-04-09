@@ -29,7 +29,7 @@ var controller = ObjectController.extend({
                 application.hideLoading();
                 application.closeModal(form);
             }.bind(this), function(msg) {
-                model.rollback();
+                model.rollbackAttributes();
                 model.reload();
                 application.hideLoading();
                 application.error_message(
