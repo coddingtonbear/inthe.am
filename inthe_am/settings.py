@@ -423,6 +423,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
     'EXCEPTION_HANDLER': 'inthe_am.taskmanager.views.rest_exception_handler',
+    'DEFAULT_PAGINATION_CLASS': (
+        'inthe_am.taskmanager.pagination.HeaderLimitOffsetPagination'
+    ),
 }
 
 RAVEN_CONFIG = {
