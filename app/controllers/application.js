@@ -116,23 +116,6 @@ var controller = Ember.Controller.extend({
     _hideLoading: function() {
         $('#loading').fadeOut(400);
     },
-    reportError: function(error) {
-        if (typeof(error) === 'object') {
-            if (error.stack) {
-                // this is a native JS error; yay!
-            } else if (error.statusText) {
-                error = new Error(error.status + " " + error.statusText);
-            } else {
-                error = new Error(JSON.stringify(error));
-            }
-        } else if (typeof(error) === 'string') {
-            error = new Error(error);
-        }
-        if(window.console && window.console.log) {
-            window.console.error("Error encountered", error);
-        }
-        Raven.captureException(error);
-    },
     taskUpdateStreamEnabled: function() {
         var enabled = this.get('user.streaming_enabled');
         var compatible = this.get('configureController.taskUpdateStreamCompatible');
@@ -308,10 +291,6 @@ var controller = Ember.Controller.extend({
             this.set('applicationName', 'Inthe.AM');
         }
         document.title = this.get('applicationName');
-
-        // Set up error reporting
-        Ember.onerror = this.reportError;
-        Ember.RSVP.configure('onerror', this.reportError);
 
         this.update_user_info();
     },

@@ -22,6 +22,7 @@ module.exports = function(defaults) {
     app.import('bower_components/datetimepicker/jquery.datetimepicker.js');
     app.import('bower_components/datetimepicker/jquery.datetimepicker.css');
     app.import('bower_components/raven-js/dist/raven.js');
+    app.import('bower_components/raven-js/dist/plugins/ember.js');
     app.import('bower_components/fastclick/lib/fastclick.js');
     app.import('bower_components/chardin.js/chardinjs.js');
     app.import('bower_components/chardin.js/chardinjs.css');
