@@ -6,7 +6,6 @@ export default {
             {
                 whitelistUrls: [/inthe\.am/]
             }
-        ).addPlugin(Raven.Plugins.Ember)
-        ).install();
+        ).addPlugin(Raven.Plugins.Ember).install();
     }
 };
