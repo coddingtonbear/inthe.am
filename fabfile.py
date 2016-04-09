@@ -13,12 +13,14 @@ def virtualenv(command, user=None):
 
 
 @task
-def deploy(install='yes', build='yes'):
+def deploy(install='yes', build='yes', chown='no'):
     local('git push origin development')
     local('git checkout master')
     local('git merge development')
     local('git push origin master')
     with cd('/var/www/twweb'):
+        if chown == 'yes':
+            sudo('chown -R www-data:www-data .')
         run('git fetch origin')
         run('git merge origin/master')
         if install == 'yes':
