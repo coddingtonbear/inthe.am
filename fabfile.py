@@ -18,9 +18,10 @@ def deploy(install='yes', build='yes', chown='no'):
     local('git checkout master')
     local('git merge development')
     local('git push origin master')
+    local('git checkout development')
+    if chown == 'yes':
+        sudo('/bin/chown -R www-data:www-data /var/www/twweb', shell=False)
     with cd('/var/www/twweb'):
-        if chown == 'yes':
-            sudo('chown -R www-data:www-data .')
         run('git fetch origin')
         run('git merge origin/master')
         if install == 'yes':
@@ -38,4 +39,3 @@ def deploy(install='yes', build='yes', chown='no'):
     sudo('/usr/sbin/service twweb-sync-listener restart', shell=False)
     sudo('/usr/sbin/service twweb-log-consumer restart', shell=False)
     sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)
-    local('git checkout development')
