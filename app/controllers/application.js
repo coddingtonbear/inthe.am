@@ -128,46 +128,60 @@ var controller = Ember.Controller.extend({
         }).then(function(data){
             this.set('user', data);
             console.logIfDebug("Got user data", data);
-            this.updateColorscheme();
-            if(this.get('user').logged_in){
-                Raven.setUser({
-                    email: this.get('user').email,
-                    id: this.get('user').uid,
-                    username: this.get('user').username
-                });
-                if(!this.get('user.tos_up_to_date')) {
-                    Ember.run.next(
+            if(! this.get('initialized')) {
+                this.updateColorscheme();
+
+                if(this.get('user').logged_in){
+                    Raven.setUser({
+                        email: this.get('user').email,
+                        id: this.get('user').uid,
+                        username: this.get('user').username
+                    });
+                    if(!this.get('user.tos_up_to_date')) {
+                        Ember.run.next(
                             this,
                             function(){
-                                    this.transitionToRoute('terms-of-service');
+                                this.transitionToRoute('terms-of-service');
                             }
-                    );
-                }
-                this.handlePostLoginRedirects();
-            } else {
-                Raven.setUser();
-                if(window.localStorage) {
-                    if(
-                        (!window.location.pathname) ||
-                        window.location.pathname !== '/'
-                    ) {
-                        window.localStorage.setItem(
-                            'redirect_to',
-                            window.location.href
                         );
                     }
+                    this.handlePostLoginRedirects();
+                } else {
+                    Raven.setUser();
+                    if(window.localStorage) {
+                        if(
+                            (!window.location.pathname) ||
+                            window.location.pathname !== '/'
+                        ) {
+                            window.localStorage.setItem(
+                                'redirect_to',
+                                window.location.href
+                            );
+                        }
+                    }
+                    this.transitionToRoute('about');
                 }
-                this.transitionToRoute('about');
-            }
-            this.set('urls.feed_url', this.get('user').feed_url);
-            this.set('urls.ical_waiting_url', this.get('user').ical_waiting_url);
-            this.set('urls.ical_due_url', this.get('user').ical_due_url);
-            this.set('urls.sms_url', this.get('user').sms_url);
-            this.set('urls.pebble_card_url', this.get('user').pebble_card_url);
-            this.set('statusUpdaterHead', this.get('user').repository_head);
+                this.set('urls.feed_url', this.get('user').feed_url);
+                this.set(
+                    'urls.ical_waiting_url',
+                    this.get('user').ical_waiting_url
+                );
+                this.set('urls.ical_due_url', this.get('user').ical_due_url);
+                this.set('urls.sms_url', this.get('user').sms_url);
+                this.set(
+                    'urls.pebble_card_url',
+                    this.get('user').pebble_card_url
+                );
+                this.set(
+                    'statusUpdaterHead',
+                    this.get('user').repository_head
+                );
 
-            this.get('indexController').notifyUserLoaded();
-            this.notifyUserLoaded();
+                this.get('indexController').notifyUserLoaded();
+                this.notifyUserLoaded();
+
+                this.set('initialized', true);
+            }
         }.bind(this), function(msg){
             this.error_message(
                 `An error was encountered while ` +

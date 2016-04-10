@@ -1,6 +1,7 @@
 import os
 
 from fabric.api import task, run, local, sudo, cd, env
+from fabric.context_managers import settings
 
 
 env.hosts = [
@@ -29,11 +30,15 @@ def deploy(install='yes', build='yes', chown='no'):
             run('npm install')
             virtualenv('pip install -r /var/www/twweb/requirements-frozen.txt')
         if build == 'yes':
+            # Restart celery in case it's using a lot of memory -- which is
+            # totally a possibility.
+            sudo('/usr/sbin/service twweb-celery restart', shell=False)
             # Clear out vendor sourcemaps
-            run(
-                "grep -lr --include=*.js sourceMappingURL bower_components/ | "
-                "xargs sed -i 's/sourceMappingURL//g'"
-            )
+            with settings(warn_only=True):
+                run(
+                    "grep -lr --include=*.js sourceMappingURL "
+                    "bower_components/ | xargs sed -i 's/sourceMappingURL//g'"
+                )
             run('ember build --environment=production')
         virtualenv('python manage.py collectstatic --noinput')
         virtualenv('python manage.py migrate')
