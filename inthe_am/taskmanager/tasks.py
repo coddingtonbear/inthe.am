@@ -4,7 +4,6 @@ from fnmatch import fnmatch as glob
 import logging
 import re
 import shlex
-import uuid
 
 from celery import shared_task
 from celery.signals import setup_logging
@@ -146,11 +145,9 @@ def process_email_message(self, message_id):
         not message.subject
         or message.subject.lower() in ['add', 'create', 'new'],
     ):
-        task_id = str(uuid.uuid4())
         with git_checkpoint(store, 'Incoming E-mail'):
             task_args = [
                 'add',
-                'uuid:%s' % task_id,
                 'intheamoriginalemailsubject:"%s"' % message.subject,
                 'intheamoriginalemailid:%s' % message.pk,
             ] + additional_args + shlex.split(
@@ -158,7 +155,8 @@ def process_email_message(self, message_id):
                                                # blank line.
             )
             stdout, stderr = store.client._execute_safe(*task_args)
-            task = store.client.get_task(uuid=task_id)[1]
+            task = store.client.get_task(intheamoriginalemailid=message.pk)[1]
+            task_id = str(task['uuid'])
 
             attachment_urls_raw = task.get('intheamattachments')
             if not attachment_urls_raw:

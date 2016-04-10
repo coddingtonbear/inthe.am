@@ -13,8 +13,10 @@ echo "installing depencencies"
 apt-get update
 apt-get install -y python-software-properties
 apt-add-repository -y ppa:chris-lea/node.js
+add-apt-repository -y ppa:ubuntu-toolchain-r/test
 apt-get update
-apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs firefox checkinstall curl libcurl4-gnutls-dev libgnutls-dev libxml2-dev libxslt1-dev
+apt-get install -y git postgresql-server-dev-9.1 python-dev cmake build-essential uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs firefox checkinstall curl libcurl4-gnutls-dev libgnutls-dev libxml2-dev libxslt1-dev g++-4.8
+update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 
 # Python prerequisites
 wget -nv https://bootstrap.pypa.io/get-pip.py
@@ -114,22 +116,24 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     if [ -z "$TRAVIS" ]; then
         service taskd start
     fi
+fi
 
-    set +e
-    which task; RETVAL=$?
-    set -e
-    if [ $RETVAL -ne 0 ]; then
-        TASK_VERSION="task-2.3.0"
-        echo "installing $TASK_VERSION"
-        cd $TWWEB_TASKD_DATA/src
-        wget -nv http://taskwarrior.org/download/$TASK_VERSION.tar.gz
-        tar xzf $TASK_VERSION.tar.gz
-        cd $TASK_VERSION
-        cmake .
-        make
-        checkinstall --default
-        cp /var/taskd/src/$TASK_VERSION/*.deb /tmp
-    fi
+set +e
+which task; RETVAL=$?
+set -e
+if [ $RETVAL -ne 0 ]; then
+    echo "installing taskwarrior"
+
+    TASK_VERSION="task-2.5.1"
+    echo "installing $TASK_VERSION"
+    cd $TWWEB_TASKD_DATA/src
+    wget -nv http://taskwarrior.org/download/$TASK_VERSION.tar.gz
+    tar xzf $TASK_VERSION.tar.gz
+    cd $TASK_VERSION
+    cmake .
+    make
+    checkinstall --default
+    cp /var/taskd/src/$TASK_VERSION/*.deb /tmp
 fi
 
 cd $MAIN_DIR

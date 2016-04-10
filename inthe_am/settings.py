@@ -144,6 +144,9 @@ DJANGO_MAILBOX_STORE_ORIGINAL_MESSAGE = True
 
 TASKWARRIOR_CONFIG_OVERRIDES = {
     'gc': 'off',
+    'recurrence': {
+        'confirmation': 'no',
+    },
     'uda': {
         'intheamattachments': {
             'type': 'string',

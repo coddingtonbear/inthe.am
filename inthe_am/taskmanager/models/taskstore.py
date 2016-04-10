@@ -797,7 +797,8 @@ class TaskStore(models.Model):
                 'taskd.key': private_key_filename,
                 'taskd.ca': self.server_config['ca.cert'],
                 'taskd.server': settings.TASKD_SERVER,
-                'taskd.credentials': taskd_credentials
+                'taskd.credentials': taskd_credentials,
+                'taskd.trust': 'ignore hostname',
             })
             self.metadata['generated_taskd_credentials'] = taskd_credentials
 

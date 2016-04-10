@@ -49,7 +49,7 @@ Feature: User can receive incoming tasks via e-mail
         When the following incoming email is processed
             """
             From: alpha
-            To: 3e196d2f-6947-42e5-8134-b954860c2c9c__project=biscuit__priority=l@inthe.am
+            To: 3e196d2f-6947-42e5-8134-b954860c2c9c__project=biscuit__priority=L@inthe.am
             Subject: New
 
             Do something important
