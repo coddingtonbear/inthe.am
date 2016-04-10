@@ -6,7 +6,9 @@ import time
 from behave import given, when, then, step
 import pytz
 
-from inthe_am.taskmanager.merge_tasks import merge_tasks
+from inthe_am.taskmanager.merge_tasks import (
+    find_all_duplicate_tasks, find_duplicate_tasks, merge_tasks
+)
 
 from utils import get_store
 
@@ -201,7 +203,7 @@ def following_values_visible_details(context):
 def task_with_following_details(context, name):
     store = get_store()
     task = store.client.task_add(
-        **{row[0]: row[1] for row in context.table.rows}
+        **{row[0]: get_json_value(row[1]) for row in context.table.rows}
     )
 
     if not hasattr(context, 'named_tasks'):
@@ -235,3 +237,41 @@ def task_annotated_as_duplicate(context, left, right):
 
     context.named_tasks[left] = beta
     context.named_tasks[right] = alpha
+
+
+@when(u'I search for duplicate tasks')
+def when_search_for_duplicate_tasks(context):
+    store = get_store()
+
+    context.duplicates_found = find_all_duplicate_tasks(store)
+
+
+@then(u'task "{left}" and task "{right}" are found as duplicates')
+def tasks_are_found_as_duplicates(context, left, right):
+    alpha = context.named_tasks[left]
+    beta = context.named_tasks[right]
+
+    to_find = {alpha['uuid'], beta['uuid']}
+    assert to_find in context.duplicates_found, (
+        "Tasks were not found in duplicates: %s" % context.duplicates_found
+    )
+
+
+@when(u'I search for duplicates of task "{name}"')
+def task_search_for_duplicates_of(context, name):
+    store = get_store()
+    task = context.named_tasks[name]
+
+    context.duplicate_found = find_duplicate_tasks(store, task)
+
+
+@then(
+    u'the task I searched for duplicates of is found to be a '
+    u'duplicate of "{name}"'
+)
+def task_found_to_be_duplicate_of(context, name):
+    task = context.named_tasks[name]
+
+    assert context.duplicate_found == {task['uuid']}, (
+        "Appropriate duplicate was not found: %s" % context.duplicate_found
+    )
