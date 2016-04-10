@@ -8,4 +8,4 @@ Feature: Duplicate recurring tasks are merged/mergeable.
              | Key         | Value                   | 
              | description | "This is the duplicate" | 
         When the tasks "alpha" and "beta" are merged
-        Then task "beta" will be annotated as a duplicate of "alpha"
+        Then the task "beta" will be annotated as a duplicate of "alpha"

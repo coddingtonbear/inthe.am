@@ -201,7 +201,7 @@ def following_values_visible_details(context):
 def task_with_following_details(context, name):
     store = get_store()
     task = store.client.task_add(
-        {row[0]: row[1]} for row in context.rows
+        **{row[0]: row[1] for row in context.table.rows}
     )
 
     if not hasattr(context, 'named_tasks'):
@@ -217,21 +217,21 @@ def named_tasks_merged(context, left, right):
 
     alpha, beta = merge_tasks(alpha, beta)
 
-    context[left] = alpha
-    context[right] = beta
+    context.named_tasks[left] = alpha
+    context.named_tasks[right] = beta
 
 
-@then(u'the task "{left}" will be annotated as the duplicate of "{right}"')
+@then(u'the task "{left}" will be annotated as a duplicate of "{right}"')
 def task_annotated_as_duplicate(context, left, right):
     beta = context.named_tasks[left]
     alpha = context.named_tasks[right]
 
-    assert alpha['intheammergedfrom'] == beta['uuid'], (
+    assert alpha['intheammergedfrom'] == str(beta['uuid']), (
         "No backreference set."
     )
-    assert beta['intheamduplicateof'] == alpha['uuid'], (
+    assert beta['intheamduplicateof'] == str(alpha['uuid']), (
         "Not marked as duplicate."
     )
 
-    context[left] = beta
-    context[right] = alpha
+    context.named_tasks[left] = beta
+    context.named_tasks[right] = alpha

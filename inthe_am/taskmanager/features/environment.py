@@ -195,9 +195,10 @@ def after_step(context, step):
 
 
 def before_scenario(context, step):
-    User.objects.filter(
-        email=settings.TESTING_LOGIN_USER
-    ).delete()
+    if hasattr(settings, 'TESTING_LOGIN_USER'):
+        User.objects.filter(
+            email=settings.TESTING_LOGIN_USER
+        ).delete()
 
 
 def after_scenario(context, step):
