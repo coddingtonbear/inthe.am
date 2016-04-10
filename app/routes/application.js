@@ -3,7 +3,7 @@ import Ember from "ember";
 var route = Ember.Route.extend({
     actions: {
         edit_task: function(task) {
-            console.logIfDebug("Showing edit task modal...")
+            console.logIfDebug("Showing edit task modal...");
             this.render(
                 'create-task-modal',
                 {
@@ -20,7 +20,7 @@ var route = Ember.Route.extend({
             });
         },
         create_task: function() {
-            console.logIfDebug("Showing create task modal...")
+            console.logIfDebug("Showing create task modal...");
             this.render(
                 'create-task-modal',
                 {

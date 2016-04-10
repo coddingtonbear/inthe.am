@@ -1,5 +1,5 @@
 import Ember from "ember";
-import ObjectController from 'ember-legacy-controllers/object'
+import ObjectController from 'ember-legacy-controllers/object';
 
 var controller = ObjectController.extend({
     applicationController: Ember.inject.controller('application'),

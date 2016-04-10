@@ -230,7 +230,6 @@ var controller = Ember.Controller.extend({
             }.bind(this));
         },
         save_twilio: function() {
-            var sms_whitelist = $('textarea[name=sms_whitelist]').val();
             var data = {
                 'twilio_auth_token': $('input[name=twilio_auth_token]').val(),
                 'sms_whitelist': $('textarea[name=sms_whitelist]').val(),
@@ -448,7 +447,7 @@ var controller = Ember.Controller.extend({
                 this.success_message(
                     `Bugwarrior synchronization requested; it may take a ` +
                     `few minutes for the synchronization to take place.`
-                  )
+                  );
             }.bind(this), function(msg){
                 this.error_message(
                     `An error was encountered while ` +

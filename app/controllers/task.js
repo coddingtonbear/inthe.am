@@ -1,5 +1,5 @@
 import Ember from "ember";
-import ObjectController from 'ember-legacy-controllers/object'
+import ObjectController from 'ember-legacy-controllers/object';
 
 var controller = ObjectController.extend({
     applicationController: Ember.inject.controller('application'),
@@ -15,11 +15,7 @@ var controller = ObjectController.extend({
             fieldNameMap[uda.field] = {
                 'label': uda.label,
                 'type': uda['type'],
-            }
-        }
-
-        if(fieldNameMap) {
-          debugger;
+            };
         }
 
         var udas = [];
@@ -31,7 +27,7 @@ var controller = ObjectController.extend({
                   'value': modelUdas[defined_uda],
                   'label': fieldNameMap[defined_uda].label,
                   'type': fieldNameMap[defined_uda]['type'],
-                })
+                });
             }
         }
 

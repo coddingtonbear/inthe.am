@@ -1,7 +1,4 @@
 import Ember from "ember";
-import DS from "ember-data";
-import Task from "../models/task";
-import Router from "../router";
 
 var controller = Ember.Controller.extend({
     taskController: Ember.inject.controller('task'),
@@ -170,7 +167,7 @@ var controller = Ember.Controller.extend({
             this.set('statusUpdaterHead', this.get('user').repository_head);
 
             this.get('indexController').notifyUserLoaded();
-            this.notifyUserLoaded()
+            this.notifyUserLoaded();
         }.bind(this), function(msg){
             this.error_message(
                 `An error was encountered while ` +
@@ -448,7 +445,7 @@ var controller = Ember.Controller.extend({
           $.growl[data.type || 'notice']({
               title: data.title ? data.title : 'Public Announcement',
               message: data.message,
-          })
+          });
         },
         'personal_announcement': function(evt) {
           console.logIfDebug(evt.type, evt.data);
@@ -457,14 +454,13 @@ var controller = Ember.Controller.extend({
           $.growl[data.type || 'notice']({
               title: data.title ? data.title : 'Notice',
               message: data.message,
-          })
+          });
         }
     },
     isSmallScreen: function() {
         return $(document).width() <= 800;
     },
     getHandlerPath: function() {
-        var path_parts = [];
         return this.get('currentRouteName');
     },
     bindKeyboardEvents: function() {

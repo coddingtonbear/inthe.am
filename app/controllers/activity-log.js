@@ -1,5 +1,4 @@
-import Ember from "ember";
-import ArrayController from 'ember-legacy-controllers/array'
+import ArrayController from 'ember-legacy-controllers/array';
 
 var controller = ArrayController.extend({
     refresh: function(){
