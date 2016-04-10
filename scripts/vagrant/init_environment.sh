@@ -109,7 +109,7 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     cp $MAIN_DIR/scripts/vagrant/simple_taskd_configuration.conf /var/taskd/config
     cp $MAIN_DIR/scripts/vagrant/certificate_signing_template.template /var/taskd/cert.template
 
-    chmod -R 777 *
+    chmod -R 777 /var/taskd/
 
     if [ -z "$TRAVIS" ]; then
         service taskd start

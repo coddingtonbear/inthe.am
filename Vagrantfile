@@ -58,6 +58,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.gatling.rsync_on_startup = true
   end
 
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize [
+      "modifyvm", :id,
+      "--memory", "1024",
+      "--paravirtprovider", "kvm", # for linux guest
+      "--cpus", "1"
+    ]
+  end
+
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
