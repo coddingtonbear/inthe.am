@@ -212,6 +212,9 @@ TASKD_SIGNING_TEMPLATE = '/var/taskd/cert.template'
 TASKD_SERVER = '127.0.0.1:53589'
 TASKD_ORG = 'testing'
 
+TESTING_LOGIN_USER = 'im_a'
+TESTING_LOGIN_PASSWORD = 'robot'
+
 TRELLO_SUBSCRIPTION_DOMAIN = 'https://inthe.am'
 
 ANNOUNCEMENTS_CHANNEL = '__general__'
