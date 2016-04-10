@@ -200,9 +200,9 @@ class UserViewSet(viewsets.ViewSet):
         permission_classes=[IsAuthenticated],
         url_path='generate-new-certificate',
     )
-    def generate_new_certificate(self, request):
-        ts = models.TaskStore.get_for_user(request.user)
-        ts.generate_new_certificate()
+    def generate_new_certificate(self, request, store=None):
+        store = models.TaskStore.get_for_user(request.user)
+        store.generate_new_certificate()
         return Response()
 
     @list_route(
@@ -246,21 +246,21 @@ class UserViewSet(viewsets.ViewSet):
         methods=['get', 'put', ],
         permission_classes=[IsAuthenticated]
     )
-    def taskrc(self, request):
+    def taskrc(self, request, store=None):
         if request.method == 'GET':
-            ts = models.TaskStore.get_for_user(request.user)
+            store = models.TaskStore.get_for_user(request.user)
             return Response(
-                ts.taskrc_extras,
+                store.taskrc_extras,
                 content_type='text/plain'
             )
         elif request.method == 'PUT':
-            ts = models.TaskStore.get_for_user(request.user)
-            ts.taskrc_extras = request.body.decode(
+            store = models.TaskStore.get_for_user(request.user)
+            store.taskrc_extras = request.body.decode(
                 request.encoding if request.encoding else 'utf-8'
             )
-            results = ts.apply_extras()
-            ts.save()
-            ts.log_message("Taskrc extras saved.")
+            results = store.apply_extras()
+            store.save()
+            store.log_message("Taskrc extras saved.")
             return Response(
                 {
                     'success': results[0],
@@ -268,7 +268,6 @@ class UserViewSet(viewsets.ViewSet):
                 }
             )
 
-    @requires_task_store
     @git_managed('Reset taskd configuration', gc=False)
     @list_route(
         methods=['post'],
