@@ -1,16 +1,7 @@
 Feature: Duplicate recurring tasks are merged/mergeable.
 
-    Scenario: Duplicated task is merged
-        Given a task "alpha" with the following details
-             | Key         | Value                    | 
-             | description | "This is the main task." | 
-        Given a task "beta" with the following details
-             | Key         | Value                   | 
-             | description | "This is the duplicate" | 
-        When the tasks "alpha" and "beta" are merged
-        Then the task "beta" will be annotated as a duplicate of "alpha"
-
-    Scenario: Duplicated tasks can be found
+    @wip
+    Scenario: Duplicated tasks can be found and merged en masse
         Given a task "alpha" with the following details
              | Key         | Value                                  | 
              | description | "Some task"                            | 
@@ -33,9 +24,11 @@ Feature: Duplicate recurring tasks are merged/mergeable.
              | imask       | 10                                     | 
         When I search for duplicate tasks
         Then task "alpha" and task "beta" are found as duplicates
+        When I merge duplicate tasks
+        Then task "beta"'s "status" field is set to "deleted"
+        And the task "beta" will be marked as a duplicate of "alpha"
 
-    @wip
-    Scenario: Duplicated tasks can be found individually
+    Scenario: Duplicated tasks can be found and merged individually
         Given a task "alpha" with the following details
              | Key         | Value                                  | 
              | description | "Some task"                            | 

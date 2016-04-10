@@ -1,4 +1,4 @@
-def merge_tasks(alpha, beta):
+def merge_task_data(alpha, beta):
     for task in alpha, beta:
         merged_from = task.get('intheammergedfrom', '')
         if merged_from:
@@ -45,6 +45,30 @@ def find_all_duplicate_tasks(store):
                 duplicates.append(task_list)
 
     return duplicates
+
+
+def merge_all_duplicate_tasks(store):
+    for duplicate in find_all_duplicate_tasks(store):
+        first_task = None
+        other_tasks = []
+
+        for task_id in duplicate:
+            task = store.client.filter_tasks({'uuid': task_id})[0]
+            if first_task is None or task['entry'] < first_task['entry']:
+                if first_task is not None:
+                    other_tasks.append(first_task)
+                first_task = task
+            else:
+                other_tasks.append(task)
+
+        merged_other = []
+        for other_task in other_tasks:
+            first_task, right = merge_task_data(first_task, other_task)
+            merged_other.append(right)
+
+        store.client.task_update(first_task)
+        for task in merged_other:
+            store.client.task_update(task)
 
 
 def find_duplicate_tasks(store, task):

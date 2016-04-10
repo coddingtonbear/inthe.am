@@ -7,7 +7,10 @@ from behave import given, when, then, step
 import pytz
 
 from inthe_am.taskmanager.merge_tasks import (
-    find_all_duplicate_tasks, find_duplicate_tasks, merge_tasks
+    find_all_duplicate_tasks,
+    find_duplicate_tasks,
+    merge_all_duplicate_tasks,
+    merge_task_data
 )
 
 from utils import get_store
@@ -217,16 +220,22 @@ def named_tasks_merged(context, left, right):
     alpha = context.named_tasks[left]
     beta = context.named_tasks[right]
 
-    alpha, beta = merge_tasks(alpha, beta)
+    alpha, beta = merge_task_data(alpha, beta)
 
     context.named_tasks[left] = alpha
     context.named_tasks[right] = beta
 
 
-@then(u'the task "{left}" will be annotated as a duplicate of "{right}"')
+@then(u'the task "{left}" will be marked as a duplicate of "{right}"')
 def task_annotated_as_duplicate(context, left, right):
-    beta = context.named_tasks[left]
-    alpha = context.named_tasks[right]
+    store = get_store()
+
+    beta = store.client.filter_tasks(
+        {'uuid': context.named_tasks[left]['uuid']}
+    )[0]
+    alpha = store.client.filter_tasks(
+        {'uuid': context.named_tasks[right]['uuid']}
+    )[0]
 
     assert alpha['intheammergedfrom'] == str(beta['uuid']), (
         "No backreference set."
@@ -244,6 +253,29 @@ def when_search_for_duplicate_tasks(context):
     store = get_store()
 
     context.duplicates_found = find_all_duplicate_tasks(store)
+
+
+@when(u'I merge duplicate tasks')
+def when_merge_duplicate_tasks(context):
+    store = get_store()
+
+    merge_all_duplicate_tasks(store)
+
+
+@then(u'task "{name}"\'s "{fieldname}" field is set to "{value}"')
+def task_whatever_is_marked_as_whatnot(context, name, fieldname, value):
+    store = get_store()
+    old_task_data = context.named_tasks[name]
+
+    task = store.client.filter_tasks({'uuid': old_task_data['uuid']})[0]
+
+    assert task[fieldname] == value, (
+        "Task %s '%s' does not match expectation '%s'" % (
+            fieldname,
+            task[fieldname],
+            value,
+        )
+    )
 
 
 @then(u'task "{left}" and task "{right}" are found as duplicates')
