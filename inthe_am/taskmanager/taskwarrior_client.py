@@ -4,6 +4,8 @@ import json
 import logging
 import pipes
 import subprocess
+import re
+import tempfile
 import uuid
 import weakref
 
@@ -172,3 +174,17 @@ class TaskwarriorClient(TaskWarriorShellout):
 
         logger.debug("%s: %s", command, stdout)
         return stdout, stderr
+
+    def import_task(self, value):
+        with tempfile.NamedTemporaryFile() as jsonout:
+            jsonout.write(json.dumps(value))
+            jsonout.flush()
+
+            self._execute(
+                'import',
+                jsonout.name,
+            )
+
+            _, task = self.get_task(uuid=value['uuid'])
+
+            return task

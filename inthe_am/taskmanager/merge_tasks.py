@@ -16,6 +16,30 @@ def merge_task_data(alpha, beta):
     original_annotations.extend(beta.get('annotations'))
     alpha['annotations'] = original_annotations
 
+    ignore = [
+        'annotations',
+        'end',
+        'entry',
+        'id',
+        'modified',
+        'urgency',
+    ]
+    unsalvageable = {}
+    for field in beta.keys():
+        if field in ignore:
+            pass
+        elif field not in alpha:
+            alpha[field] = beta[field]
+        else:
+            unsalvageable[field] = beta[field]
+
+    message = "Task %s merged." % beta['uuid']
+    if unsalvageable:
+        extra_data = '\n'.join(
+            ["%s: %s" % (k, v) for k, v in unsalvageable.items()]
+        )
+        message = message + '\nExtra fields:\n' + extra_data
+    alpha['annotations'].append(message)
     beta['annotations'].append(
         "This task has been merged with another task. "
         "See {uuid}.".format(
@@ -29,7 +53,10 @@ def merge_task_data(alpha, beta):
 
 def find_all_duplicate_tasks(store):
     tasks = store.client.filter_tasks({
-        'status': 'pending',
+        'or': [
+            ('status', 'pending', ),
+            ('status', 'waiting', ),
+        ],
         'parent.not': '',
     })
 
@@ -47,14 +74,24 @@ def find_all_duplicate_tasks(store):
     return duplicates
 
 
-def merge_all_duplicate_tasks(store):
-    for duplicate in find_all_duplicate_tasks(store):
+def merge_all_duplicate_tasks(store, duplicates=None):
+    if duplicates is None:
+        duplicates = find_all_duplicate_tasks(store)
+
+    for duplicate in [duplicates]:
         first_task = None
         other_tasks = []
 
         for task_id in duplicate:
             task = store.client.filter_tasks({'uuid': task_id})[0]
-            if first_task is None or task['entry'] < first_task['entry']:
+            if (
+                first_task is None or
+                task['entry'] < first_task['entry'] or
+                (
+                    task['entry'] == first_task['entry'] and
+                    task['id'] < first_task['id']
+                )
+            ):
                 if first_task is not None:
                     other_tasks.append(first_task)
                 first_task = task
@@ -69,14 +106,25 @@ def merge_all_duplicate_tasks(store):
         store.client.task_update(first_task)
         for task in merged_other:
             store.client.task_update(task)
+            store.client.task_delete(uuid=task['uuid'])
 
 
 def find_duplicate_tasks(store, task):
     tasks = store.client.filter_tasks({
-        'status': 'pending',
+        'or': [
+            ('status', 'pending', ),
+            ('status', 'waiting', ),
+        ],
         'parent': task['parent'],
         'imask': task['imask'],
         'uuid.not': task['uuid'],
     })
 
     return {task['uuid'] for task in tasks}
+
+
+def merge_duplicate_tasks(store, task):
+    duplicate_tasks = find_duplicate_tasks(store, task)
+    duplicate_tasks.add(task['uuid'])
+
+    merge_all_duplicate_tasks(store, duplicates=duplicate_tasks)

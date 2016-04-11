@@ -2,6 +2,7 @@ import datetime
 import json
 import re
 import time
+import uuid
 
 from behave import given, when, then, step
 import pytz
@@ -9,6 +10,7 @@ import pytz
 from inthe_am.taskmanager.merge_tasks import (
     find_all_duplicate_tasks,
     find_duplicate_tasks,
+    merge_duplicate_tasks,
     merge_all_duplicate_tasks,
     merge_task_data
 )
@@ -166,10 +168,11 @@ def existing_task_with_details(context):
     }
     for key, value in context.table.rows:
         task[key] = get_json_value(value)
+    task['uuid'] = str(uuid.uuid4())
 
     store = get_store()
-    description = task.pop('description')
-    task = store.client.task_add(description, **task)
+    task = store.client.import_task(task)
+
     context.created_task_id = task['uuid']
     context.execute_steps(u'''
         then the user clicks the refresh button
@@ -204,10 +207,11 @@ def following_values_visible_details(context):
 
 @given(u'a task "{name}" with the following details')
 def task_with_following_details(context, name):
+    task = {row[0]: get_json_value(row[1]) for row in context.table.rows}
+    task['uuid'] = str(uuid.uuid4())
+
     store = get_store()
-    task = store.client.task_add(
-        **{row[0]: get_json_value(row[1]) for row in context.table.rows}
-    )
+    task = store.client.import_task(task)
 
     if not hasattr(context, 'named_tasks'):
         context.named_tasks = {}
@@ -260,6 +264,14 @@ def when_merge_duplicate_tasks(context):
     store = get_store()
 
     merge_all_duplicate_tasks(store)
+
+
+@when(u'I check for duplicate tasks of "{name}"')
+def when_merge_singular_task(context, name):
+    store = get_store()
+    task_record = context.named_tasks[name]
+
+    merge_duplicate_tasks(store, task_record)
 
 
 @then(u'task "{name}"\'s "{fieldname}" field is set to "{value}"')

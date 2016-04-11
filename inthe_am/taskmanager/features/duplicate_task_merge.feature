@@ -51,3 +51,6 @@ Feature: Duplicate recurring tasks are merged/mergeable.
              | imask       | 13                                     | 
         When I search for duplicates of task "beta"
         Then the task I searched for duplicates of is found to be a duplicate of "alpha"
+        When I check for duplicate tasks of "beta"
+        Then task "beta"'s "status" field is set to "deleted"
+        And the task "beta" will be marked as a duplicate of "alpha"

@@ -183,7 +183,15 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
         'intheamtrellodescription': {
             'type': 'string',
             'label': 'Inthe.AM Trello Description',
-        }
+        },
+        'intheamduplicateof': {
+            'type': 'string',
+            'label': 'Inthe.AM Duplicate of Task',
+        },
+        'intheammergedfrom': {
+            'type': 'string',
+            'label': 'Inthe.AM Duplicate Tasks Merged',
+        },
     }
 }
 
