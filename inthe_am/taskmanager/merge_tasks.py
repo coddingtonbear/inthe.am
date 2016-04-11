@@ -80,7 +80,7 @@ def merge_all_duplicate_tasks(store, duplicates=None):
     else:
         duplicates = [duplicates]
 
-    merged = []
+    merged = {}
     for duplicate in duplicates:
         first_task = None
         other_tasks = []
