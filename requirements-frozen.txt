@@ -86,7 +86,7 @@ sphinx-rtd-theme==0.1.9
 splinter==0.7.3
 sse==1.2
 subprocess32==3.2.5
--e git+https://github.com/latestrevision/taskw@99377750ddea90758170c793247b7081f9cae4c7#egg=taskw
+-e git+https://github.com/coddingtonbear/taskw@8e65254fa26f3398faf0f245e6b5b0fcbd5b312d#egg=taskw
 tlslite==0.4.9
 traitlets==4.1.0
 trello==0.9.1
