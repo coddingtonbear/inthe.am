@@ -597,6 +597,6 @@ def deduplicate_tasks(self, store_id, debounce_id=None, **kwargs):
         for alpha, betas in results.items():
             store.log_message(
                 "Tasks %s merged into %s.",
-                ', '.join(betas),
-                alpha,
+                ', '.join([str(b) for b in betas]),
+                str(alpha),
             )
