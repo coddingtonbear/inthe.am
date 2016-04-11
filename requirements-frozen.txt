@@ -41,6 +41,7 @@ Jinja2==2.8
 jira==0.47
 jsonfield==1.0.3
 keyring==7.3
+kitchen==1.2.4
 kombu==3.0.33
 lockfile==0.12.2
 lxml==3.4.4
@@ -85,7 +86,7 @@ sphinx-rtd-theme==0.1.9
 splinter==0.7.3
 sse==1.2
 subprocess32==3.2.5
--e git+https://github.com/latestrevision/taskw@8ebfae0243044b231d91f482d8956cd5df0952eb#egg=taskw
+-e git+https://github.com/latestrevision/taskw@99377750ddea90758170c793247b7081f9cae4c7#egg=taskw
 tlslite==0.4.9
 traitlets==4.1.0
 trello==0.9.1
