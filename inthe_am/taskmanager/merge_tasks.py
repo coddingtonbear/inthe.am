@@ -77,9 +77,11 @@ def find_all_duplicate_tasks(store):
 def merge_all_duplicate_tasks(store, duplicates=None):
     if duplicates is None:
         duplicates = find_all_duplicate_tasks(store)
+    else:
+        duplicates = [duplicates]
 
     merged = []
-    for duplicate in [duplicates]:
+    for duplicate in duplicates:
         first_task = None
         other_tasks = []
 
