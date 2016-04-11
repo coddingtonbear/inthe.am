@@ -67,9 +67,10 @@ def process_email_message(self, message_id):
             if not arg:
                 continue
             if '=' in arg:
-                args.append(
-                    '%s:"%s"' % tuple(arg.split('='))
-                )
+                params = arg.split('=')
+                if params[0] == 'priority':
+                    params[1] = params[1].upper()
+                args.append('%s:"%s"' % tuple(params))
             else:
                 args.append('+%s' % arg)
 
