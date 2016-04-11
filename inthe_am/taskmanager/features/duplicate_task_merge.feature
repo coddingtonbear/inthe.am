@@ -1,6 +1,5 @@
 Feature: Duplicate recurring tasks are merged/mergeable.
 
-    @wip
     Scenario: Duplicated tasks can be found and merged en masse
         Given a task "alpha" with the following details
              | Key         | Value                                  | 

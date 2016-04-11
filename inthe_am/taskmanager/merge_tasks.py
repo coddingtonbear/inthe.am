@@ -78,6 +78,7 @@ def merge_all_duplicate_tasks(store, duplicates=None):
     if duplicates is None:
         duplicates = find_all_duplicate_tasks(store)
 
+    merged = []
     for duplicate in [duplicates]:
         first_task = None
         other_tasks = []
@@ -107,6 +108,10 @@ def merge_all_duplicate_tasks(store, duplicates=None):
         for task in merged_other:
             store.client.task_update(task)
             store.client.task_delete(uuid=task['uuid'])
+
+        merged[first_task['uuid']] = {m['uuid'] for m in merged_other}
+
+    return merged
 
 
 def find_duplicate_tasks(store, task):

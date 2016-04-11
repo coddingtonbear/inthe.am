@@ -27,6 +27,10 @@ var controller = Ember.Controller.extend({
         {value: false, human: 'Disabled'},
         {value: true, human: 'Enabled'},
     ],
+    deduplicateUI: [
+        {value: false, human: 'No'},
+        {value: true, human: 'Yes'},
+    ],
     themeOptions: [
         {file: 'light-16.theme', name: 'Light (4-bit)'},
         {file: 'dark-16.theme', name: 'Dark (4-bit)'},
@@ -452,6 +456,23 @@ var controller = Ember.Controller.extend({
                 this.error_message(
                     `An error was encountered while ` +
                     `attempting to request a bugwarrior synchronization: ${msg}`
+                );
+            }.bind(this));
+        },
+        deduplicate_tasks: function() {
+            var url = this.get('applicationController').urls.deduplicate_tasks;
+            return this.ajaxRequest({
+                url: url,
+                type: 'POST',
+            }).then(function(){
+                this.success_message(
+                    `Task de-duplication requested;  it may take a few ` +
+                    `minutes for the de-duplicate to take place.`
+                  );
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `attempting to request task de-duplication: ${msg}`
                 );
             }.bind(this));
         },

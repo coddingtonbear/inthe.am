@@ -132,6 +132,33 @@
                 </div>
             </li>
             <li class="accordion-navigation">
+                <a href="#deduplicate"><strong>BETA:</strong> Task Deduplication</a>
+                <div id="deduplicate" class="content">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <p>
+                                <strong>BETA:</strong> Inthe.AM provides basic
+                                task de-duplication for recurring events that
+                                may have been created by multiple devices.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <p>
+                                Automatically de-duplicate tasks? <strong>(Not yet available)</strong>
+                            </p>
+                            {{view "select" disabled='disabled' value=false optionValuePath="content.value" optionLabelPath="content.human" content=deduplicateUI name="autodeduplicate"}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <a href="" class="button radius" {{action "deduplicate_tasks"}}>Deduplicate Tasks Now</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="accordion-navigation">
                 <a href="#bugwarrior"><strong>BETA:</strong> Bugwarrior Integration</a>
                 <div id="bugwarrior" class="content">
                     <div class="row">

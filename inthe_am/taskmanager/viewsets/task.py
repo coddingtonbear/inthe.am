@@ -26,7 +26,11 @@ from ..context_managers import git_checkpoint, timed_activity
 from ..decorators import git_managed, requires_task_store
 from ..lock import get_lock_name_for_store, get_lock_redis
 from ..serializers.task import TaskSerializer
-from ..tasks import process_trello_action, sync_trello_tasks
+from ..tasks import (
+    deduplicate_tasks,
+    process_trello_action,
+    sync_trello_tasks,
+)
 from ..trello_utils import get_access_token, get_authorize_url
 from ..utils import shlex_without_quotes
 
@@ -350,7 +354,13 @@ class TaskViewSet(viewsets.ViewSet):
 
         store.sync_bugwarrior()
 
-        return Response()
+        return Response(status=202)
+
+    @requires_task_store
+    @list_route(methods=['post'])
+    def deduplicate(self, request, store=None):
+        deduplicate_tasks.apply_async(args=(store.pk, ))
+        return Response(status=202)
 
 
 def ical_feed(request, variant, secret_id):

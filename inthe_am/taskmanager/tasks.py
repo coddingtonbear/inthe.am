@@ -13,6 +13,7 @@ from django_mailbox.models import Message
 
 from .context_managers import git_checkpoint
 from .lock import get_debounce_name_for_store, get_lock_redis, LockTimeout
+from .merge_tasks import merge_all_duplicate_tasks
 
 
 logger = logging.getLogger(__name__)
@@ -579,3 +580,23 @@ def synchronize_bugwarrior(self, store_id, debounce_id=None, **kwargs):
 
     config = store.bugwarrior_config
     config.pull_issues()
+
+
+@shared_task(
+    bind=True,
+    default_retry_delay=30,
+    max_retries=10,
+)
+def deduplicate_tasks(self, store_id, debounce_id=None, **kwargs):
+    from .models import TaskStore
+    store = TaskStore.objects.get(pk=store_id)
+
+    with git_checkpoint(store, 'Deduplicate tasks'):
+        results = merge_all_duplicate_tasks(store)
+
+        for alpha, betas in results.items():
+            store.log_message(
+                "Tasks %s merged into %s.",
+                ', '.join([b['uuid'] for b in betas]),
+                alpha['uuid'],
+            )
