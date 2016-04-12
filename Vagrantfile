@@ -47,6 +47,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "tmp/", ".git/", "lib/", "bin", "bin/", "include/", "logs/",
         ".vagrant/", "node_modules/", "bower_components/",
         "taskd/", "task_data/", "*.pyc", "*.swp", "dist/", "db.sqlite3",
+        "*.log",
     ],
     rsync__verbose: true
   config.vm.synced_folder "./", "/vagrant", type: "nfs"
