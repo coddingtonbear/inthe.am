@@ -170,6 +170,18 @@ def existing_task_with_details(context):
         task[key] = get_json_value(value)
     task['uuid'] = str(uuid.uuid4())
 
+    if 'annotations' in task:
+        final_annotations = []
+        for annotation in task['annotations']:
+            if isinstance(annotation, basestring):
+                final_annotations.append({
+                    'description': annotation,
+                    'entry': datetime.datetime.utcnow()
+                })
+            else:
+                final_annotations.append(annotation)
+        task['annotations'] = final_annotations
+
     store = get_store()
     task = store.client.import_task(task)
 
@@ -209,6 +221,18 @@ def following_values_visible_details(context):
 def task_with_following_details(context, name):
     task = {row[0]: get_json_value(row[1]) for row in context.table.rows}
     task['uuid'] = str(uuid.uuid4())
+
+    if 'annotations' in task:
+        final_annotations = []
+        for annotation in task['annotations']:
+            if isinstance(annotation, basestring):
+                final_annotations.append({
+                    'description': annotation,
+                    'entry': datetime.datetime.utcnow()
+                })
+            else:
+                final_annotations.append(annotation)
+        task['annotations'] = final_annotations
 
     store = get_store()
     task = store.client.import_task(task)
