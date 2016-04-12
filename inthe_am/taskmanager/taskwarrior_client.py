@@ -13,6 +13,8 @@ import six
 from taskw import TaskWarriorShellout
 from taskw.task import Task as TaskwTask
 
+from inthe_am.taskmanager.utils import OneWaySafeJSONEncoder
+
 
 class TaskwarriorError(Exception):
     def __init__(self, stderr, stdout, code):
@@ -177,7 +179,9 @@ class TaskwarriorClient(TaskWarriorShellout):
 
     def import_task(self, value):
         with tempfile.NamedTemporaryFile() as jsonout:
-            jsonout.write(json.dumps(value))
+            jsonout.write(
+                json.dumps(value, cls=OneWaySafeJSONEncoder)
+            )
             jsonout.flush()
 
             self._execute(

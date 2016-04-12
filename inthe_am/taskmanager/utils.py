@@ -1,3 +1,4 @@
+import datetime
 import json
 import re
 import shlex
@@ -10,6 +11,11 @@ UUID_FINDER = re.compile(
 
 class OneWaySafeJSONEncoder(json.JSONEncoder):
     def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime(
+                "%Y%m%dT%H%M%SZ"
+            )
+
         try:
             json.JSONEncoder.default(self, obj)
         except:
