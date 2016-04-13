@@ -113,6 +113,11 @@ class BugwarriorConfig(models.Model):
         try:
             issues = aggregate_issues(self.config, self.CONFIG_SECTION)
 
+            self.store.publish_personal_announcement({
+                'title': 'Bugwarrior',
+                'message': 'Synchronization started...'
+            })
+
             with git_checkpoint(self.store, "Running bugwarrior-pull"):
                 synchronize(
                     log,
