@@ -1,3 +1,5 @@
+import copy
+import json
 import os
 
 from fabric.api import task, run, local, sudo, cd, env
@@ -14,12 +16,26 @@ def virtualenv(command, user=None):
 
 
 @task
-def deploy(install='yes', build='yes', chown='no'):
+def deploy(install='yes', build='yes', chown='no', refresh='yes'):
+    pubsub_message = {
+        'data': {
+            'should_refresh': True if refresh == 'yes' else False
+        },
+        'system': True,
+    }
+    pre_message = copy.copy(pubsub_message)
+    pre_message['type'] = 'deploy_started'
+    post_message = copy.copy(pubsub_message)
+    pre_message['type'] = 'deploy_finished'
+
     local('git push origin development')
     local('git checkout master')
     local('git merge development')
     local('git push origin master')
     local('git checkout development')
+    sudo(
+        "redis-cli -n 1 PUBLISH __general__ '%s'" % json.dumps(pre_message)
+    )
     if chown == 'yes':
         sudo('/bin/chown -R www-data:www-data /var/www/twweb', shell=False)
     if build == 'yes':
@@ -45,6 +61,9 @@ def deploy(install='yes', build='yes', chown='no'):
         virtualenv('python manage.py migrate')
     sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)
     sudo('/usr/sbin/service twweb restart', shell=False)
+    sudo(
+        "redis-cli -n 1 PUBLISH __general__ '%s'" % json.dumps(post_message)
+    )
     sudo('/usr/sbin/service twweb-status restart', shell=False)
     sudo('/usr/sbin/service twweb-celery restart', shell=False)
     sudo('/usr/sbin/service twweb-sync-listener restart', shell=False)

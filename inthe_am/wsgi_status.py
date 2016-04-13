@@ -73,7 +73,8 @@ class Application(object):
         self.add_message('personal_announcement', message['data'])
 
     def handle_public_announcement(self, message):
-        self.add_message('public_announcement', message['data'])
+        if not message.get('system', False):
+            self.add_message('public_announcement', message['data'])
 
     def beat_heart(self):
         heartbeat_interval = datetime.timedelta(
