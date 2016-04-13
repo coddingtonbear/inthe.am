@@ -26,7 +26,7 @@ def deploy(install='yes', build='yes', chown='no', refresh='yes'):
     pre_message = copy.copy(pubsub_message)
     pre_message['type'] = 'deploy_started'
     post_message = copy.copy(pubsub_message)
-    pre_message['type'] = 'deploy_finished'
+    post_message['type'] = 'deploy_finished'
 
     local('git push origin development')
     local('git checkout master')
@@ -60,10 +60,10 @@ def deploy(install='yes', build='yes', chown='no', refresh='yes'):
         virtualenv('python manage.py collectstatic --noinput')
         virtualenv('python manage.py migrate')
     sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)
-    sudo('/usr/sbin/service twweb restart', shell=False)
     run(
         "redis-cli -n 1 PUBLISH __general__ '%s'" % json.dumps(post_message)
     )
+    sudo('/usr/sbin/service twweb restart', shell=False)
     sudo('/usr/sbin/service twweb-status restart', shell=False)
     sudo('/usr/sbin/service twweb-celery restart', shell=False)
     sudo('/usr/sbin/service twweb-sync-listener restart', shell=False)
