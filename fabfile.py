@@ -76,8 +76,8 @@ def deploy(
     if announce == 'yes':
         commit = local('git rev-parse HEAD', capture=True)
         virtualenv(
-            "curl -d message='[Deploy completed successfully.]"
-            "(https://github.com/coddingtonbear/inthe.am/commit/%s)' "
+            "curl --data-urlencode \"message=[Deploy completed successfully.]"
+            "(https://github.com/coddingtonbear/inthe.am/commit/%s)\" "
             "$GITTER_WEBHOOK_URL" % (
                 commit,
             )
