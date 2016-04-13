@@ -33,6 +33,7 @@ def deploy(install='yes', build='yes', chown='no', refresh='yes'):
     local('git merge development')
     local('git push origin master')
     local('git checkout development')
+
     run(
         "redis-cli -n 1 PUBLISH __general__ '%s'" % json.dumps(pre_message)
     )
@@ -69,3 +70,12 @@ def deploy(install='yes', build='yes', chown='no', refresh='yes'):
     sudo('/usr/sbin/service twweb-sync-listener restart', shell=False)
     sudo('/usr/sbin/service twweb-log-consumer restart', shell=False)
     sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)
+
+    commit = local('git rev-parse HEAD', capture=True)
+    virtualenv(
+        "curl -d message='[Deploy completed successfully.]"
+        "(https://github.com/coddingtonbear/inthe.am/commit/%s)' "
+        "$GITTER_WEBHOOK_URL" % (
+            commit,
+        )
+    )
