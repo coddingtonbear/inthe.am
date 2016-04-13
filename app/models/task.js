@@ -53,15 +53,23 @@ var model = DS.Model.extend({
             value = 'blocking';
         } else if (this.get('is_blocked') === true) {
             value = 'blocked';
-        } else if (moment(this.get('due')).isBefore(moment())) {
+        } else if (
+            this.get('due') &&
+            moment(this.get('due')).isBefore(moment())
+        ) {
             value = 'overdue';
-        } else if (moment().format('L') === moment(this.get('due')).format('L')) {
+        } else if (
+            this.get('due') &&
+            moment().format('L') === moment(this.get('due')).format('L')
+        ) {
             value = 'due__today';
-        } else if ( // Truncate date to date only
-                moment(
-                    moment().format('YYYYMMDD'),
-                    'YYYYMMDD'
-                ).add(7, 'days').isAfter(this.get('due'))
+        } else if (
+            this.get('due') &&
+            // Truncate date to date only
+            moment(
+                moment().format('YYYYMMDD'),
+                'YYYYMMDD'
+            ).add(7, 'days').isAfter(this.get('due'))
         ) {
             value = 'due';
         } else if (this.get('imask')) {
