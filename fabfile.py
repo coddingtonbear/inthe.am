@@ -33,7 +33,7 @@ def deploy(install='yes', build='yes', chown='no', refresh='yes'):
     local('git merge development')
     local('git push origin master')
     local('git checkout development')
-    sudo(
+    run(
         "redis-cli -n 1 PUBLISH __general__ '%s'" % json.dumps(pre_message)
     )
     if chown == 'yes':
@@ -61,7 +61,7 @@ def deploy(install='yes', build='yes', chown='no', refresh='yes'):
         virtualenv('python manage.py migrate')
     sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)
     sudo('/usr/sbin/service twweb restart', shell=False)
-    sudo(
+    run(
         "redis-cli -n 1 PUBLISH __general__ '%s'" % json.dumps(post_message)
     )
     sudo('/usr/sbin/service twweb-status restart', shell=False)
