@@ -447,7 +447,7 @@ var controller = Ember.Controller.extend({
             console.logIfDebug(evt.type, evt.data);
             $.growl.error({
                 title: 'Error',
-                message: evt.data
+                message: evt.data,
             });
         },
         'heartbeat': function(evt) {
@@ -460,6 +460,7 @@ var controller = Ember.Controller.extend({
           $.growl[data.type || 'notice']({
               title: data.title ? data.title : 'Public Announcement',
               message: data.message,
+              duration: data.duration || 15000,
           });
         },
         'personal_announcement': function(evt) {
@@ -469,6 +470,7 @@ var controller = Ember.Controller.extend({
           $.growl[data.type || 'notice']({
               title: data.title ? data.title : 'Notice',
               message: data.message,
+              duration: data.duration || 15000,
           });
         }
     },
