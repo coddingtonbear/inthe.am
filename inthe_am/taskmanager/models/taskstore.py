@@ -185,7 +185,7 @@ class TaskStore(models.Model):
 
     def get_blocks_for_task(self, task):
         if not hasattr(self, '_blocks'):
-            self._blocks = self.store.client.filter_tasks({
+            self._blocks = self.client.filter_tasks({
                 'depends.not': '',
                 'or': [
                     ('status', 'pending'),
