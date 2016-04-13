@@ -143,6 +143,14 @@ class BugwarriorConfig(models.Model):
                 log.error_message,
                 log.pk,
             )
+            self.store.publish_personal_announcement({
+                'type': 'error',
+                'title': 'Bugwarrior',
+                'message': (
+                    'An error was encountered while synchronizing with '
+                    'bugwarrior; see your activity log for details.'
+                )
+            })
 
         log.finished = timezone.now()
         log.save()
