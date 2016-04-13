@@ -537,14 +537,19 @@ class TaskStore(models.Model):
     def publish_personal_announcement(self, message):
         self.publish_announcement(
             self.user.username,
-            message
+            message,
+            autoprefix=False
         )
 
-    def publish_announcement(self, prefix, message):
+    def publish_announcement(self, prefix, message, autoprefix=True):
         connection = self._get_announcement_connection()
 
+        queue_name = prefix
+        if autoprefix:
+            queue_name = self._get_queue_name(prefix=prefix)
+
         connection.publish(
-            self._get_queue_name(prefix=prefix),
+            queue_name,
             json.dumps(message, cls=DjangoJSONEncoder)
         )
 
