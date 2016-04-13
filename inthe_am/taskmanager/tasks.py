@@ -386,6 +386,11 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
     if store.get_changed_task_ids(ending_head, start=starting_head):
         store.sync()
 
+    store.publish_personal_announcement({
+        'title': 'Trello',
+        'message': 'Synchronization completed successfully.'
+    })
+
 
 @shared_task(
     bind=True,
@@ -600,3 +605,8 @@ def deduplicate_tasks(self, store_id, debounce_id=None, **kwargs):
                 ', '.join([str(b) for b in betas]),
                 str(alpha),
             )
+
+    store.publish_personal_announcement({
+        'title': 'Deduplication',
+        'message': 'Deduplication process completed successfully.'
+    })
