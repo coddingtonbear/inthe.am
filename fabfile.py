@@ -16,7 +16,9 @@ def virtualenv(command, user=None):
 
 
 @task
-def deploy(install='yes', build='yes', chown='no', refresh='yes'):
+def deploy(
+    install='yes', build='yes', chown='no', refresh='yes', announce='yes'
+):
     pubsub_message = {
         'data': {
             'should_refresh': True if refresh == 'yes' else False
@@ -71,11 +73,12 @@ def deploy(install='yes', build='yes', chown='no', refresh='yes'):
     sudo('/usr/sbin/service twweb-log-consumer restart', shell=False)
     sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)
 
-    commit = local('git rev-parse HEAD', capture=True)
-    virtualenv(
-        "curl -d message='[Deploy completed successfully.]"
-        "(https://github.com/coddingtonbear/inthe.am/commit/%s)' "
-        "$GITTER_WEBHOOK_URL" % (
-            commit,
+    if announce == 'yes':
+        commit = local('git rev-parse HEAD', capture=True)
+        virtualenv(
+            "curl -d message='[Deploy completed successfully.]"
+            "(https://github.com/coddingtonbear/inthe.am/commit/%s)' "
+            "$GITTER_WEBHOOK_URL" % (
+                commit,
+            )
         )
-    )
