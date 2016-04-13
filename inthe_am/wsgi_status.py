@@ -49,6 +49,8 @@ class Application(object):
     def handle_local_sync(self, message):
         new_head = json.loads(message['data'])['head']
 
+        self.add_message('local_sync', message['data'])
+
         if new_head != self.head:
             self.head = new_head
             self.add_message('head_changed', self.head)
