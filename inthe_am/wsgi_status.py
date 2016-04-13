@@ -117,7 +117,7 @@ class Application(object):
                     'local_sync.{username}': self.handle_local_sync,
                     'changed_task.{username}': self.handle_changed_task,
                     'log_message.{username}': self.handle_log_message,
-                    '{username}': self.handle_personal_announcement,
+                    'personal.{username}': self.handle_personal_announcement,
                     settings.ANNOUNCEMENTS_CHANNEL: (
                         self.handle_public_announcement
                     ),

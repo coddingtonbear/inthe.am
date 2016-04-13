@@ -535,21 +535,12 @@ class TaskStore(models.Model):
         return self._redis
 
     def publish_personal_announcement(self, message):
-        self.publish_announcement(
-            self.user.username,
-            message,
-            autoprefix=False
-        )
+        self.publish_announcement('personal', message)
 
-    def publish_announcement(self, prefix, message, autoprefix=True):
+    def publish_announcement(self, prefix, message):
         connection = self._get_announcement_connection()
-
-        queue_name = prefix
-        if autoprefix:
-            queue_name = self._get_queue_name(prefix=prefix)
-
         connection.publish(
-            queue_name,
+            self._get_queue_name(prefix=prefix),
             json.dumps(message, cls=DjangoJSONEncoder)
         )
 
