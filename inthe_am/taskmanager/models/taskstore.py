@@ -183,6 +183,23 @@ class TaskStore(models.Model):
             )
         return self._client
 
+    def get_blocks_for_task(self, task):
+        if not hasattr(self, '_blocks'):
+            self._blocks = self.store.client.filter_tasks({
+                'depends.not': '',
+                'or': [
+                    ('status', 'pending'),
+                    ('status', 'waiting'),
+                ]
+            })
+
+        blocks = []
+        for other in self._blocks:
+            if task['uuid'] in other.get('depends', ''):
+                blocks.append(other['uuid'])
+
+        return blocks
+
     def receive_client_message(self, name, *args, **kwargs):
         if name == 'log':
             self._log_entry(*args, **kwargs)

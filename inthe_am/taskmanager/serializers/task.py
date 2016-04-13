@@ -46,14 +46,7 @@ class TaskSerializer(serializers.Serializer):
         return udas
 
     def get_blocks(self, obj):
-        blocks = self.store.client.filter_tasks({
-            'depends.contains': obj['uuid'],
-            'or': [
-                ('status', 'pending'),
-                ('status', 'waiting'),
-            ]
-        })
-        return [b['uuid'] for b in blocks]
+        return self.store.get_blocks_for_task(obj)
 
     def update(self, store, pk, data):
         original = store.client.get_task(uuid=pk)[1]
