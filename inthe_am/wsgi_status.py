@@ -75,8 +75,14 @@ class Application(object):
     def handle_public_announcement(self, message):
         message_data = json.loads(message['data'])
 
+        # Open the envelope, see if it's a system announcement or not.
         if not message_data.get('system', False):
             self.add_message('public_announcement', message['data'])
+        else:
+            self.add_message(
+                message_data['type'],
+                json.dumps(message_data['data'])
+            )
 
     def beat_heart(self):
         heartbeat_interval = datetime.timedelta(
