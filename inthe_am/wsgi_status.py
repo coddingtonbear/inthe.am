@@ -73,7 +73,9 @@ class Application(object):
         self.add_message('personal_announcement', message['data'])
 
     def handle_public_announcement(self, message):
-        if not message.get('system', False):
+        message_data = json.loads(message['data'])
+
+        if not message_data.get('system', False):
             self.add_message('public_announcement', message['data'])
 
     def beat_heart(self):
