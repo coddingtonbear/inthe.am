@@ -559,6 +559,12 @@ def synchronize_bugwarrior(self, store_id, debounce_id=None, **kwargs):
     store = TaskStore.objects.get(pk=store_id)
     client = get_lock_redis()
 
+    store.publish_personal_announcement({
+        'type': 'notice',
+        'title': 'Bugwarrior',
+        'message': 'Synchronization started...'
+    })
+
     debounce_key = get_debounce_name_for_store(store, 'bugwarrior_sync')
     try:
         expected_debounce_id = client.get(debounce_key)
@@ -580,6 +586,12 @@ def synchronize_bugwarrior(self, store_id, debounce_id=None, **kwargs):
 
     config = store.bugwarrior_config
     config.pull_issues()
+
+    store.publish_personal_announcement({
+        'type': 'notice',
+        'title': 'Bugwarrior',
+        'message': 'Synchronization finished successfully.'
+    })
 
 
 @shared_task(
