@@ -21,16 +21,7 @@ def process_authentication(required=True):
 def requires_task_store(f):
     @wraps(f)
     def wrapper(self, *args, **kwargs):
-        try:
-            # Some Tastypie Views
-            request = args[0].request
-        except AttributeError:
-            # Normal Views
-            request = args[0]
-        except IndexError:
-            # Other Tastypie Views
-            request = kwargs['bundle'].request
-
+        request = args[0]
         if not request.user.is_authenticated():
             raise PermissionDenied()
 
