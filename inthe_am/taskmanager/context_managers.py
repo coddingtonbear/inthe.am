@@ -86,7 +86,9 @@ def git_checkpoint(
 
     start_head = None
     end_head = None
-    with redis_lock(lock_name, message=message, wait_timeout=1):
+    with redis_lock(
+        lock_name, message=message, wait_timeout=wait_timeout
+    ):
         start_head = store.repository.head()
         git_index_lock_path = os.path.join(
             store.local_path,
