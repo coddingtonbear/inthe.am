@@ -51,6 +51,8 @@ class TaskSerializer(serializers.Serializer):
     def update(self, store, pk, data):
         original = store.client.get_task(uuid=pk)[1]
         for k, v in data.items():
+            if k == 'priority' and v == '':
+                v = None
             original[k] = v
 
         changes = original.get_changes(keep=True)
