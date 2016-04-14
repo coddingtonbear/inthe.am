@@ -42,11 +42,11 @@ var route = Ember.Route.extend({
                 this.controllerFor('task').get('model')
             );
             this.render(
-                    'create_annotation',
-                    {
-                        'into': 'application',
-                        'outlet': 'modal',
-                    }
+                'create_annotation',
+                {
+                    'into': 'application',
+                    'outlet': 'modal',
+                }
             );
             Ember.run.next(null, function(){
                 $(document).foundation();

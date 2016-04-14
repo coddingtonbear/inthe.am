@@ -20,7 +20,8 @@ var route = Ember.Route.extend({
             });
         },
         create_task: function() {
-            console.logIfDebug("Showing create task modal...");
+            var record = this.store.createRecord('task', {});
+            this.controllerFor('create-task-modal').set('model', record);
             this.render(
                 'create-task-modal',
                 {
@@ -28,8 +29,6 @@ var route = Ember.Route.extend({
                     'outlet': 'modal',
                 }
             );
-            var record = this.store.createRecord('task', {});
-            this.controllerFor('create-task-modal').set('model', record);
             Ember.run.next(null, function(){
                 $(document).foundation();
                 $("#new_task_form").foundation('reveal', 'open');
