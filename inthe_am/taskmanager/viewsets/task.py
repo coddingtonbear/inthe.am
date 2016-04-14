@@ -167,7 +167,9 @@ class TaskViewSet(viewsets.ViewSet):
         except ValueError:
             raise NotFound()
 
-        return Response()
+        task = store.client.get_task(uuid=pk)[1]
+        serializer = TaskSerializer(task, store=store)
+        return Response(serializer.data)
 
     @requires_task_store
     @git_managed('Start task', sync=True)
