@@ -23,6 +23,7 @@ def merge_task_data(alpha, beta):
         'id',
         'modified',
         'urgency',
+        'uuid',
     ]
     unsalvageable = {}
     for field in beta.keys():
@@ -30,13 +31,14 @@ def merge_task_data(alpha, beta):
             pass
         elif field not in alpha:
             alpha[field] = beta[field]
-        else:
+        elif alpha[field] != beta[field]:
             unsalvageable[field] = beta[field]
 
     message = "Task %s merged." % beta['uuid']
     if unsalvageable:
         extra_data = '\n'.join(
-            ["%s: %s" % (k, v) for k, v in unsalvageable.items()]
+            # Note -- two trailing spaces to trigger a newline insertion.
+            ["%s: %s  " % (k, v) for k, v in unsalvageable.items()]
         )
         message = message + '\nExtra fields:\n' + extra_data
     alpha['annotations'].append(message)
