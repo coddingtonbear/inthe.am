@@ -5,6 +5,7 @@ import traceback
 import uuid
 
 from django.conf import settings
+from django.utils.encoding import force_text
 from django.utils.timezone import now
 
 from .exceptions import NestedCheckpointError
@@ -154,7 +155,10 @@ def git_checkpoint(
                     )
         except Exception as e:
             store.create_git_checkpoint(
-                u'%s (%s)' % (message, e),
+                u'%s (%s)' % (
+                    message,
+                    force_text(e, errors='replace')
+                ),
                 function=function,
                 args=args,
                 kwargs=kwargs,
