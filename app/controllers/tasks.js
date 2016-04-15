@@ -98,12 +98,12 @@ var controller = ArrayController.extend({
                 }
 
                 try {
-                        if(!item_value || item_value.indexOf(filter_value) !== 0) {
-                                ok = false;
-                        }
-                }catch(e) {
-                        // This means we tried to filter a non-string value :-|
+                    if(!item_value || item_value.indexOf(filter_value) !== 0) {
                         ok = false;
+                    }
+                }catch(e) {
+                    // This means we tried to filter a non-string value :-|
+                    ok = false;
                 }
             });
             if(!ok) {
