@@ -4,7 +4,6 @@ import json
 import logging
 import pipes
 import subprocess
-import re
 import tempfile
 import uuid
 import weakref
@@ -14,6 +13,9 @@ from taskw import TaskWarriorShellout
 from taskw.task import Task as TaskwTask
 
 from inthe_am.taskmanager.utils import OneWaySafeJSONEncoder
+
+
+logger = logging.getLogger(__name__)
 
 
 class TaskwarriorError(Exception):
@@ -117,9 +119,9 @@ class TaskwarriorClient(TaskWarriorShellout):
             [
                 'task',
                 'rc:%s' % self.config_filename,
-            ]
-            + self.get_configuration_override_args()
-            + [six.text_type(arg) for arg in args]
+            ] +
+            self.get_configuration_override_args() +
+            [six.text_type(arg) for arg in args]
         )
 
         # subprocess is expecting bytestrings only, so nuke unicode if present
@@ -192,3 +194,34 @@ class TaskwarriorClient(TaskWarriorShellout):
             _, task = self.get_task(uuid=value['uuid'])
 
             return task
+
+    def _get_task_objects(self, obj, *args):
+        results = super(TaskwarriorClient, self)._get_task_objects(obj, *args)
+        # In `_get_task_object` below, we'll be returning `None` for
+        # tasks we couldn't parse properly.  Let's strip those from results.
+        return [r for r in results if r is not None]
+
+    def _get_task_object(self, obj):
+        try:
+            return super(TaskwarriorClient, self)._get_task_object(obj)
+        except ValueError as e:
+            logger.exception(
+                "An error was encountered while parsing task {uuid} "
+                "in repository {repo}; omitting task in results: "
+                "{message}".format(
+                    uuid=str(obj.get('uuid', '??')),
+                    message=str(e),
+                    repo=str(self.store),
+                )
+            )
+            if self.store:
+                self.log_error(
+                    "An error was encountered while parsing task "
+                    "{uuid}; it was omitted from results as a result: "
+                    "{message}.".format(
+                        uuid=str(obj.get('uuid', '??')),
+                        message=str(e),
+                    )
+                )
+
+            return None
