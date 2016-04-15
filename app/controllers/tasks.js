@@ -55,7 +55,7 @@ var controller = ArrayController.extend({
             this.transitionToRoute('task', task);
         }
     },
-    enteredFilters: function() {
+    enteredFilters: Ember.computed('filterString', function() {
         var value = this.get('filterString');
         var filters = JSON.parse(
             JSON.stringify(this.defaultFilter)
@@ -79,7 +79,7 @@ var controller = ArrayController.extend({
             }
         });
         return filters;
-    }.property('filterString'),
+    }),
     unsortedPendingTasks: Ember.computed('enteredFilters', 'model.@each.status', function() {
         var filters = this.get('enteredFilters');
         var result = this.get('model').filter(function(item, idx, enumerable) {
