@@ -17,15 +17,12 @@ var route = Ember.Route.extend({
             if (this.controllerFor('application').isSmallScreen()) {
                 this.transitionTo('edit-task', this.controllerFor('task').get('model'));
             } else {
-                this.controllerFor('create-task-modal').set(
-                    'model',
-                    this.controllerFor('task').get('model')
-                );
                 var rendered = this.render(
                     'create-task-modal',
                     {
                         'into': 'application',
                         'outlet': 'modal',
+                        'model': this.controllerFor('task').get('model')
                     }
                 );
                 Ember.run.next(null, function(){
@@ -37,15 +34,12 @@ var route = Ember.Route.extend({
             }
         },
         add_annotation: function(){
-            this.controllerFor('create-annotation').set(
-                'model',
-                this.controllerFor('task').get('model')
-            );
             this.render(
                 'create_annotation',
                 {
                     'into': 'application',
                     'outlet': 'modal',
+                    'model': this.controllerFor('task').get('model')
                 }
             );
             Ember.run.next(null, function(){

@@ -9,10 +9,11 @@ var route = Ember.Route.extend({
                 {
                     'into': 'application',
                     'outlet': 'modal',
+                    'model': (
+                        task ? task : this.controllerFor('task').get('model')
+                    )
                 }
             );
-            task = task ? task : this.controllerFor('task').get('model');
-            this.controllerFor('create-task-modal').set('model', task);
             Ember.run.next(null, function(){
                 $(document).foundation();
                 $("#new_task_form").foundation('reveal', 'open');
@@ -20,13 +21,12 @@ var route = Ember.Route.extend({
             });
         },
         create_task: function() {
-            var record = this.store.createRecord('task', {});
-            this.controllerFor('create-task-modal').set('model', record);
             this.render(
                 'create-task-modal',
                 {
                     'into': 'application',
                     'outlet': 'modal',
+                    'model': this.store.createRecord('task', {})
                 }
             );
             Ember.run.next(null, function(){
