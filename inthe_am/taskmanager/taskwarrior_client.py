@@ -215,7 +215,7 @@ class TaskwarriorClient(TaskWarriorShellout):
                 )
             )
             if self.store:
-                self.log_error(
+                self.store.log_error(
                     "An error was encountered while parsing task "
                     "{uuid}; it was omitted from results as a result: "
                     "{message}.".format(
