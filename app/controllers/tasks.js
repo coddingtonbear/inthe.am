@@ -58,7 +58,7 @@ var controller = ArrayController.extend({
     enteredFilters: Ember.computed('filterString', function() {
         var value = this.get('filterString');
         var filters = JSON.parse(
-            JSON.stringify(this.defaultFilter)
+            JSON.stringify(this.get('defaultFilter'))
         );
 
         if(!value) {
