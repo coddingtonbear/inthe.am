@@ -10,7 +10,7 @@ Pending Tasks
 Task List
 ~~~~~~~~~
 
-URL: ``https://inthe.am/api/v1/task/``
+URL: ``https://inthe.am/api/v2/task/``
 
 +----------+------------------------------------------+
 | Method   | Description                              |
@@ -23,7 +23,7 @@ URL: ``https://inthe.am/api/v1/task/``
 Task Details
 ~~~~~~~~~~~~
 
-URL: ``https://inthe.am/api/v1/task/<TASK_UUID>/``
+URL: ``https://inthe.am/api/v2/task/<TASK_UUID>/``
 
 +------------+-------------------------------------------------------+
 | Method     | Description                                           |
@@ -50,7 +50,7 @@ with Taskwarrior workflows.
 Delete a Task 
 ~~~~~~~~~~~~~
 
-URL: ``https://inthe.am/api/v1/task/<TASK_UUID>/delete/``
+URL: ``https://inthe.am/api/v2/task/<TASK_UUID>/delete/``
 
 +----------+-----------------------------------+
 | Method   | Description                       |
@@ -71,7 +71,7 @@ moving it to your completed task list).
 Start a Task 
 ~~~~~~~~~~~~
 
-URL: ``https://inthe.am/api/v1/task/<TASK_UUID>/start/``
+URL: ``https://inthe.am/api/v2/task/<TASK_UUID>/start/``
 
 +----------+-----------------------------------+
 | Method   | Description                       |
@@ -82,7 +82,7 @@ URL: ``https://inthe.am/api/v1/task/<TASK_UUID>/start/``
 Stop a Task 
 ~~~~~~~~~~~
 
-URL: ``https://inthe.am/api/v1/task/<TASK_UUID>/stop/``
+URL: ``https://inthe.am/api/v2/task/<TASK_UUID>/stop/``
 
 +----------+-----------------------------------+
 | Method   | Description                       |
@@ -107,7 +107,7 @@ Returns an RSS representation of your current pending tasks.
    After enabling this endpoint in your configuration, you will be
    given the proper URL to use (including your ``SECRET_ID``).
 
-URL: ``https://inthe.am/api/v1/task/feed/<SECRET_ID>/``
+URL: ``https://inthe.am/api/v2/task/feed/<SECRET_ID>/``
 
 +---------+------------------------+
 | Method  | Description            |
@@ -130,7 +130,7 @@ Repository Lock
    Manually unlocking your repository while an action is in progress may
    result in data loss!
 
-URL: ``https://inthe.am/api/v1/task/lock/``
+URL: ``https://inthe.am/api/v2/task/lock/``
 
 +--------+------------------------------------------------------------+
 | Method | Description                                                |
@@ -147,7 +147,7 @@ Enable Synchronization
 You can re-enable synchronization if it has been disabled
 by sending an empty ``POST`` to this endpoint.
 
-URL: ``https://inthe.am/api/v1/user/enable-sync/``
+URL: ``https://inthe.am/api/v2/user/enable-sync/``
 
 +----------+--------------------------+
 | Method   | Description              |
@@ -170,7 +170,7 @@ logged-in user.
    authenticated via an API key or a cookie, you will receive only
    limited information.
 
-URL: ``https://inthe.am/api/v1/user/status/``
+URL: ``https://inthe.am/api/v2/user/status/``
 
 +---------+----------------+
 | Method  | Description    |
@@ -183,7 +183,7 @@ Announcements
 
 Returns a JSON-formatted list of recent announcements.
 
-URL: ``https://inthe.am/api/v1/user/announcements/``
+URL: ``https://inthe.am/api/v2/user/announcements/``
 
 +---------+--------------------+
 | Method  | Description        |
@@ -197,7 +197,7 @@ Download my certificate
 Returns your currently-active certificate used for communicating with
 Inthe.AM.
 
-URL: ``https://inthe.am/api/v1/user/my-certificate/``
+URL: ``https://inthe.am/api/v2/user/my-certificate/``
 
 +---------+------------------+
 | Method  | Description      |
@@ -211,7 +211,7 @@ Download my key
 Returns your currently-active key used for communicating with
 Inthe.AM.
 
-URL: ``https://inthe.am/api/v1/user/my-key/``
+URL: ``https://inthe.am/api/v2/user/my-key/``
 
 +---------+------------------+
 | Method  | Description      |
@@ -225,7 +225,7 @@ Download CA certificate
 Returns Inthe.AM's certificate; this is used for synchronizing with
 Inthe.AM's taskd server.
 
-URL: ``https://inthe.am/api/v1/user/ca-certificate/``
+URL: ``https://inthe.am/api/v2/user/ca-certificate/``
 
 +---------+---------------------+
 | Method  | Description         |
@@ -248,7 +248,7 @@ and priorities.
 Use this endpoint to see or set your current ``.taskrc``'s contents on
 Inthe.AM.
 
-URL: ``https://inthe.am/api/v1/user/taskrc/``
+URL: ``https://inthe.am/api/v2/user/taskrc/``
 
 +---------+----------------------------------+
 | Method  | Description                      |
@@ -264,7 +264,7 @@ Generate a new taskserver certificate
 If you would like to regenerate your Taskserver certificate, usually
 because your existing one has expired, you can do so using this endpoint.
 
-URL: ``https://inthe.am/api/v1/user/generate-new-certificate/``
+URL: ``https://inthe.am/api/v2/user/generate-new-certificate/``
 
 +----------+----------------------------------+
 | Method   | Description                      |
@@ -294,7 +294,7 @@ them such that Inthe.AM's built-in taskserver is utilized, send an empty
    is **not** an operation that can be undone without administrative
    intervention.
 
-URL: ``https://inthe.am/api/v1/user/reset-taskd-configuration/``
+URL: ``https://inthe.am/api/v2/user/reset-taskd-configuration/``
 
 +----------+----------------------------------+
 | Method   | Description                      |
@@ -327,7 +327,7 @@ two form-encoded variables:
   | 9     | Reply to all messages                      |
   +-------+--------------------------------------------+
 
-URL: ``https://inthe.am/api/v1/user/twilio-integration/``
+URL: ``https://inthe.am/api/v2/user/twilio-integration/``
 
 +----------+----------------------------------+
 | Method   | Description                      |
@@ -346,7 +346,7 @@ to this address with the following form-encoded variable:
   which you will allow new tasks to be created when an e-mail email message
   is received.
 
-URL: ``https://inthe.am/api/v1/user/email-integration/``
+URL: ``https://inthe.am/api/v2/user/email-integration/``
 
 +----------+----------------------------------+
 | Method   | Description                      |
@@ -365,7 +365,7 @@ it only clears your taskserver information; if you would like your
 taskserver information cleared permanently, please send an email to
 admin@inthe.am.
 
-URL: ``https://inthe.am/api/v1/user/clear-task-data/``
+URL: ``https://inthe.am/api/v2/user/clear-task-data/``
 
 +----------+----------------------------------+
 | Method   | Description                      |
@@ -398,7 +398,7 @@ Options include:
 You can also send a ``GET`` request to find the name of the colorscheme
 currently in use.
 
-URL: ``https://inthe.am/api/v1/user/colorscheme/``
+URL: ``https://inthe.am/api/v2/user/colorscheme/``
 
 +---------+--------------------------+
 | Method  | Description              |
@@ -419,7 +419,7 @@ sending a ``POST`` request:
   request.
 * To disable: Send an empty request.
 
-URL: ``https://inthe.am/api/v1/user/feed-config/``
+URL: ``https://inthe.am/api/v2/user/feed-config/``
 
 +----------+--------------------------+
 | Method   | Description              |
