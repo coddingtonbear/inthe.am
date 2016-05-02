@@ -156,7 +156,7 @@ var controller = Ember.Controller.extend({
                     filename
                 );
                 element.style.display = 'none';
-                element.body.appendChild(element);
+                document.body.appendChild(element);
                 element.click();
 
                 document.body.removeChild(element);
