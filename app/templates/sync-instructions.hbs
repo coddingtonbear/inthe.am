@@ -20,7 +20,7 @@
            Your Key 
         </th>
         <td>
-            <a href="{{applicationController.urls.my_key }}">private.key.pem</a>
+            <a {{ action 'get_file_from_url' applicationController.urls.my_key 'private.key.pem' }}>private.key.pem</a>
         </td>
     </tr>
     <tr>
@@ -29,7 +29,7 @@
         </th>
         <td>
             {{#if applicationController.urls.ca_certificate}}
-                <a href="{{applicationController.urls.ca_certificate}}">ca.cert.pem</a>
+                <a {{ action 'get_file_from_url' applicationController.urls.ca_certificate 'ca.cert.pem' }}>ca.cert.pem</a>
             {{else}}
                 &mdash;
             {{/if}}

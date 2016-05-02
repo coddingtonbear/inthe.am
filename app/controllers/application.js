@@ -78,11 +78,7 @@ var controller = Ember.Controller.extend({
         this.showLoading();
         return $.ajax(params).then(function() {
             this.hideLoading();
-            if (returnXHR) {
-                return arguments[2];
-            } else {
-                return arguments[0];
-            }
+            return arguments[0];
         }.bind(this), function(){
             this.hideLoading();
             if (arguments[0].responseText) {
