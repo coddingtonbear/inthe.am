@@ -141,6 +141,7 @@ var controller = Ember.Controller.extend({
                 type: 'GET',
                 data: {}
             }).then(function(data, status, xhr){
+                console.logIfDebug("File contents", data, status, xhr);
                 var element = document.createElement('a');
                 element.setAttribute(
                     'href',
