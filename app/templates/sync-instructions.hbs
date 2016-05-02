@@ -12,7 +12,7 @@
             Your Certificate
         </th>
         <td>
-            <a href="{{applicationController.urls.my_certificate }}">private.certificate.pem</a>
+            <a {{ action 'get_file_from_url' applicationController.urls.my_certificate 'private.certificate.pem' }}>private.certificate.pem</a>
         </td>
     </tr>
     <tr>

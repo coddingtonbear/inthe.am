@@ -135,6 +135,36 @@ var controller = Ember.Controller.extend({
                 );
             }.bind(this));
         },
+        get_file_from_url: function(url, filename) {
+            return this.ajaxRequest({
+                url: url,
+                type: 'GET',
+                data: {}
+            }, true).then(function(xhr){
+                var element = document.createElement('a');
+                element.setAttribute(
+                    'href',
+                    'data:' +
+                    xhr.getResponseHeader('Content-Type') +
+                    'charset=utf-8,' +
+                    encodeURIComponent(xhr.responseText)
+                );
+                element.setAttribute(
+                    'download',
+                    filename
+                );
+                element.style.display = 'none';
+                element.body.appendChild(element);
+                element.click();
+
+                document.body.removeChild(element);
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `downloading your certificate: ${msg}`
+                );
+            }.bind(this));
+        },
         regenerate_taskd_certificate: function() {
             var url = this.get('applicationController').urls.generate_new_certificate;
             return this.ajaxRequest({

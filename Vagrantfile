@@ -49,7 +49,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize [
       "modifyvm", :id,
       "--memory", "1024",
-      "--paravirtprovider", "kvm", # for linux guest
       "--cpus", "1"
     ]
   end
