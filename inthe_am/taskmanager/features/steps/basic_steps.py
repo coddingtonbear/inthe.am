@@ -33,8 +33,8 @@ def user_is_logged_in(context):
     context.execute_steps(u'''
         when the user accesses the url "/"
     ''')
-    u = get_user()
 
+    u = get_user()
     store = TaskStore.get_for_user(u)
     if not store.configured:
         store.autoconfigure_taskd()
@@ -45,11 +45,9 @@ def user_is_logged_in(context):
     meta.tos_accepted = now()
     meta.save()
 
-    cookies = artificial_login(
-        username=u.username,
-        password=settings.TESTING_LOGIN_PASSWORD
-    )
-    context.browser.cookies.add(cookies)
+    context.browser.cookies.add({
+        'authentication_token': store.api_key.key
+    })
 
     context.execute_steps(u'''
         when the user accesses the url "/"

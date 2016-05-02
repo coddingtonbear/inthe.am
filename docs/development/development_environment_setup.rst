@@ -6,13 +6,6 @@ Prerequisites
 
 * `Vagrant <https://www.vagrantup.com/>`_
 * `Virtualbox <https://www.virtualbox.org/>`_ or another Virtual Machine host supported by Vagrant
-* The `vagrant-gatling-rsync <https://github.com/smerrill/vagrant-gatling-rsync>`_ plugin; you can install this by running::
-
-    vagrant plugin install vagrant-gatling-rsync
-
-* If you intend to generate migrations or do anything else on your VM that you'd like to commit, you will also need the `vagrant-rsync-back <https://github.com/smerrill/vagrant-rsync-back>`_ plugin; you can install this by running::
-
-    vagrant plugin install vagrant-rsync-back
 
 Setup
 -----
