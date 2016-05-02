@@ -51,8 +51,8 @@ var controller = Ember.Controller.extend({
         }
         return true;
     }.property(),
-    ajaxRequest: function(params) {
-        return this.get('applicationController').ajaxRequest(params);
+    ajaxRequest: function(params, returnAll) {
+        return this.get('applicationController').ajaxRequest(params, returnAll);
     },
     sync_with_init: function() {
         var url = this.get('applicationController').urls.sync_init;
@@ -140,7 +140,7 @@ var controller = Ember.Controller.extend({
                 url: url,
                 type: 'GET',
                 data: {}
-            }).then(function(data, status, xhr){
+            }, true).then(function(data){
                 console.logIfDebug("File contents", data, status, xhr);
                 var element = document.createElement('a');
                 element.setAttribute(
