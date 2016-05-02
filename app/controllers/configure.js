@@ -140,14 +140,14 @@ var controller = Ember.Controller.extend({
                 url: url,
                 type: 'GET',
                 data: {}
-            }, true).then(function(xhr){
+            }).then(function(data, status, xhr){
                 var element = document.createElement('a');
                 element.setAttribute(
                     'href',
                     'data:' +
                     xhr.getResponseHeader('Content-Type') +
                     'charset=utf-8,' +
-                    encodeURIComponent(xhr.responseText)
+                    encodeURIComponent(data)
                 );
                 element.setAttribute(
                     'download',

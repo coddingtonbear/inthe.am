@@ -74,7 +74,7 @@ var controller = Ember.Controller.extend({
         sms_url: null,
         pebble_card_url: null,
     },
-    ajaxRequest: function(params, returnXHR){
+    ajaxRequest: function(params){
         this.showLoading();
         return $.ajax(params).then(function() {
             this.hideLoading();
