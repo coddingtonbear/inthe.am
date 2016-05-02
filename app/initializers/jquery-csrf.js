@@ -16,10 +16,13 @@ export default {
             }
             return cookieValue;
         };
-        $.ajaxSetup({
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            }
-        });
+        var headers = {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+        var authenticationToken = getCookie('authentication_token');
+        if (authenticationToken) {
+            headers['Authorization'] = 'Token ' + authenticationToken
+        }
+        $.ajaxSetup({headers: headers});
     }
 };

@@ -41,6 +41,7 @@ ALLOWED_HOSTS = [
 
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'inthe_am.taskmanager.middleware.AuthenticationTokenMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -433,7 +434,6 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
     ],
     'EXCEPTION_HANDLER': 'inthe_am.taskmanager.views.rest_exception_handler',
     'DEFAULT_PAGINATION_CLASS': (
