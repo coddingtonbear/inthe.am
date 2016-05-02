@@ -10,7 +10,7 @@ Pending Tasks
 Task List
 ~~~~~~~~~
 
-URL: ``https://inthe.am/api/v2/task/``
+URL: ``https://inthe.am/api/v2/tasks/``
 
 +----------+------------------------------------------+
 | Method   | Description                              |
@@ -23,7 +23,7 @@ URL: ``https://inthe.am/api/v2/task/``
 Task Details
 ~~~~~~~~~~~~
 
-URL: ``https://inthe.am/api/v2/task/<TASK_UUID>/``
+URL: ``https://inthe.am/api/v2/tasks/<TASK_UUID>/``
 
 +------------+-------------------------------------------------------+
 | Method     | Description                                           |
@@ -50,7 +50,7 @@ with Taskwarrior workflows.
 Delete a Task 
 ~~~~~~~~~~~~~
 
-URL: ``https://inthe.am/api/v2/task/<TASK_UUID>/delete/``
+URL: ``https://inthe.am/api/v2/tasks/<TASK_UUID>/delete/``
 
 +----------+-----------------------------------+
 | Method   | Description                       |
@@ -71,7 +71,7 @@ moving it to your completed task list).
 Start a Task 
 ~~~~~~~~~~~~
 
-URL: ``https://inthe.am/api/v2/task/<TASK_UUID>/start/``
+URL: ``https://inthe.am/api/v2/tasks/<TASK_UUID>/start/``
 
 +----------+-----------------------------------+
 | Method   | Description                       |
@@ -82,7 +82,7 @@ URL: ``https://inthe.am/api/v2/task/<TASK_UUID>/start/``
 Stop a Task 
 ~~~~~~~~~~~
 
-URL: ``https://inthe.am/api/v2/task/<TASK_UUID>/stop/``
+URL: ``https://inthe.am/api/v2/tasks/<TASK_UUID>/stop/``
 
 +----------+-----------------------------------+
 | Method   | Description                       |
@@ -107,7 +107,7 @@ Returns an RSS representation of your current pending tasks.
    After enabling this endpoint in your configuration, you will be
    given the proper URL to use (including your ``SECRET_ID``).
 
-URL: ``https://inthe.am/api/v2/task/feed/<SECRET_ID>/``
+URL: ``https://inthe.am/api/v2/tasks/feed/<SECRET_ID>/``
 
 +---------+------------------------+
 | Method  | Description            |
@@ -130,7 +130,7 @@ Repository Lock
    Manually unlocking your repository while an action is in progress may
    result in data loss!
 
-URL: ``https://inthe.am/api/v2/task/lock/``
+URL: ``https://inthe.am/api/v2/tasks/lock/``
 
 +--------+------------------------------------------------------------+
 | Method | Description                                                |
