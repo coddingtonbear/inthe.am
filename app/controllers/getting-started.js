@@ -4,7 +4,7 @@ var controller = Ember.Controller.extend({
     applicationController: Ember.inject.controller('application'),
     actions: {
         get_file_from_url: function(url, filename) {
-            return this.ajaxRequest({
+            return this.applicationController.get('ajaxRequest')({
                 url: url,
                 type: 'GET',
                 data: {}
