@@ -2,9 +2,12 @@ import Ember from "ember";
 
 var controller = Ember.Controller.extend({
     applicationController: Ember.inject.controller('application'),
+    ajaxRequest: function(params, returnAll) {
+        return this.get('applicationController').ajaxRequest(params, returnAll);
+    },
     actions: {
         get_file_from_url: function(url, filename) {
-            return this.applicationController.get('ajaxRequest')({
+            return this.ajaxRequest({
                 url: url,
                 type: 'GET',
                 data: {}
