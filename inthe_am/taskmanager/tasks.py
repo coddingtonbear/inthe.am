@@ -609,7 +609,7 @@ def deduplicate_tasks(self, store_id, debounce_id=None, **kwargs):
         (float(debounce_id) < float(expected_debounce_id))
     ):
         logger.warning(
-            'Deduplication debounce failed: %s<%s for %s.'
+            'Deduplication debounce failed: %s<%s for %s.',
             debounce_id,
             expected_debounce_id,
             store.pk,
