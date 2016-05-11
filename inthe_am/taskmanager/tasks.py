@@ -596,6 +596,26 @@ def deduplicate_tasks(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore
     store = TaskStore.objects.get(pk=store_id)
 
+    client = get_lock_redis()
+
+    debounce_key = get_debounce_name_for_store(store, 'deduplication')
+    try:
+        expected_debounce_id = client.get(debounce_key)
+    except (ValueError, TypeError):
+        expected_debounce_id = None
+
+    if (
+        expected_debounce_id and debounce_id and
+        (float(debounce_id) < float(expected_debounce_id))
+    ):
+        logger.warning(
+            'Deduplication debounce failed: %s<%s for %s.'
+            debounce_id,
+            expected_debounce_id,
+            store.pk,
+        )
+        return
+
     with git_checkpoint(store, 'Deduplicate tasks'):
         results = merge_all_duplicate_tasks(store)
 

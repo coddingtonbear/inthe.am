@@ -361,7 +361,7 @@ class TaskViewSet(viewsets.ViewSet):
     @requires_task_store
     @list_route(methods=['post'])
     def deduplicate(self, request, store=None):
-        deduplicate_tasks.apply_async(args=(store.pk, ))
+        store.deduplicate_tasks()
         return Response(status=202)
 
 

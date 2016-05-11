@@ -25,6 +25,7 @@ from ..lock import (
     get_lock_redis,
 )
 from ..tasks import (
+    deduplicate_tasks,
     sync_repository,
     sync_trello_tasks,
     synchronize_bugwarrior,
@@ -90,6 +91,8 @@ class TaskStore(models.Model):
         choices=REPLY_CHOICES,
         default=REPLY_ALL
     )
+
+    auto_deduplicate = models.BooleanField(default=False)
 
     email_whitelist = models.TextField(blank=True)
 
@@ -542,6 +545,23 @@ class TaskStore(models.Model):
         connection.publish(
             self._get_queue_name(prefix=prefix),
             json.dumps(message, cls=DjangoJSONEncoder)
+        )
+
+    def deduplicate_tasks(self):
+        debounce_key = get_debounce_name_for_store(
+            self, 'deduplication'
+        )
+        defined_debounce_id = str(time.time())
+
+        client = get_lock_redis()
+        client.set(debounce_key, defined_debounce_id)
+
+        deduplicate_tasks.apply_async(
+            args=(store.pk, ),
+            kwargs={
+                'debounce_id': defined_debounce_id,
+            },
+            countdown=5,  # To make sure multiple requests are grouped together
         )
 
     def sync_trello(self, two_way=False):
