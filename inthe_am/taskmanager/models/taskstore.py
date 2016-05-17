@@ -557,11 +557,11 @@ class TaskStore(models.Model):
         client.set(debounce_key, defined_debounce_id)
 
         deduplicate_tasks.apply_async(
-            args=(store.pk, ),
+            args=(self.pk, ),
             kwargs={
                 'debounce_id': defined_debounce_id,
             },
-            countdown=5,  # To make sure multiple requests are grouped together
+            countdown=10,  # To group multiple events together
         )
 
     def sync_trello(self, two_way=False):

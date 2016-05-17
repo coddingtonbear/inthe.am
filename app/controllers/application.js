@@ -67,6 +67,7 @@ var controller = Ember.Controller.extend({
         bugwarrior_config: '/api/v2/tasks/bugwarrior/',
         bugwarrior_sync: '/api/v2/tasks/bugwarrior/sync/',
         deduplicate_tasks: '/api/v2/tasks/deduplicate/',
+        deduplication_config: '/api/v2/tasks/deduplication-config/',
         status_feed: '/status/',
         ical_waiting_url: null,
         ical_due_url: null,

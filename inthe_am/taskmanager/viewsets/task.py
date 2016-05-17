@@ -364,6 +364,18 @@ class TaskViewSet(viewsets.ViewSet):
         store.deduplicate_tasks()
         return Response(status=202)
 
+    @requires_task_store
+    @list_route(methods=['post'], url_path='deduplication-config')
+    def deduplication_config(self, request, store=None):
+        try:
+            enabled = int(request.POST.get('enabled', 0))
+        except (TypeError, ValueError):
+            return Response(status=400)
+
+        store.auto_deduplicate = enabled
+        store.save()
+        return Response(status=200)
+
 
 def ical_feed(request, variant, secret_id):
     if variant not in ('due', 'waiting'):

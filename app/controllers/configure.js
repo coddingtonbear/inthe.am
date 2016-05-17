@@ -491,6 +491,24 @@ var controller = Ember.Controller.extend({
                 );
             }.bind(this));
         },
+        deduplication_config: function() {
+            var url = this.get('applicationController').urls.deduplication_config;
+            var enabled = $('select[name=autodeduplicate]').val() == "true"
+            return this.ajaxRequest({
+                url: url,
+                type: 'POST',
+                data: {
+                    enabled: enabled ? 1 : 0,
+                }
+            }).then(function(){
+                this.success_message(`Task de-duplication settings saved.`);
+            }.bind(this), function(msg){
+                this.error_message(
+                    `An error was encountered while ` +
+                    `attempting to set task de-duplication settings: ${msg}`
+                );
+            }.bind(this));
+        },
         deduplicate_tasks: function() {
             var url = this.get('applicationController').urls.deduplicate_tasks;
             return this.ajaxRequest({
