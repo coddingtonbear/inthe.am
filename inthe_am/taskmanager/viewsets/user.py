@@ -85,6 +85,7 @@ def get_published_properties(user, store, meta):
         'pebble_cards_enabled': store.pebble_cards_enabled,
         'feed_enabled': store.feed_enabled,
         'ical_enabled': store.ical_enabled,
+        'auto_deduplicate': store.auto_deduplicate,
         'udas': [
             {
                 'field': k,

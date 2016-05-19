@@ -148,7 +148,7 @@
                             <p>
                                 Automatically de-duplicate tasks?
                             </p>
-                            {{view "select" value=false optionValuePath="content.value" optionLabelPath="content.human" content=deduplicateUI name="autodeduplicate"}}
+                            {{view "select" value=applicationController.user.auto_deduplicate optionValuePath="content.value" optionLabelPath="content.human" content=deduplicateUI name="autodeduplicate"}}
                         </div>
                     </div>
                     <div class="row">
