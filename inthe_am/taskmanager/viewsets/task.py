@@ -17,7 +17,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import (
-    IsAuthenticated, IsAuthenticatedOrReadOnly
+    AllowAny, IsAuthenticated,
 )
 from rest_framework.response import Response
 from twilio.util import RequestValidator
@@ -257,18 +257,24 @@ class TaskViewSet(viewsets.ViewSet):
     @requires_task_store
     @list_route(
         methods=['get'],
-        permission_classes=[IsAuthenticatedOrReadOnly],
+        permission_classes=[AllowAny],
     )
     def trello(self, request, store=None):
+        if not request.user.is_authenticated():
+            return Response(status=401)
+
         return HttpResponseRedirect(get_authorize_url(request))
 
     @requires_task_store
     @list_route(
         methods=['get'],
         url_path='trello/callback',
-        permission_classes=[IsAuthenticatedOrReadOnly],
+        permission_classes=[AllowAny],
     )
     def trello_callback(self, request, store=None):
+        if not request.user.is_authenticated():
+            return Response(status=401)
+
         if 'trello_oauth_token' not in request.session:
             raise PermissionDenied(
                 'Arrived at Trello authorization URL without having '
