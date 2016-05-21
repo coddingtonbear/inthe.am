@@ -16,7 +16,9 @@ from icalendar import Calendar, Event
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticated, IsAuthenticatedOrReadOnly
+)
 from rest_framework.response import Response
 from twilio.util import RequestValidator
 from twilio.twiml import Response as TwilioResponse
@@ -253,12 +255,19 @@ class TaskViewSet(viewsets.ViewSet):
         return Response()
 
     @requires_task_store
-    @list_route(methods=['get'])
+    @list_route(
+        methods=['get'],
+        permission_classes=[IsAuthenticatedOrReadOnly],
+    )
     def trello(self, request, store=None):
         return HttpResponseRedirect(get_authorize_url(request))
 
     @requires_task_store
-    @list_route(methods=['get'], url_path='trello/callback')
+    @list_route(
+        methods=['get'],
+        url_path='trello/callback',
+        permission_classes=[IsAuthenticatedOrReadOnly],
+    )
     def trello_callback(self, request, store=None):
         if 'trello_oauth_token' not in request.session:
             raise PermissionDenied(
