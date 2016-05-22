@@ -255,7 +255,6 @@ class TaskViewSet(viewsets.ViewSet):
         store.client.sync(init=True)
         return Response()
 
-    @requires_task_store
     @list_route(
         methods=['get'],
         permission_classes=[AllowAny],
@@ -265,12 +264,7 @@ class TaskViewSet(viewsets.ViewSet):
         token = Token.objects.filter(key=api_key).first()
 
         if not token:
-            return Response(
-                {
-                    'error': 'An API key must be provided.'
-                },
-                status=401
-            )
+            raise PermissionDenied()
 
         return HttpResponseRedirect(
             get_authorize_url(
@@ -280,7 +274,6 @@ class TaskViewSet(viewsets.ViewSet):
             )
         )
 
-    @requires_task_store
     @list_route(
         methods=['get'],
         url_path='trello/callback',
@@ -290,6 +283,7 @@ class TaskViewSet(viewsets.ViewSet):
         token = Token.objects.filter(
             key=request.GET.get('api_key', '')
         ).first()
+        store = models.TaskStore.get_for_user(token.user)
 
         client = get_lock_redis()
         raw_value = client.get(
