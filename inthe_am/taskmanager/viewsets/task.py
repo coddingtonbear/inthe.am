@@ -280,9 +280,8 @@ class TaskViewSet(viewsets.ViewSet):
         permission_classes=[AllowAny],
     )
     def trello_callback(self, request, store=None):
-        token = Token.objects.filter(
-            key=request.GET.get('api_key', '')
-        ).first()
+        api_key = request.GET.get('api_key', '')
+        token = Token.objects.filter(key=api_key).first()
         store = models.TaskStore.get_for_user(token.user)
 
         client = get_lock_redis()
@@ -296,7 +295,7 @@ class TaskViewSet(viewsets.ViewSet):
             )
         request_token = json.loads(raw_value)
 
-        token = get_access_token(request, request_token)
+        token = get_access_token(request, api_key, request_token)
         store.trello_auth_token = token[0]
 
         if not store.trello_board:

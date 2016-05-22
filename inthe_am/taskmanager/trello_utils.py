@@ -87,9 +87,10 @@ def get_authorize_url(request, api_key, user):
     )
 
 
-def get_access_token(request, request_token):
+def get_access_token(request, api_key, request_token):
     client = get_oauth_client(
         request,
+        api_key=api_key,
         resource_owner_key=request_token[0],
         resource_owner_secret=request_token[1],
         verifier=request.GET['oauth_verifier']
