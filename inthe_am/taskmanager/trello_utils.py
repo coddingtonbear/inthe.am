@@ -71,8 +71,8 @@ def get_authorize_url(request, api_key, user):
     client = get_lock_redis()
     client.setex(
         '%s.trello_auth' % user.username,
+        600,
         json.dumps(request_token),
-        600
     )
 
     params = {
