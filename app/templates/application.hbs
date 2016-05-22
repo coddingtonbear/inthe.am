@@ -46,11 +46,13 @@
                 <li class="desktop-only" data-intro="alt+t">
                     {{#link-to "tasks" title="Tasks"}}<i class="fa fa-list-alt">Tasks</i>{{/link-to}}
                 </li>
-                {{#if user.trello_board_url}}
-                    <li class="desktop-only" data-intro="alt+k">
+                <li class="desktop-only" data-intro="alt+k">
+                    {{#if user.trello_board_url}}
                         <a title="Trello" href="{{user.trello_board_url}}"><i class="fa fa-columns">Trello</i></a>
-                    </li>
-                {{/if}}
+                    {{else}}
+                        <a title="Trello" href="{{urls.trello_authorization_url }}?api_key={{ user.api_key }}"><i class="fa fa-columns">Trello</i></a>
+                    {{/if}}
+                </li>
                 <li class="desktop-only" data-intro="alt+n">
                     <a href="#" title="New" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
                 </li>
