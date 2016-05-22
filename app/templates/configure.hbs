@@ -125,7 +125,7 @@
                                 <a href="" class="button radius alert" {{action "reset_trello_settings"}}>Reset Trello settings</a>
                                 <a href="" class="button radius" {{action "trello_force_resynchronization"}}>Force Resynchronization</a>
                             {{else}}
-                                <a class="button radius" href="{{applicationController.urls.trello_authorization_url }}">Click here to get started</a>
+                                <a class="button radius" href="{{applicationController.urls.trello_authorization_url }}?api_key={{ applicationController.user.api_key }}">Click here to get started</a>
                             {{/if}}
                         </div>
                     </div>
