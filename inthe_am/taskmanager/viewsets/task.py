@@ -18,7 +18,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import (
-    AllowAny, IsAuthenticated,
+    AllowAny, IsAuthenticatedOrReadOnly,
 )
 from rest_framework.response import Response
 from twilio.util import RequestValidator
@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 class TaskViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticatedOrReadOnly, )
 
     TASK_TYPE = 'pending'
     FILTERABLE_FIELDS = [
