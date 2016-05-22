@@ -265,7 +265,12 @@ class TaskViewSet(viewsets.ViewSet):
         token = Token.objects.filter(key=api_key).first()
 
         if not token:
-            return Response(status=401)
+            return Response(
+                {
+                    'error': 'An API key must be provided.'
+                },
+                status=401
+            )
 
         return HttpResponseRedirect(
             get_authorize_url(
