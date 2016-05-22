@@ -1,3 +1,4 @@
+import json
 import logging
 
 import oauthlib.oauth1
@@ -7,6 +8,8 @@ from urlparse import parse_qs
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
+
+from .lock import get_lock_redis
 
 
 logger = logging.getLogger(__name__)
@@ -32,14 +35,14 @@ LABEL_COLORS = [
 ]
 
 
-def get_oauth_client(request=None, **params):
+def get_oauth_client(request=None, api_key=None, **params):
     base_params = {
         'client_secret': settings.TRELLO_API_SECRET,
     }
     if request:
         base_params['callback_uri'] = request.build_absolute_uri(
             reverse('api:task-trello/callback')
-        )
+        ) + '?api_key=' + api_key
 
     base_params.update(params)
 
@@ -49,8 +52,8 @@ def get_oauth_client(request=None, **params):
     )
 
 
-def get_request_token(request):
-    client = get_oauth_client(request)
+def get_request_token(request, api_key):
+    client = get_oauth_client(request, api_key)
 
     uri, headers, body = client.sign(REQUEST_URL)
     response = requests.get(uri, headers=headers)
@@ -62,9 +65,16 @@ def get_request_token(request):
     )
 
 
-def get_authorize_url(request):
-    request_token = get_request_token(request)
-    request.session['trello_oauth_token'] = request_token
+def get_authorize_url(request, api_key, user):
+    request_token = get_request_token(request, api_key)
+
+    client = get_lock_redis()
+    client.setex(
+        '%s.trello_auth' % user.username,
+        json.dumps(request_token),
+        600
+    )
+
     params = {
         'oauth_token': request_token[0],
         'name': APP_NAME,
@@ -77,9 +87,7 @@ def get_authorize_url(request):
     )
 
 
-def get_access_token(request):
-    request_token = request.session['trello_oauth_token']
-
+def get_access_token(request, request_token):
     client = get_oauth_client(
         request,
         resource_owner_key=request_token[0],

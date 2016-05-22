@@ -14,6 +14,7 @@ from django.http import (
 from django.views.decorators.csrf import csrf_exempt
 from icalendar import Calendar, Event
 from rest_framework import viewsets
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import (
@@ -260,10 +261,19 @@ class TaskViewSet(viewsets.ViewSet):
         permission_classes=[AllowAny],
     )
     def trello(self, request, store=None):
-        if not request.user.is_authenticated():
+        api_key = request.GET.get('api_key', '')
+        token = Token.objects.filter(key=api_key).first()
+
+        if not token:
             return Response(status=401)
 
-        return HttpResponseRedirect(get_authorize_url(request))
+        return HttpResponseRedirect(
+            get_authorize_url(
+                request,
+                api_key=api_key,
+                user=token.user
+            )
+        )
 
     @requires_task_store
     @list_route(
@@ -272,16 +282,22 @@ class TaskViewSet(viewsets.ViewSet):
         permission_classes=[AllowAny],
     )
     def trello_callback(self, request, store=None):
-        if not request.user.is_authenticated():
-            return Response(status=401)
+        token = Token.objects.filter(
+            key=request.GET.get('api_key', '')
+        ).first()
 
-        if 'trello_oauth_token' not in request.session:
+        client = get_lock_redis()
+        raw_value = client.get(
+            '%s.trello_auth' % token.user.username,
+        )
+        if not raw_value:
             raise PermissionDenied(
                 'Arrived at Trello authorization URL without having '
                 'initiated a Trello authorization!'
             )
+        request_token = json.loads(raw_value)
 
-        token = get_access_token(request)
+        token = get_access_token(request, request_token)
         store.trello_auth_token = token[0]
 
         if not store.trello_board:
