@@ -318,7 +318,7 @@ class TaskViewSet(viewsets.ViewSet):
         store.save()
         store.sync_trello()
 
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect('/tasks/')
 
     @requires_task_store
     @list_route(methods=['post'], url_path='trello/resynchronize')
