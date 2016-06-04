@@ -151,7 +151,10 @@ class TaskStore(models.Model):
                 results[setting_value] = 'Custom certificate in use'
             else:
                 results[setting_value] = 'Standard certificate in use'
-        results['taskd_trust'] = self.taskrc.get('taskd.trust', 'no')
+        results['taskd_trust'] = self.taskrc.get(
+            'taskd.trust',
+            'ignore hostname'
+        )
         return results
 
     @property
@@ -728,7 +731,7 @@ class TaskStore(models.Model):
                 self.DEFAULT_FILENAMES['key']
             ),
             'taskd.ca': self.server_config['ca.cert'],
-            'taskd.trust': 'no',
+            'taskd.trust': 'ignore hostname',
             'taskd.server': settings.TASKD_SERVER,
             'taskd.credentials': self.metadata['generated_taskd_credentials']
         })
