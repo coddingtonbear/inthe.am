@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from fnmatch import fnmatch as glob
 import logging
 import re
-import shlex
+import ushlex as shlex
 
 from celery import shared_task
 from celery.signals import setup_logging
