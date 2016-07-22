@@ -516,8 +516,8 @@ var controller = Ember.Controller.extend({
                 type: 'POST',
             }).then(function(){
                 this.success_message(
-                    `Task de-duplication requested;  it may take a few ` +
-                    `minutes for the de-duplicate to take place.`
+                    `Task de-duplication requested; it may take a few ` +
+                    `minutes for the de-duplication to take place.`
                   );
             }.bind(this), function(msg){
                 this.error_message(
