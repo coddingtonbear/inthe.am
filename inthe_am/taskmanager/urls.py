@@ -19,6 +19,10 @@ router.register('user', UserViewSet, base_name='user')
 router.register('activity-logs', ActivityLogViewSet, base_name='activity_log')
 
 
+def unmatched(request):
+    return HttpResponseNotFound()
+
+
 def fallback(request):
     # This is sort of a hack; sorry!
     index_template_path = os.path.join(
@@ -55,6 +59,10 @@ urlpatterns = patterns(
         '^api/v[1-2]/task/feed/(?P<uuid>[^/]+)/',
         TaskFeed(),
         name='feed'
+    ),
+    url(
+        '^api/.*',
+        unmatched,
     ),
     url('^', fallback),
 )
