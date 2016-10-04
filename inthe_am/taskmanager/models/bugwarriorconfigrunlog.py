@@ -19,7 +19,7 @@ class BugwarriorConfigRunLog(models.Model):
         lines = [line for line in self.output.split('\n') if line]
         lines.append(new)
 
-        self.output = '\n'.join(lines)
+        self.output = u'\n'.join(lines)
         self.save()
 
     @property
