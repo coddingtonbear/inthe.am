@@ -7,3 +7,4 @@
 * [checkpoint_id]: {{ checkpoint_id }}
 
 {% if data %}{{data|safe}}{% endif %}
+

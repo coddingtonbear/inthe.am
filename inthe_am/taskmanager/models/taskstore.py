@@ -486,7 +486,7 @@ class TaskStore(models.Model):
             commit_args.append('--allow-empty')
 
         proc = self._git_command(*commit_args)
-        proc.communicate(commit_message)
+        proc.communicate(commit_message.encode('utf-8', 'replace'))
 
     #  Taskd-related methods
 
