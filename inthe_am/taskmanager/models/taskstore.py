@@ -473,19 +473,20 @@ class TaskStore(models.Model):
                 )
             }
         )
-    
+
         commit_args = [
             'commit',
             '--author',
             'Inthe.AM Git Bot <gitbot@inthe.am>',
-            '-m',
-            commit_message
+            '-F',
+            '-'
         ]
 
         if force_commit:
             commit_args.append('--allow-empty')
 
-        self._simple_git_command(*commit_args)
+        proc = self._git_command(*commit_args)
+        proc.communicate(commit_message)
 
     #  Taskd-related methods
 
