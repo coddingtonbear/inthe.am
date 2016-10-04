@@ -236,18 +236,6 @@ var controller = Ember.Controller.extend({
             min_move_x: 100,
             preventDefaultEvents: false
         });
-
-        // If the user is on a small screen:
-        if($(document).width() <= 700) {
-            if (!(window.navigator.standalone || window.navigator.userAgent.indexOf('iPhone') === -1)) {
-                Ember.run.next(
-                    this,
-                    function(){
-                        this.transitionToRoute('add-to-home-screen');
-                    }
-                );
-            }
-        }
     },
     handlePostLoginRedirects: function() {
         if(window.localStorage && this.get('user.tos_up_to_date')) {
