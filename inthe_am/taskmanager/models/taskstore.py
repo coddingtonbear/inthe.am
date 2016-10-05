@@ -438,6 +438,7 @@ class TaskStore(models.Model):
             command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            stdin=subprocess.PIPE,
         )
 
     def _simple_git_command(self, *args):
