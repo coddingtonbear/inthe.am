@@ -447,7 +447,10 @@ class TaskStore(models.Model):
         return proc.returncode
 
     def git_reset(self, to_sha):
-        self._simple_git_command('reset', '--hard', to_sha)
+        if to_sha is not None:
+            self._simple_git_command('reset', '--hard', to_sha)
+        else:
+            self._simple_git_command('update-ref', '-d', 'HEAD')
 
     def create_git_checkpoint(
         self, message, function=None,

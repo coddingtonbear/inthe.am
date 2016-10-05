@@ -69,7 +69,10 @@ def git_checkpoint(
     wait_timeout=settings.LOCKFILE_WAIT_TIMEOUT
 ):
     lock_name = get_lock_name_for_store(store)
-    pre_work_sha = store.repository.head()
+    try:
+        pre_work_sha = store.repository.head()
+    except KeyError:
+        pre_work_sha = None
     checkpoint_id = uuid.uuid4()
 
     if(hasattr(store, '_active_checkpoint')):
