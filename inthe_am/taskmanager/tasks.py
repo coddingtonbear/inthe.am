@@ -488,6 +488,11 @@ def update_trello(
                     )
                     continue
 
+                # If we are going to have to create this task, only do that
+                # if the task is currently open.
+                if task['status'] != 'pending':
+                    continue
+
                 obj = TrelloObject.create(
                     store=store,
                     type=TrelloObject.CARD,
