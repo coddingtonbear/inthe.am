@@ -15,6 +15,7 @@ from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
 from django.utils.timezone import now
+from dulwich.client import NotGitRepository
 from dulwich.repo import Repo
 from rest_framework.authtoken.models import Token
 
@@ -397,7 +398,7 @@ class TaskStore(models.Model):
                 out.write('.lock\n')
             try:
                 self.repository.head()
-            except KeyError:
+            except (KeyError, NotGitRepository):
                 self.create_git_repository()
 
         if not self.secret_id:
@@ -433,12 +434,9 @@ class TaskStore(models.Model):
         return changed_tickets
 
     def create_git_repository(self):
-        result = self._simple_git_command('status')
-        if result != 0:
-            self._simple_git_command('init')
-            self.create_git_checkpoint('Initial Commit')
-            return True
-        return False
+        self._simple_git_command('init')
+        self.create_git_checkpoint('Initial Commit')
+        return True
 
     def _git_command(self, *args):
         command = [
