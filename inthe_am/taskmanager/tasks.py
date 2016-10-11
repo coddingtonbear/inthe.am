@@ -234,6 +234,42 @@ def process_email_message(self, message_id):
 @shared_task(
     bind=True,
     default_retry_delay=60,
+    max_retries=1,
+)
+def reset_trello(self, store_id, debounce_id=None, **kwargs):
+    from .models import TaskStore, TrelloObject
+    store = TaskStore.objects.get(pk=store_id)
+
+    for obj in TrelloObject.objects.filter(store=store):
+        obj.delete()
+
+    store.trello_auth_token = ''
+    store.save()
+
+    with git_checkpoint(
+        store, "Reset trello IDs for pending/waiting tasks."
+    ):
+        for task in store.client.filter_tasks({
+            'intheamtrelloid.any': None,
+            'or': [
+                ('status', 'pending'),
+                ('status', 'waiting'),
+            ]
+        }):
+            task['intheamtrelloid'] = ''
+            task['intheamtrelloboardid'] = ''
+            task['intheamtrellolistid'] = ''
+            store.client.task_update(task)
+
+    store.publish_personal_announcement({
+        'title': 'Trello',
+        'message': 'Trello has been successfully reset.'
+    })
+
+
+@shared_task(
+    bind=True,
+    default_retry_delay=60,
     max_retries=10,
 )
 def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
