@@ -371,6 +371,7 @@ class TrelloObject(models.Model):
                 self.client.update_closed(self.id, 'true')
                 self.deleted = True
                 self.save()
+            super(TrelloObject, self).delete(*args, **kwargs)
         except Exception as e:
             logger.exception(
                 'Error encountered while deleting remote Trello object: %s',

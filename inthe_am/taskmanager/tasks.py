@@ -236,7 +236,7 @@ def process_email_message(self, message_id):
     default_retry_delay=60,
     max_retries=1,
 )
-def reset_trello(self, store_id, debounce_id=None, **kwargs):
+def reset_trello(self, store_id, **kwargs):
     from .models import TaskStore, TrelloObject
     store = TaskStore.objects.get(pk=store_id)
 
