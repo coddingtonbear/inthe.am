@@ -32,6 +32,7 @@ from ..serializers.task import TaskSerializer
 from ..tasks import (
     deduplicate_tasks,
     process_trello_action,
+    reset_trello,
     sync_trello_tasks,
 )
 from ..trello_utils import get_access_token, get_authorize_url
@@ -329,28 +330,8 @@ class TaskViewSet(viewsets.ViewSet):
     @requires_task_store
     @list_route(methods=['post'], url_path='trello/reset')
     def trello_reset(self, request, store=None):
-        for obj in models.TrelloObject.objects.filter(store=store):
-            obj.delete()
-
-        store.trello_auth_token = ''
-        store.save()
-
-        with git_checkpoint(
-            store, "Reset trello IDs for pending/waiting tasks."
-        ):
-            for task in store.client.filter_tasks({
-                'intheamtrelloid.any': None,
-                'or': [
-                    ('status', 'pending'),
-                    ('status', 'waiting'),
-                ]
-            }):
-                task['intheamtrelloid'] = ''
-                task['intheamtrelloboardid'] = ''
-                task['intheamtrellolistid'] = ''
-                store.client.task_update(task)
-
-        return Response()
+        reset_trello.apply_async(args=(store.pk, ))
+        return Response(status=202)
 
     @requires_task_store
     @list_route(methods=['put'], url_path='bugwarrior')

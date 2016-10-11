@@ -192,7 +192,7 @@ var controller = Ember.Controller.extend({
             }).then(function(){
                 this.success_message(
                   "Trello resynchronization requested.  It may take a few minutes before " +
-                  "you see any results."
+                  "this action takes place."
                 );
             }.bind(this), function(msg){
                 this.error_message(
@@ -209,7 +209,10 @@ var controller = Ember.Controller.extend({
                 data: {}
             }).then(function(){
                 this.get('applicationController').update_user_info();
-                this.success_message("Trello settings successfully reset.");
+                this.success_message(
+                  "Trello reset requested.  It may take a few minutes " + 
+                  "before this action takes place."
+                );
                 setTimeout(function(){
                     window.location.reload();
                 }, 3000);
