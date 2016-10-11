@@ -366,9 +366,21 @@ class TaskStore(models.Model):
                         errored[key] = (value, message)
         return applied, errored
 
+    def repository_is_valid(self):
+        if not self.local_path:
+            return False
+        if not os.path.isdir(self.local_path):
+            return False
+        try:
+            self.repository.head()
+        except KeyError:
+            return False
+
+        return True
+
     def save(self, *args, **kwargs):
         # Create the user directory
-        if not self.local_path:
+        if not self.repository_is_valid():
             user_tasks = os.path.join(
                 settings.TASK_STORAGE_PATH,
                 self.username,
@@ -383,7 +395,10 @@ class TaskStore(models.Model):
                 os.mkdir(self.local_path)
             with open(os.path.join(self.local_path, '.gitignore'), 'w') as out:
                 out.write('.lock\n')
-            self.create_git_repository()
+            try:
+                self.repository.head()
+            except KeyError:
+                self.create_git_repository()
 
         if not self.secret_id:
             self.secret_id = str(uuid.uuid4())
