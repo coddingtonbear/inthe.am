@@ -244,6 +244,7 @@ def reset_trello(self, store_id, **kwargs):
         obj.delete()
 
     store.trello_auth_token = ''
+    store.trello_local_head = ''
     store.save()
 
     with git_checkpoint(
