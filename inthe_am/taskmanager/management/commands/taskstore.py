@@ -58,6 +58,6 @@ class Command(BaseCommand):
                 print(
                     '{}: {}'.format(
                         key,
-                        datetime.datetime.fromtimestamp(int(value)),
+                        datetime.datetime.fromtimestamp(int(float(value))),
                     )
                 )
