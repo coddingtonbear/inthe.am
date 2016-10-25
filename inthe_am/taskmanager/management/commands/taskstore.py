@@ -5,6 +5,7 @@ import datetime
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db.models import Q
+from django.utils.timezone import now
 
 from inthe_am.taskmanager.models import TaskStore
 from inthe_am.taskmanager.lock import get_lock_redis
@@ -54,10 +55,8 @@ class Command(BaseCommand):
         elif subcommand == 'list':
             redis = get_lock_redis()
             for key in redis.keys('*.lock'):
-                value = redis.get(key)
-                print(
-                    '{}: {}'.format(
-                        key,
-                        datetime.datetime.fromtimestamp(int(float(value))),
-                    )
+                value = datetime.datetime.fromtimestamp(
+                    int(float(redis.get(key)))
                 )
+                if value > now():
+                    print('{}: {}'.format(key, value))
