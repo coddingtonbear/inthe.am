@@ -4,6 +4,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 
 from inthe_am.taskmanager.models import TaskStore
 from inthe_am.taskmanager.lock import get_lock_redis
@@ -42,7 +43,12 @@ class Command(BaseCommand):
             store.set_lock_state(lock=False)
             print('{} unlocked'.format(store))
         elif subcommand == 'search':
-            users = User.objects.filter(user__username__contains=username)
+            users = User.objects.filter(
+                Q(email__contains=username) |
+                Q(username__contains=username) |
+                Q(first_name__contains=username) |
+                Q(last_name__contains=username)
+            )
             for user in users:
                 print(user.username)
         elif subcommand == 'list':
