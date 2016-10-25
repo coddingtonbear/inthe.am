@@ -14,7 +14,7 @@ class Command(BaseCommand):
         parser.add_argument(
             'subcommand',
             nargs=1,
-            options=['list', 'lock', 'unlock', 'search'],
+            choices=['list', 'lock', 'unlock', 'search'],
             type=str,
         )
         parser.add_argument(
