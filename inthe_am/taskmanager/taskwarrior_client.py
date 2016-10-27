@@ -1,3 +1,4 @@
+import copy
 import curses.ascii
 import datetime
 import json
@@ -9,7 +10,7 @@ import uuid
 import weakref
 
 import six
-from taskw import TaskWarriorShellout
+from taskw import TaskWarriorShellout, utils
 from taskw.task import Task as TaskwTask
 
 from inthe_am.taskmanager.utils import OneWaySafeJSONEncoder
@@ -107,12 +108,28 @@ class TaskwarriorClient(TaskWarriorShellout):
             command = str(cmd[0])
         return logging.getLogger('%s.%s' % (__name__, command))
 
-    def _execute(self, *args):
+    def gc(self):
+        overrides = copy.deepcopy(self.get_configuration_override_args())
+        overrides['gc'] = 'on'
+
+        self._execute(
+            'list',
+            config_overrides=overrides
+        )
+
+    def _execute(self, *args, **kwargs):
         """ Execute a given taskwarrior command with arguments
 
         Returns a 2-tuple of stdout and stderr (respectively).
 
         """
+        if 'config_overrides' in kwargs:
+            config_overrides = utils.convert_dict_to_override_args(
+                kwargs.pop('config_overrides')
+            )
+        else:
+            config_overrides = self.get_configuration_override_args()
+
         logger = self._get_logger(args)
 
         command = (
@@ -120,7 +137,7 @@ class TaskwarriorClient(TaskWarriorShellout):
                 'task',
                 'rc:%s' % self.config_filename,
             ] +
-            self.get_configuration_override_args() +
+            config_overrides +
             [six.text_type(arg) for arg in args]
         )
 

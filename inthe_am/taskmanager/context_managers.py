@@ -134,7 +134,7 @@ def git_checkpoint(
             # they'll hang out as uncommitted changes until the next
             # writing operation.
             if gc:
-                store.client.filter_tasks({'status': 'pending'})
+                store.client.gc()
             store.create_git_checkpoint(
                 message,
                 function=function,
