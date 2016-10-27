@@ -109,7 +109,8 @@ class TaskwarriorClient(TaskWarriorShellout):
         return logging.getLogger('%s.%s' % (__name__, command))
 
     def gc(self):
-        overrides = copy.deepcopy(self.get_configuration_override_args())
+        overrides = self.DEFAULT_CONFIG_OVERRIDES.copy()
+        overrides.update(self.config_overrides)
         overrides['gc'] = 'on'
 
         self._execute(
