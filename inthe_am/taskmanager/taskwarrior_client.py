@@ -113,10 +113,15 @@ class TaskwarriorClient(TaskWarriorShellout):
         overrides.update(self.config_overrides)
         overrides['gc'] = 'on'
 
-        self._execute(
-            'list',
-            config_overrides=overrides
-        )
+        try:
+            self._execute(
+                'list',
+                config_overrides=overrides
+            )
+        except TaskwarriorError:
+            # This is fine -- this will happen if there aren't any
+            # entries in their task list.
+            pass
 
     def _execute(self, *args, **kwargs):
         """ Execute a given taskwarrior command with arguments
