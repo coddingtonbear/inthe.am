@@ -293,23 +293,11 @@ class TaskStore(models.Model):
     def _get_extra_safely(self, key, val):
         valid_patterns = [
             (
-                re.compile('^urgency\.[^.]+\.coefficient$'),
+                re.compile('^urgency\..*\.coefficient$'),
                 self._is_numeric
             ),
             (
-                re.compile('^urgency\.user\.tag\.[^.]+\.coefficient$'),
-                self._is_numeric
-            ),
-            (
-                re.compile('^urgency\.user\.project\.[^.]+.coefficient$'),
-                self._is_numeric
-            ),
-            (
-                re.compile('^urgency\.age\.max$'),
-                self._is_numeric
-            ),
-            (
-                re.compile('^urgency\.uda\.[^.]+\.coefficient$'),
+                re.compile('^urgency\..*\.max$'),
                 self._is_numeric
             ),
             (
