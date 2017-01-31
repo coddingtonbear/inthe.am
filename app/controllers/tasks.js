@@ -111,7 +111,7 @@ var controller = ArrayController.extend({
             }
 
             filters.tags.forEach(function(tag) {
-                if(item.get('tags').indexOf(tag) < 0) {
+                if(!item.get('tags') || item.get('tags').indexOf(tag) < 0) {
                     ok = false;
                 }
             });
