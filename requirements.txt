@@ -1,5 +1,5 @@
 django==1.8.12
--e git+https://github.com/latestrevision/python-social-auth.git@add_dropbox_oauth2#egg=python-social-auth
+python-social-auth==0.2.21
 -e git+https://github.com/latestrevision/taskw@inthe_am#egg=taskw
 djangorestframework==3.3.3
 markdown==2.6.6
