@@ -92,7 +92,4 @@ task:
    If you neglect to supply a timezone offset in a supplied date string, the incoming date string will be
    interpreted to be a UTC timestamp.
 
-.. [#datestring] Although datetime fields are encoded using ISO-8601 date strings in UTC, you
-   may supply date strings using any format accepted by
-   `dateutil's parse method <http://labix.org/python-dateutil#head-c0e81a473b647dfa787dc11e8c69557ec2c3ecd2>`_;
-   that being said, using ISO 8601 or RFC 2822 date strings *is* recommended.
+.. [#datestring] ISO-8601 format.

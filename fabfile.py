@@ -9,6 +9,7 @@ from fabric.context_managers import settings
 env.hosts = [
     os.environ['TWWEB_HOST'],
 ]
+env.use_ssh_config = True
 
 
 def virtualenv(command, user=None):
@@ -27,6 +28,7 @@ def deploy(
     }
     pre_message = copy.copy(pubsub_message)
     pre_message['type'] = 'deploy_started'
+    pre_message['data']['should_refresh'] = False
     post_message = copy.copy(pubsub_message)
     post_message['type'] = 'deploy_finished'
 
