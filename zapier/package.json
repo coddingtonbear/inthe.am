@@ -1,11 +1,11 @@
 {
-  "name": "zapier-platform-example-app-minimal",
-  "version": "1.0.0",
-  "description": "An example app for the Zapier platform.",
-  "repository": "zapier/zapier-platform-example-app-minimal",
-  "homepage": "https://zapier.com/",
-  "author": "Bryan Helmig <bryan@zapier.com>",
-  "license": "BSD-3-Clause",
+  "name": "zapier-platform-inthe-am",
+  "version": "1.0.1",
+  "description": "Inthe.AM App Definition for Zapier",
+  "repository": "coddingtonbear/inthe.am",
+  "homepage": "https://inthe.am/",
+  "author": "Adam Coddington <me@adamcoddington.net>",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha --recursive"
