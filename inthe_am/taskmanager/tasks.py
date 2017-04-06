@@ -692,7 +692,7 @@ def send_rest_hook_message(self, rest_hook_id, task_id, **kwargs):
     result = requests.post(
         rest_hook.target_url,
         data=JSONRenderer().render(
-            TaskSerializer(task_data, store=rest_hook.task_store)
+            TaskSerializer(task_data, store=rest_hook.task_store).data
         ),
         headers={
             'Content-type': 'application/json',
