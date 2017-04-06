@@ -10,7 +10,7 @@ const subscribeHook = (z, bundle) => {
   // You can build requests and our client will helpfully inject all the variables
   // you need to complete. You can also register middleware to control this.
   const promise = z.request({
-    url: `${_sharedBaseUrl}hooks/`,
+    url: `${_sharedBaseUrl}hook/`,
     method: 'POST',
     body: JSON.stringify(data)
   });
@@ -27,7 +27,7 @@ const unsubscribeHook = (z, bundle) => {
   // You can build requests and our client will helpfully inject all the variables
   // you need to complete. You can also register middleware to control this.
   const promise = z.request({
-    url: `${_sharedBaseUrl}/hooks/${hookId}/`,
+    url: `${_sharedBaseUrl}/hook/${hookId}/`,
     method: 'DELETE',
   });
 

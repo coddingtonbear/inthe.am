@@ -685,7 +685,7 @@ def send_rest_hook_message(self, rest_hook_id, task_id, **kwargs):
     from . import models
 
     rest_hook = models.RestHook.objects.get(id=rest_hook_id)
-    task_data = rest_hook.task_store.store.client.get_task(uuid=task_id)[1]
+    task_data = rest_hook.task_store.client.get_task(uuid=task_id)[1]
 
     result = requests.post(
         rest_hook.target_url,

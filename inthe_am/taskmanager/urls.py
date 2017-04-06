@@ -40,9 +40,9 @@ def view_does_not_exist(request):
 urlpatterns = patterns(
     '',
     url('^api/v2/', include(router.urls, namespace='api')),
-    url('^api/v2/hooks/$', RestHookHandler.as_view(), name='rest_hook_list'),
+    url('^api/v2/hook/$', RestHookHandler.as_view(), name='rest_hook_list'),
     url(
-        '^api/v2/hooks/?P<hook_id>[^/]+)/$',
+        '^api/v2/hook/?P<hook_id>[^/]+)/$',
         RestHookHandler.as_view(),
         name='rest_hook_detail'
     ),
