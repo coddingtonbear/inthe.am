@@ -1,7 +1,5 @@
-import datetime
 import json
 import logging
-import time
 
 from django.conf import settings
 from django.contrib.syndication.views import Feed
@@ -9,15 +7,19 @@ from django.core.exceptions import (
     ObjectDoesNotExist, PermissionDenied, SuspiciousOperation,
 )
 from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
-from django_sse.views import BaseSseView
+from django.http import (
+    Http404, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse,
+)
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import View
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
-from .lock import (
-    get_announcements_subscription, LockTimeout
-)
-from .models import TaskStore
+from .lock import LockTimeout
+from .models import TaskStore, RestHook
 from .taskwarrior_client import TaskwarriorError
 
 
@@ -149,3 +151,54 @@ def rest_exception_handler(e, context):
         return Response(status=404)
     else:
         return response
+
+
+class RestHookHandler(View):
+    http_method_names = ['delete', 'post']
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            request.user, _ = BasicAuthentication().authenticate(request)
+        except AuthenticationFailed:
+            return JsonResponse({}, status=401)
+
+        return super(RestHookHandler, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+        except:
+            return JsonResponse(
+                {},
+                status=400
+            )
+
+        store = TaskStore.get_for_user(request.user)
+        instance = RestHook.objects.create(
+            task_store=store,
+            event_type=data['event'],
+            target_url=data['target_url'],
+        )
+
+        return JsonResponse(
+            {
+                'id': instance.id,
+            },
+            status=201
+        )
+
+    def delete(self, request, hook_id, *args, **kwargs):
+        store = TaskStore.get_for_user(request.user)
+
+        try:
+            row = RestHook.objects.get(
+                id=hook_id,
+                task_store=store
+            )
+        except RestHook.DoesNotExist:
+            return JsonResponse({}, status=404)
+
+        row.delete()
+
+        return JsonResponse({}, status=200)
