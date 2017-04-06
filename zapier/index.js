@@ -7,7 +7,7 @@ const authentication = {
     'url': 'https://inthe.am/api/v2/user/status/'
   },
   fields: [
-    {key: 'api_key', type: 'string', required: true, helpText: 'Found on your settings page.'}
+    {key: 'api_key', type: 'string', required: true, helpText: 'Found in the "API Access" section of the "Configuration" page.'}
   ]
 }
 

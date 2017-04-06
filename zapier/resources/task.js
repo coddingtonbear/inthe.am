@@ -36,12 +36,17 @@ const searchTasks = (z, bundle) => {
 
 // create a task
 const createTask = (z, bundle) => {
+  var taskData = {
+      description: bundle.inputData.description,
+  }
+  if (bundle.inputData.due) {
+    taskData.due = bundle.inputData.due
+  }
+
   const responsePromise = z.request({
     method: 'POST',
     url: `${_sharedBaseUrl}tasks/`,
-    body: {
-      name: bundle.inputData.name // json by default
-    }
+    body: taskData
   });
   return responsePromise
     .then(response => JSON.parse(response.content));
