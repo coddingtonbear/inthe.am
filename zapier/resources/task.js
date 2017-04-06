@@ -13,7 +13,7 @@ const getTask = (z, bundle) => {
 // get a list of tasks
 const listTasks = (z) => {
   const responsePromise = z.request({
-    url: '${_sharedBaseUrl}tasks/',
+    url: `${_sharedBaseUrl}tasks/`,
     params: {
       order_by: 'id desc'
     }
@@ -25,7 +25,7 @@ const listTasks = (z) => {
 // find a particular task by name
 const searchTasks = (z, bundle) => {
   const responsePromise = z.request({
-    url: '${_sharedBaseUrl}tasks/',
+    url: `${_sharedBaseUrl}tasks/`,
     params: {
       query: `name:${bundle.inputData.name}`
     }
@@ -38,7 +38,7 @@ const searchTasks = (z, bundle) => {
 const createTask = (z, bundle) => {
   const responsePromise = z.request({
     method: 'POST',
-    url: '${_sharedBaseUrl}tasks/',
+    url: `${_sharedBaseUrl}tasks/`,
     body: {
       name: bundle.inputData.name // json by default
     }
