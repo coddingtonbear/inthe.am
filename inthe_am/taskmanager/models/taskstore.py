@@ -492,7 +492,7 @@ class TaskStore(models.Model):
 
         proc = self._git_command(*commit_args)
         proc.stdin.write(commit_message.encode('utf-8', 'replace'))
-        proc.stdin.close()
+        proc.communicate()
 
     #  Taskd-related methods
 

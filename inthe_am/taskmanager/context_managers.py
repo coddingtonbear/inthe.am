@@ -145,6 +145,7 @@ def git_checkpoint(
             )
 
             end_head = store.repository.head()
+            recurring_task_found = False
             for task_id in store.get_changed_task_ids(
                 end_head, start=start_head
             ):
@@ -167,7 +168,10 @@ def git_checkpoint(
                     store.auto_deduplicate and
                     task.get('recur')
                 ):
-                    store.deduplicate_tasks()
+                    recurring_task_found = True
+
+            if recurring_task_found:
+                store.deduplicate_tasks()
         except Exception as e:
             store.create_git_checkpoint(
                 u'%s (%s)' % (
