@@ -145,14 +145,14 @@ def git_checkpoint(
             )
 
             end_head = store.repository.head()
-            if emit_announcements:
-                for task_id in store.get_changed_task_ids(
-                    end_head, start=start_head
-                ):
-                    task = store.client.get_task(
-                        uuid=task_id
-                    )[1]
-                    store.send_rest_hook_messages(task_id)
+            for task_id in store.get_changed_task_ids(
+                end_head, start=start_head
+            ):
+                task = store.client.get_task(
+                    uuid=task_id
+                )[1]
+                store.send_rest_hook_messages(task_id)
+                if emit_announcements:
                     store.publish_announcement(
                         'changed_task',
                         {
@@ -163,11 +163,11 @@ def git_checkpoint(
                             'task_data': dict(task)
                         }
                     )
-                    if (
-                        store.auto_deduplicate and
-                        task.get('recur')
-                    ):
-                        store.deduplicate_tasks()
+                if (
+                    store.auto_deduplicate and
+                    task.get('recur')
+                ):
+                    store.deduplicate_tasks()
         except Exception as e:
             store.create_git_checkpoint(
                 u'%s (%s)' % (

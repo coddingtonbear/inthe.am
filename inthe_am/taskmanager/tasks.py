@@ -698,4 +698,13 @@ def send_rest_hook_message(self, rest_hook_id, task_id, **kwargs):
         rest_hook.delete()
         return
 
+    rest_hook.task_store.publish_personal_announcement({
+        'title': 'Rest Hooks',
+        'message': (
+            'Rest hook message dispatched: %s' % (
+                result.status_code,
+            )
+        )
+    })
+
     result.raise_for_status()
