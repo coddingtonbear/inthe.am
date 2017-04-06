@@ -13,7 +13,7 @@ from django.http import (
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
@@ -159,9 +159,12 @@ class RestHookHandler(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         try:
-            request.user, _ = BasicAuthentication().authenticate(request)
+            result = TokenAuthentication().authenticate(request)
+            if not result:
+                return JsonResponse({}, status=401)
+            request.user, _ = result
         except AuthenticationFailed:
-            return JsonResponse({}, status=401)
+            return JsonResponse({}, status=403)
 
         return super(RestHookHandler, self).dispatch(request, *args, **kwargs)
 
