@@ -12,10 +12,12 @@ from django.conf import settings
 from django.utils.timezone import now
 from django_mailbox.models import Message
 import requests
+from rest_framework.renderers import JSONRenderer
 
 from .context_managers import git_checkpoint
 from .lock import get_debounce_name_for_store, get_lock_redis, LockTimeout
 from .merge_tasks import merge_all_duplicate_tasks
+from .serializers.task import TaskSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -689,7 +691,9 @@ def send_rest_hook_message(self, rest_hook_id, task_id, **kwargs):
 
     result = requests.post(
         rest_hook.target_url,
-        data=json.dumps(task_data),
+        data=JSONRenderer().render(
+            TaskSerializer(task_data, store=rest_hook.task_store)
+        ),
         headers={
             'Content-type': 'application/json',
         }
