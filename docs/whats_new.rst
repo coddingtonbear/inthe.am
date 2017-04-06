@@ -1,6 +1,14 @@
 What's New?
 ===========
 
+6 April 2017
+------------
+
+Features
+~~~~~~~~
+
+* (Public Beta) Zapier Integration!
+
 25 July 2015
 ------------
 
