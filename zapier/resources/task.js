@@ -62,6 +62,7 @@ module.exports = {
       perform: getTask
     }
   },
+  /*
   list: {
     display: {
       label: 'New Task',
@@ -71,7 +72,7 @@ module.exports = {
       perform: listTasks
     }
   },
-  /*search: {
+  search: {
     display: {
       label: 'Find Task',
       description: 'Finds a task by searching on inthe.AM.'

@@ -1,4 +1,5 @@
 const TaskResource = require('./resources/task');
+const TaskTrigger = require('./triggers/task');
 
 const authentication = {
   type: 'custom',
@@ -38,6 +39,7 @@ const App = {
 
   // If you want your trigger to show up, you better include it here!
   triggers: {
+    [TaskTrigger.key]: TaskTrigger,
   },
 
   // If you want your searches to show up, you better include it here!
