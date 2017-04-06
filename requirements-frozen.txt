@@ -11,7 +11,7 @@ celery==3.1.19
 click==6.2
 contextlib2==0.5.1
 decorator==4.0.6
-Django==1.8.12
+Django==1.8.18
 -e git+https://github.com/coddingtonbear/django-behave.git@79028d59f89c7a12255120d266f5c844656a6805#egg=django_behave
 django-cors-headers==1.1.0
 django-extensions==1.6.1
