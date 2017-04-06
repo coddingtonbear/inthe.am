@@ -962,5 +962,9 @@ class TaskStore(models.Model):
             params=parameters
         )
 
+    def send_rest_hook_messages(self, task_id):
+        for hook in self.rest_hooks.all():
+            hook.send_message(task_id)
+
     class Meta:
         app_label = 'taskmanager'

@@ -5,7 +5,7 @@ from django.conf.urls import include, patterns, url
 from django.http import HttpResponse, HttpResponseNotFound
 from rest_framework import routers
 
-from .views import debug_login, TaskFeed
+from .views import debug_login, TaskFeed, RestHookHandler
 from .viewsets.activity_log import ActivityLogViewSet
 from .viewsets.task import (
     TaskViewSet, ical_feed, incoming_trello, incoming_sms,
@@ -40,6 +40,12 @@ def view_does_not_exist(request):
 urlpatterns = patterns(
     '',
     url('^api/v2/', include(router.urls, namespace='api')),
+    url('^api/v2/hooks/$', RestHookHandler.as_view(), name='rest_hook_list'),
+    url(
+        '^api/v2/hooks/?P<hook_id>[^/]+)/$',
+        RestHookHandler.as_view(),
+        name='rest_hook_detail'
+    ),
     url(
         r'^api/v[1,2]/task/(?P<username>[\w\d_.-]+)/sms/?$',
         incoming_sms,

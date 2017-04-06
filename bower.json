@@ -21,6 +21,7 @@
     "showdown": "^1.3.0"
   },
   "resolutions": {
-    "ember": "~2.4.3"
+    "ember": "~2.4.3",
+    "qunit-notifications": "~0.1.0"
   }
 }

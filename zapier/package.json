@@ -1,0 +1,27 @@
+{
+  "name": "zapier-platform-example-app-minimal",
+  "version": "1.0.0",
+  "description": "An example app for the Zapier platform.",
+  "repository": "zapier/zapier-platform-example-app-minimal",
+  "homepage": "https://zapier.com/",
+  "author": "Bryan Helmig <bryan@zapier.com>",
+  "license": "BSD-3-Clause",
+  "main": "index.js",
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --recursive"
+  },
+  "engines": {
+    "node": ">=4.3.0",
+    "npm": ">=2.0.0"
+  },
+  "dependencies": {
+    "lodash": "4.15.0",
+    "zapier-platform-core": "1.0.2"
+  },
+  "devDependencies": {
+    "babel": "6.5.2",
+    "babel-eslint": "6.1.2",
+    "mocha": "2.5.3",
+    "should": "9.0.2"
+  }
+}

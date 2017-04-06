@@ -46,9 +46,11 @@ if [ -z "$TRAVIS" ]; then
         printf "\n\nsource $MAIN_DIR/environment_variables.sh\n" >> /var/www/envs/twweb/bin/activate
         cp $MAIN_DIR/scripts/vagrant/environment_variables.sh $MAIN_DIR
     fi
+    set +e
     if [ ! -L $MAIN_DIR/bin ]; then
         ln -s /var/www/envs/twweb/bin $MAIN_DIR/bin
     fi
+    set -e
 
     # Copy bash profile into place
     cp $MAIN_DIR/scripts/vagrant/bash_profile /home/vagrant/.profile
@@ -67,12 +69,12 @@ mkdir -p $MAIN_DIR/logs
 if [ ! -d $TWWEB_TASKD_DATA ]; then
     # See environment variable TWWEB_TASKD_DATA
 
-    TASKD_VERSION="taskd-1.0.0"
+    TASKD_VERSION="taskd-1.1.0"
     echo "installing $TASKD_VERSION and setup certificates"
     mkdir -p $TWWEB_TASKD_DATA/src
     cd $TWWEB_TASKD_DATA/src
 
-    wget -nv http://taskwarrior.org/download/$TASKD_VERSION.tar.gz
+    wget -nv --no-check-certificate http://taskwarrior.org/download/$TASKD_VERSION.tar.gz
     tar xzf $TASKD_VERSION.tar.gz
     cd $TASKD_VERSION
 
@@ -127,7 +129,7 @@ if [ $RETVAL -ne 0 ]; then
     TASK_VERSION="task-2.5.1"
     echo "installing $TASK_VERSION"
     cd $TWWEB_TASKD_DATA/src
-    wget -nv http://taskwarrior.org/download/$TASK_VERSION.tar.gz
+    wget -nv --no-check-certificate http://taskwarrior.org/download/$TASK_VERSION.tar.gz
     tar xzf $TASK_VERSION.tar.gz
     cd $TASK_VERSION
     cmake .
@@ -148,13 +150,13 @@ else
     nvm install 5
     nvm use 5
 fi
-npm install -g npm@3.8.3
-npm install -g ember-cli@2.4.3 bower@1.7.6
+sudo npm install -g npm@3.8.3
+sudo npm install -g ember-cli@2.4.3 bower@1.7.6
 ember --version
 echo "running npm install"
-npm install
+sudo npm install
 echo "running bower install"
-bower --config.interactive=false install --allow-root
+sudo bower --config.interactive=false install --allow-root
 set -e
 echo "running ember build"
 ember build
@@ -166,7 +168,6 @@ pip install -r $MAIN_DIR/requirements-frozen.txt
 if [ -z "$TRAVIS" ]; then
     echo "preparing application"
     pip install ipdb
-    python $MAIN_DIR/manage.py syncdb --noinput
     python $MAIN_DIR/manage.py migrate --noinput
 
     if [ ! -f /etc/init/taskd-celery.conf ]; then
@@ -177,7 +178,9 @@ if [ -z "$TRAVIS" ]; then
     service taskd-celery restart
     service taskd restart
 
-    chown -R vagrant:vagrant $MAIN_DIR
+    set +e
+        chown -R vagrant:vagrant $MAIN_DIR
+    set -e
 else
     if [ -d /home/travis/.config ]; then
         chmod -R 777 /home/travis/.config

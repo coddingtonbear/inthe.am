@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 from fnmatch import fnmatch as glob
+import json
 import logging
 import re
 import shlex
@@ -10,6 +11,7 @@ from celery.signals import setup_logging
 from django.conf import settings
 from django.utils.timezone import now
 from django_mailbox.models import Message
+import requests
 
 from .context_managers import git_checkpoint
 from .lock import get_debounce_name_for_store, get_lock_redis, LockTimeout
@@ -672,3 +674,28 @@ def deduplicate_tasks(self, store_id, debounce_id=None, **kwargs):
         'title': 'Deduplication',
         'message': 'Deduplication process completed successfully.'
     })
+
+
+@shared_task(
+    bind=True,
+    default_retry_delay=15,
+    max_retries=10,
+)
+def send_rest_hook_message(self, rest_hook_id, task_id, **kwargs):
+    from . import models
+
+    rest_hook = models.RestHook.objects.get(id=rest_hook_id)
+    task_data = rest_hook.task_store.store.client.get_task(uuid=task_id)[1]
+
+    result = requests.post(
+        rest_hook.target_url,
+        data=json.dumps(task_data),
+        headers={
+            'Content-type': 'application/json',
+        }
+    )
+    if result.status_code == 410:
+        rest_hook.delete()
+        return
+
+    result.raise_for_status()

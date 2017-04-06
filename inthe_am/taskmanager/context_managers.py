@@ -152,6 +152,7 @@ def git_checkpoint(
                     task = store.client.get_task(
                         uuid=task_id
                     )[1]
+                    store.send_rest_hook_messages(task_id)
                     store.publish_announcement(
                         'changed_task',
                         {
