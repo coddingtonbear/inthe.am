@@ -64,7 +64,7 @@ def timed_activity(store, activity):
 @contextmanager
 def git_checkpoint(
     store, message, function=None, args=None, kwargs=None,
-    sync=None, gc=True, notify_rollback=True,
+    sync=None, gc=False, notify_rollback=True,
     emit_announcements=True, data=None,
     wait_timeout=settings.LOCKFILE_WAIT_TIMEOUT,
     lock_timeout=settings.LOCKFILE_TIMEOUT_SECONDS,

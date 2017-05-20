@@ -623,8 +623,23 @@ class TaskStore(models.Model):
             notify_rollback=False,
             lock_timeout=60 * 120,  # 2h of lock timeout; just in case!
         ):
-            self._git_command('reflog', 'expire', '--expire=now', '--all')
-            self._git_command('gc', '--aggressive', '--prune=now')
+            reflog = self._git_command(
+                'reflog',
+                'expire',
+                '--expire=now',
+                '--all'
+            )
+            reflog_result = reflog.communicate()
+            repack = self._git_command(
+                '-c', 'pack.windowMemory=30m',
+                '-c', 'pack.packSizeLimit=50m',
+                '-c', 'pack.threads=2',
+                'gc',
+                '--aggressive',
+                '--prune=now',
+            )
+            repack_result = repack.communicate()
+            return reflog_result, repack_result
 
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None

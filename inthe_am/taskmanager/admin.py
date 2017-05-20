@@ -148,7 +148,7 @@ class TaskStoreStatisticAdmin(admin.ModelAdmin):
     list_display = (
         'created', 'store', 'username', 'measure', 'value'
     )
-    list_filter = ('measure', 'store', )
+    list_filter = ('measure', )
     ordering = ('-created', )
 
     def username(self, obj):

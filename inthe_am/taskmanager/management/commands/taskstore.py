@@ -22,7 +22,8 @@ class Command(BaseCommand):
                 'lock',
                 'unlock',
                 'search',
-                'update_statistics'
+                'update_statistics',
+                'gc_large_repos'
             ],
             type=str,
         )
@@ -36,11 +37,17 @@ class Command(BaseCommand):
             type=int,
             default=5,
         )
+        parser.add_argument(
+            '--repack-size',
+            type=int,
+            default=int(1e8)
+        )
 
     def handle(self, *args, **options):
         subcommand = options['subcommand'][0]
         username = options['username']
         minutes = options['minutes']
+        repack_size = options['repack_size']
 
         if subcommand == 'lock':
             store = TaskStore.objects.get(user__username=username)
@@ -90,3 +97,15 @@ class Command(BaseCommand):
                         run_id=run_id,
                     )
                     bar.update(idx)
+        elif subcommand == 'gc_large_repos':
+            for store in TaskStore.objects.order_by('-last_synced'):
+                last_size_measurement = store.statistics.filter(
+                    measure=TaskStoreStatistic.MEASURE_SIZE
+                ).latest('created')
+                if last_size_measurement.value > repack_size:
+                    print("> Repacking {store}...".format(store=store))
+                    reflog_result, repack_result = store.gc()
+                    for result_set in store.gc():
+                        for result in result_set:
+                            if result:
+                                print(result)
