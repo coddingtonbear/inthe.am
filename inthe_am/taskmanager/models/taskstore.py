@@ -639,7 +639,20 @@ class TaskStore(models.Model):
                 '--prune=now',
             )
             repack_result = repack.communicate()
-            return reflog_result, repack_result
+
+            results = {
+                'reflog': {
+                    'returncode': reflog.returncode,
+                    'stdout': reflog_result[0],
+                    'stderr': reflog_result[1],
+                },
+                'repack': {
+                    'returncode': repack.returncode,
+                    'stdout': repack_result[0],
+                    'stderr': repack_result[1],
+                },
+            }
+            return results
 
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None

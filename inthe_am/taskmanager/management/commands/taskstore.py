@@ -1,6 +1,7 @@
 from __future__ import print_function, unicode_literals
 
 import datetime
+import json
 
 import progressbar
 
@@ -104,8 +105,5 @@ class Command(BaseCommand):
                 ).latest('created')
                 if last_size_measurement.value > repack_size:
                     print("> Repacking {store}...".format(store=store))
-                    reflog_result, repack_result = store.gc()
-                    for result_set in store.gc():
-                        for result in result_set:
-                            if result:
-                                print(result)
+                    results = store.gc()
+                    print(json.dumps(results, sort_keys=True, indent=4))
