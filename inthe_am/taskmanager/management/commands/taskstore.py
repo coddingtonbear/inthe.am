@@ -107,11 +107,12 @@ class Command(BaseCommand):
                     print("> Repacking {store}...".format(store=store))
                     results = store.gc()
                     print(json.dumps(results, sort_keys=True, indent=4))
-                final_size = store.get_repository_size()
-                print(
-                    ">> {diff} MB recovered".format(
-                        diff=int(
-                            (last_size_measurement.value - final_size) / 1e6
+                    final_size = store.get_repository_size()
+                    print(
+                        ">> {diff} MB recovered".format(
+                            diff=int(
+                                (last_size_measurement.value - final_size)
+                                / 1e6
+                            )
                         )
                     )
-                )
