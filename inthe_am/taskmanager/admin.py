@@ -164,7 +164,7 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
         'sms_whitelist', 'email_whitelist',
     )
     list_display = (
-        'user', 'created', 'last_synced', 'repository_size',
+        'user', 'created', 'last_synced',
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
         'ical_enabled', 'twilio_enabled', 'trello_enabled',
         'local_sync',
@@ -208,9 +208,6 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
         if store.pk:
             return self._renderable(store.taskrc)
         return ''
-
-    def repository_size(self, obj):
-        return '%5.2f MB' % (obj.get_repository_size() / 1e6)
 
     def twilio_enabled(self, store):
         return True if store.twilio_auth_token else False
