@@ -66,7 +66,8 @@ def git_checkpoint(
     store, message, function=None, args=None, kwargs=None,
     sync=None, gc=True, notify_rollback=True,
     emit_announcements=True, data=None,
-    wait_timeout=settings.LOCKFILE_WAIT_TIMEOUT
+    wait_timeout=settings.LOCKFILE_WAIT_TIMEOUT,
+    lock_timeout=settings.LOCKFILE_TIMEOUT_SECONDS,
 ):
     lock_name = get_lock_name_for_store(store)
     try:
@@ -90,7 +91,10 @@ def git_checkpoint(
     start_head = None
     end_head = None
     with redis_lock(
-        lock_name, message=message, wait_timeout=wait_timeout
+        lock_name,
+        message=message,
+        lock_timeout=lock_timeout,
+        wait_timeout=wait_timeout,
     ):
         start_head = store.repository.head()
         git_index_lock_path = os.path.join(

@@ -16,6 +16,7 @@ from .models import (
     TaskStoreActivityLog,
     TrelloObject,
     TrelloObjectAction,
+    TaskStoreStatistic,
     UserMetadata
 )
 
@@ -141,6 +142,21 @@ class TwilioEnabledFilter(admin.SimpleListFilter):
             )
 
 
+class TaskStoreStatisticAdmin(admin.ModelAdmin):
+    raw_id_fields = ('store', )
+    search_fields = ('store__user__username', )
+    list_display = (
+        'created', 'store', 'username', 'measure', 'value'
+    )
+    list_filter = ('measure', 'store', )
+    ordering = ('-created', )
+
+    def username(self, obj):
+        return obj.user.username
+
+admin.site.register(TaskStoreStatistic, TaskStoreStatisticAdmin)
+
+
 class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     raw_id_fields = ('user', )
     search_fields = (
@@ -148,7 +164,7 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
         'sms_whitelist', 'email_whitelist',
     )
     list_display = (
-        'user', 'created', 'last_synced',
+        'user', 'created', 'last_synced', 'repository_size',
         'sync_enabled', 'pebble_cards_enabled', 'feed_enabled',
         'ical_enabled', 'twilio_enabled', 'trello_enabled',
         'local_sync',
@@ -192,6 +208,9 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
         if store.pk:
             return self._renderable(store.taskrc)
         return ''
+
+    def repository_size(self, obj):
+        return '%5.2f MB' % (obj.get_repository_size() / 1e6)
 
     def twilio_enabled(self, store):
         return True if store.twilio_auth_token else False

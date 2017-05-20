@@ -617,9 +617,14 @@ class TaskStore(models.Model):
         return total_size
 
     def gc(self):
-        with git_checkpoint(self, "Garbage Collection", notify_rollback=False):
+        with git_checkpoint(
+            self,
+            "Garbage Collection",
+            notify_rollback=False,
+            lock_timeout=60 * 120,  # 2h of lock timeout; just in case!
+        ):
             self._git_command('reflog', 'expire', '--expire=now', '--all')
-            self._git_command('gc', '--prune=now')
+            self._git_command('gc', '--aggressive', '--prune=now')
 
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None
