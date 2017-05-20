@@ -1,6 +1,7 @@
 alabaster==0.7.7
 amqp==1.4.9
 anyjson==0.3.3
+appdirs==1.4.3
 Babel==2.2.0
 backports.statistics==0.1.0
 behave==1.2.5
@@ -53,23 +54,27 @@ newrelic==2.54.0.41
 oauthlib==0.7.2
 offtrac==0.1.0
 ordereddict==1.1
+packaging==16.8
 parse==1.6.6
 parse-type==0.3.4
 path.py==8.1.2
 pbr==1.8.1
 pexpect==4.0.1
 pickleshare==0.5
+progressbar2==3.20.0
 psycogreen==1.0
 psycopg2==2.6.1
 ptyprocess==0.5
 pycurl==7.21.5
 Pygments==2.1
+pyparsing==2.2.0
 python-bugzilla==1.2.2
 python-dateutil==2.4.2
 python-memcached==1.53
 python-mimeparse==0.1.4
 python-openid==2.2.5
 -e git+https://github.com/latestrevision/python-social-auth.git@f435f73a8e296d19531b3a240bffae96ab79903b#egg=python_social_auth
+python-utils==2.1.0
 pytz==2015.7
 pyxdg==0.25
 raven==5.10.0

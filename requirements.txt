@@ -45,4 +45,4 @@ backports.statistics==0.1.0
 django-cors-headers==1.1.0
 uwsgi==2.0.12
 psycogreen==1.0
-progressbar==3.20.0
+progressbar2==3.20.0
