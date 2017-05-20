@@ -99,7 +99,7 @@ class Command(BaseCommand):
                     )
                     bar.update(idx)
         elif subcommand == 'gc_large_repos':
-            for store in TaskStore.objects.order_by('last_synced'):
+            for store in TaskStore.objects.order_by('-last_synced'):
                 last_size_measurement = store.statistics.filter(
                     measure=TaskStoreStatistic.MEASURE_SIZE
                 ).latest('created')
