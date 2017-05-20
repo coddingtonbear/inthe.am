@@ -152,7 +152,7 @@ class TaskStoreStatisticAdmin(admin.ModelAdmin):
     ordering = ('-created', )
 
     def username(self, obj):
-        return obj.user.username
+        return obj.store.user.username
 
 admin.site.register(TaskStoreStatistic, TaskStoreStatisticAdmin)
 
