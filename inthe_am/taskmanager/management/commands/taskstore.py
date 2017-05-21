@@ -100,9 +100,12 @@ class Command(BaseCommand):
                     bar.update(idx)
         elif subcommand == 'gc_large_repos':
             for store in TaskStore.objects.order_by('-last_synced'):
-                last_size_measurement = store.statistics.filter(
-                    measure=TaskStoreStatistic.MEASURE_SIZE
-                ).latest('created')
+                try:
+                    last_size_measurement = store.statistics.filter(
+                        measure=TaskStoreStatistic.MEASURE_SIZE
+                    ).latest('created')
+                except TaskStoreStatistic.DoesNotExist:
+                    continue
                 if last_size_measurement.value > repack_size:
                     print("> Repacking {store}...".format(store=store))
                     results = store.gc()
