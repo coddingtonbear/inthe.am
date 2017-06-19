@@ -10,7 +10,11 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q
 
 from inthe_am.taskmanager.models import TaskStore, TaskStoreStatistic
-from inthe_am.taskmanager.lock import get_lock_redis
+from inthe_am.taskmanager.lock import (
+    get_lock_name_for_store,
+    get_lock_redis,
+    redis_lock,
+)
 
 
 class Command(BaseCommand):
@@ -24,7 +28,8 @@ class Command(BaseCommand):
                 'unlock',
                 'search',
                 'update_statistics',
-                'gc_large_repos'
+                'gc_large_repos',
+                'squash',
             ],
             type=str,
         )
@@ -119,3 +124,51 @@ class Command(BaseCommand):
                             )
                         )
                     )
+        elif subcommand == 'squash':
+            store = TaskStore.objects.get(user__username=username)
+            lock_name = get_lock_name_for_store(store)
+
+            starting_size = store.get_repository_size()
+
+            with redis_lock(
+                lock_name,
+                message='Squash',
+                lock_timeout=60*60,
+                wait_timeout=60,
+            ):
+                if (
+                    store.trello_local_head
+                    and store.trello_local_head != self.repository.head()
+                ):
+                    raise ValueError("Trello head out-of-date; aborting!")
+
+                head_commit, _ = store._git_command(
+                    'rev-list',
+                    '--max-parents=0',
+                    'HEAD',
+                ).communicate()
+                head_commit = head_commit.strip()
+
+                store._git_command(
+                    'reset',
+                    '--soft',
+                    head_commit,
+                ).communicate()
+
+                store.create_git_checkpoint("Repository squashed.")
+
+                if store.trello_local_head:
+                    store.trello_local_head = self.repository.head()
+                    store.save()
+
+                #results = store.gc()
+                ending_size = store.get_repository_size()
+
+                print(
+                    ">> {diff} MB recovered".format(
+                        diff=int(
+                            (starting_size - ending_size)
+                            / 1e6
+                        )
+                    )
+                )
