@@ -5,10 +5,10 @@ appdirs==1.4.3
 Babel==2.2.0
 backports.statistics==0.1.0
 behave==1.2.5
-billiard==3.3.0.22
+billiard==3.3.0.23
 boto==2.34.0
 -e git+https://github.com/coddingtonbear/bugwarrior.git@c614f6ba99e380b097c12235d6b1dc7c3b980636#egg=bugwarrior
-celery==3.1.19
+celery==3.1.25
 click==6.2
 contextlib2==0.5.1
 decorator==4.0.6
@@ -43,7 +43,7 @@ jira==0.47
 jsonfield==1.0.3
 keyring==7.3
 kitchen==1.2.4
-kombu==3.0.33
+kombu==3.0.37
 lockfile==0.12.2
 lxml==3.4.4
 Markdown==2.6.6
@@ -67,20 +67,21 @@ psycopg2==2.6.1
 ptyprocess==0.5
 pycurl==7.21.5
 Pygments==2.1
+PyJWT==1.5.2
 pyparsing==2.2.0
 python-bugzilla==1.2.2
 python-dateutil==2.4.2
 python-memcached==1.53
 python-mimeparse==0.1.4
 python-openid==2.2.5
--e git+https://github.com/latestrevision/python-social-auth.git@f435f73a8e296d19531b3a240bffae96ab79903b#egg=python_social_auth
+python-social-auth==0.2.21
 python-utils==2.1.0
 pytz==2015.7
 pyxdg==0.25
 raven==5.10.0
 redis==2.10.5
 requests==2.2.0
-requests-oauthlib==0.6.0
+requests-oauthlib==0.8.0
 requests-toolbelt==0.5.1
 selenium==2.48.0
 simplegeneric==0.8.1
@@ -91,7 +92,7 @@ sphinx-rtd-theme==0.1.9
 splinter==0.7.3
 sse==1.2
 subprocess32==3.2.5
--e git+https://github.com/coddingtonbear/taskw@8e65254fa26f3398faf0f245e6b5b0fcbd5b312d#egg=taskw
+-e git+https://github.com/latestrevision/taskw@8e65254fa26f3398faf0f245e6b5b0fcbd5b312d#egg=taskw
 tlslite==0.4.9
 traitlets==4.1.0
 trello==0.9.1
