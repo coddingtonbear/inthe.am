@@ -46,6 +46,9 @@ Each task has at least the following fields:
 | ``wait``         | A date string [#datestring]_ representing the minimum date and time at  |
 |                  | which this task should appear in the pending task list.                 |
 +------------------+-------------------------------------------------------------------------+
+| ``until``        | A date string [#datestring]_ representing the maximum date and time at  |
+|                  | which this task should appear in the pending task list.                 |
++------------------+-------------------------------------------------------------------------+
 | ``scheduled``    | A date string [#datestring]_ representing the minimum date and time at  |
 |                  | which this task is scheduled.                                           |
 +------------------+-------------------------------------------------------------------------+
