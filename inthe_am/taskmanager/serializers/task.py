@@ -15,6 +15,7 @@ class TaskSerializer(serializers.Serializer):
     modified = serializers.DateTimeField(read_only=True)
     start = serializers.DateTimeField(required=False)
     wait = serializers.DateTimeField(required=False)
+    until = serializers.DatetimeField(required=False)
     scheduled = serializers.DateTimeField(required=False)
     depends = serializers.ListField(
         child=serializers.UUIDField(),
