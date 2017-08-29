@@ -64,6 +64,14 @@ class Command(BaseCommand):
         try:
             while True:
                 time.sleep(1)
+                if not runserver.is_alive():
+                    raise Exception(
+                        'Runserver has stopped.'
+                    )
+                if not ember.is_alive():
+                    raise Exception(
+                        'Ember has stopped.'
+                    )
         except KeyboardInterrupt:
             pass
         self.teardown()
