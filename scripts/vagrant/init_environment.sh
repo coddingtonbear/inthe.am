@@ -150,13 +150,13 @@ else
     nvm install 5
     nvm use 5
 fi
-sudo npm install -g npm@3.8.3
-sudo npm install -g ember-cli@2.4.3 bower@1.7.6
+npm install -g npm@3.8.3
+npm install -g ember-cli@2.4.3 bower@1.7.6
 ember --version
 echo "running npm install"
-sudo npm install
+npm install
 echo "running bower install"
-sudo bower --config.interactive=false install --allow-root
+bower --config.interactive=false install --allow-root
 set -e
 echo "running ember build"
 ember build
