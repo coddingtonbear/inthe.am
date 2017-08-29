@@ -36,6 +36,7 @@ script:
 - travis_retry bash scripts/travis/run_tests.sh
 env:
   global:
+  - SKIP_SASS_BINARY_DOWNLOAD_FOR_CI=true
   - ARTIFACTS_S3_BUCKET=inthe-am-travis-artifacts
   - TWWEB_DJANGO_MAILBOX_STORE_ORIGINAL_MESSAGE__BOOL=0
   - TWWEB_TEST_ALWAYS_SAVE_FULL_PAGE_DETAILS__BOOL=0
