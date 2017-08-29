@@ -150,7 +150,7 @@ else
     nvm install 5
     nvm use 5
 fi
-export PATH=node_modules/.bin:$PATH
+export PATH=$MAIN_DIR/node_modules/.bin:$PATH
 npm install npm@3.8.3
 npm install -g bower@1.7.6
 npm install ember-cli@2.4.3
