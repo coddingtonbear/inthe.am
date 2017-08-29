@@ -22,4 +22,4 @@ if [ -d "$HOME/bin" ] ; then
 fi
 
 source /var/www/envs/twweb/bin/activate
-export PATH=$MAIN_DIR/node_modules/.bin:$PATH
+export PATH=/var/www/twwweb/node_modules/.bin:$PATH
