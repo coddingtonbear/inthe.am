@@ -35,6 +35,15 @@ DEBUG = True
 if os.uname()[1] == "eugene.adamcoddington.net":
     DEBUG = False
 
+RUN_LOCALLY = {
+    'python_path': '/var/www/envs/twweb/bin/python',
+
+    'runserver_port': 8001,
+
+    'ember_path': '/var/www/twweb/node_modules/.bin/ember',
+    'ember_port': 8009,
+}
+
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [
