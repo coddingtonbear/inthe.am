@@ -11,6 +11,7 @@ if [ -z "$TRAVIS" ]; then
 fi
 
 # The below settings are unlikely to need to be changed for testing.
+export TWWEB_ALLOWED_HOSTS__JSON="['127.0.0.1']"
 export TWWEB_STREAMING_UPDATES_ENABLED__BOOL=0
 export TWWEB_TASKD_BINARY=/usr/local/bin/taskd
 export TWWEB_TASKD_SERVER=127.0.0.1:53589
