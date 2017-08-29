@@ -14,6 +14,8 @@ import os
 from subprocess32 import check_output
 import sys
 
+import raven
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 TRAVIS = True if os.environ.get('TRAVIS') else False
 TESTING = ('test' in sys.argv) or TRAVIS
@@ -440,7 +442,8 @@ REST_FRAMEWORK = {
 }
 
 RAVEN_CONFIG = {
-    'dsn': RAVEN_DSN
+    'dsn': RAVEN_DSN,
+    'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
 }
 
 if RAVEN_DSN:
