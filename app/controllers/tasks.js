@@ -89,7 +89,7 @@ var controller = ArrayController.extend({
                 var filter_value = filters.fields[field];
                 var item_value = item.get(field);
                 if(item_value instanceof Date) {
-                    item_value = moment(item_value).format('YYYY-MM-DDTHH:mm:ssZ');
+                    item_value = moment.utc(item_value).format('YYYY-MM-DDTHH:mm:ssZ');
                     if(filter_value === 'today') {
                         filter_value = moment().format('YYYY-MM-DD');
                     } else if(filter_value === 'tomorrow') {
