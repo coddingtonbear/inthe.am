@@ -80,11 +80,11 @@ def get_browser(engine):
                 'tags': [
                     'CI',
                 ],
-                'tunnel-identifier': os.environ.get(
-                    'TRAVIS_JOB_NUMBER',
-                    '0.0',
-                ),
             },
+            'tunnelIdentifier': os.environ.get(
+                'TRAVIS_JOB_NUMBER',
+                '0.0',
+            ),
             'browser': 'chrome',
             'platform': 'macOS 10.12',
             'version': '60.0',
