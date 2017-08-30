@@ -75,12 +75,10 @@ def get_browser(engine):
     engine_kwargs = {}
     if engine == 'remote' and os.environ.get('TRAVIS'):
         engine_kwargs.update({
-            'capabilities': {
-                'build': os.environ.get('TRAVIS_BUILD_NUMBER', 'dev'),
-                'tags': [
-                    'CI',
-                ],
-            },
+            'build': os.environ.get('TRAVIS_BUILD_NUMBER', 'dev'),
+            'tags': [
+                'CI',
+            ],
             'tunnelIdentifier': os.environ.get(
                 'TRAVIS_JOB_NUMBER',
                 '0.0',
