@@ -53,8 +53,8 @@ def get_browser(engine, time_zone):
                 '0.0',
             ),
             'browser': 'chrome',
-            'platform': 'Linux',
-            'version': '48.0',
+            'platform': 'Windows 10',
+            'version': '60.0',
             'timeZone': time_zone.split('/')[1].replace('_', ' '),
             'url': (
                 (
