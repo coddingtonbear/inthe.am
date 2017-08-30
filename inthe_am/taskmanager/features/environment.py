@@ -1,16 +1,13 @@
 from __future__ import print_function
 
 from collections import Counter
-import json
 import os
 import string
+import urllib
 from urlparse import urljoin
-import uuid
 
 from django.conf import settings
 from django.contrib.auth.models import User
-import lxml.html
-import requests
 from splinter.browser import Browser
 
 
@@ -74,37 +71,48 @@ def save_page_details(context, step=None, prefix='demand'):
         out.write(context.browser.html.encode('utf-8'))
 
 
-def before_all(context):
-    context.engine = getattr(settings, 'WEBDRIVER_BROWSER', 'phantomjs')
+def get_browser(engine):
     engine_kwargs = {}
-    if context.engine == 'remote' and os.environ.get('TRAVIS'):
+    if engine == 'remote' and os.environ.get('TRAVIS'):
         engine_kwargs.update({
             'capabilities': {
-                'build': os.environ['TRAVIS_BUILD_NUMBER'],
+                'build': os.environ.get('TRAVIS_BUILD_NUMBER', 'dev'),
                 'tags': [
                     'CI',
                 ],
-                'tunnel-identifier': os.environ[
-                    'TRAVIS_JOB_NUMBER'
-                ],
+                'tunnel-identifier': os.environ.get(
+                    'TRAVIS_JOB_NUMBER',
+                    '0.0',
+                ),
                 'browserName': 'chrome',
                 'platform': 'macOS 10.12',
                 'version': '60.0',
             },
             'url': (
-                '{username}:{password}@ondemand.saucelabs.com/wd/hub'.format(
-                    username=os.environ['SAUCE_USERNAME'],
-                    password=os.environ['SAUCE_ACCESS_KEY'],
+                (
+                    'http://{username}:{password}'
+                    '@ondemand.saucelabs.com/wd/hub'
+                ).format(
+                    username=urllib.quote(os.environ['SAUCE_USERNAME']),
+                    password=urllib.quote(os.environ['SAUCE_ACCESS_KEY']),
                 )
             ),
         })
+
+    browser = Browser(engine, **engine_kwargs)
+    browser.driver.set_window_size(1024, 800)
+    browser.driver.implicitly_wait(10)
+    browser.driver.set_page_load_timeout(60)
+
+    return browser
+
+
+def before_all(context):
+    context.engine = getattr(settings, 'WEBDRIVER_BROWSER', 'phantomjs')
+    context.browser = get_browser(context.engine)
     # Ember is running on :8000, and it knows to send API traffic to :8001
     # where this server is running.
     context.config.server_url = 'http://127.0.0.1:8000/'
-    context.browser = Browser(context.engine, **engine_kwargs)
-    context.browser.driver.set_window_size(1024, 800)
-    context.browser.driver.implicitly_wait(10)
-    context.browser.driver.set_page_load_timeout(60)
     context.browser.visit(context.config.server_url)
     context.browser.execute_script(
         u"window.localStorage.setItem('disable_ticket_stream', 'yes');"
