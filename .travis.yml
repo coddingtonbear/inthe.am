@@ -38,8 +38,7 @@ addons:
     paths:
     - logs/twweb.log
     - logs/twweb.error.log
-    - /tmp/task*.deb
-    - /tmp/taskd*.deb
+    - $(ls /tmp/*.deb | tr "\n" ":")
     - /tmp/testing_artifacts.tar.gz
     - /tmp/task_data.tar.gz
 env:
