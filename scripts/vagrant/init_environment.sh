@@ -137,6 +137,8 @@ if [ $RETVAL -ne 0 ]; then
     checkinstall --default
     cp /var/taskd/src/$TASK_VERSION/*.deb /tmp
 fi
+# Ensure that these files are readable for later archiving.
+chmod -R 777 /tmp/
 
 cd $MAIN_DIR
 set +e
