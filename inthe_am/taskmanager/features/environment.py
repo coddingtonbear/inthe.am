@@ -40,7 +40,7 @@ def calculate_absolute_path(context, url):
     return server_url + url
 
 
-def get_browser(engine):
+def get_browser(engine, time_zone):
     engine_kwargs = {}
     if engine == 'remote' and os.environ.get('TRAVIS'):
         engine_kwargs.update({
@@ -53,8 +53,9 @@ def get_browser(engine):
                 '0.0',
             ),
             'browser': 'chrome',
-            'platform': 'macOS 10.12',
-            'version': '60.0',
+            'platform': 'Linux',
+            'version': '48.0',
+            'timeZone': time_zone.split('/')[1].replace('_', ' '),
             'url': (
                 (
                     'http://{username}:{password}'
@@ -76,7 +77,8 @@ def get_browser(engine):
 
 def before_all(context):
     context.engine = getattr(settings, 'WEBDRIVER_BROWSER', 'phantomjs')
-    context.browser = get_browser(context.engine)
+    context.time_zone = 'America/Los_Angeles'
+    context.browser = get_browser(context.engine, context.time_zone)
     # Ember is running on :8000, and it knows to send API traffic to :8001
     # where this server is running.
     context.config.server_url = 'http://localhost:8000/'
