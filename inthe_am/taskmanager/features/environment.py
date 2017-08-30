@@ -40,37 +40,6 @@ def calculate_absolute_path(context, url):
     return server_url + url
 
 
-def save_page_details(context, step=None, prefix='demand'):
-    global TEST_COUNTERS, ABSOLUTE_COUNTER
-    ABSOLUTE_COUNTER += 1
-
-    this_absolute_counter = ABSOLUTE_COUNTER
-
-    scenario_name = sanitize_name(context.scenario.name)
-    if step:
-        step_name = sanitize_name(step.name)
-    else:
-        step_name = ''
-
-    status = 'FAIL' if context.failed else 'OK'
-
-    TEST_COUNTERS[prefix][scenario_name] += 1
-    this_counter = TEST_COUNTERS[prefix][scenario_name]
-
-    name = '{absolute}_{scenario}_{num}_{step}_{prefix}_{status}'.format(
-        absolute=str(this_absolute_counter).zfill(5),
-        scenario=scenario_name,
-        num=str(this_counter).zfill(2),
-        step=step_name,
-        prefix=prefix,
-        status=status,
-    )
-
-    context.browser.screenshot(name)
-    with open(os.path.join('/tmp', name + '.html'), 'w') as out:
-        out.write(context.browser.html.encode('utf-8'))
-
-
 def get_browser(engine):
     engine_kwargs = {}
     if engine == 'remote' and os.environ.get('TRAVIS'):
@@ -123,19 +92,11 @@ def after_all(context):
 
 
 def before_step(context, step):
-    if 'TRAVIS' in os.environ:
-        try:
-            save_page_details(context, step, 'before')
-        except Exception as e:
-            print(e)
+    pass
 
 
 def after_step(context, step):
-    if 'TRAVIS' in os.environ:
-        try:
-            save_page_details(context, step, 'following')
-        except Exception as e:
-            print(e)
+    pass
 
 
 def before_scenario(context, step):
