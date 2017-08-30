@@ -82,7 +82,7 @@ def store_configuration(context):
             key,
             get_json_value(
                 value,
-                timezone=context.time_zone
+                time_zone=context.time_zone
             )
         )
     store.save()
