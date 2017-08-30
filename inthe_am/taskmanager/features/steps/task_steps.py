@@ -35,7 +35,7 @@ def get_json_value(value, time_zone='UTC'):
             zone_str = time_zone
         return pytz.timezone(zone_str).localize(
             datetime.datetime.strptime(
-                date_str
+                date_str,
                 '%Y%m%dT%H%M%S'
             )
         )
