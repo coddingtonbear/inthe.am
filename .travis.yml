@@ -34,6 +34,7 @@ script:
 - travis_retry bash scripts/travis/run_tests.sh
 addons:
   artifacts:
+    debug: true
     s3_region: us-east-1
     paths:
     - logs/twweb.log
