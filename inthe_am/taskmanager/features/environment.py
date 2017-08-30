@@ -84,10 +84,10 @@ def get_browser(engine):
                     'TRAVIS_JOB_NUMBER',
                     '0.0',
                 ),
-                'browserName': 'chrome',
-                'platform': 'macOS 10.12',
-                'version': '60.0',
             },
+            'browser': 'chrome',
+            'platform': 'macOS 10.12',
+            'version': '60.0',
             'url': (
                 (
                     'http://{username}:{password}'
