@@ -43,76 +43,6 @@ def calculate_absolute_path(context, url):
     return server_url + url
 
 
-def save_full_page_details(context, output_path):
-    try:
-        js_errors = {
-            'result': json.loads(
-                context.browser.evaluate_script(
-                    "JSON.stringify(window.JS_ERRORS);"
-                )
-            )
-        }
-    except Exception as e:
-        print(e)
-        js_errors = {'error': str(e)}
-
-    try:
-        console_log = {
-            'result': json.loads(
-                context.browser.evaluate_script(
-                    "JSON.stringify(window.CONSOLE_LOG);"
-                )
-            )
-        }
-    except Exception as e:
-        print(e)
-        console_log = {'error': str(e)}
-
-    metadata = {
-        'js_errors': js_errors,
-        'console_log': console_log,
-    }
-
-    with open(os.path.join(output_path, 'meta.json'), 'w') as out:
-        out.write(
-            json.dumps(metadata).encode('utf8')
-        )
-
-    document = lxml.html.document_fromstring(
-        context.browser.html
-    )
-    resource_urls = {}
-    # Rewrite dom assets
-    selectors = [
-        ('//script', 'src', ),
-        ('//link', 'href', ),
-        ('//img', 'src', ),
-    ]
-    for selector, attribute in selectors:
-        for result in document.xpath(selector):
-            src = result.attrib.get(attribute)
-            if not src:
-                continue
-
-            url = calculate_absolute_path(context, src)
-            if url not in resource_urls:
-                _, extension = os.path.splitext(url)
-                resource_urls[url] = str(uuid.uuid4()) + extension
-            result.attrib[attribute] = resource_urls[url]
-
-    with open(os.path.join(output_path, 'index.html'), 'w') as out:
-        out.write(lxml.html.tostring(document))
-
-    for asset_url, name in resource_urls.items():
-        with open(os.path.join(output_path, name), 'w') as out:
-            try:
-                out.write(
-                    requests.get(asset_url, timeout=5).content
-                )
-            except Exception as e:
-                out.write(str(e))
-
-
 def save_page_details(context, step=None, prefix='demand'):
     global TEST_COUNTERS, ABSOLUTE_COUNTER
     ABSOLUTE_COUNTER += 1
@@ -143,36 +73,36 @@ def save_page_details(context, step=None, prefix='demand'):
     with open(os.path.join('/tmp', name + '.html'), 'w') as out:
         out.write(context.browser.html.encode('utf-8'))
 
-    if context.failed or settings.TEST_ALWAYS_SAVE_FULL_PAGE_DETAILS:
-        full_path = os.path.join('/tmp', name)
-        do_save = False
-        try:
-            os.mkdir(full_path)
-            do_save = True
-        except Exception as e:
-            print(
-                "Error encountered when saving full page details: %s" % e
-            )
-
-        if do_save:
-            save_full_page_details(context, full_path)
-
 
 def before_all(context):
     context.engine = getattr(settings, 'WEBDRIVER_BROWSER', 'phantomjs')
     engine_kwargs = {}
-    if context.engine == 'firefox':
+    if context.engine == 'remote' and os.environ.get('TRAVIS'):
         engine_kwargs.update({
             'capabilities': {
-                'marionette': True,
+                'build': os.environ['TRAVIS_BUILD_NUMBER'],
+                'tags': [
+                    'CI',
+                ],
+                'tunnel-identifier': os.environ[
+                    'TRAVIS_JOB_NUMBER'
+                ],
+                'browserName': 'chrome',
+                'platform': 'macOS 10.12',
+                'version': '60.0',
             },
+            'url': (
+                '{username}:{password}@ondemand.saucelabs.com/wd/hub'.format(
+                    username=os.environ['SAUCE_USERNAME'],
+                    password=os.environ['SAUCE_ACCESS_KEY'],
+                )
+            ),
         })
     # Ember is running on :8000, and it knows to send API traffic to :8001
     # where this server is running.
     context.config.server_url = 'http://127.0.0.1:8000/'
     context.browser = Browser(context.engine, **engine_kwargs)
-    if not context.engine == 'firefox':
-        context.browser.driver.set_window_size(1024, 800)
+    context.browser.driver.set_window_size(1024, 800)
     context.browser.driver.implicitly_wait(10)
     context.browser.driver.set_page_load_timeout(60)
     context.browser.visit(context.config.server_url)
