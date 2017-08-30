@@ -19,14 +19,14 @@ Feature: User can manipulate tasks
         And the user enters the text "2018-03-02 12:00" into the field named "wait"
         And the user clicks the button labeled "Save"
         Then a single waiting task with the following details will exist
-            | Key         | Value            |
-            | description | "My Description" |
-            | project     | "Alpha"          |
-            | priority    | "L"              |
-            | tags        | ["Magic"]        |
-            | due         | 20200302T120000Z |
-            | scheduled   | 20190302T120000Z |
-            | wait        | 20180302T120000Z |
+            | Key         | Value                 |
+            | description | "My Description"      |
+            | project     | "Alpha"               |
+            | priority    | "L"                   |
+            | tags        | ["Magic"]             |
+            | due         | 20200302T120000 Local |
+            | scheduled   | 20190302T120000 Local |
+            | wait        | 20180302T120000 Local |
 
     Scenario: User can view existing task
         Given the user is logged-in

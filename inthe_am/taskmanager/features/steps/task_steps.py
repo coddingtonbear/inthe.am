@@ -18,12 +18,27 @@ from inthe_am.taskmanager.merge_tasks import (
 from utils import get_store
 
 
-def get_json_value(value):
-    if re.match(r'^\d{8}T\d{6}Z$', value):
-        return datetime.datetime.strptime(
-            value,
-            '%Y%m%dT%H%M%SZ'
-        ).replace(tzinfo=pytz.UTC)
+def get_json_value(value, time_zone='UTC'):
+    matched = re.match(r'^\d{8}T\d{6}Z$', value)
+    if matched:
+        return pytz.UTC.localize(
+            datetime.datetime.strptime(
+                value,
+                '%Y%m%dT%H%M%SZ'
+            )
+        )
+    matched = re.match(r'^(?P<date>\d{8}T\d{6}) (?P<zone>.*)$', value)
+    if matched:
+        date_str = matched.groupdict()['date']
+        zone_str = matched.groupdict()['zone']
+        if zone_str.lower() == 'local':
+            zone_str = time_zone
+        return pytz.timezone(zone_str).localize(
+            datetime.datetime.strptime(
+                date_str
+                '%Y%m%dT%H%M%S'
+            )
+        )
     return json.loads(value)
 
 
@@ -47,7 +62,9 @@ def task_with_details(context, status):
     )
     task = tasks[0]
     for key, value in context.table.rows:
-        assert task.get(key) == get_json_value(value), (
+        assert task.get(key) == get_json_value(
+            value, time_zone=context.time_zone
+        ), (
             "Task field %s's value is %s, not %s" % (
                 key,
                 task.get(key),
@@ -60,7 +77,14 @@ def task_with_details(context, status):
 def store_configuration(context):
     store = get_store()
     for key, value in context.table.rows:
-        setattr(store, key, get_json_value(value))
+        setattr(
+            store,
+            key,
+            get_json_value(
+                value,
+                timezone=context.time_zone
+            )
+        )
     store.save()
 
 
@@ -167,7 +191,7 @@ def existing_task_with_details(context):
         'description': 'Untitled'
     }
     for key, value in context.table.rows:
-        task[key] = get_json_value(value)
+        task[key] = get_json_value(value, time_zone=context.time_zone)
     task['uuid'] = str(uuid.uuid4())
 
     if 'annotations' in task:
@@ -219,7 +243,12 @@ def following_values_visible_details(context):
 
 @given(u'a task "{name}" with the following details')
 def task_with_following_details(context, name):
-    task = {row[0]: get_json_value(row[1]) for row in context.table.rows}
+    task = {
+        row[0]: get_json_value(
+            row[1],
+            time_zone=context.time_zone
+        ) for row in context.table.rows
+    }
     task['uuid'] = str(uuid.uuid4())
 
     if 'annotations' in task:
