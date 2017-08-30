@@ -162,6 +162,7 @@ bower --config.interactive=false install --allow-root
 set -e
 echo "running ember build"
 ember build
+which ember
 
 # Install requirements
 echo "installing python requirements"
