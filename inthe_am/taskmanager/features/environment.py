@@ -112,7 +112,7 @@ def before_all(context):
     context.browser = get_browser(context.engine)
     # Ember is running on :8000, and it knows to send API traffic to :8001
     # where this server is running.
-    context.config.server_url = 'http://127.0.0.1:8000/'
+    context.config.server_url = 'http://localhost:8000/'
     context.browser.visit(context.config.server_url)
     context.browser.execute_script(
         u"window.localStorage.setItem('disable_ticket_stream', 'yes');"
