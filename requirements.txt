@@ -12,7 +12,7 @@ python-memcached==1.53
 webcolors==1.4
 django-twilio==0.4
 dulwich==0.9.4
-raven>=4.0.4
+raven>=5.10.0
 mock>=1.0.1
 -e git+https://github.com/niwinz/django-sse.git@1351b1387250c412e1adfc33aef0bc9d888d5bbf#egg=django-sse
 sse>=1.2
@@ -23,8 +23,8 @@ Celery>=3.1.25,<4
 redis>=2.10.3
 subprocess32==3.2.5
 behave==1.2.5
-selenium==2.48.0
-splinter==0.7.3
+selenium==3.4.3
+splinter==0.7.6
 lxml==3.4.4
 -e git+https://github.com/coddingtonbear/django-behave.git@79028d59f89c7a12255120d266f5c844656a6805#egg=django_behave
 ipdb==0.8
