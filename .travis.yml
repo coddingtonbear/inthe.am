@@ -9,6 +9,7 @@ install:
 - sudo /usr/local/bin/taskd server --data /var/taskd --daemon
 - sudo chmod -R 777 ./
 - sudo chmod -R 777 /var/taskd
+- sudo chmod -R 777 /tmp
 - git config --global user.email "gitbot@inthe.am"
 - git config --global user.name "Inthe.AM Git Bot"
 before_script:
