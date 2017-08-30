@@ -83,13 +83,13 @@ redis==2.10.5
 requests==2.2.0
 requests-oauthlib==0.8.0
 requests-toolbelt==0.5.1
-selenium==2.48.0
+selenium==3.4.3
 simplegeneric==0.8.1
 six==1.10.0
 snowballstemmer==1.2.1
 Sphinx==1.3.4
 sphinx-rtd-theme==0.1.9
-splinter==0.7.3
+splinter==0.7.6
 sse==1.2
 subprocess32==3.2.5
 -e git+https://github.com/latestrevision/taskw@8e65254fa26f3398faf0f245e6b5b0fcbd5b312d#egg=taskw

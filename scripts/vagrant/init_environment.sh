@@ -137,6 +137,8 @@ if [ $RETVAL -ne 0 ]; then
     checkinstall --default
     cp /var/taskd/src/$TASK_VERSION/*.deb /tmp
 fi
+# Ensure that these files are readable for later archiving.
+chmod -R 777 /tmp/
 
 cd $MAIN_DIR
 set +e
@@ -150,16 +152,19 @@ else
     nvm install 5
     nvm use 5
 fi
-sudo npm install -g npm@3.8.3
-sudo npm install -g ember-cli@2.4.3 bower@1.7.6
+export PATH=$MAIN_DIR/node_modules/.bin:$PATH
+npm install -g npm@5.3.0
+npm install -g bower@1.7.6
+npm install ember-cli@2.4.3
 ember --version
 echo "running npm install"
-sudo npm install
+npm install
 echo "running bower install"
-sudo bower --config.interactive=false install --allow-root
+bower --config.interactive=false install --allow-root
 set -e
 echo "running ember build"
 ember build
+which ember
 
 # Install requirements
 echo "installing python requirements"

@@ -33,6 +33,15 @@ DEBUG = True
 if os.uname()[1] == "eugene.adamcoddington.net":
     DEBUG = False
 
+RUN_LOCALLY = {
+    'python_path': 'python',
+
+    'runserver_port': 8001,
+
+    'ember_path': '%s/node_modules/.bin/ember' % BASE_DIR,
+    'ember_port': 8009,
+}
+
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [

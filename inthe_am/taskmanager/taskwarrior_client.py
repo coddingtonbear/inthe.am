@@ -33,6 +33,10 @@ class TaskwarriorError(Exception):
 
 
 class TaskwarriorClient(TaskWarriorShellout):
+    NONZERO_ALERT_EXEMPT = [
+        'list',
+    ]
+
     def __init__(self, *args, **kwargs):
         self.store = None
         if 'store' in kwargs:
@@ -181,7 +185,11 @@ class TaskwarriorClient(TaskWarriorShellout):
             }
         )
 
-        if proc.returncode != 0:
+        base_command = args[0]
+        if (
+            proc.returncode != 0 and
+            base_command not in self.NONZERO_ALERT_EXEMPT
+        ):
             logger.error(
                 'Non-zero return code returned from taskwarrior: %s; %s' % (
                     proc.returncode,

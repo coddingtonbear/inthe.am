@@ -102,8 +102,12 @@ def clicks_link_class(context, class_name):
 
 @when(u'the user enters the text "{text}" into the field named "{field}"')
 def user_enters_text_into_field(context, text, field):
-    context.browser.find_by_name(field).type(text)
+    field = context.browser.find_by_name(field)
+    field.click()
+    field.type(text)
 
+    # Unfocus the element
+    field.type('\t')
 
 @when(u'the user clears the text field named "{field_name}"')
 def user_clears_text_field(context, field_name):

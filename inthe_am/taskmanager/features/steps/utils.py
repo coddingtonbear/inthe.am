@@ -39,22 +39,6 @@ def monkey_patch_browser(context):
             lastConfirmationMessage = message; return true;
         }
     """.replace('\n', ' '))
-    context.browser.execute_script("""
-        CONSOLE_LOG = [];
-    """.replace('\n', ' '))
-    context.browser.execute_script("""
-        window.console.log = function() {
-            CONSOLE_LOG.push(arguments)
-        }
-    """.replace('\n', ''))
-    context.browser.execute_script("""
-        JS_ERRORS = [];
-    """.replace('\n', ' '))
-    context.browser.execute_script("""
-        window.onerror = function(errorMessage) {
-            window.JS_ERRORS.push(errorMessage)
-        }
-    """.replace('\n', ''))
 
 
 def get_user():

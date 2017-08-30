@@ -4,7 +4,11 @@ import subprocess
 import threading
 import time
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
+
+
+CONFIG = settings.RUN_LOCALLY
 
 
 class Command(BaseCommand):
@@ -13,10 +17,10 @@ class Command(BaseCommand):
     def run_runserver(self):
         proc = subprocess.Popen(
             [
-                'python',
+                CONFIG.get('python_path', '/usr/bin/python'),
                 'manage.py',
                 'runserver',
-                '0.0.0.0:8001',
+                '0.0.0.0:%s' % CONFIG.get('runserver_port', 8001)
             ],
             env=os.environ.copy()
         )
@@ -27,9 +31,9 @@ class Command(BaseCommand):
         kwargs['env'] = os.environ.copy()
         proc = subprocess.Popen(
             [
-                'ember',
+                CONFIG.get('ember_path', '/usr/bin/ember'),
                 'server',
-                '--live-reload-port', '8009',
+                '--live-reload-port', str(CONFIG.get('ember_port', 8009)),
             ],
             **kwargs
         )
@@ -60,6 +64,14 @@ class Command(BaseCommand):
         try:
             while True:
                 time.sleep(1)
+                if not runserver.is_alive():
+                    raise Exception(
+                        'Runserver has stopped.'
+                    )
+                if not ember.is_alive():
+                    raise Exception(
+                        'Ember has stopped.'
+                    )
         except KeyboardInterrupt:
             pass
         self.teardown()
