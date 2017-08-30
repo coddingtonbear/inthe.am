@@ -48,7 +48,7 @@ def save_full_page_details(context, output_path):
         js_errors = {
             'result': json.loads(
                 context.browser.evaluate_script(
-                    "JSON.stringify(JS_ERRORS);"
+                    "JSON.stringify(window.JS_ERRORS);"
                 )
             )
         }
@@ -60,7 +60,7 @@ def save_full_page_details(context, output_path):
         console_log = {
             'result': json.loads(
                 context.browser.evaluate_script(
-                    "JSON.stringify(CONSOLE_LOG);"
+                    "JSON.stringify(window.CONSOLE_LOG);"
                 )
             )
         }

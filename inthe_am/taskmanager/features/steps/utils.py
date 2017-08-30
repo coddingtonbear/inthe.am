@@ -40,15 +40,15 @@ def monkey_patch_browser(context):
         }
     """.replace('\n', ' '))
     context.browser.execute_script("""
-        CONSOLE_LOG = [];
+        window.CONSOLE_LOG = [];
     """.replace('\n', ' '))
     context.browser.execute_script("""
         window.console.log = function() {
-            CONSOLE_LOG.push(arguments)
+            window.CONSOLE_LOG.push(arguments)
         }
     """.replace('\n', ''))
     context.browser.execute_script("""
-        JS_ERRORS = [];
+        window.JS_ERRORS = [];
     """.replace('\n', ' '))
     context.browser.execute_script("""
         window.onerror = function(errorMessage) {
