@@ -27,7 +27,7 @@ class TrelloObject(models.Model):
     BOARD = 'board'
     LIST = 'list'
 
-    TYPE_CHOIES = (
+    TYPE_CHOICES = (
         (CARD, 'Card', ),
         (BOARD, 'Board', ),
         (LIST, 'List', )
@@ -49,7 +49,7 @@ class TrelloObject(models.Model):
         null=True,
         blank=True,
     )
-    type = models.CharField(choices=TYPE_CHOIES, max_length=10)
+    type = models.CharField(choices=TYPE_CHOICES, max_length=10)
     meta = JSONField()
     log = JSONField(null=True, blank=True)
     deleted = models.BooleanField(default=False)

@@ -226,7 +226,7 @@ def git_checkpoint(
                 store.git_reset(pre_work_sha)
             else:
                 logger.exception(
-                    "An error occured that did not require rolling-back "
+                    "An error occurred that did not require rolling-back "
                     "the git repository at %s (at %s)",
                     store.local_path,
                     pre_work_sha

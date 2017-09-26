@@ -79,7 +79,7 @@ module.exports = {
 
     sample: {
       id: 'ff1c2fc0-936d-49f3-839e-87cb8b7f350e',
-      description: 'Forget bananna label image sound.',
+      description: 'Forget banana label image sound.',
     }
   }
 };

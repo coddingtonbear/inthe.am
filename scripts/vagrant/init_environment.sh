@@ -9,7 +9,7 @@ if [ ! -z "$TRAVIS" ]; then
 fi
 
 # Install necessary packages
-echo "installing depencencies"
+echo "installing dependencies"
 apt-get update
 apt-get install -y python-software-properties
 apt-add-repository -y ppa:chris-lea/node.js
