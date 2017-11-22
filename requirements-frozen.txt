@@ -7,7 +7,7 @@ backports.statistics==0.1.0
 behave==1.2.5
 billiard==3.3.0.23
 boto==2.34.0
--e git+https://github.com/coddingtonbear/bugwarrior.git@c614f6ba99e380b097c12235d6b1dc7c3b980636#egg=bugwarrior
+-e git+https://github.com/coddingtonbear/bugwarrior.git@a96b0c6a72dfc633500bfc0661aa16d1c038840f#egg=bugwarrior
 celery==3.1.25
 click==6.2
 contextlib2==0.5.1
