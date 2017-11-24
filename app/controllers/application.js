@@ -145,24 +145,24 @@ var controller = Ember.Controller.extend({
           })
           if (!this.get('user.tos_up_to_date')) {
             Ember.run.next(
-                            this,
-                            function () {
-                              this.transitionToRoute('terms-of-service')
-                            }
-                        )
+                this,
+                function () {
+                  this.transitionToRoute('terms-of-service')
+                }
+            )
           }
           this.handlePostLoginRedirects()
         } else {
           Raven.setUser()
           if (window.localStorage) {
             if (
-                            (!window.location.pathname) ||
-                            window.location.pathname !== '/'
-                        ) {
+              (!window.location.pathname) ||
+              window.location.pathname !== '/'
+            ) {
               window.localStorage.setItem(
-                                'redirect_to',
-                                window.location.href
-                            )
+                'redirect_to',
+                window.location.href
+              )
             }
           }
           this.transitionToRoute('about')
