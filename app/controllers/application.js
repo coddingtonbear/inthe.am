@@ -477,12 +477,12 @@ var controller = Ember.Controller.extend({
     var controller = this
     for (var keycode in this.shortcuts) {
       if (this.shortcuts.hasOwnProperty(keycode)) {
-        var event_name = this.shortcuts[keycode]
+        var eventName = this.shortcuts[keycode]
         $(document).bind('keydown', keycode, function (name, evt) {
           evt.stopPropagation()
           controller.send(name, controller)
           return false
-        }.bind(this, event_name))
+        }.bind(this, eventName))
       }
     }
   },
