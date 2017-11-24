@@ -1,5 +1,5 @@
-import TasksController from "./tasks";
+import TasksController from './tasks'
 
-var controller = TasksController.extend({});
+var controller = TasksController.extend({})
 
-export default controller;
+export default controller
