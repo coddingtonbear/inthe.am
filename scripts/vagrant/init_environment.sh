@@ -15,7 +15,7 @@ apt-get install -y python-software-properties
 apt-add-repository -y ppa:chris-lea/node.js
 add-apt-repository -y ppa:ubuntu-toolchain-r/test
 apt-get update
-apt-get install -y --force-yes git postgresql-server-dev-9.1 python-dev cmake build-essential uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs firefox checkinstall curl libcurl4-gnutls-dev libgnutls-dev libxml2-dev libxslt1-dev g++-4.8
+apt-get install -y --force-yes git postgresql-server-dev-9.3 python-dev cmake build-essential uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev firefox checkinstall curl libcurl4-gnutls-dev libgnutls-dev libxml2-dev libxslt1-dev g++-5
 update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 
 # Python prerequisites
@@ -142,20 +142,16 @@ chmod -R 777 /tmp/
 
 cd $MAIN_DIR
 set +e
-echo "installing ember-cli and bower"
-if [ -z "$TRAVIS" ]; then
-    # Install a modern version of node
-    npm install -g n
-    n 5.0.0
-else
-    . $HOME/.nvm/nvm.sh
-    nvm install 5
-    nvm use 5
-fi
-export PATH=$MAIN_DIR/node_modules/.bin:$PATH
-npm install -g npm@5.3.0
-npm install -g bower@1.7.6
-npm install ember-cli@2.4.3
+echo "installing nvm, ember-cli, and bower"
+
+curl -L https://git.io/n-install | bash -s -- -y lts
+. $HOME/.bashrc
+sudo ln -s `which node` /usr/local/bin/nodejs
+sudo ln -s `which node` /usr/local/bin/node
+export PATH=$MAIN_DIR/node_modules/.bin:$PATH:$(npm config get prefix)
+npm install npm@5.5.1
+npm install bower@1.8.2
+npm install ember-cli@2.12.3
 ember --version
 echo "running npm install"
 npm install

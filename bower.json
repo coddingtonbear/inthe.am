@@ -1,10 +1,6 @@
 {
   "name": "inthe_am",
   "dependencies": {
-    "ember": "~2.4.3",
-    "ember-cli-shims": "0.1.1",
-    "ember-cli-test-loader": "0.2.2",
-    "ember-qunit-notifications": "0.1.0",
     "markdown": "~0.5.0",
     "moment": "~2.9.0",
     "javascript-linkify": "latest",
@@ -19,9 +15,5 @@
     "modernizr": "~2.8.3",
     "Sortable": "~1.1.0",
     "showdown": "^1.3.0"
-  },
-  "resolutions": {
-    "ember": "~2.4.3",
-    "qunit-notifications": "~0.1.0"
   }
 }

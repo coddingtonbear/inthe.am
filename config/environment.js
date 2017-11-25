@@ -4,12 +4,15 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'inthe_am',
     environment: environment,
-    baseURL: '/',
+    rootURL: '/',
     locationType: 'history',
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
         // e.g. 'with-controller': true
+      },
+      EXTEND_PROTOTYPES: {
+        Date: false
       }
     },
 
@@ -31,9 +34,6 @@ module.exports = function(environment) {
   }
 
   if (environment === 'test') {
-    // Testem prefers this...
-    ENV.baseURL = '/';
-
     // keep test console output quieter
     ENV.APP.LOG_ACTIVE_GENERATION = false;
     ENV.APP.LOG_VIEW_LOOKUPS = false;
