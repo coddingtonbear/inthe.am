@@ -19,6 +19,7 @@ export TWWEB_TASKD_ORG=inthe_am
 export TWWEB_TASK_BINARY=/usr/local/bin/task
 export TWWEB_TASKD_DATA=/var/taskd
 export TWWEB_TASKD_SIGNING_TEMPLATE=/var/taskd/cert.template
+export TWWEB_CELERY_ALWAYS_EAGER__BOOL=1
 export DJANGO_SETTINGS_MODULE=inthe_am.settings
 export PYTHONPATH=/var/www/twweb
 export TWWEB_DEFAULT_FILE_STORAGE=django.core.files.storage.FileSystemStorage
