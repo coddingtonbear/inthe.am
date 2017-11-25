@@ -144,6 +144,11 @@ cd $MAIN_DIR
 set +e
 echo "installing nvm, ember-cli, and bower"
 
+if [ ! -z "$TRAVIS" ]; then
+    mkdir /opt/node
+    chmod 777 /opt/node
+    export N_PREFIX=/opt/node
+fi
 curl -L https://git.io/n-install | bash -s -- -y lts
 . $HOME/.bashrc
 sudo ln -s `which node` /usr/local/bin/nodejs

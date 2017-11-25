@@ -32,7 +32,7 @@ class Command(BaseCommand):
         proc = subprocess.Popen(
             [
                 CONFIG.get('ember_path', '/usr/bin/ember'),
-                'server',
+                'serve',
                 '--live-reload-port', str(CONFIG.get('ember_port', 8009)),
             ],
             **kwargs
