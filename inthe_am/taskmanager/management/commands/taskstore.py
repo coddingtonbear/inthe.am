@@ -138,7 +138,7 @@ class Command(BaseCommand):
             ):
                 if (
                     store.trello_local_head
-                    and store.trello_local_head != self.repository.head()
+                    and store.trello_local_head != store.repository.head()
                 ):
                     raise ValueError("Trello head out-of-date; aborting!")
 
@@ -158,7 +158,7 @@ class Command(BaseCommand):
                 store.create_git_checkpoint("Repository squashed.")
 
                 if store.trello_local_head:
-                    store.trello_local_head = self.repository.head()
+                    store.trello_local_head = store.repository.head()
                     store.save()
 
                 #results = store.gc()
