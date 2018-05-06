@@ -1,5 +1,5 @@
-import Task from "./task";
+import Task from './task'
 
-var model = Task.extend({});
+var model = Task.extend({})
 
-export default model;
+export default model
