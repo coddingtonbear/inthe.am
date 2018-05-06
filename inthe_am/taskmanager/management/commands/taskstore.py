@@ -44,6 +44,12 @@ class Command(BaseCommand):
             default=5,
         )
         parser.add_argument(
+            '--force',
+            type=bool,
+            action='store_true',
+            default=False,
+        )
+        parser.add_argument(
             '--repack-size',
             type=int,
             default=int(1e8)
@@ -139,6 +145,7 @@ class Command(BaseCommand):
                 if (
                     store.trello_local_head
                     and store.trello_local_head != store.repository.head()
+                    and not options['force']
                 ):
                     raise ValueError("Trello head out-of-date; aborting!")
 
@@ -161,7 +168,7 @@ class Command(BaseCommand):
                     store.trello_local_head = store.repository.head()
                     store.save()
 
-                #results = store.gc()
+                results = store.gc()
                 ending_size = store.get_repository_size()
 
                 print(
