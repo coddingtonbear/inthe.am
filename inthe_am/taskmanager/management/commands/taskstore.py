@@ -45,7 +45,6 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             '--force',
-            type=bool,
             action='store_true',
             default=False,
         )
