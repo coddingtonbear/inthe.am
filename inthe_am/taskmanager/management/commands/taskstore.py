@@ -167,14 +167,14 @@ class Command(BaseCommand):
                     store.trello_local_head = store.repository.head()
                     store.save()
 
-                results = store.gc()
-                ending_size = store.get_repository_size()
+            results = store.gc()
+            ending_size = store.get_repository_size()
 
-                print(
-                    ">> {diff} MB recovered".format(
-                        diff=int(
-                            (starting_size - ending_size)
-                            / 1e6
-                        )
+            print(
+                ">> {diff} MB recovered".format(
+                    diff=int(
+                        (starting_size - ending_size)
+                        / 1e6
                     )
                 )
+            )
