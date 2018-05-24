@@ -14,6 +14,11 @@ class UserMetadata(models.Model):
         default=None,
         null=True,
     )
+    privacy_policy_version = models.IntegerField(default=0)
+    privacy_policy_accepted = models.DateTimeField(
+        default=None,
+        null=True,
+    )
     colorscheme = models.CharField(
         default='dark-yellow-green.theme',
         max_length=255,
@@ -22,6 +27,10 @@ class UserMetadata(models.Model):
     @property
     def tos_up_to_date(self):
         return self.tos_version == settings.TOS_VERSION
+
+    @property
+    def privacy_policy_up_to_date(self):
+        return self.privacy_policy_version == settings.PRIVACY_POLICY_VERSION
 
     @classmethod
     def get_for_user(cls, user):

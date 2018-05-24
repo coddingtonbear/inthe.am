@@ -53,6 +53,7 @@ def get_published_properties(user, store, meta):
         'taskrc_extras': store.taskrc_extras,
         'api_key': store.api_key.key,
         'tos_up_to_date': meta.tos_up_to_date,
+        'privacy_policy_up_to_date': meta.privacy_policy_up_to_date,
         'feed_url': reverse(
             'feed',
             kwargs={
@@ -288,6 +289,19 @@ class UserViewSet(viewsets.ViewSet):
         meta = models.UserMetadata.get_for_user(request.user)
         meta.tos_version = request.POST['version']
         meta.tos_accepted = now()
+        meta.save()
+
+        return Response()
+
+    @list_route(
+        methods=['post'],
+        permission_classes=[IsAuthenticated],
+        url_path='privacy-policy-accept',
+    )
+    def privacy_policy_accept(self, request):
+        meta = models.UserMetadata.get_for_user(request.user)
+        meta.privacy_policy_version = request.POST['version']
+        meta.privacy_policy_accepted = now()
         meta.save()
 
         return Response()

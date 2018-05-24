@@ -793,13 +793,7 @@ class TaskStore(models.Model):
 
     def clear_taskserver_data(self):
         try:
-            os.rename(
-                self.taskd_data_path,
-                (
-                    self.taskd_data_path +
-                    datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                )
-            )
+            os.unlink(self.taskd_data_path)
         except OSError:
             logger.exception(
                 "OSError encountered while removing taskd data."

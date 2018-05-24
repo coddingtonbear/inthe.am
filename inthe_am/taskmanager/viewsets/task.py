@@ -76,6 +76,16 @@ class TaskViewSet(viewsets.ViewSet):
                 },
                 status=403
             )
+        if metadata and not metadata.privacy_policy_up_to_date:
+            return Response(
+                {
+                    'error_message': (
+                        'Please accept the privacy policy at '
+                        'https://inthe.am/privacy-policy.'
+                    )
+                },
+                status=403
+            )
         return super(TaskViewSet, self).dispatch(request, *args, **kwargs)
 
     def passes_filters(self, task, filters):

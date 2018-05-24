@@ -47,6 +47,7 @@ var controller = Ember.Controller.extend({
     email_integration: '/api/v2/user/email-integration/',
     twilio_integration: '/api/v2/user/twilio-integration/',
     tos_accept: '/api/v2/user/tos-accept/',
+    privacy_policy_accept: '/api/v2/user/privacy-policy-accept/',
     clear_task_data: '/api/v2/user/clear-task-data/',
     set_colorscheme: '/api/v2/user/colorscheme/',
     enable_sync: '/api/v2/user/enable-sync/',
@@ -151,21 +152,35 @@ var controller = Ember.Controller.extend({
                 }
             )
           }
+          if (!this.get('user.privacy_policy_up_to_date')) {
+            Ember.run.next(
+                this,
+                function () {
+                  this.transitionToRoute('privacy-policy')
+                }
+            )
+          }
           this.handlePostLoginRedirects()
         } else {
           Raven.setUser()
-          if (window.localStorage) {
-            if (
+          if (
+            window.localStorage &&
+            (
               (!window.location.pathname) ||
               window.location.pathname !== '/'
-            ) {
-              window.localStorage.setItem(
-                'redirect_to',
-                window.location.href
-              )
-            }
+            )
+          ) {
+            window.localStorage.setItem(
+              'redirect_to',
+              window.location.href
+            )
           }
-          this.transitionToRoute('about')
+          if(
+            this.currentRouteName !== 'terms-of-service' &&
+            this.currentRouteName !== 'privacy-policy'
+          ) {
+            this.transitionToRoute('about')
+          }
         }
         this.set('urls.feed_url', this.get('user').feed_url)
         this.set(

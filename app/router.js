@@ -19,6 +19,7 @@ Router.map(function () {
   this.route('configure', {path: '/configure'})
   this.route('getting-started', {path: '/getting-started'})
   this.route('terms-of-service', {path: '/terms-of-service'})
+  this.route('privacy-policy', {path: '/privacy-policy'})
   this.route('four-oh-four', {path: '*path'})
 })
 
