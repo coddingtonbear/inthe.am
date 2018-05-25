@@ -78,7 +78,10 @@ def handle_incoming_forwardable_message(sender, message, **kwargs):
                 body=message.text,
                 to=[settings.MAIL_FORWARDING[address]],
                 attachments=attachments,
-                reply_to=message.from_header,
+                reply_to=[message.from_header],
+                headers={
+                    'IntheAM-Message-Id': message.pk
+                }
             )
             message.attach_alternative(
                 message.html,
