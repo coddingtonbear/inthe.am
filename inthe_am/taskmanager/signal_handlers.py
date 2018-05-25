@@ -1,5 +1,6 @@
 import logging
 import mimetypes
+import traceback
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -87,5 +88,8 @@ def handle_incoming_forwardable_message(sender, message, **kwargs):
             except:
                 mail_admins(
                     u"Error processing forwarding rule for %s" % address,
-                    u"See message ID %s." % message.pk,
+                    u"See message ID %s.\n\n%s" % (
+                        message.pk,
+                        traceback.format_tb(),
+                    )
                 )
