@@ -90,6 +90,6 @@ def handle_incoming_forwardable_message(sender, message, **kwargs):
                     u"Error processing forwarding rule for %s" % address,
                     u"See message ID %s.\n\n%s" % (
                         message.pk,
-                        traceback.format_tb(),
+                        traceback.format_exc(),
                     )
                 )
