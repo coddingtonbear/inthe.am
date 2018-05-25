@@ -82,7 +82,7 @@ def handle_incoming_forwardable_message(sender, message, **kwargs):
                         attachment.document.read(),
                         mimetypes.guess_type(
                             attachment.get_filename(),
-                        )
+                        )[0]
                     )
                 email.send()
             except:
