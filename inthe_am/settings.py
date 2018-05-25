@@ -151,6 +151,11 @@ REDIS_DB = 2
 SERVER_EMAIL = 'no-reply@localhost'
 DJANGO_MAILBOX_STORE_ORIGINAL_MESSAGE = True
 
+# Relay support/privacy messages to the appropriate inboxes
+MAIL_FORWARDING = {
+    'somebody@somewhere.com': 'someotheraddress@somewhereelse.com'
+}
+
 TASKWARRIOR_CONFIG_OVERRIDES = {
     'gc': 'off',
     'recurrence': {

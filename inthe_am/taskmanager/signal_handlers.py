@@ -1,7 +1,9 @@
 import logging
+import mimetypes
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.dispatch import receiver
 from django_mailbox.signals import message_received
@@ -49,3 +51,37 @@ def autoconfigure_taskstore_for_user(sender, instance, **kwargs):
 @receiver(message_received, dispatch_uid='incoming_email')
 def handle_incoming_message(sender, message, **kwargs):
     process_email_message.apply_async(args=(message.pk, ))
+
+
+@receiver(message_received, dispatch_uid='forwardable_email')
+def handle_incoming_forwardable_message(sender, message, **kwargs):
+    for address in message.to_addresses:
+        if address in settings.MAIL_FORWARDING:
+            attachments = []
+            for attachment in message.attachments.all():
+                attachments.append(
+                    (
+                        attachment.get_filename(),
+                        attachment.document.read(),
+                        mimetypes.guess_type(
+                            attachment.get_filename(),
+                        )
+                    )
+                )
+
+            message = EmailMultiAlternatives(
+                subject=u' '.join([
+                    u'[Inthe.AM]',
+                    message.subject,
+                    u'(%s)' % message.pk,
+                ]),
+                body=message.text,
+                to=[settings.MAIL_FORWARDING[address]],
+                attachments=attachments,
+                reply_to=message.from_header,
+            )
+            message.attach_alternative(
+                message.html,
+                'text/html',
+            )
+            message.send()
