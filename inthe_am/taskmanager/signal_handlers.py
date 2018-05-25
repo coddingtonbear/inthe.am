@@ -69,7 +69,7 @@ def handle_incoming_forwardable_message(sender, message, **kwargs):
                     )
                 )
 
-            message = EmailMultiAlternatives(
+            email = EmailMultiAlternatives(
                 subject=u' '.join([
                     u'[Inthe.AM]',
                     message.subject,
@@ -83,8 +83,8 @@ def handle_incoming_forwardable_message(sender, message, **kwargs):
                     'IntheAM-Message-Id': message.pk
                 }
             )
-            message.attach_alternative(
+            email.attach_alternative(
                 message.html,
                 'text/html',
             )
-            message.send()
+            email.send()
