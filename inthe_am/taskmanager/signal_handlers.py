@@ -3,7 +3,7 @@ import mimetypes
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, mail_admins
 from django.db import models
 from django.dispatch import receiver
 from django_mailbox.signals import message_received
@@ -57,34 +57,35 @@ def handle_incoming_message(sender, message, **kwargs):
 def handle_incoming_forwardable_message(sender, message, **kwargs):
     for address in message.to_addresses:
         if address in settings.MAIL_FORWARDING:
-            attachments = []
-            for attachment in message.attachments.all():
-                attachments.append(
-                    (
+            try:
+                email = EmailMultiAlternatives(
+                    subject=u' '.join([
+                        u'[Inthe.AM]',
+                        message.subject,
+                        u'(%s)' % message.pk,
+                    ]),
+                    body=message.text,
+                    to=[settings.MAIL_FORWARDING[address]],
+                    reply_to=[message.from_header],
+                    headers={
+                        'IntheAM-Message-Id': message.pk
+                    }
+                )
+                email.attach_alternative(
+                    message.html,
+                    'text/html',
+                )
+                for attachment in message.attachments.all():
+                    email.attach(
                         attachment.get_filename(),
                         attachment.document.read(),
                         mimetypes.guess_type(
                             attachment.get_filename(),
                         )
                     )
+                email.send()
+            except:
+                mail_admins(
+                    u"Error processing forwarding rule for %s" % address,
+                    u"See message ID %s." % message.pk,
                 )
-
-            email = EmailMultiAlternatives(
-                subject=u' '.join([
-                    u'[Inthe.AM]',
-                    message.subject,
-                    u'(%s)' % message.pk,
-                ]),
-                body=message.text,
-                to=[settings.MAIL_FORWARDING[address]],
-                attachments=attachments,
-                reply_to=[message.from_header],
-                headers={
-                    'IntheAM-Message-Id': message.pk
-                }
-            )
-            email.attach_alternative(
-                message.html,
-                'text/html',
-            )
-            email.send()
