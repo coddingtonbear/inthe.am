@@ -19,7 +19,7 @@ TRAVIS = True if os.environ.get('TRAVIS') else False
 TESTING = ('test' in sys.argv) or TRAVIS
 
 ADMINS = (
-    ('Adam Coddington', 'me+intheam-admin@adamcoddington.net'),
+    ('Adam Coddington', 'admin@inthe.am'),
 )
 
 # Quick-start development settings - unsuitable for production
