@@ -9,10 +9,12 @@ billiard==3.3.0.23
 boto==2.34.0
 -e git+https://github.com/coddingtonbear/bugwarrior.git@c614f6ba99e380b097c12235d6b1dc7c3b980636#egg=bugwarrior
 celery==3.1.25
+certifi==2018.4.16
+chardet==3.0.4
 click==6.2
 contextlib2==0.5.1
 decorator==4.0.6
-Django==1.8.18
+Django==1.8.19
 -e git+https://github.com/coddingtonbear/django-behave.git@79028d59f89c7a12255120d266f5c844656a6805#egg=django_behave
 django-cors-headers==1.1.0
 django-extensions==1.6.1
@@ -27,14 +29,15 @@ docutils==0.12
 dogpile.cache==0.5.7
 dogpile.core==0.4.1
 dropbox==1.6
-dulwich==0.9.4
+dulwich==0.19.2
 enum34==1.1.2
 funcsigs==0.4
-gevent==1.0.2
-greenlet==0.4.9
+gevent==1.3.1
+greenlet==0.4.13
 gunicorn==19.4.5
-httplib2==0.9.2
+httplib2==0.11.3
 icalendar==3.9.0
+idna==2.6
 ipdb==0.8
 ipython==4.0.2
 ipython-genutils==0.1.0
@@ -50,7 +53,7 @@ Markdown==2.6.6
 MarkupSafe==0.23
 mimeparse==0.1.3
 mock==1.3.0
-newrelic==2.54.0.41
+newrelic==2.106.1.88
 oauthlib==0.7.2
 offtrac==0.1.0
 ordereddict==1.1
@@ -80,7 +83,7 @@ pytz==2015.7
 pyxdg==0.25
 raven==5.10.0
 redis==2.10.5
-requests==2.2.0
+requests==2.18.4
 requests-oauthlib==0.8.0
 requests-toolbelt==0.5.1
 selenium==3.4.3
@@ -98,6 +101,7 @@ traitlets==4.1.0
 trello==0.9.1
 Twiggy==0.4.7
 twilio==5.2.0
+urllib3==1.22
 uWSGI==2.0.12
 webcolors==1.4
 x256==0.0.3
