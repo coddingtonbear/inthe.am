@@ -1,5 +1,5 @@
 django==1.8.18
-python-social-auth==0.2.21
+social-auth-app-django==2.1.0
 -e git+https://github.com/latestrevision/taskw@inthe_am#egg=taskw
 djangorestframework==3.3.3
 markdown==2.6.6
