@@ -349,7 +349,7 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'sentry': {
-            'level': 'WARNING',
+            'level': 'ERROR',
             'class': (
                 'raven.contrib.django.handlers.SentryHandler'
                 if RAVEN_DSN else
