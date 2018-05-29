@@ -32,6 +32,24 @@ def project_setup_logging(loglevel, logfile, format, colorize, **kwargs):
 
 @shared_task(
     bind=True,
+)
+def autoconfigure_taskd(self, store_id):
+    from .models import TaskStore
+    store = TaskStore.objects.get(pk=store_id)
+
+    try:
+        if not store.configured:
+            store.autoconfigure_taskd()
+    except:
+        if not settings.DEBUG:
+            raise
+        message = "Error encountered while configuring task store."
+        logger.exception(message)
+        store.log_error(message)
+
+
+@shared_task(
+    bind=True,
     time_limit=120,
     default_retry_delay=120,
     max_retries=10,

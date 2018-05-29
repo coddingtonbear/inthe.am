@@ -11,22 +11,10 @@ from django_mailbox.signals import message_received
 from rest_framework.authtoken.models import Token
 
 from .models import TaskStore
-from .tasks import process_email_message
+from .tasks import process_email_message, autoconfigure_taskd
 
 
 logger = logging.getLogger(__name__)
-
-
-def autoconfigure_taskd_if_necessary(instance):
-    try:
-        if not instance.configured:
-            instance.autoconfigure_taskd()
-    except:
-        if not settings.DEBUG:
-            raise
-        message = "Error encountered while configuring task store."
-        logger.exception(message)
-        instance.log_error(message)
 
 
 @receiver(
@@ -46,7 +34,10 @@ def create_taskstore_for_user(sender, instance, **kwargs):
     dispatch_uid='configure_taskstore'
 )
 def autoconfigure_taskstore_for_user(sender, instance, **kwargs):
-    autoconfigure_taskd_if_necessary(instance)
+    autoconfigure_taskd.apply_async(
+        args=(instance.pk, ),
+        countdown=5,
+    )
 
 
 @receiver(message_received, dispatch_uid='incoming_email')
