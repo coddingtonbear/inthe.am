@@ -25,7 +25,7 @@ django-rest-framework==0.1.0
 django-storages==1.1.8
 django-tastypie==0.13.3
 django-twilio==0.4
-djangorestframework==3.8.2
+djangorestframework==3.6.4
 docutils==0.12
 dogpile.cache==0.5.7
 dogpile.core==0.4.1
