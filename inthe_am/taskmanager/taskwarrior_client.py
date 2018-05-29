@@ -190,7 +190,7 @@ class TaskwarriorClient(TaskWarriorShellout):
             proc.returncode != 0 and
             base_command not in self.NONZERO_ALERT_EXEMPT
         ):
-            logger.error(
+            logger.warning(
                 'Non-zero return code returned from taskwarrior: %s; %s' % (
                     proc.returncode,
                     stderr,
