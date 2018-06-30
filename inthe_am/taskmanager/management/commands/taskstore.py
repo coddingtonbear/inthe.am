@@ -89,7 +89,7 @@ class Command(BaseCommand):
             run_id = 'update_statistics_{date}'.format(
                 date=datetime.datetime.now().strftime('%Y%m%dT%H%M%SZ')
             )
-
+            print("Run ID: {}".format(run_id))
             with progressbar.ProgressBar(
                 max_value=TaskStore.objects.count(),
                 widgets=[
