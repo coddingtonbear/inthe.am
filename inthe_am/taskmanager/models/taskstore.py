@@ -183,7 +183,7 @@ class TaskStore(models.Model):
 
     @property
     def client(self):
-        if not self.taskrc['data.location']:
+        if not self.taskrc.get('data.location'):
             raise InvalidTaskwarriorConfiguration(
                 "No data.location specified!"
             )
