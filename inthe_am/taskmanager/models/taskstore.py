@@ -35,6 +35,7 @@ from ..tasks import (
 from ..taskstore_migrations import upgrade as upgrade_taskstore
 from ..taskwarrior_client import TaskwarriorClient
 from ..utils import OneWaySafeJSONEncoder
+from .exceptions import InvalidTaskwarriorConfiguration
 from .taskrc import TaskRc
 from .metadata import Metadata
 from .taskstoreactivitylog import TaskStoreActivityLog
@@ -182,6 +183,11 @@ class TaskStore(models.Model):
 
     @property
     def client(self):
+        if not self.taskrc['data.location']:
+            raise InvalidTaskwarriorConfiguration(
+                "No data.location specified!"
+            )
+
         if not getattr(self, '_client', None):
             self._client = TaskwarriorClient(
                 self.taskrc.path,

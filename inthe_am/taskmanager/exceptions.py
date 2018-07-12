@@ -10,3 +10,7 @@ class CheckpointNeeded(RuntimeError):
 
 class InvalidBugwarriorConfiguration(RuntimeError):
     pass
+
+
+class InvalidTaskwarriorConfiguration(RuntimeError):
+    pass
