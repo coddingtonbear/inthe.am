@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils.encoding import force_text
 from django.utils.timezone import now
 
-from .exceptions import NestedCheckpointError
+from .exceptions import NestedCheckpointError, InvalidTaskwarriorConfiguration
 from .lock import get_lock_name_for_store, redis_lock
 
 
@@ -176,6 +176,10 @@ def git_checkpoint(
 
             if recurring_task_found:
                 store.deduplicate_tasks()
+        except InvalidTaskwarriorConfiguration:
+            # A checkpoint will be created during account initialization;
+            # if so, the taskwarrior client may not yet be configured.
+            pass
         except Exception as e:
             store.create_git_checkpoint(
                 u'%s (%s)' % (
