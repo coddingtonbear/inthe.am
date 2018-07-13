@@ -805,6 +805,16 @@ class TaskStore(models.Model):
                 "OSError encountered while removing taskd data."
             )
 
+    def clear_local_task_list(self):
+        for path in os.listdir(self.local_path):
+            if os.path.splitext(path)[1] == '.data':
+                os.unlink(
+                    os.path.join(
+                        self.local_path,
+                        path
+                    )
+                )
+
     def autoconfigure_taskd(self):
         with git_checkpoint(self, 'Autoconfiguration'):
             self.configured = True

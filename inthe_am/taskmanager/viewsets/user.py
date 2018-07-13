@@ -343,15 +343,7 @@ class UserViewSet(viewsets.ViewSet):
     def clear_task_data(self, request):
         ts = models.TaskStore.get_for_user(request.user)
         ts.clear_taskserver_data()
-
-        for path in os.listdir(ts.local_path):
-            if os.path.splitext(path)[1] == '.data':
-                os.unlink(
-                    os.path.join(
-                        ts.local_path,
-                        path
-                    )
-                )
+        ts.clear_local_task_list()
 
         return Response()
 
