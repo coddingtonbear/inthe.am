@@ -180,7 +180,7 @@ class Command(BaseCommand):
             for store in TaskStore.objects.filter(
                 last_synced__lt=min_action_recency,
                 user__last_login__lt=min_action_recency
-            ).distinct('pk').objects.order_by('-last_synced'):
+            ).distinct('pk').order_by('-last_synced'):
                 print('> %s' % store.path)
                 print('>> %s' % (now - store.last_synced).days)
                 print('>> %s' % (now - store.user.last_login).days)
