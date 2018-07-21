@@ -24,6 +24,7 @@ from ..lock import (
     get_debounce_name_for_store,
     get_lock_name_for_store,
     get_lock_redis,
+    redis_lock
 )
 from ..tasks import (
     deduplicate_tasks,
@@ -659,6 +660,41 @@ class TaskStore(models.Model):
                 },
             }
             return results
+
+    def squash(self, force=False):
+        lock_name = get_lock_name_for_store(self)
+
+        with redis_lock(
+            lock_name,
+            message='Squash',
+            lock_timeout=60*60,
+            wait_timeout=60,
+        ):
+            if (
+                self.trello_local_head
+                and self.trello_local_head != self.repository.head()
+                and not force
+            ):
+                raise ValueError("Trello head out-of-date; aborting!")
+
+            head_commit, _ = self._git_command(
+                'rev-list',
+                '--max-parents=0',
+                'HEAD',
+            ).communicate()
+            head_commit = head_commit.strip()
+
+            self._git_command(
+                'reset',
+                '--soft',
+                head_commit,
+            ).communicate()
+
+            self.create_git_checkpoint("Repository squashed.")
+
+            if self.trello_local_head:
+                self.trello_local_head = self.repository.head()
+                self.save()
 
     def sync(
         self, function=None, args=None, kwargs=None, async=True, msg=None

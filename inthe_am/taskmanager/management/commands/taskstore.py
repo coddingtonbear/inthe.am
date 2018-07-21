@@ -2,6 +2,7 @@ from __future__ import print_function, unicode_literals
 
 import datetime
 import json
+import traceback
 
 import progressbar
 
@@ -51,6 +52,11 @@ class Command(BaseCommand):
         parser.add_argument(
             '--repack-size',
             type=int,
+            default=int(5e7)
+        )
+        parser.add_argument(
+            '--squash-size',
+            type=int,
             default=int(1e8)
         )
 
@@ -59,6 +65,7 @@ class Command(BaseCommand):
         username = options['username']
         minutes = options['minutes']
         repack_size = options['repack_size']
+        squash_size = options['squash_size']
 
         if subcommand == 'lock':
             store = TaskStore.objects.get(user__username=username)
@@ -116,58 +123,46 @@ class Command(BaseCommand):
                     ).latest('created')
                 except TaskStoreStatistic.DoesNotExist:
                     continue
-                if last_size_measurement.value > repack_size:
-                    print("> Repacking {store}...".format(store=store))
-                    results = store.gc()
-                    print(json.dumps(results, sort_keys=True, indent=4))
-                    final_size = store.get_repository_size()
-                    print(
-                        ">> {diff} MB recovered".format(
-                            diff=int(
-                                (last_size_measurement.value - final_size)
-                                / 1e6
+                if last_size_measurement.value > squash_size:
+                    print("> Squashing {store}...".format(store=store))
+                    try:
+                        store.squash()
+                        store.gc()
+                        final_size = store.get_repository_size()
+                        print(
+                            ">> {diff} MB recovered".format(
+                                diff=int(
+                                    (last_size_measurement.value - final_size)
+                                    / 1e6
+                                )
                             )
                         )
-                    )
+                    except Exception as e:
+                        print("> FAILED: %s" % e)
+                        traceback.print_exc()
+                elif last_size_measurement.value > repack_size:
+                    print("> Repacking {store}...".format(store=store))
+                    try:
+                        store.gc()
+                        final_size = store.get_repository_size()
+                        print(
+                            ">> {diff} MB recovered".format(
+                                diff=int(
+                                    (last_size_measurement.value - final_size)
+                                    / 1e6
+                                )
+                            )
+                        )
+                    except Exception as e:
+                        print("> FAILED: %s" % e)
+                        traceback.print_exc()
         elif subcommand == 'squash':
             store = TaskStore.objects.get(user__username=username)
-            lock_name = get_lock_name_for_store(store)
 
             starting_size = store.get_repository_size()
 
-            with redis_lock(
-                lock_name,
-                message='Squash',
-                lock_timeout=60*60,
-                wait_timeout=60,
-            ):
-                if (
-                    store.trello_local_head
-                    and store.trello_local_head != store.repository.head()
-                    and not options['force']
-                ):
-                    raise ValueError("Trello head out-of-date; aborting!")
-
-                head_commit, _ = store._git_command(
-                    'rev-list',
-                    '--max-parents=0',
-                    'HEAD',
-                ).communicate()
-                head_commit = head_commit.strip()
-
-                store._git_command(
-                    'reset',
-                    '--soft',
-                    head_commit,
-                ).communicate()
-
-                store.create_git_checkpoint("Repository squashed.")
-
-                if store.trello_local_head:
-                    store.trello_local_head = store.repository.head()
-                    store.save()
-
-            results = store.gc()
+            store.squash(force=options['force'])
+            store.gc()
             ending_size = store.get_repository_size()
 
             print(
