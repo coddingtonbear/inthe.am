@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import time
@@ -367,6 +368,8 @@ class TaskStore(models.Model):
             return False
         if not os.path.isdir(self.local_path):
             return False
+        if not self.local_path.startswith(settings.TASK_STORAGE_PATH):
+            return False
         try:
             self.repository.head()
         except KeyError:
@@ -400,6 +403,24 @@ class TaskStore(models.Model):
             self.secret_id = str(uuid.uuid4())
 
         self.apply_extras()
+        super(TaskStore, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        try:
+            self.clear_local_task_list()
+        except Exception as e:
+            logger.exception(
+                "Error encountered while deleting local task list: %s",
+                e,
+            )
+        try:
+            self.clear_taskserver_data()
+        except Exception as e:
+            logger.exception(
+                "Error encountered while deleting taskserver task list: %s",
+                e,
+            )
+
         super(TaskStore, self).save(*args, **kwargs)
 
     def __unicode__(self):
