@@ -177,7 +177,7 @@ class Command(BaseCommand):
         elif subcommand == 'delete_old_accounts':
             now = datetime.datetime.now()
             min_action_recency = now - datetime.timedelta(days=370)
-            for store in TaskStore.filter(
+            for store in TaskStore.objects.filter(
                 last_synced__lt=min_action_recency,
                 user__last_login__lt=min_action_recency
             ).distinct('pk').objects.order_by('-last_synced'):
