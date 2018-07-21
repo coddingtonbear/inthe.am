@@ -61,6 +61,11 @@ class Command(BaseCommand):
             type=int,
             default=int(1e8)
         )
+        parser.add_argument(
+            '--min-use-recency-days',
+            type=int,
+            default=370
+        )
 
     def handle(self, *args, **options):
         subcommand = options['subcommand'][0]
@@ -68,6 +73,7 @@ class Command(BaseCommand):
         minutes = options['minutes']
         repack_size = options['repack_size']
         squash_size = options['squash_size']
+        min_use_recency_days = options['min_use_recency_days']
 
         if subcommand == 'lock':
             store = TaskStore.objects.get(user__username=username)
@@ -176,7 +182,9 @@ class Command(BaseCommand):
                 )
             )
         elif subcommand == 'delete_old_accounts':
-            min_action_recency = now() - datetime.timedelta(days=370)
+            min_action_recency = now() - datetime.timedelta(
+                days=min_use_recency_days
+            )
             for store in TaskStore.objects.filter(
                 last_synced__lt=min_action_recency,
                 user__last_login__lt=min_action_recency
