@@ -181,6 +181,6 @@ class Command(BaseCommand):
                 last_synced__lt=min_action_recency,
                 user__last_login__lt=min_action_recency
             ).order_by('-last_synced'):
-                print('> %s' % store.local_path)
-                print('>> %s' % (now() - store.last_synced).days)
-                print('>> %s' % (now() - store.user.last_login).days)
+                print('> Deleting %s' % store.local_path)
+                store.delete()
+                store.user.delete()
