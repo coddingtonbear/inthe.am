@@ -848,9 +848,9 @@ class TaskStore(models.Model):
             )
         except OSError:
             pass
-        self.client.sync(init=True)
         self.sync_permitted = True
         self.save()
+        self.client.sync(init=True)
         self.log_message("Taskd settings reset to default.")
 
     def clear_taskserver_data(self):
