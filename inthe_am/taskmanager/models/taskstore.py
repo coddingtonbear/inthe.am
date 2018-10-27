@@ -420,7 +420,28 @@ class TaskStore(models.Model):
                 e,
             )
 
-        super(TaskStore, self).save(*args, **kwargs)
+        try:
+            env = os.environ.copy()
+            env['TASKDDATA'] = settings.TASKD_DATA
+
+            command = [
+                settings.TASKD_BINARY,
+                'remove',
+                'user',
+                settings.TASKD_ORG,
+                self.username,
+            ]
+            subprocess.check_call(
+                command,
+                env=env,
+            )
+        except Exception as e:
+            logger.exception(
+                "Error encountered while deleting taskserver account: %s",
+                e,
+            )
+
+        super(TaskStore, self).delete(*args, **kwargs)
 
     def __unicode__(self):
         return 'Tasks for %s' % self.username
