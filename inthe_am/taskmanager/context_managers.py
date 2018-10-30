@@ -139,6 +139,14 @@ def git_checkpoint(
             # writing operation.
             if gc:
                 store.client.gc()
+            # We do not need to store undo.data since we're handling
+            # history using a git repo and can revert using that.
+            undo_path = os.path.join(
+                store.local_path,
+                'undo.data'
+            )
+            if os.path.isfile(undo_path):
+                os.unlink(undo_path)
             store.create_git_checkpoint(
                 message,
                 function=function,
