@@ -218,7 +218,11 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     trello_enabled.boolean = True
 
     def local_sync(self, store):
-        return store.sync_uses_default_server
+        try:
+            return store.sync_uses_default_server
+        except Exception as e:
+            logger.exception(e)
+            return None
     local_sync.boolean = True
 
 admin.site.register(TaskStore, TaskStoreAdmin)
