@@ -33,6 +33,7 @@ class Command(BaseCommand):
                 'gc_large_repos',
                 'squash',
                 'delete_old_accounts',
+                'list_old_accounts',
             ],
             type=str,
         )
@@ -192,3 +193,26 @@ class Command(BaseCommand):
                 print('> Deleting %s' % store.local_path)
                 store.delete()
                 store.user.delete()
+        elif subcommand == 'list_old_accounts':
+            min_action_recency = now() - datetime.timedelta(
+                days=min_use_recency_days
+            )
+            output_format = u'{path}\t{last_synced}\t{last_login}'
+            print(
+                output_format.format(
+                    path='path',
+                    last_synced='last_synced',
+                    last_login='user__last_login'
+                )
+            )
+            for store in TaskStore.objects.filter(
+                last_synced__lt=min_action_recency,
+                user__last_login__lt=min_action_recency
+            ).order_by('-last_synced'):
+                print(
+                    output_format.format(
+                        path=store.local_path,
+                        last_synced=store.last_synced,
+                        last_login=store.user.last_login,
+                    )
+                )
