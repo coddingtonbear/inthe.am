@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import urlparse
 
 from django.contrib import admin
@@ -19,6 +20,9 @@ from .models import (
     TaskStoreStatistic,
     UserMetadata
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 class DefaultFilterMixIn(admin.ModelAdmin):
