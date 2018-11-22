@@ -32,7 +32,7 @@ class TaskFeed(Feed):
             store = TaskStore.objects.get(
                 secret_id=uuid
             )
-        except TaskStore.NotFound:
+        except TaskStore.DoesNotExist:
             raise Http404()
 
         if not store.feed_enabled:
