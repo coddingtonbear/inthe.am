@@ -18,7 +18,6 @@ var controller = Ember.Controller.extend({
     'alt+n': 'show_create_task',
 
     'alt+r': 'refresh',
-    'alt+b': 'bugwarrior_sync',
 
     'alt+s': 'start_or_stop',
     'alt+a': 'add_annotation',
@@ -65,8 +64,6 @@ var controller = Ember.Controller.extend({
     trello_authorization_url: '/api/v2/tasks/trello/',
     trello_resynchronization_url: '/api/v2/tasks/trello/resynchronize/',
     trello_reset_url: '/api/v2/tasks/trello/reset/',
-    bugwarrior_config: '/api/v2/tasks/bugwarrior/',
-    bugwarrior_sync: '/api/v2/tasks/bugwarrior/sync/',
     deduplicate_tasks: '/api/v2/tasks/deduplicate/',
     deduplication_config: '/api/v2/tasks/deduplication-config/',
     status_feed: '/status/',
@@ -518,10 +515,6 @@ var controller = Ember.Controller.extend({
       }.bind(this), function () {
         this.hideLoading()
       }.bind(this))
-    },
-    bugwarrior_sync: function () {
-      var configController = this.get('configureController')
-      configController.send('schedule_bugwarrior_synchronization')
     },
     home: function () {
       window.location = '/'

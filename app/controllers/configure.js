@@ -445,54 +445,6 @@ var controller = Ember.Controller.extend({
                 )
       }.bind(this))
     },
-    update_bugwarrior_config: function () {
-      var url = this.get('applicationController').urls.bugwarrior_config
-      var data = $('textarea[name=bugwarrior_config]').val()
-      return this.ajaxRequest({
-        url: url,
-        type: 'PUT',
-        data: data
-      }).then(function () {
-        this.success_message('Bugwarrior configuration updated.')
-      }.bind(this), function (msg) {
-        this.error_message(
-                    `An error was encountered while ` +
-                    `attempting to updating your bugwarrior configuration: ${msg}`
-                )
-      }.bind(this))
-    },
-    delete_bugwarrior_configuration: function () {
-      var url = this.get('applicationController').urls.bugwarrior_config
-      return this.ajaxRequest({
-        url: url,
-        type: 'DELETE'
-      }).then(function () {
-        this.set('applicationController.user.bugwarrior_configured', false)
-        this.success_message('Bugwarrior configuration deleted')
-      }.bind(this), function (msg) {
-        this.error_message(
-                    `An error was encountered while ` +
-                    `attempting to delete your bugwarrior configuration: ${msg}`
-                )
-      }.bind(this))
-    },
-    schedule_bugwarrior_synchronization: function () {
-      var url = this.get('applicationController').urls.bugwarrior_sync
-      return this.ajaxRequest({
-        url: url,
-        type: 'POST'
-      }).then(function () {
-        this.success_message(
-                    `Bugwarrior synchronization requested; it may take a ` +
-                    `few minutes for the synchronization to take place.`
-                  )
-      }.bind(this), function (msg) {
-        this.error_message(
-                    `An error was encountered while ` +
-                    `attempting to request a bugwarrior synchronization: ${msg}`
-                )
-      }.bind(this))
-    },
     deduplication_config: function () {
       var url = this.get('applicationController').urls.deduplication_config
       var enabled = $('select[name=autodeduplicate]').val() == 'true'

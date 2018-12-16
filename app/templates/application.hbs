@@ -57,11 +57,6 @@
                     <a href="#" title="New" {{action "create_task"}}><i class="fa fa-pencil-square-o">New</i></a>
                 </li>
 
-                {{#if user.bugwarrior_configured}}
-                    <li data-intro="alt+b">
-                        <a href="#" title="Sync with Bugwarrior" {{action "bugwarrior_sync"}}><i class="fa fa-bug"></i></a>
-                    </li>
-                {{/if}}
                 <li id="refresh-link" data-intro="alt+r">
                     <a href="#" title="{{taskUpdateStreamStatusMessage}}" {{action "refresh"}}><i class="fa fa-refresh {{taskUpdateStreamClass}}"></i></a>
                 </li>

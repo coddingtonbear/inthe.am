@@ -6,8 +6,6 @@ from .taskstorestatistic import TaskStoreStatistic
 from .trelloobject import TrelloObject
 from .trelloobjectaction import TrelloObjectAction
 from .usermetadata import UserMetadata
-from .bugwarriorconfig import BugwarriorConfig
-from .bugwarriorconfigrunlog import BugwarriorConfigRunLog
 from .taskstoreactivity import TaskStoreActivity
 from .rest_hook import RestHook
 

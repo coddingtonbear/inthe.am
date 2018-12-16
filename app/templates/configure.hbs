@@ -160,41 +160,6 @@
                 </div>
             </li>
             <li class="accordion-navigation">
-                <a href="#bugwarrior"><strong>DEPRECATED:</strong> Bugwarrior Integration</a>
-                <div id="bugwarrior" class="content">
-                    <div class="row">
-                        <div class="large-12 columns">
-                            <p>
-                                <strong>DEPRECATED: This feature will be discontinued on 15 December 2018.</strong>
-                                Inthe.AM provides Bugwarrior
-                                integration allowing you to synchronize issues from
-                                JIRA, Github, Bitbucket, and many other services
-                                automatically.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="large-12 columns">
-                            <p>
-                                Your bugwarrior configuration:
-                            </p>
-                            {{textarea name="bugwarrior_config" value=applicationController.user.bugwarrior_config}}
-                            <p class="input-note">
-                                See <a href="http://bugwarrior.readthedocs.org/en/latest/common_configuration.html">Bugwarrior's Documentation</a> for information
-                                about how to configure synchronization with your services.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="large-12 columns">
-                            <a href="" class="button radius" {{action "update_bugwarrior_config"}}>Update Bugwarrior Configuration</a>
-                            <a href="" class="button radius" {{action "schedule_bugwarrior_synchronization"}}>Resynchronize Now</a>
-                            <a href="" class="button radius alert" {{action "delete_bugwarrior_configuration"}}>Delete Bugwarrior Configuration</a>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="accordion-navigation">
                 <a href="#zapier-integration"><strong>BETA:</strong> Zapier Integration</a>
                 <div id="zapier-integration" class="content">
                     <div class="row">

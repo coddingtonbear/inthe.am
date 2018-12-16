@@ -344,41 +344,6 @@ class TaskViewSet(viewsets.ViewSet):
         return Response(status=202)
 
     @requires_task_store
-    @list_route(methods=['put'], url_path='bugwarrior')
-    def bugwarrior_config(self, request, store=None):
-        config = store.bugwarrior_config
-        if not config:
-            config = models.BugwarriorConfig.objects.create(
-                store=store,
-                enabled=True,
-            )
-
-        config.serialized_config = request.body
-        try:
-            config.validate_configuration()
-            config.save()
-        except Exception as e:
-            return Response(
-                {
-                    'error_message': unicode(e)
-                },
-                status=400,
-            )
-
-        return Response()
-
-    @requires_task_store
-    @list_route(methods=['post'], url_path='bugwarrior/sync')
-    def bugwarrior_sync(self, request, store=None):
-        config = store.bugwarrior_config
-        if not config:
-            raise NotFound()
-
-        store.sync_bugwarrior()
-
-        return Response(status=202)
-
-    @requires_task_store
     @list_route(methods=['post'])
     def deduplicate(self, request, store=None):
         store.deduplicate_tasks()
