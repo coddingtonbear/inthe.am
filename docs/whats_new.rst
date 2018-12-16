@@ -1,6 +1,11 @@
 What's New?
 ===========
 
+15 Dec 2018
+-----------
+
+* Bugwarrior support removed (see https://github.com/coddingtonbear/inthe.am/issues/303)
+
 6 April 2017
 ------------
 
@@ -15,7 +20,7 @@ Features
 Features
 ~~~~~~~~
 
-* Bugwarrior: Bugwarrior is a tool that allows you to synchronize issues
+* kugwarrior: Bugwarrior is a tool that allows you to synchronize issues
   assigned to you from JIRA, Github, and other services with your Taskwarrior
   task list.  Now, you can use Bugwarrior directly with Inthe.AM.
 

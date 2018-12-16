@@ -9,8 +9,6 @@ from django.utils.timezone import now
 
 from .models import (
     Announcement,
-    BugwarriorConfig,
-    BugwarriorConfigRunLog,
     TaskAttachment,
     TaskStore,
     TaskStoreActivity,
@@ -318,26 +316,6 @@ class TrelloObjectActionAdmin(admin.ModelAdmin):
     date_hierarchy = 'occurred'
 
 admin.site.register(TrelloObjectAction, TrelloObjectActionAdmin)
-
-
-class BugwarriorConfigAdmin(admin.ModelAdmin):
-    list_display = ('store', 'enabled', 'created', 'updated')
-    raw_id_fields = ('store', )
-    list_filter = ('enabled', )
-    ordering = ('-updated', )
-    search_fields = ('store__user__username', )
-
-admin.site.register(BugwarriorConfig, BugwarriorConfigAdmin)
-
-
-class BugwarriorConfigRunLogAdmin(admin.ModelAdmin):
-    list_display = ('config', 'success', 'started', 'finished', )
-    raw_id_fields = ('config', )
-    list_filter = ('success', )
-    ordering = ('-finished', )
-    search_fields = ('config__store__user__username', )
-
-admin.site.register(BugwarriorConfigRunLog, BugwarriorConfigRunLogAdmin)
 
 
 class ActivityStatusListFilter(admin.SimpleListFilter):
