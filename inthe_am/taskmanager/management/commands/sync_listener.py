@@ -76,10 +76,7 @@ class Command(BaseCommand):
                     time.sleep(0.1)
                     continue
                 elif message['type'] != 'pmessage':
-                    logger.info(
-                        'Skipping message type %s',
-                        message['type'],
-                    )
+                    continue
                 else:
                     # This was an actual message we'd like to use.
                     last_sync_queued = now()
@@ -93,9 +90,10 @@ class Command(BaseCommand):
                             repo,
                         )
                         repo.sync()
-                except:
+                except Exception as e:
                     logger.exception(
-                        "Error encountered while processing sync event."
+                        "Error encountered while processing sync event: %s",
+                        e
                     )
 
                 if (
