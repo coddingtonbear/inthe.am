@@ -72,8 +72,6 @@ class Command(BaseCommand):
             while True:
                 message = self.get_next_message()
 
-                logger.info("Received message: %s", message)
-
                 if not message:
                     time.sleep(0.1)
                     continue
@@ -82,6 +80,8 @@ class Command(BaseCommand):
                 else:
                     # This was an actual message we'd like to use.
                     last_sync_queued = now()
+
+                logger.info("Received message: %s", message)
 
                 try:
                     operation = json.loads(message['data'])
