@@ -72,6 +72,8 @@ class Command(BaseCommand):
             while True:
                 message = self.get_next_message()
 
+                logger.info("Received message: %s", message)
+
                 if not message:
                     time.sleep(0.1)
                     continue
