@@ -76,7 +76,10 @@ class Command(BaseCommand):
                     time.sleep(0.1)
                     continue
                 elif message['type'] != 'pmessage':
-                    continue
+                    logger.info(
+                        'Skipping message type %s',
+                        message['type'],
+                    )
                 else:
                     # This was an actual message we'd like to use.
                     last_sync_queued = now()
