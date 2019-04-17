@@ -14,10 +14,9 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 
-from .. import models
+from .. import exceptions, models
 from ..decorators import git_managed, requires_task_store
 from ..serializers.user import UserSerializer
-from ..taskmanager import exceptions
 
 
 def get_published_properties(user, store, meta):
@@ -88,18 +87,26 @@ def get_published_properties(user, store, meta):
         'feed_enabled': store.feed_enabled,
         'ical_enabled': store.ical_enabled,
         'auto_deduplicate': store.auto_deduplicate,
-        'udas': [
-            {
-                'field': k,
-                'label': v.label,
-                'type': v.__class__.__name__
-            } for k, v in store.client.config.get_udas().items()
-        ],
         'trello_board_url': (
             store.trello_board.meta['url'] if store.trello_board else None
         ),
         'system_udas': get_system_udas_as_config(),
     }
+
+    try:
+        data.update({
+            'udas': [
+                {
+                    'field': k,
+                    'label': v.label,
+                    'type': v.__class__.__name__
+                } for k, v in store.client.config.get_udas().items()
+            ],
+        })
+    except exceptions.InvalidTaskwarriorConfiguration:
+        pass
+
+    return data
 
 
 def get_system_udas_as_config():
