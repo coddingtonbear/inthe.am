@@ -17,12 +17,13 @@ from rest_framework.response import Response
 from .. import models
 from ..decorators import git_managed, requires_task_store
 from ..serializers.user import UserSerializer
+from ..taskmanager import exceptions
 
 
 def get_published_properties(user, store, meta):
     signer = Signer()
 
-    return {
+    data = {
         'logged_in': True,
         'uid': user.pk,
         'username': user.username,

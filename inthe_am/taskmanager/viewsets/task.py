@@ -10,6 +10,7 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponseNotFound,
     HttpResponseRedirect,
+    JsonResponse
 )
 from django.views.decorators.csrf import csrf_exempt
 from icalendar import Calendar, Event
@@ -67,30 +68,24 @@ class TaskViewSet(viewsets.ViewSet):
         else:
             metadata = None
         if metadata and not metadata.tos_up_to_date:
-            return self.finalize_response(
-                request,
-                Response(
-                    {
-                        'error_message': (
-                            'Please accept the terms of service at '
-                            'https://inthe.am/terms-of-use.'
-                        )
-                    },
-                    status=403
-                )
+            return JsonResponse(
+                {
+                    'error_message': (
+                        'Please accept the terms of service at '
+                        'https://inthe.am/terms-of-use.'
+                    )
+                },
+                status=403
             )
         if metadata and not metadata.privacy_policy_up_to_date:
-            return self.finalize_response(
-                request,
-                Response(
-                    {
-                        'error_message': (
-                            'Please accept the privacy policy at '
-                            'https://inthe.am/privacy-policy.'
-                        )
-                    },
-                    status=403
-                )
+            return JsonResponse(
+                {
+                    'error_message': (
+                        'Please accept the privacy policy at '
+                        'https://inthe.am/privacy-policy.'
+                    )
+                },
+                status=403
             )
         return super(TaskViewSet, self).dispatch(request, *args, **kwargs)
 
