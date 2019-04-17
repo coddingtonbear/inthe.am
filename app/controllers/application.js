@@ -132,6 +132,23 @@ var controller = Ember.Controller.extend({
     }).then(function (data) {
       this.set('user', data)
       console.logIfDebug('Got user data', data)
+      if (this.get('user').logged_in) {
+        if (!this.get('user.tos_up_to_date')) {
+          Ember.run.next(
+              this,
+              function () {
+                this.transitionToRoute('terms-of-service')
+              }
+          )
+        } else if (!this.get('user.privacy_policy_up_to_date')) {
+          Ember.run.next(
+              this,
+              function () {
+                this.transitionToRoute('privacy-policy')
+              }
+          )
+        }
+      }
       if (!this.get('initialized')) {
         this.updateColorscheme()
 
@@ -141,22 +158,6 @@ var controller = Ember.Controller.extend({
             id: this.get('user').uid,
             username: this.get('user').username
           })
-          if (!this.get('user.tos_up_to_date')) {
-            Ember.run.next(
-                this,
-                function () {
-                  this.transitionToRoute('terms-of-service')
-                }
-            )
-          }
-          if (!this.get('user.privacy_policy_up_to_date')) {
-            Ember.run.next(
-                this,
-                function () {
-                  this.transitionToRoute('privacy-policy')
-                }
-            )
-          }
           this.handlePostLoginRedirects()
         } else {
           Raven.setUser()

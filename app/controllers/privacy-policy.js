@@ -12,16 +12,6 @@ var controller = Ember.Controller.extend({
       )
     }
   ),
-  mustAcceptTos: Ember.computed(
-    'applicationController.user',
-    function () {
-      let appCtrl = this.get('applicationController')
-      return (
-        appCtrl.get('user.logged_in') &&
-        !appCtrl.get('user.tos_up_to_date')
-      )
-    }
-  ),
   actions: {
     accept: function (version) {
       return this.get('applicationController').ajaxRequest({
@@ -31,14 +21,9 @@ var controller = Ember.Controller.extend({
           version: version
         }
       }).then(function () {
+        this.get('applicationController').handlePostLoginRedirects()
+        this.transitionToRoute('getting-started')
         this.get('applicationController').update_user_info()
-        if(!this.get('applicationController').handlePostLoginRedirects()) {
-          if(this.get('mustAcceptTos')) {
-            this.transitionToRoute('terms-of-service')
-          } else {
-            this.transitionToRoute('getting-started')
-          }
-        }
       }.bind(this), function (msg) {
         this.get('applicationController').error_message(
                     `An error was encountered while ` +

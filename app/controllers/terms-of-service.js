@@ -21,9 +21,9 @@ var controller = Ember.Controller.extend({
           version: version
         }
       }).then(function () {
-        this.get('applicationController').update_user_info()
         this.get('applicationController').handlePostLoginRedirects()
         this.transitionToRoute('getting-started')
+        this.get('applicationController').update_user_info()
       }.bind(this), function (msg) {
         this.get('applicationController').error_message(
                     `An error was encountered while ` +
