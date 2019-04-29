@@ -12,13 +12,14 @@ from wsgiref import util as wsgiref_utils
 
 from django.conf import settings
 from django.core.signing import Signer
-from gevent import sleep
+from gevent import sleep, monkey
 from psycogreen.gevent import patch_psycopg
 
 from inthe_am.taskmanager.models import TaskStore
 from inthe_am.taskmanager.lock import get_announcements_subscription
 
 
+monkey.patch_all()
 patch_psycopg()
 
 
@@ -156,34 +157,39 @@ class Application(object):
             logger.exception("Error starting event stream: %s", str(e))
 
     def __iter__(self):
-        if not self.initialized:
-            yield 'retry: %s\n\n' % self.ERROR_RETRY_DELAY
-            return
+        try:
+            if not self.initialized:
+                yield 'retry: %s\n\n' % self.ERROR_RETRY_DELAY
+                return
 
-        self.beat_heart()
-        created = time.time()
-        while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
             self.beat_heart()
+            created = time.time()
+            while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
+                self.beat_heart()
 
-            # Emit queued messages
-            while not self.queue.empty():
-                message = self.queue.get(False)
-                if not message:
-                    continue
+                # Emit queued messages
+                while not self.queue.empty():
+                    message = self.queue.get(False)
+                    if not message:
+                        continue
 
-                if message.get('name'):
-                    yield 'event: {name}\n'.format(
-                        name=message['name'].encode('utf8')
+                    if message.get('name'):
+                        yield 'event: {name}\n'.format(
+                            name=message['name'].encode('utf8')
+                        )
+                    yield 'data: {data}\n'.format(
+                        data=message.get('data', '').encode('utf8')
                     )
-                yield 'data: {data}\n'.format(
-                    data=message.get('data', '').encode('utf8')
-                )
-                yield '\n'
+                    yield '\n'
 
-            # Relax
-            sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
-
-        self.subscription_thread.stop()
+                # Relax
+                sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
+            self.subscription_thread.stop()
+            self.subscription.close()
+        except:
+            self.subscription_thread.stop()
+            self.subscription.close()
+            raise
 
 try:
     application = Application
