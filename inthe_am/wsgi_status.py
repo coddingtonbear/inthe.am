@@ -12,14 +12,13 @@ from wsgiref import util as wsgiref_utils
 
 from django.conf import settings
 from django.core.signing import Signer
-from gevent import sleep, monkey
+from gevent import sleep
 from psycogreen.gevent import patch_psycopg
 
 from inthe_am.taskmanager.models import TaskStore
 from inthe_am.taskmanager.lock import get_announcements_subscription
 
 
-monkey.patch_all()
 patch_psycopg()
 
 
