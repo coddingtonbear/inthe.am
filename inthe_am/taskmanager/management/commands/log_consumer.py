@@ -49,7 +49,12 @@ class Command(BaseCommand):
         ),
         re.compile(
             r"Serviced in (?P<service_duration__float>[0-9.]+)s"
-        )
+        ),
+    )
+    RESTART_RES = (
+        re.compile(
+            r"Unknown error"
+        ),
     )
     TRANSFORMATION_SUFFIXES = {
         '__int': int,
@@ -143,6 +148,21 @@ class Command(BaseCommand):
             del self.operations[operation_number]
         else:
             self.operations[operation_number] = operation
+
+        for regex in self.RESTART_RES:
+            does_match = regex.match(message)
+            if does_match:
+                self.restart_taskd()
+                break
+
+    def restart_taskd(self):
+        subprocess.check_output(
+            [
+                "/usr/sbin/service",
+                "taskd",
+                "restart"
+            ]
+        )
 
     def get_file_inode(self, filename):
         inode = subprocess.check_output(
