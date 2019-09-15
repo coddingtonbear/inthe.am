@@ -11,16 +11,12 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import json
 import os
-from subprocess32 import check_output
+from subprocess import check_output
 import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 TRAVIS = True if os.environ.get('TRAVIS') else False
 TESTING = ('test' in sys.argv) or TRAVIS
-
-ADMINS = (
-    ('Adam Coddington', 'admin@inthe.am'),
-)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -294,7 +290,7 @@ LOGGING = {
     'handlers': {
         'null': {
             'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
+            'class': 'logging.NullHandler',
         },
         'console': {
             'level': 'DEBUG',

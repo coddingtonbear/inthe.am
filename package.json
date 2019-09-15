@@ -38,7 +38,7 @@
     "ember-django-adapter": "1.1.2",
     "ember-export-application-global": "^1.0.5",
     "ember-font-awesome": "2.1.0",
-    "ember-inflector": "^2.0.0",
+    "ember-inflector": "^2.2.0",
     "ember-legacy-controllers": "0.1.0",
     "ember-legacy-views": "0.2.0",
     "ember-load-initializers": "^0.5.1",

@@ -4,7 +4,7 @@ import logging
 import oauthlib.oauth1
 import requests
 import urllib
-from urlparse import parse_qs
+from urllib.parse import parse_qs
 
 from django.conf import settings
 from django.core.urlresolvers import reverse

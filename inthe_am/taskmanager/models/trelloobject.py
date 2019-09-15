@@ -193,7 +193,7 @@ class TrelloObject(models.Model):
             if label.get('name'):
                 task_tags.add(
                     re.sub(
-                        ur'[\W_]+', u'_',
+                        r'[\W_]+', u'_',
                         label.get('name'),
                         flags=re.UNICODE
                     )

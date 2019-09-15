@@ -98,7 +98,7 @@ sse==1.2
 -e git+https://github.com/latestrevision/taskw@8e65254fa26f3398faf0f245e6b5b0fcbd5b312d#egg=taskw
 tlslite==0.4.9
 traitlets==4.1.0
-trello==0.9.1
+-e git+https://github.com/coddingtonbear/trello-py.git@f24eea1df98cecbc6bb4f8265e1fb598a69dcf62#egg=trello
 Twiggy==0.4.7
 twilio==5.2.0
 urllib3==1.22

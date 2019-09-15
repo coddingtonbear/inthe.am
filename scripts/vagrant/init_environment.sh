@@ -40,6 +40,10 @@ if [ -z "$TRAVIS" ]; then
     fi
     cd $STARTING_DIR
 
+    # Enable NFS file locking
+    systemctl enable rpc-statd
+    systemctl start rpc-statd
+
     # Increase watch count
     echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 

@@ -1,7 +1,7 @@
 import datetime
 import json
 import logging
-import urlparse
+import urllib.parse
 
 from django.contrib import admin
 from django.utils.safestring import mark_safe
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 class DefaultFilterMixIn(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         full_path = request.get_full_path()
-        path_info = urlparse.urlparse(full_path)
+        path_info = urllib.parse.urlparse(full_path)
         referrer = request.META.get('HTTP_REFERER', '')
         if not path_info.path in referrer:
             q = request.GET.copy()

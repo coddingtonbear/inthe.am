@@ -1,5 +1,5 @@
 from django.contrib.auth import logout
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.http import HttpResponseRedirect
 
@@ -12,9 +12,9 @@ def logout_and_redirect(request):
     return HttpResponseRedirect('/')
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url('^logout/', logout_and_redirect, name='logout'),
     url('', include('social_django.urls', namespace='social')),
     url('', include('inthe_am.taskmanager.urls')),
-) + staticfiles_urlpatterns()
+ ] + staticfiles_urlpatterns()

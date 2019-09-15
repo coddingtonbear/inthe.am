@@ -45,14 +45,16 @@ class Command(BaseCommand):
             try:
                 os.kill(pid, signal.SIGKILL)
             except:
-                print "\033[31mFailed to kill PID %s\033[m" % pid
+                print("\033[31mFailed to kill PID %s\033[m" % pid)
 
     def handle(self, *args, **kwargs):
-        print "\033[31m Note: It will take a few seconds for both necessary"
-        print "      servers to start.  Once you see the message"
-        print "      message '\033[32mBuild Successful\033[31m', both",
-        print "servers are up."
-        print "\033[m"
+        print("\033[31m Note: It will take a few seconds for both necessary")
+        print("      servers to start.  Once you see the message")
+        print(
+            "      message '\033[32mBuild Successful\033[31m', both"
+            "servers are up."
+        )
+        print("\033[m")
         runserver = threading.Thread(target=self.run_runserver)
         runserver.daemon = True
         runserver.start()

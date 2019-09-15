@@ -1,7 +1,7 @@
 import os
 
 from django.conf import settings
-from django.conf.urls import include, patterns, url
+from django.conf.urls import include, url
 from django.http import HttpResponse, HttpResponseNotFound
 from rest_framework import routers
 
@@ -37,8 +37,7 @@ def view_does_not_exist(request):
     return HttpResponseNotFound()
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url('^api/v2/', include(router.urls, namespace='api')),
     url('^api/v2/hook/$', RestHookHandler.as_view(), name='rest_hook_list'),
     url(
@@ -71,7 +70,7 @@ urlpatterns = patterns(
         unmatched,
     ),
     url('^', fallback),
-)
+]
 
 if settings.DEBUG:
     # Only enabled for local development as a way to
