@@ -10,17 +10,22 @@ fi
 
 # Install necessary packages
 echo "installing dependencies"
+
+
+
 apt-get update
-apt-get install -y python-software-properties
-apt-add-repository -y ppa:chris-lea/node.js
-add-apt-repository -y ppa:ubuntu-toolchain-r/test
+apt-get install -y software-properties-common
 apt-get update
-apt-get install -y --force-yes git postgresql-server-dev-9.1 python-dev cmake build-essential uuid-dev gnutls-bin memcached redis-server chrpath git-core libssl-dev libfontconfig1-dev nodejs firefox checkinstall curl libcurl4-gnutls-dev libgnutls-dev libxml2-dev libxslt1-dev g++-4.8
+apt-get install -y --allow-unauthenticated git postgresql-all python3-dev cmake build-essential uuid-dev gnutls-bin memcached chrpath git-core libssl1.0-dev libfontconfig1-dev nodejs-dev node-gyp nodejs npm firefox checkinstall curl libcurl4-gnutls-dev libgnutls28-dev libxml2-dev libxslt1-dev g++-4.8
 update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+
+mkdir -p /etc/redis/
+cp $MAIN_DIR/scripts/vagrant/redis.conf /etc/redis/redis.conf
+apt-get install redis-server
 
 # Python prerequisites
 wget -nv https://bootstrap.pypa.io/get-pip.py
-python get-pip.py
+python3 get-pip.py
 pip install virtualenv
 pip install wheel
 
@@ -59,7 +64,7 @@ if [ -z "$TRAVIS" ]; then
     source /var/www/envs/twweb/bin/activate
 else
     source $MAIN_DIR/scripts/vagrant/environment_variables.sh
-    source ~/virtualenv/python2.7/bin/activate
+    source ~/virtualenv/python3.6/bin/activate
 fi
 
 mkdir -p $MAIN_DIR/task_data
@@ -93,10 +98,13 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     taskd init
     taskd add org inthe_am
     taskd add org testing
-    cp $MAIN_DIR/scripts/vagrant/simple_taskd_upstart.conf /etc/init/taskd.conf
+    if [ -z "$TRAVIS" ]; then
+        cp $MAIN_DIR/scripts/vagrant/taskd.service /etc/systemd/system/taskd.service
+        chmod 644 /etc/systemd/system/taskd.service
+    fi
 
     if [ -z "$TRAVIS" && -z "`pgrep -x taskd`" ]; then
-        service taskd stop
+        systemctl stop taskd
     fi
 
     # generate certificates
@@ -116,7 +124,7 @@ if [ ! -d $TWWEB_TASKD_DATA ]; then
     chmod -R 777 /var/taskd/
 
     if [ -z "$TRAVIS" ]; then
-        service taskd start
+        systemctl start taskd
     fi
 fi
 
@@ -146,15 +154,19 @@ echo "installing ember-cli and bower"
 if [ -z "$TRAVIS" ]; then
     # Install a modern version of node
     npm install -g n
-    n 5.0.0
+    n 6
 else
     . $HOME/.nvm/nvm.sh
-    nvm install 5
-    nvm use 5
+    nvm install 6
+    nvm use 6
 fi
+hash -d node
+
 export PATH=$MAIN_DIR/node_modules/.bin:$PATH
-npm install -g npm@5.3.0
-npm install -g bower@1.7.6
+npm install -g npm@5.7
+hash -d npm
+
+npm install -g bower@1.8.8
 npm install ember-cli@2.4.3
 ember --version
 echo "running npm install"

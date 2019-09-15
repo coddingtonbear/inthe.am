@@ -1,0 +1,10 @@
+[Unit]
+Description=Taskwarrior Daemon
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/taskd server
+Environment=TASKDDATA=/var/taskd
+
+[Install]
+WantedBy=multi-user.target

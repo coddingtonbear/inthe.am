@@ -45,6 +45,7 @@
     "esnext": true,
     "node": false,
     "browser": false,
+    "asi": true,
 
     "boss": true,
     "curly": false,
