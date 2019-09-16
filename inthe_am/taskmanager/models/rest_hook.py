@@ -24,7 +24,7 @@ class RestHook(models.Model):
             }
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{task_store} ({event_type}) --> {target_url}'.format(
             task_store=self.task_store,
             event_type=self.event_type,

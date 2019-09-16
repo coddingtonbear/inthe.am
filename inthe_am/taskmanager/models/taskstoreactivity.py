@@ -64,7 +64,7 @@ class TaskStoreActivity(models.Model):
             )
         super(TaskStoreActivity, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%ss sync of %s" % (
             self.duration_seconds,
             self.store,

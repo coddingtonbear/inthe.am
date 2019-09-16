@@ -117,7 +117,7 @@ class TrelloObjectAction(models.Model):
         if hasattr(self, reconciliation_method):
             getattr(self, reconciliation_method)()
 
-    def __unicode__(self):
+    def __str__(self):
         return (
             u'{type} action #{id} on trello {model_type} '
             '#{model_id}'.format(

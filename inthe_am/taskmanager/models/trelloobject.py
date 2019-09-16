@@ -379,7 +379,7 @@ class TrelloObject(models.Model):
 
         super(TrelloObject, self).delete(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'Trello {type} #{id} ({user})'.format(
             type=self.type.title(),
             id=self.id,

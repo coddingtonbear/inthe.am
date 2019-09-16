@@ -24,7 +24,6 @@ class TaskRc(object):
             return config, includes
         with open(path, 'r') as config_file:
             for line in config_file.readlines():
-                line = line.decode('utf8', 'replace')
                 if line.startswith('#'):
                     continue
                 if line.startswith('include '):
@@ -64,10 +63,7 @@ class TaskRc(object):
                 )
             for key, value in data.items():
                 config.write(
-                    "%s=%s\n" % (
-                        key.encode('utf8'),
-                        value.encode('utf8')
-                    )
+                    "%s=%s\n" % (key, value)
                 )
 
     @property
@@ -126,8 +122,5 @@ class TaskRc(object):
             self.includes.remove(item)
         self._write()
 
-    def __unicode__(self):
-        return u'.taskrc at %s' % self.path
-
     def __str__(self):
-        return self.__unicode__().encode('utf-8', 'REPLACE')
+        return u'.taskrc at %s' % self.path

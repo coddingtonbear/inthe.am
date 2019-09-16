@@ -26,11 +26,11 @@ class Metadata(object):
             return self._init()
 
         with open(self.path, 'r') as config_file:
-            return json.loads(config_file.read().decode('utf8'))
+            return json.loads(config_file.read())
 
     def _write(self):
         with open(self.path, 'w') as config_file:
-            config_file.write(json.dumps(self.config).encode('utf8'))
+            config_file.write(json.dumps(self.config))
 
     def items(self):
         return self.config.items()
@@ -51,8 +51,5 @@ class Metadata(object):
         self.config[item] = value
         self._write()
 
-    def __unicode__(self):
-        return u'metadata at %s' % self.path
-
     def __str__(self):
-        return self.__unicode__().encode('utf-8', 'REPLACE')
+        return u'metadata at %s' % self.path

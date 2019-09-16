@@ -38,7 +38,7 @@ class Announcement(models.Model):
     objects = models.Manager()
     current = CurrentAnnouncementsManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Meta:

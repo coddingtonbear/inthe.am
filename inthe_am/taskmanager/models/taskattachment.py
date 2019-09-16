@@ -22,7 +22,7 @@ class TaskAttachment(models.Model):
     document = models.FileField(upload_to=get_attachment_path)
     created = models.DateTimeField(auto_now_add=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s: %s (%s MB)" % (
             self.task_id,
             self.name,

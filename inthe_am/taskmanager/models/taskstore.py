@@ -416,7 +416,7 @@ class TaskStore(models.Model):
 
         super(TaskStore, self).delete(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Tasks for %s' % self.username
 
     #  Git-related methods
@@ -430,7 +430,7 @@ class TaskStore(models.Model):
         )
         stdout, stderr = proc.communicate()
         changed_tickets = set()
-        for raw_line in stdout.split('\n'):
+        for raw_line in stdout.decode('utf-8').split('\n'):
             line = raw_line.strip()
             if not line or line[0] not in ('+', '-'):
                 continue
@@ -664,13 +664,13 @@ class TaskStore(models.Model):
             results = {
                 'reflog': {
                     'returncode': reflog.returncode,
-                    'stdout': reflog_result[0],
-                    'stderr': reflog_result[1],
+                    'stdout': reflog_result[0].decode('utf-8'),
+                    'stderr': reflog_result[1].decode('utf-8'),
                 },
                 'repack': {
                     'returncode': repack.returncode,
-                    'stdout': repack_result[0],
-                    'stderr': repack_result[1],
+                    'stdout': repack_result[0].decode('utf-8'),
+                    'stderr': repack_result[1].decode('utf-8'),
                 },
             }
             return results
@@ -696,7 +696,7 @@ class TaskStore(models.Model):
                 '--max-parents=0',
                 'HEAD',
             ).communicate()
-            head_commit = head_commit.strip()
+            head_commit = head_commit.decode('utf-8').strip()
 
             self._git_command(
                 'reset',
@@ -898,8 +898,12 @@ class TaskStore(models.Model):
                 stderr=subprocess.PIPE,
                 env=env,
             )
-            key_proc_output = key_proc.communicate()[0].split('\n')
-            taskd_user_key = key_proc_output[0].split(':')[1].strip()
+            key_proc_output = (
+                key_proc.communicate()[0].decode('utf-8').split('\n')
+            )
+            taskd_user_key = (
+                key_proc_output[0].split(':')[1].strip()
+            )
 
             # Create and write a new private key
             private_key_proc = subprocess.Popen(
@@ -910,7 +914,7 @@ class TaskStore(models.Model):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            private_key = private_key_proc.communicate()[0]
+            private_key = private_key_proc.communicate()[0].decode('utf-8')
             private_key_filename = os.path.join(
                 self.local_path,
                 self.DEFAULT_FILENAMES['key'],
@@ -971,7 +975,7 @@ class TaskStore(models.Model):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        cert = cert_proc.communicate()[0]
+        cert = cert_proc.communicate()[0].decode('utf-8')
 
         with open(cert_filename, 'w') as out:
             out.write(cert)
@@ -1016,7 +1020,7 @@ class TaskStore(models.Model):
                     )
 
         message_hash = hashlib.md5(
-            self.local_path + message % params
+            (self.local_path + message % params).encode('utf-8')
         ).hexdigest()
         instance, created = TaskStoreActivityLog.objects.get_or_create(
             store=self,

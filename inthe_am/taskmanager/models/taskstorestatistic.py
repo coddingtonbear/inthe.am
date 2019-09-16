@@ -23,7 +23,7 @@ class TaskStoreStatistic(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"{value} {measure} for {store} at {date}".format(
             value=self.value,
             measure=self.measure,

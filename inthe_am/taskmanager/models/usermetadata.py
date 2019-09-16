@@ -39,7 +39,7 @@ class UserMetadata(models.Model):
         )
         return meta
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username
 
     class Meta:

@@ -11,7 +11,7 @@ class TaskStoreActivityLog(models.Model):
     message = models.TextField()
     count = models.IntegerField(default=0)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.message.replace('\n', ' ')[0:50]
 
     def save(self, *args, **kwargs):
