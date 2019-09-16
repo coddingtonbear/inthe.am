@@ -8,6 +8,7 @@ class UserMetadata(models.Model):
         User,
         related_name='metadata',
         unique=True,
+        on_delete=models.CASCADE
     )
     tos_version = models.IntegerField(default=0)
     tos_accepted = models.DateTimeField(

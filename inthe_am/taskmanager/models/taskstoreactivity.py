@@ -8,7 +8,11 @@ from django.utils.timezone import now
 
 
 class TaskStoreActivity(models.Model):
-    store = models.ForeignKey('TaskStore', related_name='syncs')
+    store = models.ForeignKey(
+        'TaskStore',
+        related_name='syncs',
+        on_delete=models.CASCADE,
+    )
     activity = models.CharField(max_length=255)
     metadata_version = models.CharField(max_length=10, default='v5')
 

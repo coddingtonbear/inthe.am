@@ -9,7 +9,11 @@ from ..tasks import send_rest_hook_message
 class RestHook(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    task_store = models.ForeignKey(TaskStore, related_name='rest_hooks')
+    task_store = models.ForeignKey(
+        TaskStore,
+        related_name='rest_hooks',
+        on_delete=models.CASCADE,
+    )
     event_type = models.CharField(max_length=255)
     target_url = models.URLField()
 

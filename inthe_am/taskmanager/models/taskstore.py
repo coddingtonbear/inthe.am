@@ -66,6 +66,7 @@ class TaskStore(models.Model):
         related_name='task_stores',
         null=True,
         blank=True,
+        on_delete=models.CASCADE,
     )
     local_path = models.CharField(
         max_length=255,

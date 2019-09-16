@@ -15,7 +15,11 @@ def get_attachment_path(instance, filename):
 
 
 class TaskAttachment(models.Model):
-    store = models.ForeignKey(TaskStore, related_name='attachments')
+    store = models.ForeignKey(
+        TaskStore,
+        related_name='attachments',
+        on_delete=models.CASCADE,
+    )
     task_id = models.CharField(max_length=36)
     name = models.CharField(max_length=256)
     size = models.PositiveIntegerField()

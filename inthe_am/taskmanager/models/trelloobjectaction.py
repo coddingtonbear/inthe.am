@@ -15,7 +15,8 @@ class TrelloObjectAction(models.Model):
         TrelloObject,
         related_name='actions',
         blank=True,
-        null=True
+        null=True,
+        on_delete=models.CASCADE,
     )
     meta = JSONField()
 

@@ -42,12 +42,14 @@ class TrelloObject(models.Model):
     store = models.ForeignKey(
         TaskStore,
         related_name='trello_objects',
+        on_delete=models.CASCADE,
     )
     parent = models.ForeignKey(
         'self',
         related_name='children',
         null=True,
         blank=True,
+        on_delete=models.CASCADE,
     )
     type = models.CharField(choices=TYPE_CHOICES, max_length=10)
     meta = JSONField()

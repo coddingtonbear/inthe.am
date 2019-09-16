@@ -8,7 +8,11 @@ class TaskStoreStatistic(models.Model):
         (MEASURE_SIZE, 'Repository Size', ),
     )
 
-    store = models.ForeignKey('TaskStore', related_name='statistics')
+    store = models.ForeignKey(
+        'TaskStore',
+        related_name='statistics',
+        on_delete=models.CASCADE,
+    )
 
     measure = models.CharField(choices=MEASURE_CHOICES, max_length=50)
     value = models.FloatField()

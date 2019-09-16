@@ -44,7 +44,9 @@ ALLOWED_HOSTS = [
     'inthe.am',
 ]
 
-MIDDLEWARE_CLASSES = [
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'inthe_am.taskmanager.middleware.AuthenticationTokenMiddleware',
     'corsheaders.middleware.CorsMiddleware',

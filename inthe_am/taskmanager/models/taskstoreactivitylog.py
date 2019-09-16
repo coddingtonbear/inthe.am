@@ -2,7 +2,11 @@ from django.db import models
 
 
 class TaskStoreActivityLog(models.Model):
-    store = models.ForeignKey('TaskStore', related_name='log_entries')
+    store = models.ForeignKey(
+        'TaskStore',
+        related_name='log_entries',
+        on_delete=models.CASCADE,
+    )
     md5hash = models.CharField(max_length=32)
     last_seen = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
