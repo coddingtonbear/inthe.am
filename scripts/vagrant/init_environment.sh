@@ -188,7 +188,7 @@ pip install -r $MAIN_DIR/requirements-frozen.txt
 
 if [ -z "$TRAVIS" ]; then
     echo "preparing application"
-    pip install ipdb
+    pip install ipdb ptvsd
     python $MAIN_DIR/manage.py migrate --noinput
 
     if [ ! -f /etc/init/taskd-celery.conf ]; then
