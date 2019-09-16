@@ -273,27 +273,27 @@ class TaskStore(models.Model):
     def _get_extra_safely(self, key, val):
         valid_patterns = [
             (
-                re.compile('^urgency\..*\.coefficient$'),
+                re.compile(r'^urgency\..*\.coefficient$'),
                 self._is_numeric
             ),
             (
-                re.compile('^urgency\..*\.max$'),
+                re.compile(r'^urgency\..*\.max$'),
                 self._is_numeric
             ),
             (
-                re.compile('^uda\.priority\.default$'),
+                re.compile(r'^uda\.priority\.default$'),
                 self._is_valid_priority
             ),
             (
-                re.compile('^priority\.default$'),
+                re.compile(r'^priority\.default$'),
                 self._is_valid_priority
             ),
             (
-                re.compile('^uda\.[^.]+\.type$'),
+                re.compile(r'^uda\.[^.]+\.type$'),
                 self._is_valid_type
             ),
             (
-                re.compile('^uda\.[^.]+\.label$'),
+                re.compile(r'^uda\.[^.]+\.label$'),
                 lambda x: True  # Accept all strings
             )
         ]
@@ -711,7 +711,8 @@ class TaskStore(models.Model):
                 self.save()
 
     def sync(
-        self, function=None, args=None, kwargs=None, async=True, msg=None
+        self, function=None, args=None, kwargs=None,
+        asynchronous=True, msg=None
     ):
         if not self.sync_enabled or not self.sync_permitted:
             return False
@@ -730,7 +731,7 @@ class TaskStore(models.Model):
         debounce_id = kwargs.get('debounce_id') if kwargs else None
         debounce_key = get_debounce_name_for_store(self)
 
-        if async:
+        if asynchronous:
             defined_debounce_id = str(time.time())
             client.set(debounce_key, defined_debounce_id)
             sync_repository.apply_async(

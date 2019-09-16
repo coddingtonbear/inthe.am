@@ -250,7 +250,7 @@ class TaskViewSet(viewsets.ViewSet):
     @requires_task_store
     @list_route(methods=['post'])
     def sync(self, request, store=None):
-        result = store.sync(async=False)
+        result = store.sync(asynchronous=False)
         if not result:
             return Response(
                 {

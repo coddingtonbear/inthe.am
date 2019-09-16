@@ -59,7 +59,7 @@ def sync_repository(self, store_id, debounce_id=None, **kwargs):
     store = TaskStore.objects.get(pk=store_id)
     try:
         store.sync(
-            async=False,
+            asynchronous=False,
             function='tasks.sync_repository',
             args=(store_id, ),
             kwargs={'debounce_id': debounce_id},
