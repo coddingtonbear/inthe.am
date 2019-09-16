@@ -6,7 +6,7 @@ from django.contrib.syndication.views import Feed
 from django.core.exceptions import (
     ObjectDoesNotExist, PermissionDenied, SuspiciousOperation,
 )
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import (
     Http404, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse,
 )

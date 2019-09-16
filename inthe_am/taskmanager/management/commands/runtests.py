@@ -11,22 +11,21 @@ from .run import Command as RunserverCommand
 
 
 class Command(RunserverCommand):
-    option_list = RunserverCommand.option_list + (
-        make_option(
+    def add_arguments(self, parser):
+        parser.add_argument(
             '--wip',
             action='store_true',
             dest='wip',
             default=False,
             help='Run only tests marked with @wip'
-        ),
-        make_option(
+        )
+        parser.add_argument(
             '-x', '--failfast',
             action='store_true',
             dest='stop',
             default=False,
             help='Stop running tests at first failure'
-        ),
-    )
+        )
 
     def run_tests(self, *args):
         env = os.environ.copy()

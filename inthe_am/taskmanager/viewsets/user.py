@@ -3,11 +3,11 @@ import textwrap
 
 from django.conf import settings
 from django.core.signing import Signer
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http.response import HttpResponse
 from django.utils.timezone import now
 from rest_framework import viewsets
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import (
     IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -151,7 +151,7 @@ class UserViewSet(viewsets.ViewSet):
             )
             return response
 
-    @list_route(methods=['get'])
+    @action(detail=False, methods=['get'])
     def status(self, request):
         if request.user.is_authenticated():
             store = models.TaskStore.get_for_user(request.user)
@@ -164,7 +164,7 @@ class UserViewSet(viewsets.ViewSet):
 
         return Response(user_data)
 
-    @list_route(methods=['get'])
+    @action(detail=False, methods=['get'])
     def announcements(self, request):
         announcements = []
 
@@ -196,7 +196,8 @@ class UserViewSet(viewsets.ViewSet):
         return Response(announcements)
 
     @git_managed('Generate new certificate', gc=False)
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='generate-new-certificate',
@@ -206,7 +207,8 @@ class UserViewSet(viewsets.ViewSet):
         store.generate_new_certificate()
         return Response()
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['get'],
         permission_classes=[IsAuthenticated],
         url_path='my-certificate',
@@ -218,7 +220,8 @@ class UserViewSet(viewsets.ViewSet):
             content_type='application/x-pem-file',
         )
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['get'],
         permission_classes=[IsAuthenticated],
         url_path='my-key',
@@ -230,7 +233,8 @@ class UserViewSet(viewsets.ViewSet):
             content_type='application/x-pem-file',
         )
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['get'],
         permission_classes=[IsAuthenticated],
         url_path='ca-certificate',
@@ -243,7 +247,8 @@ class UserViewSet(viewsets.ViewSet):
         )
 
     @git_managed('Update custom taskrc configuration', gc=False)
-    @list_route(
+    @action(
+        detail=False,
         methods=['get', 'put', ],
         permission_classes=[IsAuthenticated]
     )
@@ -270,7 +275,8 @@ class UserViewSet(viewsets.ViewSet):
             )
 
     @git_managed('Reset taskd configuration', gc=False)
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='reset-taskd-configuration',
@@ -279,7 +285,8 @@ class UserViewSet(viewsets.ViewSet):
         store.reset_taskd_configuration()
         return Response()
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='tos-accept',
@@ -292,7 +299,8 @@ class UserViewSet(viewsets.ViewSet):
 
         return Response()
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='privacy-policy-accept',
@@ -305,7 +313,8 @@ class UserViewSet(viewsets.ViewSet):
 
         return Response()
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='twilio-integration',
@@ -321,7 +330,8 @@ class UserViewSet(viewsets.ViewSet):
 
         return Response()
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='email-integration',
@@ -334,7 +344,8 @@ class UserViewSet(viewsets.ViewSet):
 
         return Response()
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='clear-task-data',
@@ -346,7 +357,8 @@ class UserViewSet(viewsets.ViewSet):
 
         return Response()
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['put', 'get'],
         permission_classes=[IsAuthenticated],
     )
@@ -364,7 +376,8 @@ class UserViewSet(viewsets.ViewSet):
             )
 
     @requires_task_store
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='enable-sync',
@@ -381,7 +394,8 @@ class UserViewSet(viewsets.ViewSet):
         return Response()
 
     @requires_task_store
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='feed-config',
@@ -399,7 +413,8 @@ class UserViewSet(viewsets.ViewSet):
         return Response()
 
     @requires_task_store
-    @list_route(
+    @action(
+        detail=False,
         methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='ical-config',

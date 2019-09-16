@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from icalendar import Calendar, Event
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import (
     AllowAny, IsAuthenticatedOrReadOnly,
@@ -188,27 +188,27 @@ class TaskViewSet(viewsets.ViewSet):
 
     @requires_task_store
     @git_managed('Start task', sync=True)
-    @detail_route(methods=['post'])
+    @action(detail=True, methods=['post'])
     def start(self, request, store=None, pk=None):
         store.client.task_start(uuid=pk)
         return Response()
 
     @requires_task_store
     @git_managed('Stop task', sync=True)
-    @detail_route(methods=['post'])
+    @action(detail=True, methods=['post'])
     def stop(self, request, store=None, pk=None):
         store.client.task_stop(uuid=pk)
         return Response()
 
     @requires_task_store
     @git_managed('Delete task', sync=True)
-    @detail_route(methods=['post'])
+    @action(detail=True, methods=['post'])
     def delete(self, request, store=None, pk=None):
         store.client.task_delete(uuid=pk)
         return Response()
 
     @requires_task_store
-    @list_route(methods=['delete', 'get'])
+    @action(detail=False, methods=['delete', 'get'])
     def lock(self, request, store=None):
         lock_name = get_lock_name_for_store(store)
         client = get_lock_redis()
@@ -225,7 +225,7 @@ class TaskViewSet(viewsets.ViewSet):
             return Response({'status': value})
 
     @requires_task_store
-    @list_route(methods=['post'])
+    @action(detail=False, methods=['post'])
     def revert(self, request, store=None):
         old_head = store.repository.head().decode('utf-8')
         new_head = (
@@ -248,7 +248,7 @@ class TaskViewSet(viewsets.ViewSet):
         })
 
     @requires_task_store
-    @list_route(methods=['post'])
+    @action(detail=False, methods=['post'])
     def sync(self, request, store=None):
         result = store.sync(asynchronous=False)
         if not result:
@@ -264,12 +264,13 @@ class TaskViewSet(viewsets.ViewSet):
         return Response()
 
     @requires_task_store
-    @list_route(methods=['post'], url_path='sync-init')
+    @action(detail=False, methods=['post'], url_path='sync-init')
     def sync_init(self, request, store=None):
         store.client.sync(init=True)
         return Response()
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['get'],
         permission_classes=[AllowAny],
     )
@@ -288,7 +289,8 @@ class TaskViewSet(viewsets.ViewSet):
             )
         )
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['get'],
         url_path='trello/callback',
         permission_classes=[AllowAny],
@@ -335,25 +337,25 @@ class TaskViewSet(viewsets.ViewSet):
         return HttpResponseRedirect('/tasks/')
 
     @requires_task_store
-    @list_route(methods=['post'], url_path='trello/resynchronize')
+    @action(detail=False, methods=['post'], url_path='trello/resynchronize')
     def trello_resynchronize(self, request, store=None):
         sync_trello_tasks.apply_async(args=(store.pk, ))
         return Response(status=202)
 
     @requires_task_store
-    @list_route(methods=['post'], url_path='trello/reset')
+    @action(detail=False, methods=['post'], url_path='trello/reset')
     def trello_reset(self, request, store=None):
         reset_trello.apply_async(args=(store.pk, ))
         return Response(status=202)
 
     @requires_task_store
-    @list_route(methods=['post'])
+    @action(detail=False, methods=['post'])
     def deduplicate(self, request, store=None):
         store.deduplicate_tasks()
         return Response(status=202)
 
     @requires_task_store
-    @list_route(methods=['post'], url_path='deduplication-config')
+    @action(detail=False, methods=['post'], url_path='deduplication-config')
     def deduplication_config(self, request, store=None):
         try:
             enabled = int(request.POST.get('enabled', 0))

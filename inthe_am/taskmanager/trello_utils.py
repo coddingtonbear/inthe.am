@@ -7,7 +7,7 @@ import urllib
 from urllib.parse import parse_qs
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from .lock import get_lock_redis
 

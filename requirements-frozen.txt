@@ -13,18 +13,17 @@ chardet==3.0.4
 click==6.2
 contextlib2==0.5.1
 decorator==4.0.6
-Django==1.8.19
+django==1.11.24
 -e git+https://github.com/coddingtonbear/django-behave.git@79028d59f89c7a12255120d266f5c844656a6805#egg=django_behave
-django-cors-headers==1.1.0
+django-cors-headers==3.1.0
 django-extensions==1.6.1
 django-filter==0.13.0
-django-mailbox==4.4.5
-django-rest-framework==0.1.0
+django-mailbox==4.8.0
 -e git+https://github.com/niwinz/django-sse.git@1351b1387250c412e1adfc33aef0bc9d888d5bbf#egg=django_sse
 django-storages==1.1.8
 django-tastypie==0.13.3
 django-twilio==0.4
-djangorestframework==3.6.4
+djangorestframework==3.10.3
 docutils==0.12
 dogpile.cache==0.5.7
 dogpile.core==0.4.1
