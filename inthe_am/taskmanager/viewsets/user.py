@@ -81,7 +81,7 @@ def get_published_properties(user, store, meta):
             }
         ),
         'colorscheme': meta.colorscheme,
-        'repository_head': store.repository.head(),
+        'repository_head': store.repository.head().decode('utf-8'),
         'sync_enabled': store.sync_enabled,
         'pebble_cards_enabled': store.pebble_cards_enabled,
         'feed_enabled': store.feed_enabled,

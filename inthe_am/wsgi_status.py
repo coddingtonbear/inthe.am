@@ -117,7 +117,7 @@ class Application(object):
             try:
                 self.head = query['head'][0]
             except (KeyError, IndexError):
-                self.head = self.store.repository.head()
+                self.head = self.store.repository.head().decode('utf-8')
 
             # Subscribe to the event stream
             self.subscription = get_announcements_subscription(
@@ -147,7 +147,7 @@ class Application(object):
 
             # Let the client know the head has changed if they've asked
             # for a different head than the one we're on:
-            if self.head != self.store.repository.head():
+            if self.head != self.store.repository.head().decode('utf-8'):
                 for task_id in self.store.get_changed_task_ids(self.head):
                     self.add_message('task_changed', task_id)
 

@@ -51,7 +51,7 @@ class Command(BaseCommand):
         print("\033[31m Note: It will take a few seconds for both necessary")
         print("      servers to start.  Once you see the message")
         print(
-            "      message '\033[32mBuild Successful\033[31m', both"
+            "      message '\033[32mBuild Successful\033[31m', both "
             "servers are up."
         )
         print("\033[m")

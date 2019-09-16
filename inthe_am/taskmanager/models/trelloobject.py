@@ -308,7 +308,7 @@ class TrelloObject(models.Model):
             "Instance created",
             data={
                 'meta': meta,
-                'head': store.repository.head(),
+                'head': store.repository.head().decode('utf-8'),
             }
         )
         instance.subscribe()

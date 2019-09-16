@@ -343,7 +343,7 @@ class TaskStore(models.Model):
         if not self.local_path.startswith(settings.TASK_STORAGE_PATH):
             return False
         try:
-            self.repository.head()
+            self.repository.head().decode('utf-8')
         except KeyError:
             return False
 
@@ -367,7 +367,7 @@ class TaskStore(models.Model):
             with open(os.path.join(self.local_path, '.gitignore'), 'w') as out:
                 out.write('.lock\n')
             try:
-                self.repository.head()
+                self.repository.head().decode('utf-8')
             except (KeyError, NotGitRepository):
                 self.create_git_repository()
 
@@ -424,7 +424,7 @@ class TaskStore(models.Model):
     def get_changed_task_ids(self, head, start=None):
         uuid_matcher = re.compile(r'uuid:"([0-9a-zA-Z-]+)"')
         if not start:
-            start = self.repository.head()
+            start = self.repository.head().decode('utf-8')
         proc = self._git_command(
             'diff', head, start
         )
@@ -613,7 +613,7 @@ class TaskStore(models.Model):
             args=(self.pk, ),
             kwargs={
                 'debounce_id': defined_debounce_id,
-                'current_head': self.repository.head(),
+                'current_head': self.repository.head().decode('utf-8'),
             }
         )
 
@@ -686,7 +686,7 @@ class TaskStore(models.Model):
         ):
             if (
                 self.trello_local_head
-                and self.trello_local_head != self.repository.head()
+                and self.trello_local_head != self.repository.head().decode('utf-8')
                 and not force
             ):
                 raise ValueError("Trello head out-of-date; aborting!")
@@ -707,7 +707,7 @@ class TaskStore(models.Model):
             self.create_git_checkpoint("Repository squashed.")
 
             if self.trello_local_head:
-                self.trello_local_head = self.repository.head()
+                self.trello_local_head = self.repository.head().decode('utf-8')
                 self.save()
 
     def sync(
@@ -739,7 +739,7 @@ class TaskStore(models.Model):
                 args=(self.pk, ),
                 kwargs={
                     'debounce_id': defined_debounce_id,
-                    'current_head': self.repository.head(),
+                    'current_head': self.repository.head().decode('utf-8'),
                 }
             )
         else:
@@ -772,7 +772,7 @@ class TaskStore(models.Model):
             if msg:
                 checkpoint_msg = '%s: %s' % (checkpoint_msg, msg)
 
-            start = self.repository.head()
+            start = self.repository.head().decode('utf-8')
             with git_checkpoint(
                 self, checkpoint_msg, function=function,
                 args=args, kwargs=kwargs, notify_rollback=False
@@ -781,7 +781,7 @@ class TaskStore(models.Model):
                 self.last_synced = now()
                 self.save()
 
-            head = self.repository.head()
+            head = self.repository.head().decode('utf-8')
             logger.info(
                 'Emitting local_sync pubsub event for %s\'s '
                 'task store at %s',
@@ -804,7 +804,7 @@ class TaskStore(models.Model):
                 (
                     not self.trello_local_head or
                     self.get_changed_task_ids(
-                        self.repository.head(),
+                        self.repository.head().decode('utf-8'),
                         start=self.trello_local_head
                     )
                 )

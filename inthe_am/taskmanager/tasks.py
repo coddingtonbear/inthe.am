@@ -300,7 +300,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
     store = TaskStore.objects.get(pk=store_id)
     client = get_lock_redis()
 
-    starting_head = store.repository.head()
+    starting_head = store.repository.head().decode('utf-8')
 
     debounce_key = get_debounce_name_for_store(store, 'trello')
     try:
@@ -438,7 +438,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
             }
             store.client.task_add(**data),
 
-    ending_head = store.repository.head()
+    ending_head = store.repository.head().decode('utf-8')
     store.trello_local_head = ending_head
     store.save()
 
@@ -501,7 +501,7 @@ def update_trello(
         )
         return
 
-    ending_head = store.repository.head()
+    ending_head = store.repository.head().decode('utf-8')
     starting_head = store.trello_local_head
     changed_ids = store.get_changed_task_ids(
         ending_head,

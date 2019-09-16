@@ -71,7 +71,7 @@ def git_checkpoint(
 ):
     lock_name = get_lock_name_for_store(store)
     try:
-        pre_work_sha = store.repository.head()
+        pre_work_sha = store.repository.head().decode('utf-8')
     except KeyError:
         pre_work_sha = None
     checkpoint_id = uuid.uuid4()
@@ -96,7 +96,7 @@ def git_checkpoint(
         lock_timeout=lock_timeout,
         wait_timeout=wait_timeout,
     ):
-        start_head = store.repository.head()
+        start_head = store.repository.head().decode('utf-8')
         git_index_lock_path = os.path.join(
             store.local_path,
             '.git/index.lock'
@@ -156,7 +156,7 @@ def git_checkpoint(
                 data=data,
             )
 
-            end_head = store.repository.head()
+            end_head = store.repository.head().decode('utf-8')
             recurring_task_found = False
             for task_id in store.get_changed_task_ids(
                 end_head, start=start_head
@@ -199,7 +199,7 @@ def git_checkpoint(
                 kwargs=kwargs,
                 rollback=True
             )
-            dangling_sha = store.repository.head()
+            dangling_sha = store.repository.head().decode('utf-8')
             changes_were_stored = (
                 dangling_sha and dangling_sha != pre_work_sha
             )
@@ -214,7 +214,7 @@ def git_checkpoint(
                 rollback=False,
                 force_commit=True,
             )
-            dangling_sha = store.repository.head()
+            dangling_sha = store.repository.head().decode('utf-8')
 
             if changes_were_stored:
                 logger.exception(

@@ -227,11 +227,13 @@ class TaskViewSet(viewsets.ViewSet):
     @requires_task_store
     @list_route(methods=['post'])
     def revert(self, request, store=None):
-        old_head = store.repository.head()
-        new_head = store.repository.get_object(old_head).parents[0]
+        old_head = store.repository.head().decode('utf-8')
+        new_head = (
+            store.repository.get_object(old_head).parents[0].decode('utf-8')
+        )
 
         with git_checkpoint(store, "Reverting to previous commit", sync=True):
-            store.git_reset(new_head)
+            store.git_reset(new_head.encode('utf-8'))
 
         store.log_message(
             "Taskstore was reverted from %s to %s via user-initiated "

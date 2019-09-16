@@ -1,4 +1,3 @@
-import copy
 import curses.ascii
 import datetime
 import json
@@ -10,6 +9,7 @@ import uuid
 import weakref
 
 import six
+import taskw.utils
 from taskw import TaskWarriorShellout, utils
 from taskw.task import Task as TaskwTask
 
@@ -63,9 +63,7 @@ class TaskwarriorClient(TaskWarriorShellout):
         return False
 
     def _get_json(self, *args):
-        encoded = self._execute(*args)[0]
-        decoded = encoded.decode('utf-8', 'replace')
-        return json.loads(decoded)
+        return json.loads(self._execute(*args)[0])
 
     def _strip_unsafe_args(self, *args):
         if not args:
@@ -154,7 +152,9 @@ class TaskwarriorClient(TaskWarriorShellout):
         # subprocess is expecting bytestrings only, so nuke unicode if present
         for i in range(len(command)):
             if isinstance(command[i], six.text_type):
-                command[i] = command[i].encode('utf-8')
+                command[i] = (
+                    taskw.utils.clean_ctrl_chars(command[i].encode('utf-8'))
+                )
 
         started = datetime.datetime.now()
 
@@ -164,7 +164,9 @@ class TaskwarriorClient(TaskWarriorShellout):
             stderr=subprocess.PIPE,
         )
 
-        stdout, stderr = proc.communicate()
+        _stdout, _stderr = proc.communicate()
+        stdout = _stdout.decode('utf-8')
+        stderr = _stderr.decode('utf-8')
 
         total_seconds = (datetime.datetime.now() - started).total_seconds()
 
