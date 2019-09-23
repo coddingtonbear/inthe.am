@@ -179,7 +179,7 @@ class Command(BaseCommand):
         try:
             while True:
                 if poller.poll(1):
-                    line = proc.stdout.readline()
+                    line = proc.stdout.readline().decode('utf-8')
                     try:
                         self.process_line(line)
                     except:
