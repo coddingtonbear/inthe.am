@@ -11,7 +11,7 @@ celery==3.1.25
 certifi==2018.4.16
 chardet==3.0.4
 click==6.2
-contextlib2==0.5.1
+contextlib2==0.6.0
 decorator==4.0.6
 django==1.11.24
 -e git+https://github.com/coddingtonbear/django-behave.git@79028d59f89c7a12255120d266f5c844656a6805#egg=django_behave
@@ -79,7 +79,7 @@ python-social-auth==0.2.21
 python-utils==2.1.0
 pytz==2015.7
 pyxdg==0.25
-raven==5.10.0
+raven==6.10.0
 redis==2.10.5
 requests==2.18.4
 requests-oauthlib==0.8.0

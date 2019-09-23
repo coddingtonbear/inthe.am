@@ -13,7 +13,7 @@ python-memcached==1.59
 webcolors==1.4
 django-twilio==0.4
 dulwich==0.9.4
-raven>=5.10.0
+raven>=6.10.0
 mock>=1.0.1
 -e git+https://github.com/niwinz/django-sse.git@1351b1387250c412e1adfc33aef0bc9d888d5bbf#egg=django-sse
 sse>=1.2
