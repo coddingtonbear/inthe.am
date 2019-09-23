@@ -46,7 +46,7 @@ keyring==7.3
 kitchen==1.2.4
 kombu==3.0.37
 lockfile==0.12.2
-lxml==3.4.4
+lxml==3.8.0
 Markdown==2.6.6
 MarkupSafe==0.23
 mimeparse==0.1.3
