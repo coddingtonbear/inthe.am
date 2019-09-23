@@ -25,7 +25,7 @@ redis>=2.10.3
 behave==1.2.5
 selenium==3.4.3
 splinter==0.7.6
-lxml==3.8.0
+lxml==4.4.1
 -e git+https://github.com/coddingtonbear/django-behave.git@79028d59f89c7a12255120d266f5c844656a6805#egg=django_behave
 ipdb==0.8
 python-dateutil>=2.2
