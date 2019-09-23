@@ -10,6 +10,9 @@ import time
 import urllib.parse as urlparse
 from wsgiref import util as wsgiref_utils
 
+import django
+django.setup()  # noqa
+
 from django.conf import settings
 from django.core.signing import Signer
 from gevent import sleep
