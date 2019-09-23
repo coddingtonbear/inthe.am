@@ -152,7 +152,7 @@ class Command(BaseCommand):
                 filename,
             ]
         )
-        return inode.strip().split(' ')[0]
+        return inode.decode('ascii').strip().split(' ')[0]
 
     def add_arguments(self, parser):
         parser.add_argument('file_path', nargs='?', type=str)
