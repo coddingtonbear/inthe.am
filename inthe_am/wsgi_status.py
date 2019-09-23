@@ -5,9 +5,9 @@ import datetime
 import json
 import logging
 import os
-from Queue import Queue
+from queue import Queue
 import time
-import urlparse
+import urllib.parse as urlparse
 from wsgiref import util as wsgiref_utils
 
 from django.conf import settings
