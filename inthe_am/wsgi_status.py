@@ -138,7 +138,7 @@ class Application(object):
 
             # Kick-off a sync just to be sure
             kwargs = {
-                'async': True,
+                'asynchronous': True,
                 'function': (
                     'views.Status.iterator'
                 )
