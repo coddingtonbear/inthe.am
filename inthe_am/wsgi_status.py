@@ -11,8 +11,6 @@ import urllib.parse as urlparse
 from wsgiref import util as wsgiref_utils
 
 import django
-django.setup()  # noqa
-
 from django.conf import settings
 from django.core.signing import Signer
 from gevent import sleep
@@ -21,15 +19,13 @@ from psycogreen.gevent import patch_psycopg
 from inthe_am.taskmanager.models import TaskStore
 from inthe_am.taskmanager.lock import get_announcements_subscription
 
-
 patch_psycopg()
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "inthe_am.settings")
+django.setup()  # noqa
 
 logger = logging.getLogger(__name__)
 logging.config.dictConfig(settings.LOGGING)
-
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "inthe_am.settings")
 
 
 class Application(object):
