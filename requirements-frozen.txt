@@ -94,7 +94,7 @@ Sphinx==1.3.4
 sphinx-rtd-theme==0.1.9
 splinter==0.7.6
 sse==1.2
--e git+https://github.com/latestrevision/taskw@8e65254fa26f3398faf0f245e6b5b0fcbd5b312d#egg=taskw
+-e git+https://github.com/latestrevision/taskw@7aef20e8666955fc0c5560567b6673e1d88160e7#egg=taskw
 tlslite==0.4.9
 traitlets==4.1.0
 -e git+https://github.com/coddingtonbear/trello-py.git@f24eea1df98cecbc6bb4f8265e1fb598a69dcf62#egg=trello
