@@ -80,7 +80,7 @@ python-utils==2.1.0
 pytz==2015.7
 pyxdg==0.25
 raven==6.10.0
-redis==2.10.5
+redis==3.3.8
 requests==2.18.4
 requests-oauthlib==0.8.0
 requests-toolbelt==0.5.1
