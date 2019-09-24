@@ -7,6 +7,7 @@ import time
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db import InterfaceError
 from django.utils.timezone import now
 
 from inthe_am.taskmanager.lock import get_lock_redis
@@ -92,6 +93,8 @@ class Command(BaseCommand):
                             repo,
                         )
                         repo.sync()
+                except InterfaceError:
+                    raise
                 except Exception as e:
                     logger.exception(
                         "Error encountered while processing sync event: %s",
