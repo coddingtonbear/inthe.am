@@ -67,7 +67,7 @@ parse-type==0.3.4
 parso==0.5.1
 path.py==8.1.2
 pbr==1.8.1
-pexpect==4.0.1
+pexpect==4.7.0
 pickleshare==0.5
 progressbar2==3.20.0
 prompt-toolkit==2.0.9
