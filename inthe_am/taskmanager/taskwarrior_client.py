@@ -238,7 +238,7 @@ class TaskwarriorClient(TaskWarriorShellout):
         try:
             return super(TaskwarriorClient, self)._get_task_object(obj)
         except ValueError as e:
-            logger.exception(
+            logger.warning(
                 "An error was encountered while parsing task {uuid} "
                 "in repository {repo}; omitting task in results: "
                 "{message}".format(
