@@ -317,7 +317,7 @@ class TaskStore(models.Model):
         errored = {}
         self.taskrc.add_include(extras_path)
         with tempfile.NamedTemporaryFile() as temp_extras:
-            temp_extras.write(self.taskrc_extras)
+            temp_extras.write(self.taskrc_extras.encode('utf-8'))
             temp_extras.flush()
             extras = TaskRc(temp_extras.name, read_only=True)
 
@@ -327,10 +327,7 @@ class TaskStore(models.Model):
                     if safe:
                         applied[key] = value
                         applied_extras.write(
-                            "%s=%s\n" % (
-                                key.encode('utf8'),
-                                value.encode('utf8'),
-                            )
+                            "%s=%s\n" % (key, value)
                         )
                     else:
                         errored[key] = (value, message)
