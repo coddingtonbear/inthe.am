@@ -41,7 +41,7 @@ def get_oauth_client(request=None, api_key=None, **params):
     }
     if request:
         base_params['callback_uri'] = request.build_absolute_uri(
-            reverse('api:task-trello/callback')
+            reverse('api:task-trello_callback')
         ) + '?api_key=' + api_key
 
     base_params.update(params)

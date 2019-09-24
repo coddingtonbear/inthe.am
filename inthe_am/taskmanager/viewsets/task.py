@@ -293,6 +293,7 @@ class TaskViewSet(viewsets.ViewSet):
         detail=False,
         methods=['get'],
         url_path='trello/callback',
+        url_name="trello_callback",
         permission_classes=[AllowAny],
     )
     def trello_callback(self, request, store=None):
