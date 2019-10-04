@@ -19,7 +19,7 @@ class OneWaySafeJSONEncoder(json.JSONEncoder):
         try:
             json.JSONEncoder.default(self, obj)
         except:
-            return unicode(obj)
+            return str(obj)
 
 
 def shlex_without_quotes(value):
