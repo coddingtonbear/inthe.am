@@ -18,7 +18,7 @@ def virtualenv(command, user=None):
 
 @task
 def deploy(
-    install='yes', build='yes', chown='no', refresh='yes', announce='yes'
+    install='yes', build='yes', chown='no', refresh='yes', announce='yes', restart='yes'
 ):
     pubsub_message = {
         'data': {
@@ -68,12 +68,14 @@ def deploy(
     run(
         "redis-cli -n 1 PUBLISH __general__ '%s'" % json.dumps(post_message)
     )
-    sudo('/usr/sbin/service twweb restart', shell=False)
-    sudo('/usr/sbin/service twweb-status restart', shell=False)
-    sudo('/usr/sbin/service twweb-celery restart', shell=False)
-    sudo('/usr/sbin/service twweb-sync-listener restart', shell=False)
-    sudo('/usr/sbin/service twweb-log-consumer restart', shell=False)
-    sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)
+    if restart == 'yes':
+        sudo('/usr/sbin/service twweb restart', shell=False)
+        sudo('/usr/sbin/service twweb-status restart', shell=False)
+        sudo('/usr/sbin/service twweb-celery restart', shell=False)
+        sudo('/usr/sbin/service twweb-sync-listener restart', shell=False)
+        sudo('/usr/sbin/service twweb-log-consumer restart', shell=False)
+    if chown == 'yes':
+        sudo('/bin/chown -R www-data:www-data /var/www/twweb/logs/', shell=False)
 
     if announce == 'yes':
         commit = local('git rev-parse HEAD', capture=True)
