@@ -4,7 +4,7 @@ import logging
 import oauthlib.oauth1
 import requests
 import urllib
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urlencode
 
 from django.conf import settings
 from django.urls import reverse
@@ -83,7 +83,7 @@ def get_authorize_url(request, api_key, user):
     }
     return u'{url}?{params}'.format(
         url=AUTHORIZE_URL,
-        params=urllib.urlencode(params)
+        params=urlencode(params)
     )
 
 
@@ -115,7 +115,7 @@ def subscribe_to_updates(object_id, user_token, callback_url):
 
     url = "%s?%s" % (
         SUBSCRIPTION_URL.format(user_token=user_token),
-        urllib.urlencode({
+        urlencode({
             'key': settings.TRELLO_API_KEY,
         })
     )
