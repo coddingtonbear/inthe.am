@@ -412,8 +412,13 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
                         "was not found in database!"
                     )
 
-    for task in to_reconcile:
-        task.reconcile()
+    with git_checkpoint(
+        store,
+        'Reconcile all known trello tasks.',
+        sync=False,
+    ):
+        for task in to_reconcile:
+            task.reconcile()
 
     with git_checkpoint(
         store,
