@@ -60,8 +60,8 @@ def get_request_token(request, api_key):
 
     request_token = parse_qs(response.content)
     return (
-        request_token['oauth_token'][0],
-        request_token['oauth_token_secret'][0],
+        request_token[b'oauth_token'][0],
+        request_token[b'oauth_token_secret'][0],
     )
 
 
@@ -102,8 +102,8 @@ def get_access_token(request, api_key, request_token):
     access_token = parse_qs(response.content)
 
     return (
-        access_token['oauth_token'][0],
-        access_token['oauth_token_secret'][0],
+        access_token[b'oauth_token'][0],
+        access_token[b'oauth_token_secret'][0],
     )
 
 
