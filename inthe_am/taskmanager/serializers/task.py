@@ -62,8 +62,10 @@ class TaskSerializer(serializers.Serializer):
         return original, changes
 
     def create(self, store, data):
-        for k, v in data.items():
-            if not v:
-                data.pop(k, None)
+        record = {}
 
-        return store.client.task_add(**data)
+        for k, v in data.items():
+            if v:
+                record[k] = v
+
+        return store.client.task_add(**record)
