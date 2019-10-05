@@ -34,8 +34,7 @@ django-storages==1.1.8
 boto==2.34.0
 x256==0.0.3
 requests==2.2.0
--e git+https://github.com/coddingtonbear/trello.git@f24eea1df98cecbc6bb4f8265e1fb598a69dcf62#egg=trello
-trello==0.9.1
+-e git+https://github.com/coddingtonbear/trello-py.git@f24eea1df98cecbc6bb4f8265e1fb598a69dcf62#egg=trello
 oauthlib==0.7.2
 jsonfield==1.0.3
 icalendar==3.9.0

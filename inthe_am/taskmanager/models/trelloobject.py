@@ -10,6 +10,8 @@ from jsonfield import JSONField
 import trello
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.urls import reverse
 from django.db import models
 
@@ -20,6 +22,10 @@ from .taskstore import TaskStore
 
 
 logger = logging.getLogger(__name__)
+
+
+class TrelloTaskDoesNotExist(ValueError):
+    pass
 
 
 class TrelloObject(models.Model):
@@ -77,6 +83,17 @@ class TrelloObject(models.Model):
             params=dict(key=client._apikey, token=client._token),
             data=data,
         )
+
+    def get_task(self):
+        constraints = {
+            'intheamtrelloid': self.id,
+            'intheamtrelloboardid': self.store.trello_board.id,
+        }
+
+        try:
+            return self.store.client.filter_tasks(constraints)[0]
+        except IndexError:
+            raise TrelloTaskDoesNotExist(constraints)
 
     def add_log_data(self, message=None, data=None):
         log_data = self.log
@@ -143,11 +160,8 @@ class TrelloObject(models.Model):
 
     def _reconcile_card(self):
         try:
-            task = self.store.client.filter_tasks({
-                'intheamtrelloid': self.id,
-                'intheamtrelloboardid': self.store.trello_board.id,
-            })[0]
-        except IndexError:
+            task = self.get_task()
+        except TrelloTaskDoesNotExist:
             self.add_log_data(
                 "Could not find matching task; aborting task reconciliation."
             )
@@ -242,6 +256,31 @@ class TrelloObject(models.Model):
             "Sending trello update data",
             data=kwargs
         )
+
+        existing_urls = set([
+            attachment.get('url', '')
+            for attachment in self.client.get(
+                self.id, attachments='true'
+            ).get('attachments', [])
+            if not attachment.get('isUpload', True)
+        ])
+        validator = URLValidator()
+        for uda_name, _ in self.store.client.config.get_udas().items():
+            if uda_name.startswith('intheam'):
+                # Skip internal UDAs
+                continue
+
+            try:
+                value = task.get(uda_name)
+                validator(value)
+
+                if value not in existing_urls:
+                    self.client.new_attachment(
+                        self.id,
+                        url=value
+                    )
+            except ValidationError:
+                pass
 
         self.client.update(
             self.id,
