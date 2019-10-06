@@ -30,7 +30,7 @@ lxml==4.4.1
 ipdb==0.8
 python-dateutil>=2.2
 sphinx>=1.2.3
-django-storages==1.1.8
+django-storages==1.7.2
 boto==2.34.0
 x256==0.0.3
 requests==2.2.0
