@@ -143,8 +143,12 @@ class Application(object):
         self.queue = Queue()
 
         try:
-            logger.info("Starting connection with env %s", env)
             self.store = TaskStore.objects.get(pk=int(env['TASKSTORE_ID']))
+            logger.info(
+                "Starting event stream for TaskStore %s for user %s",
+                self.store.pk,
+                self.store.user.username,
+            )
             query = urlparse.parse_qs(
                 urlparse.urlparse(
                     wsgiref_utils.request_uri(env)
@@ -227,9 +231,11 @@ class Application(object):
 
                 # Relax
                 sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
+            logger.info("Self-terminating; stream timeout reached.")
             self.subscription.unsubscribe()
             self.subscription.close()
-        except Exception:
+        except Exception as e:
+            logger.exception("Error encountered: %s", e)
             self.subscription.unsubscribe()
             self.subscription.close()
             raise
