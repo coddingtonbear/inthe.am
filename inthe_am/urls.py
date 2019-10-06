@@ -38,7 +38,7 @@ def status_offload(request):
 
     taskstore = TaskStore.get_for_user(request.user)
 
-    uwsgi.route("TASKSTORE_ID", taskstore.pk)
+    uwsgi.add_var("TASKSTORE_ID", taskstore.pk)
     uwsgi.route("uwsgi", "/tmp/inthe_am_status.sock,0,0")
     return HttpResponse()
 
