@@ -25,7 +25,7 @@ def status_offload(request):
             {
                 'error': 'Status unavailable in this environment.',
             },
-            status_code=404,
+            status=404,
         )
 
     if not request.user.is_authenticated():
@@ -33,7 +33,7 @@ def status_offload(request):
             {
                 'error': 'Unauthenticated',
             },
-            status_code=401
+            status=401
         )
 
     taskstore = TaskStore.get_for_user(request.user)
