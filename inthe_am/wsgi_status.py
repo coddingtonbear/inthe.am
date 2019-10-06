@@ -111,7 +111,7 @@ class Application(object):
             )
 
     def handle_message(self, message):
-        channel = message['channel']
+        channel = message['channel'].decode('utf-8')
         if channel.startswith('local_sync.'):
             self.handle_local_sync(message)
             return True
