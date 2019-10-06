@@ -49,6 +49,12 @@ def get_announcements_subscription(store, channels):
     return subscription
 
 
+def sse_offload(env, start_response):
+    app = Application(env, start_response)
+
+    yield from app.generator()
+
+
 class Application(object):
     HEADERS = [
         ('Content-Type', 'text/event-stream'),
@@ -195,7 +201,7 @@ class Application(object):
 
             start_response('500 Server Error', self.HEADERS)
 
-    def __iter__(self):
+    def generator(self):
         try:
             if not self.initialized:
                 yield 'retry: %s\n\n' % self.ERROR_RETRY_DELAY
@@ -242,7 +248,7 @@ class Application(object):
 
 
 try:
-    application = Application
+    application = sse_offload
 except Exception as e:
     logging.exception(
         'Event stream terminated by uncaught exception: %s',
