@@ -35,7 +35,7 @@ def get_announcements_subscription(store, channels):
     client = get_lock_redis()
     subscription = client.pubsub(ignore_subscribe_messages=True)
 
-    final_channels = {}
+    final_channels = []
 
     for channel in channels:
         final_channels.append(
