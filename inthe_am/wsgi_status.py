@@ -141,6 +141,8 @@ class Application(object):
             self.last_heartbeat = datetime.datetime.now()
 
     def __init__(self, env, start_response):
+        start_response('200 OK', self.HEADERS)
+
         self.last_heartbeat = None
         self.env = env
         self.response = env
@@ -194,12 +196,8 @@ class Application(object):
 
             self.initialized = True
 
-            start_response('200 OK', self.HEADERS)
-
         except Exception as e:
             logger.exception("Error starting event stream: %s", str(e))
-
-            start_response('500 Server Error', self.HEADERS)
 
     def generator(self):
         try:
