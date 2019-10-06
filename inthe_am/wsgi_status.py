@@ -1,8 +1,6 @@
 """
 WSGI config for Inthe.AM's status server.
 """
-from gevent import sleep, monkey
-monkey.patch_all()  # noqa
 
 import datetime
 import json
@@ -18,6 +16,8 @@ django.setup()  # noqa
 
 from django.conf import settings
 from django.core.signing import Signer
+
+from gevent import sleep
 from psycogreen.gevent import patch_psycopg
 
 from inthe_am.taskmanager.models import TaskStore
