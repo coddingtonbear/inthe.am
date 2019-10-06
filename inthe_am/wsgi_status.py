@@ -144,7 +144,7 @@ class Application(object):
 
         try:
             logger.info("Starting connection with env %s", env)
-            self.store = TaskStore.objects.get(pk=env['TASKSTORE_ID'])
+            self.store = TaskStore.objects.get(pk=int(env['TASKSTORE_ID']))
             query = urlparse.parse_qs(
                 urlparse.urlparse(
                     wsgiref_utils.request_uri(env)
