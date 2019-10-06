@@ -15,18 +15,37 @@ django.setup()  # noqa
 
 from django.conf import settings
 from django.core.signing import Signer
-from gevent import sleep
+from gevent import sleep, monkey
 from psycogreen.gevent import patch_psycopg
 
 from inthe_am.taskmanager.models import TaskStore
-from inthe_am.taskmanager.lock import get_announcements_subscription
+from inthe_am.taskmanager.lock import get_lock_redis
 
+monkey.patch_all()
 patch_psycopg()
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "inthe_am.settings")
 
 logger = logging.getLogger(__name__)
 logging.config.dictConfig(settings.LOGGING)
+
+
+def get_announcements_subscription(store, channels):
+    client = get_lock_redis()
+    subscription = client.pubsub(ignore_subscribe_messages=True)
+
+    final_channels = {}
+
+    for channel in channels:
+        final_channels.append(
+            channel.format(
+                username=store.username.encode('utf8')
+            )
+        )
+
+    subscription.subscribe(*channels)
+
+    return subscription
 
 
 class Application(object):
@@ -84,6 +103,25 @@ class Application(object):
                 json.dumps(message_data['data'])
             )
 
+    def handle_message(self, message):
+        channel = message['channel']
+        if channel.startswith('local_sync.'):
+            self.handle_local_sync(message)
+            return True
+        elif channel.startswith('changed_task.'):
+            self.handle_changed_task(message)
+            return True
+        elif channel.startswith('log_message.'):
+            self.handle_log_message(message)
+            return True
+        elif channel.startswith('personal.'):
+            self.handle_personal_announcement(message)
+            return True
+        elif channel == settings.ANNOUNCEMENTS_CHANNEL:
+            return True
+
+        return False
+
     def beat_heart(self):
         heartbeat_interval = datetime.timedelta(
             seconds=settings.EVENT_STREAM_HEARTBEAT_INTERVAL
@@ -105,15 +143,12 @@ class Application(object):
         self.queue = Queue()
 
         try:
+            self.store = TaskStore.objects.get(pk=env['TASKSTORE_ID'])
             query = urlparse.parse_qs(
                 urlparse.urlparse(
                     wsgiref_utils.request_uri(env)
                 ).query
             )
-            if 'key' not in query:
-                return
-            taskstore_id = self.signer.unsign(query['key'][0])
-            self.store = TaskStore.objects.get(pk=int(taskstore_id))
             try:
                 self.head = query['head'][0]
             except (KeyError, IndexError):
@@ -122,18 +157,13 @@ class Application(object):
             # Subscribe to the event stream
             self.subscription = get_announcements_subscription(
                 self.store,
-                **{
-                    'local_sync.{username}': self.handle_local_sync,
-                    'changed_task.{username}': self.handle_changed_task,
-                    'log_message.{username}': self.handle_log_message,
-                    'personal.{username}': self.handle_personal_announcement,
-                    settings.ANNOUNCEMENTS_CHANNEL: (
-                        self.handle_public_announcement
-                    ),
-                }
-            )
-            self.subscription_thread = self.subscription.run_in_thread(
-                sleep_time=1
+                [
+                    'local_sync.{username}',
+                    'changed_task.{username}',
+                    'log_message.{username}',
+                    'personal.{username}',
+                    settings.ANNOUNCEMENTS_CHANNEL,
+                ]
             )
 
             # Kick-off a sync just to be sure
@@ -166,6 +196,14 @@ class Application(object):
             while time.time() - created < settings.EVENT_STREAM_TIMEOUT:
                 self.beat_heart()
 
+                # Queue-up all messages that have occurred
+                while True:
+                    message = self.subscription.get_message()
+                    if not message:
+                        break
+
+                    self.handle_message(message)
+
                 # Emit queued messages
                 while not self.queue.empty():
                     message = self.queue.get(False)
@@ -183,12 +221,13 @@ class Application(object):
 
                 # Relax
                 sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
-            self.subscription_thread.stop()
+            self.subscription.unsubscribe()
             self.subscription.close()
-        except:
-            self.subscription_thread.stop()
+        except Exception:
+            self.subscription.unsubscribe()
             self.subscription.close()
             raise
+
 
 try:
     application = Application
