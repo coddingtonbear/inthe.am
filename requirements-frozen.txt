@@ -33,8 +33,8 @@ dogpile.core==0.4.1
 dropbox==1.6
 dulwich==0.19.2
 funcsigs==0.4
-gevent==1.3.1
-greenlet==0.4.13
+gevent==1.4.0
+greenlet==0.4.15
 gunicorn==19.4.5
 httplib2==0.11.3
 icalendar==3.9.0
