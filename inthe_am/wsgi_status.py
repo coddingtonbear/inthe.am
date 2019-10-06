@@ -26,7 +26,7 @@ patch_psycopg()
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "inthe_am.settings")
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('inthe_am.wsgi_status')
 logging.config.dictConfig(settings.LOGGING)
 
 
@@ -134,7 +134,6 @@ class Application(object):
             self.last_heartbeat = datetime.datetime.now()
 
     def __init__(self, env, start_response):
-        start_response('200 OK', self.HEADERS)
         self.last_heartbeat = None
         self.env = env
         self.response = env
@@ -143,6 +142,7 @@ class Application(object):
         self.queue = Queue()
 
         try:
+            logger.info("Starting connection with env %s", env)
             self.store = TaskStore.objects.get(pk=env['TASKSTORE_ID'])
             query = urlparse.parse_qs(
                 urlparse.urlparse(
@@ -182,8 +182,13 @@ class Application(object):
                     self.add_message('task_changed', task_id)
 
             self.initialized = True
+
+            start_response('200 OK', self.HEADERS)
+
         except Exception as e:
             logger.exception("Error starting event stream: %s", str(e))
+
+            start_response('500 Server Error', self.HEADERS)
 
     def __iter__(self):
         try:
