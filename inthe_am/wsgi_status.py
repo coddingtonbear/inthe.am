@@ -49,7 +49,9 @@ def get_announcements_subscription(store, channels):
 def sse_offload(env, start_response):
     app = Application(env, start_response)
 
-    yield from app.generator()
+    for row in app.generator():
+        logger.info(row)
+        yield row
 
 
 class Application(object):
