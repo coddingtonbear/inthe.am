@@ -50,7 +50,6 @@ def sse_offload(env, start_response):
     app = Application(env, start_response)
 
     for row in app.generator():
-        logger.info(row)
         yield row.encode('utf-8')
 
 
@@ -204,7 +203,6 @@ class Application(object):
             logger.exception("Error starting event stream: %s", str(e))
 
     def generator(self):
-        logger.info("Starting generator cycle for %s", self.store.pk)
         try:
             if not self.initialized:
                 yield 'retry: %s\n\n' % self.ERROR_RETRY_DELAY
@@ -240,15 +238,12 @@ class Application(object):
 
                 # Relax
                 sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
-            logger.info("Self-terminating; stream timeout reached.")
             self.subscription.unsubscribe()
             self.subscription.close()
         except Exception as e:
-            logger.exception("Error encountered: %s", e)
             self.subscription.unsubscribe()
             self.subscription.close()
             raise
-        logger.info("Exiting generator cycle for %s", self.store.pk)
 
 
 try:
