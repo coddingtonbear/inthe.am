@@ -54,8 +54,6 @@ def sse_offload(env, start_response):
 
     yield from app.generator()
 
-    logger.info("SSE naturally terminated.")
-
 
 class Application(object):
     HEADERS = [
@@ -202,6 +200,7 @@ class Application(object):
             logger.exception("Error starting event stream: %s", str(e))
 
     def generator(self):
+        logger.info('Generator cycle...')
         try:
             if not self.initialized:
                 yield 'retry: %s\n\n' % self.ERROR_RETRY_DELAY
