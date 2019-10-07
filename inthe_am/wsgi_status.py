@@ -54,6 +54,8 @@ def sse_offload(env, start_response):
 
     yield from app.generator()
 
+    logger.info("SSE naturally terminated.")
+
 
 class Application(object):
     HEADERS = [
