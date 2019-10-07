@@ -51,7 +51,7 @@ def sse_offload(env, start_response):
 
     for row in app.generator():
         logger.info(row)
-        yield row
+        yield row.encode('utf-8')
 
 
 class Application(object):
