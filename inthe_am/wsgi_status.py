@@ -200,7 +200,7 @@ class Application(object):
             logger.exception("Error starting event stream: %s", str(e))
 
     def generator(self):
-        logger.info('Generator cycle...')
+        logger.info("Starting generator cycle for %s", self.store.pk)
         try:
             if not self.initialized:
                 yield 'retry: %s\n\n' % self.ERROR_RETRY_DELAY
@@ -244,6 +244,7 @@ class Application(object):
             self.subscription.unsubscribe()
             self.subscription.close()
             raise
+        logger.info("Exiting generator cycle for %s", self.store.pk)
 
 
 try:
