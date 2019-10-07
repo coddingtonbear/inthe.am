@@ -53,7 +53,7 @@ def status_offload(request):
         ex=60
     )
 
-    uwsgi.add_var("TASKTORE_PICKLE_ID", str(pickle_id))
+    uwsgi.add_var("TASKSTORE_PICKLE_ID", str(pickle_id))
     uwsgi.add_var("OFFLOAD_TO_SSE", "y")
     uwsgi.add_var("OFFLOAD_SERVER", "/tmp/inthe_am_status.sock")
     return HttpResponse()
