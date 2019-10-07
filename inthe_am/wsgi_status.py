@@ -231,10 +231,10 @@ class Application(object):
 
                     if message.get('name'):
                         yield 'event: {name}\n'.format(
-                            name=message['name'].encode('utf8')
+                            name=message['name']
                         )
                     yield 'data: {data}\n'.format(
-                        data=message.get('data', '').encode('utf8')
+                        data=message.get('data', '')
                     )
                     yield '\n'
 
