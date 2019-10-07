@@ -60,8 +60,8 @@ def get_request_token(request, api_key):
 
     request_token = parse_qs(response.content)
     return (
-        request_token[b'oauth_token'][0],
-        request_token[b'oauth_token_secret'][0],
+        request_token[b'oauth_token'][0].decode('utf-8'),
+        request_token[b'oauth_token_secret'][0].decode('utf-8'),
     )
 
 
