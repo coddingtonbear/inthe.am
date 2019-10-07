@@ -1,9 +1,13 @@
+import pickle
+import uuid
+
 from django.contrib import admin
 from django.contrib.auth import logout
 from django.conf.urls import include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
+from inthe_am.taskmanager.lock import get_lock_redis
 from inthe_am.taskmanager.models import TaskStore
 
 admin.autodiscover()
@@ -36,9 +40,20 @@ def status_offload(request):
             status=401
         )
 
+    redis = get_lock_redis()
+
     taskstore = TaskStore.get_for_user(request.user)
 
-    uwsgi.add_var("TASKSTORE_ID", str(taskstore.pk))
+    pickle_id = str(uuid.uuid4())
+    pickled_taskstore = pickle.dumps(taskstore)
+
+    redis.set(
+        'taskstore_pickle_{}'.format(pickle_id),
+        pickled_taskstore,
+        ex=60
+    )
+
+    uwsgi.add_var("TASKTORE_PICKLE_ID", str(pickle_id))
     uwsgi.add_var("OFFLOAD_TO_SSE", "y")
     uwsgi.add_var("OFFLOAD_SERVER", "/tmp/inthe_am_status.sock")
     return HttpResponse()

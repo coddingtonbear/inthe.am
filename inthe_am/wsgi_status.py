@@ -6,6 +6,7 @@ import datetime
 import json
 import logging
 import os
+import pickle
 from queue import Queue
 import time
 import urllib.parse as urlparse
@@ -18,12 +19,8 @@ from django.conf import settings
 from django.core.signing import Signer
 
 from gevent import sleep
-from psycogreen.gevent import patch_psycopg
 
-from inthe_am.taskmanager.models import TaskStore
 from inthe_am.taskmanager.lock import get_lock_redis
-
-patch_psycopg()
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "inthe_am.settings")
 
@@ -150,8 +147,13 @@ class Application(object):
         self.initialized = False
         self.queue = Queue()
 
+        client = get_lock_redis()
+        pickled_taskstore = client.get(
+            'taskstore_pickle_{}'.format(env['TASKSTORE_PICKLE_ID'])
+        )
+
         try:
-            self.store = TaskStore.objects.get(pk=int(env['TASKSTORE_ID']))
+            self.store = pickle.loads(pickled_taskstore)
             logger.info(
                 "Starting event stream for TaskStore %s for user %s",
                 self.store.pk,
