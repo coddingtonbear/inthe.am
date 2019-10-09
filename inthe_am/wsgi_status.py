@@ -147,15 +147,17 @@ class Application(object):
         self.signer = Signer()
         self.initialized = False
         self.queue = Queue()
-        self.username = env["USERNAME"]
 
         client = get_lock_redis()
-        pickled_taskstore = client.get(
-            'taskstore_pickle_{}'.format(env['TASKSTORE_PICKLE_ID'])
+        pickled_data = pickle.loads(
+            client.get(
+                'pickle_{}'.format(env['PICKLE_ID'])
+            )
         )
+        self.store = pickled_data['taskstore']
+        self.username = pickled_data['username']
 
         try:
-            self.store = pickle.loads(pickled_taskstore)
             logger.info(
                 "Starting event stream for TaskStore %s for user %s",
                 self.store.pk,

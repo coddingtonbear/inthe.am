@@ -45,16 +45,19 @@ def status_offload(request):
     taskstore = TaskStore.get_for_user(request.user)
 
     pickle_id = str(uuid.uuid4())
-    pickled_taskstore = pickle.dumps(taskstore)
+
+    pickled_data = pickle.dumps({
+        'taskstore': taskstore,
+        'username': request.user.username
+    })
 
     redis.set(
-        'taskstore_pickle_{}'.format(pickle_id),
-        pickled_taskstore,
+        'pickle_{}'.format(pickle_id),
+        pickled_data,
         ex=60
     )
 
-    uwsgi.add_var("TASKSTORE_PICKLE_ID", str(pickle_id))
-    uwsgi.add_var("USERNAME", request.user.username)
+    uwsgi.add_var("PICKLE_ID", str(pickle_id))
     uwsgi.add_var("OFFLOAD_TO_SSE", "y")
     uwsgi.add_var("OFFLOAD_SERVER", "/tmp/inthe_am_status.sock")
     return HttpResponse()
