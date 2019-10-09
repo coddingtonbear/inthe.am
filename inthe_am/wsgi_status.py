@@ -28,7 +28,7 @@ logger = logging.getLogger('inthe_am.wsgi_status')
 logging.config.dictConfig(settings.LOGGING)
 
 
-def get_announcements_subscription(store, channels):
+def get_announcements_subscription(store, username, channels):
     client = get_lock_redis()
     subscription = client.pubsub(ignore_subscribe_messages=True)
 
@@ -37,7 +37,7 @@ def get_announcements_subscription(store, channels):
     for channel in channels:
         final_channels.append(
             channel.format(
-                username=store.username.encode('utf8')
+                username=username.encode('utf8')
             )
         )
 
@@ -147,6 +147,7 @@ class Application(object):
         self.signer = Signer()
         self.initialized = False
         self.queue = Queue()
+        self.username = env["USERNAME"]
 
         client = get_lock_redis()
         pickled_taskstore = client.get(
@@ -158,7 +159,7 @@ class Application(object):
             logger.info(
                 "Starting event stream for TaskStore %s for user %s",
                 self.store.pk,
-                self.store.user.username,
+                self.username,
             )
             query = urlparse.parse_qs(
                 urlparse.urlparse(
@@ -173,6 +174,7 @@ class Application(object):
             # Subscribe to the event stream
             self.subscription = get_announcements_subscription(
                 self.store,
+                self.username,
                 [
                     'local_sync.{username}',
                     'changed_task.{username}',
