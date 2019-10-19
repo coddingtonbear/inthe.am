@@ -12,6 +12,6 @@ class AuthenticationTokenMiddleware(object):
             store = TaskStore.get_for_user(request.user)
             response.set_cookie('authentication_token', store.api_key.key)
         else:
-            response.set_cookie('authentication_token', '')
+            response.delete_cookie('authentication_token')
 
         return response
