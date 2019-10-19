@@ -428,7 +428,7 @@ class TaskStore(models.Model):
         )
         stdout, stderr = proc.communicate()
         changed_tickets = set()
-        for raw_line in stdout.decode('utf-8').split('\n'):
+        for raw_line in stdout.decode('utf-8', 'ignore').split('\n'):
             line = raw_line.strip()
             if not line or line[0] not in ('+', '-'):
                 continue
