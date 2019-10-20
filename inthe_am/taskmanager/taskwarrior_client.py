@@ -166,8 +166,8 @@ class TaskwarriorClient(TaskWarriorShellout):
         )
 
         _stdout, _stderr = proc.communicate()
-        stdout = _stdout.decode('utf-8')
-        stderr = _stderr.decode('utf-8')
+        stdout = _stdout.decode('utf-8', 'replace')
+        stderr = _stderr.decode('utf-8', 'replace')
 
         total_seconds = (datetime.datetime.now() - started).total_seconds()
 
