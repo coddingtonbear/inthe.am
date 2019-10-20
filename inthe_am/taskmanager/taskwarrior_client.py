@@ -55,7 +55,7 @@ class TaskwarriorClient(TaskWarriorShellout):
     def _get_acceptable_properties(self):
         return (
             list(TaskwTask.FIELDS.keys()) +
-            list(self.config.get_udas().keys()
+            list(self.config.get_udas().keys())
         )
 
     def _get_acceptable_prefix(self, command):
