@@ -545,23 +545,20 @@ def incoming_sms(request, username):
             if store.sms_replies >= store.REPLY_ERROR:
                 r.sms("Bad Request: Empty task.")
         else:
-            task_uuid = str(uuid.uuid4())
             task_args = (
                 ['add'] +
                 shlex_without_quotes(store.sms_arguments) +
                 shlex_without_quotes(task_info)
             )
-            task_args.append('uuid:%s' % task_uuid)
             result = store.client._execute_safe(*task_args)
             stdout, stderr = result
             if store.sms_replies >= store.REPLY_ALL:
                 r.sms("Added.")
 
             log_args = (
-                "Added task %s via SMS from %s; message '%s'; "
+                "Added task via SMS from %s; message '%s'; "
                 "automatic args: '%s';"
                 "response: '%s'." % (
-                    task_uuid,
                     from_,
                     body,
                     store.sms_arguments,
