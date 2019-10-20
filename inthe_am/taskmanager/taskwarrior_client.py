@@ -91,8 +91,6 @@ class TaskwarriorClient(TaskWarriorShellout):
         return final_args + ['--'] + description_args
 
     def _strip_unsafe_chars(self, incoming):
-        if isinstance(incoming, str):
-            incoming = incoming.encode('utf8')
         return ''.join(
             char for char in incoming if curses.ascii.isprint(char)
         )
