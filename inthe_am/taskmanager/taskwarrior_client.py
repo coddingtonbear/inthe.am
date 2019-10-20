@@ -53,7 +53,10 @@ class TaskwarriorClient(TaskWarriorShellout):
             pass
 
     def _get_acceptable_properties(self):
-        return TaskwTask.FIELDS.keys() + self.config.get_udas().keys()
+        return (
+            list(TaskwTask.FIELDS.keys()) +
+            list(self.config.get_udas().keys()
+        )
 
     def _get_acceptable_prefix(self, command):
         if ' ' in command:
