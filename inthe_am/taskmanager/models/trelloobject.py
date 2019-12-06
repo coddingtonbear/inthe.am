@@ -13,10 +13,11 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.urls import reverse
+from django.utils.text import slugify
 from django.db import models
 
 from ..exceptions import CheckpointNeeded
-from ..trello_utils import LABEL_COLORS, subscribe_to_updates
+from ..trello_utils import subscribe_to_updates
 from ..utils import OneWaySafeJSONEncoder
 from .taskstore import TaskStore
 
@@ -270,44 +271,34 @@ class TrelloObject(models.Model):
         )
 
         try:
-            reformatter = re.compile(r'\W+')
-            try:
-                label_names = self.store.trello_board.meta.get(
-                    'labelNames', {}
+            board = self.store.trello_board
+            label_map = {
+                slugify(label_data['name']): label_data['id']
+                for label_data in board.client_request(
+                    'GET',
+                    '/1/boards/%s/labels' % board.pk,
                 )
-            except (TypeError, AttributeError, ValueError):
-                logger.exception("Error encountered while building label map.")
-                label_names = {}
-            # Maps string tag names to color names so we can know what
-            # tags to add for whatever names.
-            color_map = {
-                reformatter.sub('_', v): k
-                for (k, v) in label_names.items() if k
+                if label_data['name']
             }
+            trello_labels = set(label_map.keys())
 
-            possible_colors = set(LABEL_COLORS)
-            existing_labels = set([
-                l.get('color')
-                for l in self.meta.get('labels', [])
-                if l.get('color')
+            card_labels = set([
+                slugify(label['name'])
+                for label in self.meta['labels']
+                if label['name']
             ])
-            task_tags = set(task.get('tags'))
-            for tag in task.get('tags'):
-                if tag in color_map:
-                    task_tags.add(color_map[tag])
+            task_tags = set(task.get('tags', []))
 
-            tags_to_add = (
-                (task_tags - existing_labels) & possible_colors
-            )
+            tags_to_add = list((task_tags & trello_labels) - card_labels)
             for tag_to_add in tags_to_add:
-                self.client.new_label(self.id, tag_to_add)
+                self.client.new_idLabel(self.id, label_map[tag_to_add])
 
-            tags_to_delete = (
-                (existing_labels - task_tags) & possible_colors
-            )
+            tags_to_delete = list(card_labels - task_tags)
             for tag_to_delete in tags_to_delete:
-                self.client.delete_label_color(tag_to_delete, self.id)
-        except:
+                self.client.delete_idLabel_idLabel(
+                    label_map[tag_to_delete], self.id
+                )
+        except:  # noqa
             logger.exception("Error encountered while adding labels!")
 
     @classmethod
