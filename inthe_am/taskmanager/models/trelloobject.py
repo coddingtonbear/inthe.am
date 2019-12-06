@@ -74,14 +74,18 @@ class TrelloObject(models.Model):
             store.trello_auth_token,
         )
 
-    def client_request(self, method, url, data):
+    def client_request(self, method, url, data=None):
         client = self.client
+
+        request_kwargs = {}
+        if data is not None:
+            request_kwargs['data'] = data
 
         return requests.request(
             method,
             'https://trello.com' + url,
             params=dict(key=client._apikey, token=client._token),
-            data=data,
+            **request_kwargs
         )
 
     def get_task(self):
