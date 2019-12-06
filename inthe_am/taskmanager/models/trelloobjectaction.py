@@ -3,9 +3,10 @@ from jsonfield import JSONField
 import pytz
 
 from django.db import IntegrityError, models
+from django.utils.text import slugify
 
 from ..exceptions import CheckpointNeeded
-from .trelloobject import TrelloObject
+from .trelloobject import TrelloObject, TrelloTaskDoesNotExist
 
 
 class TrelloObjectAction(models.Model):
@@ -53,6 +54,55 @@ class TrelloObjectAction(models.Model):
             instance.reconcile_action()
 
         return instance
+
+    def reconcile_addLabelToCard(self):
+        card_data = (
+            self.meta.get('action', {})
+                .get('data', {})
+                .get('card', {})
+        )
+        label = slugify(self.meta['action']['data']['text'])
+
+        try:
+            to = TrelloObject.objects.get(
+                id=card_data.get('id'),
+                store=self.model.store,
+            )
+            task = to.get_task()
+
+            task.setdefault('tags', []).append(label)
+            to.store.client.task_update(task)
+        except TrelloTaskDoesNotExist:
+            return
+        except TrelloObject.DoesNotExist:
+            return
+
+    def reconcile_removeLabelFromCard(self):
+        card_data = (
+            self.meta.get('action', {})
+                .get('data', {})
+                .get('card', {})
+        )
+        label = slugify(self.meta['action']['data']['text'])
+
+        try:
+            to = TrelloObject.objects.get(
+                id=card_data.get('id'),
+                store=self.model.store,
+            )
+            task = to.get_task()
+
+            tags = task.get('tags', [])
+            try:
+                tags.remove(label)
+            except ValueError:
+                return
+            task['tags'] = tags
+            to.store.client.task_update(task)
+        except TrelloTaskDoesNotExist:
+            return
+        except TrelloObject.DoesNotExist:
+            return
 
     def reconcile_updateCard(self):
         # Run only for board events!

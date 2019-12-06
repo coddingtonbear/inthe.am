@@ -195,28 +195,6 @@ class TrelloObject(models.Model):
                 self.id,
             )
 
-        task_tags = set(task.get('tags', []))
-
-        # Remove any color labels, we'll re-add them below if they still apply
-        for label_color in LABEL_COLORS:
-            if label_color in task_tags:
-                task_tags.remove(label_color)
-
-        # Now, let's re-add any relevant tags by color and name
-        for label in self.meta.get('labels', []):
-            if label.get('color'):
-                task_tags.add(label.get('color'))
-            if label.get('name'):
-                task_tags.add(
-                    re.sub(
-                        r'[\W_]+', u'_',
-                        label.get('name'),
-                        flags=re.UNICODE
-                    )
-                )
-
-        task['tags'] = sorted(list(task_tags))
-
         self.store.client.task_update(task)
         self.add_log_data("Task updated.", data=task)
 
