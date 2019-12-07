@@ -277,7 +277,7 @@ class TrelloObject(models.Model):
                 for label_data in board.client_request(
                     'GET',
                     '/1/boards/%s/labels' % board.pk,
-                )
+                ).json()
                 if label_data['name']
             }
             trello_labels = set(label_map.keys())
