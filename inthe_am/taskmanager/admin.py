@@ -163,7 +163,7 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
     raw_id_fields = ('user', )
     search_fields = (
         'user__username', 'local_path', 'taskrc_extras',
-        'sms_whitelist', 'email_whitelist',
+        'sms_whitelist', 'email_whitelist', 'secret_id',
     )
     list_display = (
         'user', 'created', 'last_synced',
