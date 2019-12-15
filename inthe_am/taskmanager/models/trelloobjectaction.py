@@ -74,10 +74,11 @@ class TrelloObjectAction(models.Model):
             to.store.client.task_update(task)
 
             self.model.store.log_message(
-                "Label added to Trello card %s: adding label '%s' to task %s",
+                "Label added toTrello card %s; updating task %s: "
+                " %s",
                 to.pk,
-                label,
-                task['uuid']
+                task['uuid'],
+                task.get_changes(keep=True),
             )
         except TrelloTaskDoesNotExist:
             return
@@ -108,11 +109,11 @@ class TrelloObjectAction(models.Model):
             to.store.client.task_update(task)
 
             self.model.store.log_message(
-                "Label removed from Trello card %s: removing label"
-                " '%s' from task %s",
+                "Label removed from Trello card %s; updating task %s: "
+                " %s",
                 to.pk,
-                label,
-                task['uuid']
+                task['uuid'],
+                task.get_changes(keep=True),
             )
         except TrelloTaskDoesNotExist:
             return
@@ -147,9 +148,10 @@ class TrelloObjectAction(models.Model):
                 task = {}
 
             self.model.store.log_message(
-                "Trello card %s changed; updating task %s",
+                "Trello card %s updated; updating task %s: %s",
                 to.pk,
-                task.get('uuid', '?')
+                task['uuid'],
+                task.get_changes(keep=True),
             )
         except TrelloObject.DoesNotExist:
             return
