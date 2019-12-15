@@ -71,7 +71,8 @@ class TrelloObjectAction(models.Model):
             task = to.get_task()
 
             tags = task.get('tags', [])
-            tags.append(label)
+            if label not in tags:
+                tags.append(label)
             task['tags'] = tags
             to.store.client.task_update(task)
 
