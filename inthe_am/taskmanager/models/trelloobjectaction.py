@@ -70,7 +70,9 @@ class TrelloObjectAction(models.Model):
             )
             task = to.get_task()
 
-            task.setdefault('tags', []).append(label)
+            tags = task.get('tags', [])
+            tags.append(label)
+            task['tags'] = tags
             to.store.client.task_update(task)
 
             self.model.store.log_message(
