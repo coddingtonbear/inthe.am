@@ -200,7 +200,7 @@ class TrelloObject(models.Model):
                 self.id,
             )
 
-        self.model.store.log_message(
+        self.store.log_message(
             "Trello card %s updated; updating task %s: %s",
             self.pk,
             task['uuid'],
