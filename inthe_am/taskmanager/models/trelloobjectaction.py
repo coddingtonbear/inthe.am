@@ -72,6 +72,13 @@ class TrelloObjectAction(models.Model):
 
             task.setdefault('tags', []).append(label)
             to.store.client.task_update(task)
+
+            self.model.store.log_message(
+                "Label added to Trello card %s: adding label '%s' to task %s",
+                to.pk,
+                label,
+                task['uuid']
+            )
         except TrelloTaskDoesNotExist:
             return
         except TrelloObject.DoesNotExist:
@@ -99,6 +106,14 @@ class TrelloObjectAction(models.Model):
                 return
             task['tags'] = tags
             to.store.client.task_update(task)
+
+            self.model.store.log_message(
+                "Label removed from Trello card %s: removing label"
+                " '%s' from task %s",
+                to.pk,
+                label,
+                task['uuid']
+            )
         except TrelloTaskDoesNotExist:
             return
         except TrelloObject.DoesNotExist:
@@ -125,6 +140,17 @@ class TrelloObjectAction(models.Model):
             )
             to.update_data()
             to.reconcile()
+
+            try:
+                task = to.get_task()
+            except TrelloTaskDoesNotExist:
+                task = {}
+
+            self.model.store.log_message(
+                "Trello card %s changed; updating task %s",
+                to.pk,
+                task.get('uuid', '?')
+            )
         except TrelloObject.DoesNotExist:
             return
 
@@ -157,6 +183,17 @@ class TrelloObjectAction(models.Model):
         to.update_data()
         to.save()
         to.reconcile()
+
+        try:
+            task = to.get_task()
+        except TrelloTaskDoesNotExist:
+            task = {}
+
+        self.model.store.log_message(
+            "Trello card %s added; adding task %s",
+            to.pk,
+            task.get('uuid', '?')
+        )
 
     def reconcile_action(self):
         if not self.model.store.has_active_checkpoint():
