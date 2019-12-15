@@ -74,7 +74,7 @@ class TrelloObjectAction(models.Model):
             to.store.client.task_update(task)
 
             self.model.store.log_message(
-                "Label added toTrello card %s; updating task %s: "
+                "Label added to Trello card %s; updating task %s: "
                 " %s",
                 to.pk,
                 task['uuid'],
