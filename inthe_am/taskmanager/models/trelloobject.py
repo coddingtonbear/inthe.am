@@ -200,6 +200,13 @@ class TrelloObject(models.Model):
                 self.id,
             )
 
+        self.model.store.log_message(
+            "Trello card %s updated; updating task %s: %s",
+            self.pk,
+            task['uuid'],
+            task.get_changes(keep=True),
+        )
+
         self.store.client.task_update(task)
         self.add_log_data("Task updated.", data=task)
 
