@@ -45,13 +45,11 @@ class TrelloObjectAction(models.Model):
             )
 
         model = instance.model
+        model.meta = data['model']
+        model.last_action = occurred
+        model.save()
 
-        if not model.last_action or model.last_action < occurred:
-            model.meta = data['model']
-            model.last_action = occurred
-            model.save()
-
-            instance.reconcile_action()
+        instance.reconcile_action()
 
         return instance
 
