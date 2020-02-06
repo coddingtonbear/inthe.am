@@ -183,6 +183,7 @@ class TrelloObject(models.Model):
         task['description'] = self.meta['name']
         task['intheamtrellodescription'] = self.meta['desc']
         task['intheamtrellourl'] = self.meta['url']
+        task['intheamtrellolastupdated'] = self.meta['dateLastActivity']
         if self.meta['badges']['due']:
             task['due'] = parse(self.meta['badges']['due'])
 
@@ -218,6 +219,43 @@ class TrelloObject(models.Model):
                 pass
 
     def update_trello(self, task):
+        # Make sure the card in Trello is older or the same age
+        # as our most recently received updates
+        remote_data = self.get_data()
+        local_last_updated = parse(
+            task['intheamtrellolastupdated']
+        ).replace(
+            microsecond=0,
+            tzinfo=None
+        )
+        remote_last_updated = parse(
+            remote_data['dateLastActivity']
+        ).replace(
+            microsecond=0,
+            tzinfo=None
+        )
+        local_last_updated_age = remote_last_updated - local_last_updated
+        if local_last_updated_age > datetime.timedelta(minutes=30):
+            logger.warning(
+                "While attempting taskwarrior-to-trello update for %s task "
+                "%s, remote record was found to be significantly newer (%s)"
+                "than the local version; this is an indication of a problem "
+                "in our synchronization logic.",
+                self.store,
+                task['uuid'],
+                local_last_updated_age
+            )
+        elif remote_last_updated > local_last_updated:
+            logger.info(
+                "Aborting taskwarrior-to-trello update for %s task %s; "
+                "trello version is newer (%s > %s)",
+                self.store,
+                task['uuid'],
+                remote_last_updated,
+                local_last_updated
+            )
+            return
+
         kwargs = {
             'name': task['description'],
         }

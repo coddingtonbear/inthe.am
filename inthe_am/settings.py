@@ -219,6 +219,10 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
             'type': 'string',
             'label': 'Inthe.AM Trello Description',
         },
+        'intheamtrellolastupdated': {
+            'type': 'string',
+            'label': 'Inthe.AM Trello Last Updated',
+        },
         'intheamduplicateof': {
             'type': 'string',
             'label': 'Inthe.AM Duplicate of Task',

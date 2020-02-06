@@ -74,6 +74,7 @@ class TrelloObjectAction(models.Model):
             if label not in tags:
                 tags.append(label)
             task['tags'] = tags
+            task['intheamtrellolastupdated'] = to.meta['dateLastActivity']
             to.store.client.task_update(task)
 
             self.model.store.log_message(
@@ -109,6 +110,7 @@ class TrelloObjectAction(models.Model):
             except ValueError:
                 return
             task['tags'] = tags
+            task['intheamtrellolastupdated'] = to.meta['dateLastActivity']
             to.store.client.task_update(task)
 
             self.model.store.log_message(
