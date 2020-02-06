@@ -223,7 +223,7 @@ class TrelloObject(models.Model):
         # as our most recently received updates
         remote_data = self.get_data()
         local_last_updated = parse(
-            task['intheamtrellolastupdated']
+            task.get('intheamtrellolastupdated', '2000-01-01')
         ).replace(
             microsecond=0,
             tzinfo=None
