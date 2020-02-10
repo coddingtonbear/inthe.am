@@ -478,28 +478,29 @@ def update_trello_task(
     self, object_id, **kwargs
 ):
     from inthe_am.taskmanager.models import TrelloObject
-
     obj = TrelloObject.objects.get(pk=object_id)
-    try:
-        obj.update_trello()
-    except TrelloObjectRecentlyModified as e:
-        self.retry(exc=e, countdown=settings.TRELLO_UPDATE_MARGIN_SECONDS)
-    except Exception as e:
-        logger.exception(
-            "Error encountered while updating task: %s",
-            str(e)
-        )
-        raise
 
-    task = obj.get_task()
+    with git_checkpoint(obj.store, 'Updating trello task'):
+        try:
+            obj.update_trello()
+        except TrelloObjectRecentlyModified as e:
+            self.retry(exc=e, countdown=settings.TRELLO_UPDATE_MARGIN_SECONDS)
+        except Exception as e:
+            logger.exception(
+                "Error encountered while updating task: %s",
+                str(e)
+            )
+            raise
 
-    # Clear trello ID if we've just marked the task as closed;
-    # this will cause us to re-create the record if it ever
-    # enters the "pending" status.
-    if task['status'] in ('waiting', 'closed', 'deleted'):
-        task['intheamtrelloid'] = ''
+        task = obj.get_task()
 
-    obj.store.client.task_update(task)
+        # Clear trello ID if we've just marked the task as closed;
+        # this will cause us to re-create the record if it ever
+        # enters the "pending" status.
+        if task['status'] in ('waiting', 'closed', 'deleted'):
+            task['intheamtrelloid'] = ''
+
+        obj.store.client.task_update(task)
 
 
 @shared_task(
