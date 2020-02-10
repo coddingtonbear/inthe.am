@@ -263,7 +263,7 @@ class TrelloObject(models.Model):
         # this update until a little later to allow those changes to
         # be received and processed
         remote_update_recency = (
-            pytz.utc.localize(datetime.datetime.utcnow())
+            datetime.datetime.utcnow()
             - remote_last_updated
         )
         if remote_update_recency < datetime.timedelta(
