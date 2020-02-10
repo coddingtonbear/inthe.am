@@ -218,7 +218,9 @@ class TrelloObject(models.Model):
                 # This just means the card was already closed.
                 pass
 
-    def update_trello(self, task):
+    def update_trello(self):
+        task = self.get_task()
+
         # Make sure the card in Trello is older or the same age
         # as our most recently received updates
         remote_data = self.get_data()

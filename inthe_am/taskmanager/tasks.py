@@ -473,6 +473,36 @@ def process_trello_action(self, store_id, data, **kwargs):
     default_retry_delay=30,
     max_retries=10,
 )
+def update_trello_task(
+    self, object_id, **kwargs
+):
+    from inthe_am.taskmanager.models import TrelloObject
+
+    obj = TrelloObject.objects.get(pk=object_id)
+    try:
+        obj.update_trello()
+    except Exception as e:
+        logger.exception(
+            "Error encountered while updating task: %s",
+            str(e)
+        )
+
+    task = obj.get_task()
+
+    # Clear trello ID if we've just marked the task as closed;
+    # this will cause us to re-create the record if it ever
+    # enters the "pending" status.
+    if task['status'] in ('waiting', 'closed', 'deleted'):
+        task['intheamtrelloid'] = ''
+
+    obj.store.client.task_update(task)
+
+
+@shared_task(
+    bind=True,
+    default_retry_delay=30,
+    max_retries=10,
+)
 def update_trello(
     self, store_id, debounce_id=None, current_head=None, **kwargs
 ):
@@ -596,21 +626,12 @@ def update_trello(
                             'name'
                         )
 
-            try:
-                obj.update_trello(task)
-            except Exception as e:
-                logger.exception(
-                    "Error encountered while updating task: %s",
-                    str(e)
-                )
-
-            # Clear trello ID if we've just marked the task as closed;
-            # this will cause us to re-create the record if it ever
-            # enters the "pending" status.
-            if task['status'] in ('waiting', 'closed', 'deleted'):
-                task['intheamtrelloid'] = ''
-
             store.client.task_update(task)
+
+            update_trello_task.apply_async(
+                args=(obj.pk, ),
+                countdown=15
+            )
 
         store.trello_local_head = ending_head
         store.save()
