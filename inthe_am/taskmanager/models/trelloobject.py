@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.db import models
 
-from ..exceptions import CheckpointNeeded
+from ..exceptions import CheckpointNeeded, TrelloObjectRecentlyModified
 from ..trello_utils import subscribe_to_updates
 from ..utils import OneWaySafeJSONEncoder
 from .taskstore import TaskStore
@@ -257,6 +257,19 @@ class TrelloObject(models.Model):
                 local_last_updated
             )
             return
+
+        # Make sure that the record wasn't updated very recently; if it
+        # was modified in the last TRELLO_UPDATE_MARGIN_SECONDS, delay
+        # this update until a little later to allow those changes to
+        # be received and processed
+        remote_update_recency = (
+            pytz.utc.localize(datetime.datetime.utcnow())
+            - remote_last_updated
+        )
+        if remote_update_recency < datetime.timedelta(
+            seconds=settings.TRELLO_UPDATE_MARGIN_SECONDS
+        ):
+            raise TrelloObjectRecentlyModified()
 
         kwargs = {
             'name': task['description'],

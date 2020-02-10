@@ -14,6 +14,7 @@ from django_mailbox.models import Message
 import requests
 from rest_framework.renderers import JSONRenderer
 
+from .exceptions import TrelloObjectRecentlyModified
 from .context_managers import git_checkpoint
 from .lock import get_debounce_name_for_store, get_lock_redis, LockTimeout
 from .merge_tasks import merge_all_duplicate_tasks
@@ -481,11 +482,14 @@ def update_trello_task(
     obj = TrelloObject.objects.get(pk=object_id)
     try:
         obj.update_trello()
+    except TrelloObjectRecentlyModified as e:
+        self.retry(exc=e, countdown=settings.TRELLO_UPDATE_MARGIN_SECONDS)
     except Exception as e:
         logger.exception(
             "Error encountered while updating task: %s",
             str(e)
         )
+        raise
 
     task = obj.get_task()
 
@@ -630,7 +634,7 @@ def update_trello(
 
             update_trello_task.apply_async(
                 args=(obj.pk, ),
-                countdown=15
+                countdown=settings.TRELLO_UPDATE_MARGIN_SECONDS
             )
 
         store.trello_local_head = ending_head

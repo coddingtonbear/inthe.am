@@ -10,3 +10,7 @@ class CheckpointNeeded(RuntimeError):
 
 class InvalidTaskwarriorConfiguration(RuntimeError):
     pass
+
+
+class TrelloObjectRecentlyModified(RuntimeError):
+    pass
