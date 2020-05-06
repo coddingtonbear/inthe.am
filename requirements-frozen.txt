@@ -72,7 +72,7 @@ pickleshare==0.5
 progressbar2==3.20.0
 prompt-toolkit==2.0.9
 psycogreen==1.0
-psycopg2==2.7.7
+psycopg2==2.8.5
 ptvsd==4.3.2
 ptyprocess==0.5
 pycurl==7.21.5
