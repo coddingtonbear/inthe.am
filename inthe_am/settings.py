@@ -125,12 +125,16 @@ TASK_STORAGE_PATH = os.path.join(BASE_DIR, 'task_data')
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211'
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
+SESSION_CACHE_ALIAS = "default"
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
