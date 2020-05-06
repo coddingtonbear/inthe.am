@@ -145,12 +145,12 @@ TOS_VERSION = 1
 PRIVACY_POLICY_VERSION = 1
 
 RAVEN_DSN = ''
-DATABASE_ENGINE = 'django.db.backends.sqlite3'
-DATABASE_NAME = os.path.join(BASE_DIR, 'db.sqlite3')
-DATABASE_USER = ''
-DATABASE_PASSWORD = ''
-DATABASE_HOST = ''
-DATABASE_PORT = ''
+DATABASE_ENGINE = 'django.db.backends.postgresql_psycopg2'
+DATABASE_NAME = os.environ['DB_NAME']
+DATABASE_USER = os.environ['DB_USER']
+DATABASE_PASSWORD = os.environ['DB_PASS']
+DATABASE_HOST = os.environ['DB_SERVICE']
+DATABASE_PORT = os.environ['DB_PORT']
 
 EVENT_STREAM_TIMEOUT = 3600
 EVENT_STREAM_LOOP_INTERVAL = 1
@@ -165,7 +165,7 @@ SYNC_LISTENER_WARNING_TIMEOUT = 600
 TEST_RUNNER = 'django_behave.runner.DjangoBehaveTestSuiteRunner'
 TEST_ALWAYS_SAVE_FULL_PAGE_DETAILS = False
 
-BROKER_URL = 'redis://localhost:6379/1'
+BROKER_URL = 'redis://redis:6379/1'
 CELERYD_CONCURRENCY = 10
 CELERY_HIJACK_ROOT_LOGGER = False
 
