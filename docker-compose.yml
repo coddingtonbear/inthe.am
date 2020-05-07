@@ -11,6 +11,7 @@ services:
     links:
       - postgres:postgres
       - redis:redis
+      - memcached:memcached
     env_file: .env
     volumes:
       - ./:/data/web
@@ -43,6 +44,8 @@ services:
     image: redis:latest
     expose:
       - "6379"
+  memcached:
+    image: 'bitnami/memcached:latest'
 
   data:
     restart: always

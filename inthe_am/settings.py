@@ -22,7 +22,7 @@ TESTING = ('test' in sys.argv) or TRAVIS
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'nou@d*dme8l60^9mzyk@#ikeobd0ws#p*mj#e*i*g33d#blsc9'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -30,7 +30,7 @@ if os.uname()[1] == "eugene.adamcoddington.net":
     DEBUG = False
 
 RUN_LOCALLY = {
-    'python_path': 'python',
+    'python_path': 'python3',
 
     'runserver_port': 8001,
 
@@ -41,7 +41,7 @@ RUN_LOCALLY = {
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [
-    'inthe.am',
+    os.environ['HOSTNAME'],
 ]
 
 MIDDLEWARE = [
@@ -127,7 +127,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211'
+        'LOCATION': 'memcached:11211'
     }
 }
 
