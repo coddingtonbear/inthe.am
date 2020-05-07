@@ -21,11 +21,12 @@ django-cors-headers==3.1.0
 django-extensions==1.6.1
 django-filter==0.13.0
 django-mailbox==4.8.0
+django-phonenumber-field==4.0.0
 django-rest-framework==0.1.0
 #-e git+https://github.com/niwinz/django-sse.git@1351b1387250c412e1adfc33aef0bc9d888d5bbf#egg=django_sse
 django-storages==1.7.2
 django-tastypie==0.13.3
-django-twilio==0.4
+django-twilio==0.9.0
 djangorestframework==3.10.3
 docutils==0.12
 dogpile.cache==0.5.7
@@ -69,6 +70,7 @@ path.py==8.1.2
 pbr==1.8.1
 pexpect==4.7.0
 pickleshare==0.5
+pip==20.1
 progressbar2==3.20.0
 prompt-toolkit==2.0.9
 psycogreen==1.0
@@ -96,6 +98,7 @@ requests==2.18.4
 requests-oauthlib==0.8.0
 requests-toolbelt==0.5.1
 selenium==3.4.3
+setuptools==41.2.0
 simplegeneric==0.8.1
 six==1.10.0
 snowballstemmer==1.2.1
@@ -110,7 +113,7 @@ tlslite==0.4.9
 traitlets==4.3.2
 #-e git+https://github.com/coddingtonbear/trello-py.git@f24eea1df98cecbc6bb4f8265e1fb598a69dcf62#egg=trello
 Twiggy==0.4.7
-twilio==5.2.0
+twilio==6.39.0
 urllib3==1.22
 uWSGI==2.0.18
 vine==1.3.0
@@ -118,3 +121,4 @@ wcwidth==0.1.7
 webcolors==1.4
 x256==0.0.3
 zipp==0.6.0
+

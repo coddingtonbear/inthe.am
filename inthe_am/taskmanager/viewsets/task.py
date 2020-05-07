@@ -22,8 +22,8 @@ from rest_framework.permissions import (
     AllowAny, IsAuthenticatedOrReadOnly,
 )
 from rest_framework.response import Response
-from twilio.util import RequestValidator
-from twilio.twiml import Response as TwilioResponse
+from twilio.request_validator import RequestValidator
+from twilio.twiml.messaging_response import MessagingResponse as TwilioResponse
 
 from .. import models
 from ..context_managers import git_checkpoint, timed_activity
