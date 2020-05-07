@@ -9,9 +9,12 @@ pip3 install --upgrade pip
 COPY requirements-frozen.txt /tmp
 RUN pip3 install --no-cache -r /tmp/requirements-frozen.txt && \
   apk del .build-deps
+COPY external_python_modules/ /external_python_modules
+RUN for mod in /external_python_modules/* ; do pip3 install -e $mod ; done
 
 RUN addgroup -g 1000 -S django && \
     adduser -u 1000 -S django -G django
+RUN apk add bash
 USER django
 VOLUME /data/web
 WORKDIR /data/web

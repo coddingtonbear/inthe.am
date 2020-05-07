@@ -3,6 +3,7 @@ services:
   web:
     restart: always
     build:
+      # image: renefritze/intheam_django
       context: ./
       dockerfile: Dockerfile.django
     expose:
@@ -10,10 +11,11 @@ services:
     links:
       - postgres:postgres
       - redis:redis
-    env_file: env
+    env_file: .env
     volumes:
-      - ./web:/data/web
-    command: /usr/bin/gunicorn mydjango.wsgi:application -w 2 -b :8000
+      - ./:/data/web
+      - ./external_python_modules:/external_python_modules
+    command: /usr/bin/gunicorn inthe_am.wsgi:application -w 2 -b :8000
   nginx:
     restart: always
     build: ./nginx/
@@ -33,7 +35,7 @@ services:
       - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - ./backups/postgresql:/backup
     env_file:
-      - env
+      - .env
     expose:
       - "5432"
   redis:

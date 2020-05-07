@@ -1,0 +1,12 @@
+[submodule "external_python_modules/taskw"]
+	path = external_python_modules/taskw
+	url = https://github.com/latestrevision/taskw
+[submodule "external_python_modules/trello-py"]
+	path = external_python_modules/trello-py
+	url = https://github.com/coddingtonbear/trello-py.git
+[submodule "external_python_modules/django-sse"]
+	path = external_python_modules/django-sse
+	url = https://github.com/niwinz/django-sse.git
+[submodule "external_python_modules/django-behave"]
+	path = external_python_modules/django-behave
+	url = https://github.com/coddingtonbear/django-behave.git
