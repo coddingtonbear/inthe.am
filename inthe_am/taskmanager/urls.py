@@ -27,7 +27,7 @@ def fallback(request):
     # This is sort of a hack; sorry!
     index_template_path = os.path.join(
         settings.BASE_DIR,
-        'dist/index.html'
+        'app/index.html'
     )
     with open(index_template_path) as index:
         return HttpResponse(index.read())
