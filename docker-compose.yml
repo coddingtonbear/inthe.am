@@ -5,7 +5,7 @@ services:
     build:
       # image: renefritze/intheam_django
       context: ./
-      dockerfile: Dockerfile.django
+      dockerfile: ./docker/django/Dockerfile
     expose:
       - "8000"
     links:
@@ -19,7 +19,7 @@ services:
     command: /usr/bin/gunicorn inthe_am.wsgi:application -w 2 -b :8000
   nginx:
     restart: always
-    build: ./nginx/
+    build: ./docker/nginx/
     ports:
       - "80:80"
     volumes_from:
@@ -33,8 +33,8 @@ services:
     volumes_from:
       - data
     volumes:
-      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-      - ./backups/postgresql:/backup
+      - ./docker/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./docker/backups/postgresql:/backup
     env_file:
       - .env
     expose:
