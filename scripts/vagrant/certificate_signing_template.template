@@ -1,5 +1,1 @@
-organization=Inthe.AM
-cn=taskwarrior.inthe.am
-tls_www_client
-encryption_key
-signing_key
+../../docker/taskd/certificate_signing_template.template

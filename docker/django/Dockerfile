@@ -12,6 +12,7 @@ RUN pip3 install --no-cache -r /tmp/requirements-frozen.txt && \
 COPY external_python_modules/ /external_python_modules
 RUN for mod in /external_python_modules/* ; do pip3 install -e $mod ; done
 
+# TODO accept userid from build-arg
 RUN addgroup -g 1000 -S django && \
     adduser -u 1000 -S django -G django
 RUN apk add bash
