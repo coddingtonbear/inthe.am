@@ -3,7 +3,7 @@ services:
   web:
     restart: always
     build:
-      # image: renefritze/intheam_django
+      # image: intheam_django
       context: ./
       dockerfile: ./docker/django/Dockerfile
     expose:
@@ -19,9 +19,11 @@ services:
     command: /usr/bin/gunicorn inthe_am.wsgi:application -w 2 -b :8000
   nginx:
     restart: always
-    build: ./docker/nginx/
+    build:
+      dockerfile: ../docker/nginx/Dockerfile
+      context: ember/
     ports:
-      - "80:80"
+      - "80:8000"
     volumes_from:
       - web
     links:

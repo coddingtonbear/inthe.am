@@ -10,7 +10,7 @@
     "javascript-linkify": "latest",
     "growl": "https://github.com/ksylvest/jquery-growl.git#~1.2.4",
     "datetimepicker": "2.4.5",
-    "font-awesome": "~4.5.0",
+    "font-awesome": "^4.5.0",
     "foundation": "^5.5.0",
     "raven-js": "~3.17.0",
     "fastclick": "~1.0.3",
@@ -22,6 +22,7 @@
   },
   "resolutions": {
     "ember": "~2.4.3",
-    "qunit-notifications": "~0.1.0"
+    "qunit-notifications": "~0.1.0",
+    "font-awesome": "~4.5.0"
   }
 }

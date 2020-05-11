@@ -44,3 +44,4 @@ messages/*
 local/*
 share/*
 docker/data/
+.idea/
