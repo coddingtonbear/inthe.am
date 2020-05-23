@@ -1,3 +1,5 @@
+# make sure to `git submodule update --init` before building images
+
 version: '2'
 services:
   web:
@@ -20,15 +22,27 @@ services:
   nginx:
     restart: always
     build:
-      dockerfile: ../docker/nginx/Dockerfile
+      dockerfile: docker/Dockerfile
       context: ember/
     ports:
-      - "80:8000"
+      - "80:80"
     volumes_from:
       - web
+    volumes:
+      - ./logs:/app/logs/
     links:
       - web:web
-
+  zapier:
+    restart: always
+    build:
+      dockerfile: ../docker/zapier/Dockerfile
+      context: zapier/
+    volumes_from:
+      - web
+    volumes:
+      - ./logs:/app/logs/
+    links:
+      - web:web
   postgres:
     restart: always
     image: postgres:latest
