@@ -1,0 +1,119 @@
+log_format upstreamlogtwweb '[$time_local] $remote_addr - $remote_user - $server_name  to: $upstream_addr: $request upstream_response_time $upstream_response_time msec $msec request_time $request_time';
+limit_conn_zone $binary_remote_addr zone=addr:10m;
+
+
+upstream inthe_am {
+    server unix:///tmp/inthe_am.sock;
+}
+
+upstream inthe_am_status {
+    server unix:///tmp/inthe_am_status.sock;
+}
+
+
+server {
+    listen   80;
+    server_name  inthe.am www.inthe.am;
+    access_log  /var/log/nginx/twweb.access.log upstreamlogtwweb;
+    error_log /var/log/nginx/twweb.error.log error;
+    client_max_body_size 1024m;
+
+    rewrite ^/(.*) https://inthe.am/$1 permanent;
+}
+
+server {
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/inthe.am/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/inthe.am/privkey.pem;
+    #ssl_certificate /etc/ssl/private/inthe.am.chained.crt;
+    #ssl_certificate_key /etc/ssl/private/inthe.am.key;
+    ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
+    ssl_ciphers "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA !RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS";
+    ssl_prefer_server_ciphers on;
+    ssl_session_timeout 10m;
+    ssl_session_cache shared:SSL:10m;
+
+    uwsgi_read_timeout 60s;
+    uwsgi_next_upstream_timeout 0;
+    uwsgi_buffering off;
+    uwsgi_ignore_client_abort on;
+    proxy_buffering off;
+
+    server_name  inthe.am www.inthe.am sentry.inthe.am;
+    access_log  /var/log/nginx/twweb.access.log upstreamlogtwweb;
+    error_log /var/log/nginx/twweb.error.log error;
+    client_max_body_size 1024m;
+
+    #limit_conn addr 5;
+
+    location /static/ {
+        alias /var/www/twweb/static/;
+        autoindex off;
+        gzip on;
+        gzip_http_version 1.1;
+        gzip_vary on;
+        gzip_comp_level 6;
+        gzip_proxied any;
+        gzip_types text/plain text/html text/css application/json application/javascript application/x-javascript text/javascript text/xml;
+        gzip_buffers 128 4k;
+    }
+
+    location /sentry/ {
+        proxy_set_header Host 'sentry.adamcoddington.net';
+        proxy_set_header Referer $http_referer;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_next_upstream off;
+        proxy_read_timeout 240;
+        proxy_connect_timeout 240;
+        proxy_buffering off;
+
+        proxy_pass http://127.0.0.1:9000/;
+    }
+
+    location /status-old/ {
+            #limit_conn addr 2;
+            uwsgi_pass inthe_am_status;
+            include /etc/nginx/uwsgi_params;
+    }
+
+    location ~ "^/$" {
+        gzip on;
+        autoindex on;
+    }
+
+    root /var/www/twweb/dist;
+    try_files $uri $uri/ @proxy;
+
+    location @proxy {
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Protocol https;
+            proxy_set_header Host $http_host;
+            proxy_set_header Connection '';
+            proxy_next_upstream off;
+            proxy_http_version 1.1;
+
+            set $prerender 0;
+            if ($http_user_agent ~* "googlebot|yahoo|bingbot|baiduspider|yandex|yeti|yodaobot|gigabot|ia_archiver|facebookexternalhit|twitterbot|developers\.google\.com") {
+                set $prerender 1;
+            }
+            if ($args ~ "_escaped_fragment_|prerender=1") {
+                set $prerender 1;
+            }
+            if ($http_user_agent ~ "Prerender") {
+                set $prerender 0;
+            }
+
+            if ($prerender = 1) {
+                rewrite .* /$scheme://$host$request_uri break;
+                proxy_pass http://127.0.0.1:3000;
+            }
+            if ($prerender = 0) {
+                uwsgi_pass inthe_am;
+            }
+            proxy_connect_timeout 10s;
+            proxy_read_timeout 15s;
+            proxy_send_timeout 15s;
+            include /etc/nginx/uwsgi_params;
+            include /etc/nginx/proxy.conf;
+    }
+}

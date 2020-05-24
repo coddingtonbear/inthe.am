@@ -1,6 +1,5 @@
 # make sure to `git submodule update --init` before building images
-
-version: '2'
+version: '3'
 services:
   web:
     restart: always
@@ -18,39 +17,27 @@ services:
     volumes:
       - ./:/data/web
       - ./external_python_modules:/external_python_modules
-    command: /usr/bin/gunicorn inthe_am.wsgi:application -w 2 -b :8000
+    command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate --noinput && uwsgi --ini uwsgi.ini --http :8000"
   nginx:
     restart: always
     build:
-      dockerfile: docker/Dockerfile
-      context: ember/
+      dockerfile: ./docker/nginx/Dockerfile
+      context: ./
     ports:
       - "80:80"
-    volumes_from:
-      - web
-    volumes:
-      - ./logs:/app/logs/
+      - "443:443"
     links:
       - web:web
-  zapier:
-    restart: always
-    build:
-      dockerfile: ../docker/zapier/Dockerfile
-      context: zapier/
-    volumes_from:
-      - web
     volumes:
       - ./logs:/app/logs/
     links:
       - web:web
   postgres:
     restart: always
-    image: postgres:latest
-    volumes_from:
-      - data
+    image: postgres:alpine
     volumes:
-      - ./docker/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - ./docker/backups/postgresql:/backup
+      - db-data:/var/lib/postgresql
     env_file:
       - .env
     expose:
@@ -62,15 +49,9 @@ services:
       - "6379"
   memcached:
     image: 'bitnami/memcached:latest'
-
   taskd:
     build: ./docker/taskd
     volumes:
       - ./docker/data:/var/taskd
-
-  data:
-    restart: always
-    image: alpine
-    volumes:
-      - /var/lib/postgresql
-    command: "true"
+volumes:
+  db-data:
