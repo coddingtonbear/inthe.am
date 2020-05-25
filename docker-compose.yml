@@ -17,7 +17,7 @@ services:
     volumes:
       - ./:/data/web
       - ./external_python_modules:/external_python_modules
-    command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate --noinput && uwsgi --ini uwsgi.ini --http :8000"
+    command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate --noinput && uwsgi --ini uwsgi.ini"
   nginx:
     restart: always
     build:

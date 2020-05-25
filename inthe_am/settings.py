@@ -302,6 +302,8 @@ for key, value in os.environ.items():
             value
         )
 
+LOG_DIR = os.environ.get('LOG_DIR', os.path.join(BASE_DIR, 'logs'))
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -329,7 +331,7 @@ LOGGING = {
         'exception_log': {
             'level': 'WARNING',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.error.log'),
+            'filename': os.path.join(LOG_DIR, 'twweb.error.log'),
             'maxBytes': 1048576,
             'backupCount': 5,
             'formatter': 'verbose',
@@ -337,7 +339,7 @@ LOGGING = {
         'taskwarrior': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.taskwarrior.log'),
+            'filename': os.path.join(LOG_DIR, 'twweb.taskwarrior.log'),
             'maxBytes': 1048576,
             'backupCount': 5,
             'formatter': 'verbose',
@@ -345,7 +347,7 @@ LOGGING = {
         'tasks': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.tasks.log'),
+            'filename': os.path.join(LOG_DIR, 'twweb.tasks.log'),
             'maxBytes': 1048576,
             'backupCount': 5,
             'formatter': 'verbose',
@@ -353,7 +355,7 @@ LOGGING = {
         'mgmt': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.mgmt.log'),
+            'filename': os.path.join(LOG_DIR, 'twweb.mgmt.log'),
             'maxBytes': 1048576,
             'backupCount': 5,
             'formatter': 'verbose',
@@ -361,7 +363,7 @@ LOGGING = {
         'store': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.log'),
+            'filename': os.path.join(LOG_DIR, 'twweb.log'),
             'maxBytes': 1048576,
             'backupCount': 5,
             'formatter': 'verbose',
@@ -369,7 +371,7 @@ LOGGING = {
         'status': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.status.log'),
+            'filename': os.path.join(LOG_DIR, 'twweb.status.log'),
             'maxBytes': 1048576,
             'backupCount': 5,
             'formatter': 'verbose',
@@ -377,7 +379,7 @@ LOGGING = {
         'requests': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/twweb.requests.log'),
+            'filename': os.path.join(LOG_DIR, 'twweb.requests.log'),
             'maxBytes': 1048576,
             'backupCount': 5,
             'formatter': 'verbose',
@@ -455,6 +457,9 @@ LOGGING = {
         }
     }
 }
+
+if os.environ.get('DOCKER', False):
+    LOGGING['loggers']['']['handlers'].append('console')
 
 
 # Application definition
