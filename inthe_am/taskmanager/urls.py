@@ -2,7 +2,8 @@ import os
 
 from django.conf import settings
 from django.conf.urls import include, url
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.urls import reverse
 from rest_framework import routers
 
 from .views import debug_login, TaskFeed, RestHookHandler
@@ -24,13 +25,16 @@ def unmatched(request):
 
 
 def fallback(request):
-    # This is sort of a hack; sorry!
-    index_template_path = os.path.join(
-        settings.BASE_DIR,
-        'app/index.html'
+    # This will redirect to the root path (which will be served for ember
+    # via nginx directly); we'll see the 'path=' parameter and ember will
+    # use its internal navigation to route you to the proper path
+    return HttpResponseRedirect(
+        ''.join([
+            reverse("fallback"),
+            '?path=',
+            request.path,
+        ])
     )
-    with open(index_template_path) as index:
-        return HttpResponse(index.read())
 
 
 def view_does_not_exist(request):
@@ -69,7 +73,7 @@ urlpatterns = [
         '^api/.*',
         unmatched,
     ),
-    url('^', fallback),
+    url('^', fallback, name='fallback'),
 ]
 
 if settings.DEBUG:
