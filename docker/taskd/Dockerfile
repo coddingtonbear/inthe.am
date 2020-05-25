@@ -1,20 +1,26 @@
-FROM alpine:3.11
+FROM python:3.8-slim
 
-ENV TASKD_VERSION=1.1.0-r6 \
- TASKDDATA=/var/taskd \
- USER_NAME=twtaskd
+ENV TASKDDATA=/var/taskd USERNAME=taskd
 
-RUN apk -U --no-cache upgrade && \
-  apk -U --no-cache add taskd=${TASKD_VERSION} taskd-pki=${TASKD_VERSION}
+RUN apt-get update
+RUN apt-get install -y build-essential git supervisor uuid-dev cmake libpq-dev \
+  postgresql-server-dev-11 libgnutls28-dev gnutls-bin
+RUN git clone https://github.com/coddingtonbear/taskserver
+RUN cd taskserver &&\
+  cmake -DCMAKE_INSTALL_PREFIX=/usr &&\
+  make && make install
 
-COPY simple_taskd_configuration.conf /var/taskd/config
-COPY certificate_signing_template.template /var/taskd/cert.template
-COPY entrypoint.sh /app/run.sh
-# TODO accept userid from build-arg
-RUN addgroup -g 1000 -S ${USER_NAME} && \
-    adduser -u 1000 -S ${USER_NAME} -G ${USER_NAME}
-USER ${USER_NAME}
+COPY docker/taskd/simple_taskd_configuration.conf /var/taskd/config
+COPY docker/taskd/certificate_signing_template.template /var/taskd/cert.template
+COPY docker/taskd/entrypoint.sh /app/run.sh
+COPY docker/taskd/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+RUN chown ${USER_NAME}:${USER_NAME} ${TASKDDATA}
+RUN chown ${USER_NAME}:${USER_NAME} /tmp/
+
 # Configure container
 VOLUME ["${TASKDDATA}"]
 EXPOSE 53589
-ENTRYPOINT ["/app/run.sh"]
+CMD ["/usr/bin/supervisord"]
+
+USER ${USER_NAME}

@@ -85,6 +85,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+DEFAULT_LOGIN_ROUTE = ''
+
 GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'access_type': 'offline'}
 
 ROOT_URLCONF = 'inthe_am.urls'
@@ -120,7 +122,10 @@ ENVIRONMENT_SETTING_PREFIX = 'TWWEB_'
 
 LOGIN_REDIRECT_URL = '/'
 
-TASK_STORAGE_PATH = os.path.join(BASE_DIR, 'task_data')
+TASK_STORAGE_PATH = os.environ.get(
+    'TASK_STORAGE_PATH',
+    os.path.join(BASE_DIR, 'task_data')
+)
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -275,6 +280,14 @@ STREAMING_UPDATES_ENABLED = True
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
+
+SOCIAL_AUTH_URLOPEN_TIMEOUT = os.environ.get('SOCIAL_AUTH_URLOPEN_TIMEOUT', 30)
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
+    'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', ''
+)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
+    'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', ''
+)
 
 # Must be sourced from environment:
 #  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY

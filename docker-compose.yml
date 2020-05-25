@@ -13,9 +13,13 @@ services:
       - postgres:postgres
       - redis:redis
       - memcached:memcached
-    env_file: .env
+      - taskd:taskd
+    env_file:
+      - .env
+      - .private.env
     volumes:
       - ./:/data/web
+      - task-data:/task_data
       - ./external_python_modules:/external_python_modules
     command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate --noinput && uwsgi --ini uwsgi.ini"
   nginx:
@@ -50,8 +54,12 @@ services:
   memcached:
     image: 'bitnami/memcached:latest'
   taskd:
-    build: ./docker/taskd
+    build:
+      dockerfile: ./docker/taskd/Dockerfile
+      context: ./
     volumes:
-      - ./docker/data:/var/taskd
+      - taskd-data:/var/taskd
 volumes:
   db-data:
+  task-data:
+  taskd-data:

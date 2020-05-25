@@ -16,7 +16,12 @@ COPY external_python_modules/ /external_python_modules
 RUN for mod in /external_python_modules/* ; do pip install -e $mod ; done
 
 RUN chmod 777 /tmp/
-USER www-data
 
 VOLUME /data/web
 WORKDIR /data/web
+
+RUN mkdir /task_data
+RUN chown www-data:www-data /task_data
+VOLUME /task_data
+
+USER www-data

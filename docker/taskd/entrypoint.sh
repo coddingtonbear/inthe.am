@@ -1,14 +1,17 @@
 #!/bin/sh
-
+if [ ! -d $TASKDDATA ]; then
+    echo "Task data is not mounted!"
+    exit 1
+fi
 if [ ! -d ${TASKDDATA}/pki ]; then
-      cd $TASKDDATA
+    cd $TASKDDATA
     taskd init
     taskd add org inthe_am
     taskd add org testing
 
     mkdir ${TASKDDATA}/pki
-    cp /usr/share/taskd/pki/generate* ${TASKDDATA}/pki
-    cp /usr/share/taskd/pki/vars ${TASKDDATA}/pki
+    cp /taskserver/pki/generate* ${TASKDDATA}/pki
+    cp /taskserver/pki/vars ${TASKDDATA}/pki
     cd ${TASKDDATA}/pki
     ./generate
     taskd config --force client.cert ${TASKDDATA}/pki/client.cert.pem
@@ -23,3 +26,4 @@ if [ ! -d ${TASKDDATA}/pki ]; then
 
     #chmod -R 777 /var/taskd/
 fi
+/usr/bin/taskd server
