@@ -127,7 +127,7 @@ TASK_STORAGE_PATH = os.environ.get(
     os.path.join(BASE_DIR, 'task_data')
 )
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, 'static'))
 
 CACHES = {
     'default': {
@@ -170,7 +170,7 @@ BROKER_URL = 'redis://redis:6379/1'
 CELERYD_CONCURRENCY = 10
 CELERY_HIJACK_ROOT_LOGGER = False
 
-REDIS_HOST = 'localhost'
+REDIS_HOST = 'redis'
 REDIS_PORT = 6379
 REDIS_DB = 2
 

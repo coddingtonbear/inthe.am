@@ -21,6 +21,9 @@ services:
       - ./:/data/web
       - task-data:/task_data
       - ./external_python_modules:/external_python_modules
+      - django-static-assets:/django-static
+    networks:
+      - backend
     command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate --noinput && uwsgi --ini uwsgi.ini"
   nginx:
     restart: always
@@ -34,6 +37,9 @@ services:
       - web:web
     volumes:
       - ./logs:/app/logs/
+      - django-static-assets:/app/static:ro
+    networks:
+      - backend
     links:
       - web:web
   postgres:
@@ -44,6 +50,8 @@ services:
       - db-data:/var/lib/postgresql
     env_file:
       - .env
+    networks:
+      - backend
     expose:
       - "5432"
   redis:
@@ -51,15 +59,27 @@ services:
     image: redis:latest
     expose:
       - "6379"
+    networks:
+      - backend
   memcached:
     image: 'bitnami/memcached:latest'
+    networks:
+      - backend
   taskd:
     build:
       dockerfile: ./docker/taskd/Dockerfile
       context: ./
+    networks:
+      - backend
+    links:
+      - postgres:postgres
+      - redis:redis
     volumes:
       - taskd-data:/var/taskd
 volumes:
   db-data:
+  django-static-assets:
   task-data:
   taskd-data:
+networks:
+  backend:

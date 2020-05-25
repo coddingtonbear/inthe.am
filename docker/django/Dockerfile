@@ -20,6 +20,10 @@ RUN chmod 777 /tmp/
 VOLUME /data/web
 WORKDIR /data/web
 
+RUN mkdir /django-static
+RUN chown www-data:www-data /django-static
+VOLUME /django-static
+
 RUN mkdir /task_data
 RUN chown www-data:www-data /task_data
 VOLUME /task_data

@@ -1,4 +1,6 @@
 #!/bin/sh
+export LOCAL_IP=`getent hosts web | awk '{ print $1 }'`
+
 if [ ! -d $TASKDDATA ]; then
     echo "Task data is not mounted!"
     exit 1
@@ -24,6 +26,12 @@ if [ ! -d ${TASKDDATA}/pki ]; then
     # And finaly set taskd to listen in default port
     taskd config --force server 0.0.0.0:53589
 
-    #chmod -R 777 /var/taskd/
+    # Configure database settings for looking up account information
+    taskd config --force intheam.db.host postgres
+    taskd config --force intheam.db.name ${DB_NAME}
+    taskd config --force intheam.db.user ${DB_USER}
+    taskd config --force intheam.db.password ${DB_PASS}
+    taskd config --force intheam.min_tos 1
+    taskd config --force intheam.min_privacy 1
 fi
 /usr/bin/taskd server
