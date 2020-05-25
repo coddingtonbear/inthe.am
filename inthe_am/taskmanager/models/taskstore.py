@@ -945,6 +945,8 @@ class TaskStore(models.Model):
                 '--generate-request',
                 '--load-privkey',
                 private_key_filename,
+                '--template',
+                settings.TASKD_SIGNING_TEMPLATE,
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

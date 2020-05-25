@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import date, datetime
+import json
 import os
 import subprocess
 import tempfile
@@ -20,8 +21,19 @@ CERT_DB_PATH = os.environ.get(
 )
 
 
+class TaskdJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.strftime('%Y-%m-%dT%H:%M:%SZ')
+        if isinstance(obj, date):
+            return obj.strftime('%Y-%m-%d')
+
+        return super().default(self, obj)
+
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://' + CERT_DB_PATH
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + CERT_DB_PATH
+app.config['RESTFUL_JSON'] = {'cls': TaskdJsonEncoder}
 api = Api(app)
 
 db = SQLAlchemy(app)
@@ -32,7 +44,7 @@ class Credential(db.Model):
     org_name = db.Column(db.String(255), nullable=False)
     user_name = db.Column(db.String(255), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    deleted = db.column(db.DateTime, nullable=True)
+    deleted = db.Column(db.DateTime, nullable=True)
 
     def as_dict(self):
         return {
@@ -41,7 +53,11 @@ class Credential(db.Model):
 
 
 class Certificate(db.Model):
-    id = db.Column(db.String(36), primary_key=True, default=uuid.uuid4)
+    id = db.Column(
+        db.String(36),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4())
+    )
     user_key = db.Column(db.String(36), nullable=False)
     certificate = db.Column(db.Text, nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -96,7 +112,13 @@ class TaskdAccount(Resource):
         db.session.add(cred)
         db.session.commit()
 
-        return cred.as_dict()
+        return redirect(
+            api.url_for(
+                TaskdAccount,
+                org_name=org_name,
+                user_name=user_name,
+            )
+        )
 
     def get(self, org_name, user_name):
         cred = Credential.query.filter_by(
@@ -139,6 +161,11 @@ class TaskdAccount(Resource):
 
 class TaskdCertificates(Resource):
     def post(self, org_name, user_name):
+        cred = Credential.query.filter_by(
+            user_name=user_name,
+            org_name=org_name,
+        ).first_or_404()
+
         with tempfile.NamedTemporaryFile('wb+') as outf:
             outf.write(request.data)
             outf.flush()
@@ -162,8 +189,7 @@ class TaskdCertificates(Resource):
             cert = cert_proc.communicate()[0].decode('utf-8')
 
         cert_record = Certificate(
-            org_name=org_name,
-            user_name=user_name,
+            user_key=cred.user_key,
             certificate=cert,
         )
         db.session.add(cert_record)
@@ -179,29 +205,39 @@ class TaskdCertificates(Resource):
         )
 
     def get(self, org_name, user_name):
+        cred = Credential.query.filter_by(
+            user_name=user_name,
+            org_name=org_name,
+        ).first_or_404()
+
         return [
             record.as_dict()
             for record in Certificate.query.filter_by(
-                user_name=user_name,
-                org_name=org_name,
+                user_key=cred.user_key,
             )
         ]
 
 
 class TaskdCertificateDetails(Resource):
     def get(self, org_name, user_name, cert_id):
-        cert_record = Certificate.query.filter_by(
+        cred = Credential.query.filter_by(
             user_name=user_name,
             org_name=org_name,
+        ).first_or_404()
+        cert_record = Certificate.query.filter_by(
+            user_key=cred.user_key,
             id=cert_id,
         ).first_or_404()
 
         return cert_record.as_dict()
 
     def delete(self, org_name, user_name, cert_id):
-        cert_record = Certificate.query.filter_by(
+        cred = Credential.query.filter_by(
             user_name=user_name,
             org_name=org_name,
+        ).first_or_404()
+        cert_record = Certificate.query.filter_by(
+            user_key=cred.user_key,
             id=cert_id,
         ).first_or_404()
 

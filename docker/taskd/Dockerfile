@@ -1,6 +1,7 @@
 FROM python:3.8-slim
 
-ENV TASKDDATA=/var/taskd USERNAME=taskd
+ENV TASKDDATA=/var/taskd USERNAME=taskd CA_CERT=/var/taskd/pki/ca.cert.pem \
+  CA_KEY=/var/taskd/pki/ca.key.pem CA_SIGNING_TEMPLATE=/var/taskd/cert.template
 
 RUN apt-get update
 RUN apt-get install -y build-essential git supervisor uuid-dev cmake libpq-dev \
