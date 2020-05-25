@@ -9,6 +9,8 @@ import tempfile
 import time
 import uuid
 
+import requests
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -880,30 +882,6 @@ class TaskStore(models.Model):
                 except AttributeError:
                     pass
 
-            # Create a new user username
-            env = os.environ.copy()
-            env['TASKDDATA'] = settings.TASKD_DATA
-
-            command = [
-                settings.TASKD_BINARY,
-                'add',
-                'user',
-                settings.TASKD_ORG,
-                self.username,
-            ]
-            key_proc = subprocess.Popen(
-                command,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                env=env,
-            )
-            key_proc_output = (
-                key_proc.communicate()[0].decode('utf-8').split('\n')
-            )
-            taskd_user_key = (
-                key_proc_output[0].split(':')[1].strip()
-            )
-
             # Create and write a new private key
             private_key_proc = subprocess.Popen(
                 [
@@ -921,64 +899,64 @@ class TaskStore(models.Model):
             with open(private_key_filename, 'w') as out:
                 out.write(private_key)
 
-        with git_checkpoint(self, 'Save initial taskrc credentials'):
-            cert_filename = self.generate_new_certificate()
+        response = requests.put(
+            f'http://taskd/{settings.TASKD_ORG}/{self.username}'
+        ).json()
 
-            # Save these details to the taskrc
-            taskd_credentials = '%s/%s/%s' % (
-                settings.TASKD_ORG,
-                self.username,
-                taskd_user_key,
+        with git_checkpoint(self, 'Save initial taskrc credentials'):
+            cert_data = self.generate_new_certificate()
+            cert_filename = self.taskrc.get(
+                'taskd.certificate',
+                os.path.join(
+                    self.local_path,
+                    self.DEFAULT_FILENAMES['certificate'],
+                )
             )
+
+            with open(cert_filename, 'wb') as out:
+                out.write(cert_data)
+
             self.taskrc.update({
                 'data.location': self.local_path,
                 'taskd.certificate': cert_filename,
                 'taskd.key': private_key_filename,
                 'taskd.ca': self.server_config['ca.cert'],
                 'taskd.server': settings.TASKD_SERVER,
-                'taskd.credentials': taskd_credentials,
+                'taskd.credentials': response['credentials'],
                 'taskd.trust': 'ignore hostname',
             })
-            self.metadata['generated_taskd_credentials'] = taskd_credentials
+            self.metadata['generated_taskd_credentials'] = (
+                response['credentials']
+            )
 
         with git_checkpoint(self, 'Initial Synchronization'):
             self.save()
             self.client.sync(init=True)
 
-    def generate_new_certificate(self):
+    def generate_new_certificate(self) -> bytes:
         private_key_filename = os.path.join(
             self.local_path,
             self.DEFAULT_FILENAMES['key'],
         )
-        cert_filename = self.taskrc.get(
-            'taskd.certificate',
-            os.path.join(
-                self.local_path,
-                self.DEFAULT_FILENAMES['certificate'],
-            )
-        )
         # Create and write a new certificate
-        cert_proc = subprocess.Popen(
+        csr_proc = subprocess.Popen(
             [
                 'certtool',
-                '--generate-certificate',
+                '--generate-request',
                 '--load-privkey',
                 private_key_filename,
-                '--load-ca-privkey',
-                self.server_config['ca.key'],
-                '--load-ca-certificate',
-                self.server_config['ca.cert'],
-                '--template',
-                settings.TASKD_SIGNING_TEMPLATE,
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        cert = cert_proc.communicate()[0].decode('utf-8')
+        csr = csr_proc.communicate()[0].decode('utf-8')
 
-        with open(cert_filename, 'w') as out:
-            out.write(cert)
-        return cert_filename
+        response = requests.post(
+            f'http://taskd/{settings.TASKD_ORG}/{self.username}/certificates/',
+            data=csr,
+        ).json()
+
+        return response['certificate']
 
     def register_metadata_callback(self, callback):
         if not hasattr(self, '_metadata_callbacks'):

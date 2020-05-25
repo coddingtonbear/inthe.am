@@ -45,3 +45,6 @@ local/*
 share/*
 docker/data/
 .idea/
+.private.env
+.mypy_cache
+taskd_http/env

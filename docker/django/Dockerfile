@@ -7,7 +7,7 @@ RUN apt-get update && \
 RUN apt-get install -y postgresql-client git taskwarrior \
     python-dev gettext vim libxml2-dev libxslt-dev \
     libcurl4-gnutls-dev build-essential libgnutls28-dev \
-    libpcre3 libpcre3-dev
+    libpcre3 libpcre3-dev gnutls-bin
 
 RUN pip install --upgrade pip
 COPY requirements-frozen.txt /tmp

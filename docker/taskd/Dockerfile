@@ -14,13 +14,18 @@ COPY docker/taskd/simple_taskd_configuration.conf /var/taskd/config
 COPY docker/taskd/certificate_signing_template.template /var/taskd/cert.template
 COPY docker/taskd/entrypoint.sh /app/run.sh
 COPY docker/taskd/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY taskd_http/api.py /app/api.py
+COPY taskd_http/requirements.txt /tmp/requirements.txt
 
 RUN chown ${USER_NAME}:${USER_NAME} ${TASKDDATA}
 RUN chown ${USER_NAME}:${USER_NAME} /tmp/
 
+RUN pip install --no-cache -r /tmp/requirements.txt
+
 # Configure container
 VOLUME ["${TASKDDATA}"]
 EXPOSE 53589
-CMD ["/usr/bin/supervisord"]
+EXPOSE 80
+ENTRYPOINT /usr/bin/supervisord --nodaemon
 
 USER ${USER_NAME}
