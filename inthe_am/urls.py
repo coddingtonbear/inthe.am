@@ -1,4 +1,5 @@
 import pickle
+import socket
 import uuid
 
 from django.contrib import admin
@@ -58,9 +59,12 @@ def status_offload(request):
         ex=60
     )
 
+    hostname, port = settings.STATUS_OFFLOAD_SOCKET.split(':')
+    offload_ip = socket.gethostbyname(hostname)
+
     uwsgi.add_var("PICKLE_ID", str(pickle_id))
     uwsgi.add_var("OFFLOAD_TO_SSE", "y")
-    uwsgi.add_var("OFFLOAD_SERVER", settings.STATUS_OFFLOAD_SOCKET)
+    uwsgi.add_var("OFFLOAD_SERVER", ':'.join([offload_ip, port]))
     return HttpResponse()
 
 

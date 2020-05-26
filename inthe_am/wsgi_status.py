@@ -22,7 +22,6 @@ from gevent import sleep
 
 from inthe_am.taskmanager.lock import get_lock_redis
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "inthe_am.settings")
 
 logger = logging.getLogger('inthe_am.wsgi_status')
 logging.config.dictConfig(settings.LOGGING)

@@ -4,11 +4,34 @@ services:
   web:
     restart: always
     build:
-      # image: intheam_django
       context: ./
       dockerfile: ./docker/django/Dockerfile
     expose:
       - "8000"
+    links:
+      - postgres:postgres
+      - redis:redis
+      - memcached:memcached
+      - taskd:taskd
+      - sse:sse
+    env_file:
+      - .env
+      - .private.env
+    volumes:
+      - ./:/data/web
+      - task-data:/task_data
+      - ./external_python_modules:/external_python_modules
+      - django-static-assets:/django-static
+    networks:
+      - backend
+    command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate --noinput && uwsgi --ini uwsgi.ini"
+  sse:
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./docker/django/Dockerfile
+    expose:
+      - "8001"
     links:
       - postgres:postgres
       - redis:redis
@@ -21,10 +44,9 @@ services:
       - ./:/data/web
       - task-data:/task_data
       - ./external_python_modules:/external_python_modules
-      - django-static-assets:/django-static
     networks:
       - backend
-    command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate --noinput && uwsgi --ini uwsgi.ini"
+    command: bash -c "uwsgi --ini uwsgi_status.ini"
   nginx:
     restart: always
     build:
@@ -78,8 +100,11 @@ services:
       - taskd-data:/var/taskd
 volumes:
   db-data:
-  django-static-assets:
+    external: true
   task-data:
+    external: true
   taskd-data:
+    external: true
+  django-static-assets:
 networks:
   backend:

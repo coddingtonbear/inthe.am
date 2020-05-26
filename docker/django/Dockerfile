@@ -1,6 +1,6 @@
 FROM python:3.8-slim
 
-ENV TASK_VERSION=2.5.1-r0
+ENV TASK_VERSION=2.5.1-r0 DJANGO_SETTINGS_MODULE=inthe_am.settings
 
 RUN apt-get update && \
   apt-get upgrade
