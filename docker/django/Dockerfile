@@ -14,6 +14,7 @@ COPY requirements-frozen.txt /tmp
 RUN pip install --no-cache -r /tmp/requirements-frozen.txt
 COPY external_python_modules/ /external_python_modules
 RUN for mod in /external_python_modules/* ; do pip install -e $mod ; done
+COPY docker/django/gitconfig /var/www/.gitconfig
 
 RUN chmod 777 /tmp/
 

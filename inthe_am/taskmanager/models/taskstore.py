@@ -849,12 +849,10 @@ class TaskStore(models.Model):
         self.log_message("Taskd settings reset to default.")
 
     def clear_taskserver_data(self):
-        try:
-            os.unlink(self.taskd_data_path)
-        except OSError:
-            logger.exception(
-                "OSError encountered while removing taskd data."
-            )
+        response = requests.delete(
+            f'http://taskd/{settings.TASKD_ORG}/{self.username}/data/',
+        )
+        response.raise_for_status()
 
     def clear_local_task_list(self):
         for path in os.listdir(self.local_path):
@@ -913,7 +911,7 @@ class TaskStore(models.Model):
                 )
             )
 
-            with open(cert_filename, 'wb') as out:
+            with open(cert_filename, 'w') as out:
                 out.write(cert_data)
 
             self.taskrc.update({

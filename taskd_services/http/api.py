@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import uuid
 
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, send_file
 from flask_restful import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 
@@ -248,12 +248,47 @@ class TaskdCertificateDetails(Resource):
         return None
 
 
+class TaskdData(Resource):
+    def get_data_path(self, cred) -> str:
+        return os.path.join(
+            TASKD_DATA,
+            'orgs',
+            cred.org_name,
+            'users',
+            cred.user_key,
+            'tx.data',
+        )
+
+    def get(self, org_name, user_name):
+        cred = Credential.query.filter_by(
+            user_name=user_name,
+            org_name=org_name,
+        ).first_or_404()
+
+        return send_file(
+            self.get_data_path(cred),
+            mimetype='application/octet-stream',
+            as_attachment=True,
+        )
+
+    def delete(self, org_name, user_name):
+        cred = Credential.query.filter_by(
+            user_name=user_name,
+            org_name=org_name,
+        ).first_or_404()
+
+        os.unlink(self.get_data_path(cred))
+
+        return None
+
+
 api.add_resource(TaskdAccount, '/<org_name>/<user_name>')
 api.add_resource(TaskdCertificates, '/<org_name>/<user_name>/certificates/')
 api.add_resource(
     TaskdCertificateDetails,
     '/<org_name>/<user_name>/certificates/<cert_id>'
 )
+api.add_resource(TaskdData, '/<org_name>/<user_name>/data/')
 
 
 if __name__ == '__main__':
