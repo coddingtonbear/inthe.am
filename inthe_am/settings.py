@@ -25,9 +25,7 @@ TESTING = ('test' in sys.argv) or TRAVIS
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-if os.uname()[1] == "eugene.adamcoddington.net":
-    DEBUG = False
+DEBUG = bool(os.environ.get('DEBUG', False))
 
 RUN_LOCALLY = {
     'python_path': 'python3',
