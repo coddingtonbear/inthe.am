@@ -261,7 +261,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 TASKD_BINARY = '/usr/local/bin/taskd'
 TASK_BINARY = '/usr/local/bin/task'
-TASKD_DATA = '/var/taskd'
+TASKD_DATA = '/taskserver_data'
 TASKD_SIGNING_TEMPLATE = '/var/taskd/cert.template'
 TASKD_SERVER = '127.0.0.1:53589'
 TASKD_ORG = 'testing'

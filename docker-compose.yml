@@ -22,6 +22,7 @@ services:
       - task-data:/task_data
       - ./external_python_modules:/external_python_modules
       - django-static-assets:/django-static
+      - taskd-data:/taskserver_data:ro
     networks:
       - backend
     command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate --noinput && uwsgi --ini uwsgi.ini"
