@@ -14,6 +14,7 @@ services:
       - memcached:memcached
       - taskd:taskd
       - sse:sse
+      - celery:celery
     env_file:
       - .env
       - .private.env
@@ -47,6 +48,26 @@ services:
     networks:
       - backend
     command: bash -c "uwsgi --ini uwsgi_status.ini"
+  celery:
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./docker/django/Dockerfile
+    links:
+      - postgres:postgres
+      - redis:redis
+      - memcached:memcached
+      - taskd:taskd
+    env_file:
+      - .env
+      - .private.env
+    volumes:
+      - ./:/data/web
+      - task-data:/task_data
+      - ./external_python_modules:/external_python_modules
+    networks:
+      - backend
+    command: bash -c "celery -A inthe_am.taskmanager.celery worker -l info"
   nginx:
     restart: always
     build:
