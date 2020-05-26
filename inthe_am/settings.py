@@ -140,6 +140,11 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
+STATUS_OFFLOAD_SOCKET = os.environ.get(
+    'STATUS_OFFLOAD_SOCKET',
+    None
+)
+
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 TOS_VERSION = 1

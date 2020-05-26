@@ -3,6 +3,7 @@ import uuid
 
 from django.contrib import admin
 from django.contrib.auth import logout
+from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -24,7 +25,7 @@ def logout_and_redirect(request):
 
 
 def status_offload(request):
-    if not uwsgi:
+    if not uwsgi or not settings.STATUS_OFFLOAD_SOCKET:
         return JsonResponse(
             {
                 'error': 'Status unavailable in this environment.',
@@ -59,7 +60,7 @@ def status_offload(request):
 
     uwsgi.add_var("PICKLE_ID", str(pickle_id))
     uwsgi.add_var("OFFLOAD_TO_SSE", "y")
-    uwsgi.add_var("OFFLOAD_SERVER", "/tmp/inthe_am_status.sock")
+    uwsgi.add_var("OFFLOAD_SERVER", settings.STATUS_OFFLOAD_SOCKET)
     return HttpResponse()
 
 
