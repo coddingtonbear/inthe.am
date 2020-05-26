@@ -61,6 +61,7 @@ class TaskStore(models.Model):
     DEFAULT_FILENAMES = {
         'key': 'private.key.pem',
         'certificate': 'private.certificate.pem',
+        'ca_cert': 'ca.certificate.pem',
     }
 
     user = models.ForeignKey(
@@ -165,16 +166,6 @@ class TaskStore(models.Model):
     @property
     def repository(self):
         return Repo(self.local_path)
-
-    @property
-    def server_config(self):
-        return TaskRc(
-            os.path.join(
-                settings.TASKD_DATA,
-                'config'
-            ),
-            read_only=True
-        )
 
     @classmethod
     def get_for_user(cls, user):
@@ -394,20 +385,10 @@ class TaskStore(models.Model):
             )
 
         try:
-            env = os.environ.copy()
-            env['TASKDDATA'] = settings.TASKD_DATA
-
-            command = [
-                settings.TASKD_BINARY,
-                'remove',
-                'user',
-                settings.TASKD_ORG,
-                self.username,
-            ]
-            subprocess.check_call(
-                command,
-                env=env,
+            response = requests.delete(
+                f'http://taskd/{settings.TASKD_ORG}/{self.username}/',
             )
+            response.raise_for_status()
         except Exception as e:
             logger.exception(
                 "Error encountered while deleting taskserver account: %s",
@@ -534,20 +515,6 @@ class TaskStore(models.Model):
             else:
                 self._local_taskd = False
         return self._local_taskd
-
-    @property
-    def taskd_data_path(self):
-        org, user, uid = (
-            self.metadata['generated_taskd_credentials'].split('/')
-        )
-        return os.path.join(
-            settings.TASKD_DATA,
-            'orgs',
-            org,
-            'users',
-            uid,
-            'tx.data'
-        )
 
     @property
     def sync_uses_default_server(self):
@@ -827,7 +794,10 @@ class TaskStore(models.Model):
                 self.local_path,
                 self.DEFAULT_FILENAMES['key']
             ),
-            'taskd.ca': self.server_config['ca.cert'],
+            'taskd.ca': os.path.join(
+                self.local_path,
+                self.DEFAULT_FILENAMES['ca_cert']
+            ),
             'taskd.trust': 'ignore hostname',
             'taskd.server': settings.TASKD_SERVER,
             'taskd.credentials': self.metadata['generated_taskd_credentials']
@@ -897,6 +867,14 @@ class TaskStore(models.Model):
             with open(private_key_filename, 'w') as out:
                 out.write(private_key)
 
+        server_config = requests.get(f'http://taskd/').json()
+        ca_cert_filename = os.path.join(
+            self.local_path,
+            self.DEFAULT_FILENAMES['ca_cert'],
+        )
+        with open(ca_cert_filename, 'w') as out:
+            out.write(server_config['ca_cert'])
+
         response = requests.put(
             f'http://taskd/{settings.TASKD_ORG}/{self.username}'
         ).json()
@@ -918,7 +896,7 @@ class TaskStore(models.Model):
                 'data.location': self.local_path,
                 'taskd.certificate': cert_filename,
                 'taskd.key': private_key_filename,
-                'taskd.ca': self.server_config['ca.cert'],
+                'taskd.ca': ca_cert_filename,
                 'taskd.server': settings.TASKD_SERVER,
                 'taskd.credentials': response['credentials'],
                 'taskd.trust': 'ignore hostname',
@@ -936,20 +914,26 @@ class TaskStore(models.Model):
             self.local_path,
             self.DEFAULT_FILENAMES['key'],
         )
-        # Create and write a new certificate
-        csr_proc = subprocess.Popen(
-            [
-                'certtool',
-                '--generate-request',
-                '--load-privkey',
-                private_key_filename,
-                '--template',
-                settings.TASKD_SIGNING_TEMPLATE,
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        csr = csr_proc.communicate()[0].decode('utf-8')
+        server_config = requests.get(f'http://taskd/').json()
+
+        with tempfile.NamedTemporaryFile('w+') as signing_template:
+            signing_template.write(server_config['signing_template'])
+            signing_template.flush()
+
+            # Create and write a new certificate
+            csr_proc = subprocess.Popen(
+                [
+                    'certtool',
+                    '--generate-request',
+                    '--load-privkey',
+                    private_key_filename,
+                    '--template',
+                    signing_template.name,
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            csr = csr_proc.communicate()[0].decode('utf-8')
 
         response = requests.post(
             f'http://taskd/{settings.TASKD_ORG}/{self.username}/certificates/',

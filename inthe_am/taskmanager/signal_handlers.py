@@ -11,7 +11,7 @@ from django_mailbox.signals import message_received
 from rest_framework.authtoken.models import Token
 
 from .models import TaskStore
-from .tasks import process_email_message, autoconfigure_taskd
+from .tasks import process_email_message
 
 
 logger = logging.getLogger(__name__)
@@ -24,20 +24,10 @@ logger = logging.getLogger(__name__)
 )
 def create_taskstore_for_user(sender, instance, **kwargs):
     # This just makes sure that the task store exists.
-    TaskStore.get_for_user(instance)
+    store = TaskStore.get_for_user(instance)
     Token.objects.get_or_create(user=instance)
-
-
-@receiver(
-    models.signals.post_save,
-    sender=TaskStore,
-    dispatch_uid='configure_taskstore'
-)
-def autoconfigure_taskstore_for_user(sender, instance, **kwargs):
-    autoconfigure_taskd.apply_async(
-        args=(instance.pk, ),
-        countdown=5,
-    )
+    if not store.configured:
+        store.autoconfigure_taskd()
 
 
 @receiver(message_received, dispatch_uid='incoming_email')

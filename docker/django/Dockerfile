@@ -29,4 +29,6 @@ RUN mkdir /task_data
 RUN chown www-data:www-data /task_data
 VOLUME /task_data
 
+VOLUME /var/taskd
+
 USER www-data

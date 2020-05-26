@@ -76,6 +76,20 @@ class TaskdError(Exception):
     pass
 
 
+class ServerConfig(Resource):
+    def get(self):
+        with open(CA_CERT, 'r') as inf:
+            ca_cert = inf.read()
+
+        with open(CA_SIGNING_TEMPLATE, 'r') as inf:
+            signing_template = inf.read()
+
+        return {
+            'ca_cert': ca_cert,
+            'signing_template': signing_template,
+        }
+
+
 class TaskdAccount(Resource):
     def put(self, org_name, user_name):
         env = os.environ.copy()
@@ -282,6 +296,7 @@ class TaskdData(Resource):
         return None
 
 
+api.add_resource(ServerConfig, '/')
 api.add_resource(TaskdAccount, '/<org_name>/<user_name>')
 api.add_resource(TaskdCertificates, '/<org_name>/<user_name>/certificates/')
 api.add_resource(

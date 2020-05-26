@@ -259,11 +259,8 @@ FILE_UPLOAD_MAXIMUM_BYTES = 5 * 2**20
 AWS_QUERYSTRING_AUTH = False
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-TASKD_BINARY = '/usr/local/bin/taskd'
 TASK_BINARY = '/usr/local/bin/task'
-TASKD_DATA = '/taskserver_data'
-TASKD_SIGNING_TEMPLATE = '/var/taskd/cert.template'
-TASKD_SERVER = '127.0.0.1:53589'
+TASKD_SERVER = 'taskd:53589'
 TASKD_ORG = 'testing'
 
 TESTING_LOGIN_USER = 'im_a'
