@@ -8,7 +8,7 @@ RUN apt-get install -y build-essential git supervisor uuid-dev cmake libpq-dev \
   postgresql-server-dev-11 libgnutls28-dev gnutls-bin
 RUN git clone https://github.com/coddingtonbear/taskserver
 RUN cd taskserver &&\
-  git checkout inthe_am.dockerized &&\
+  git checkout inthe_am_dockerized &&\
   cmake -DCMAKE_INSTALL_PREFIX=/usr &&\
   make && make install
 
