@@ -40,6 +40,13 @@ class UserMetadata(models.Model):
         )
         return meta
 
+    def save(self):
+        super().save()
+
+        if self.tos_up_to_date and self.privacy_policy_up_to_date:
+            store = models.TaskStore.get_for_user(self.user)
+            store.taskd_account.resume()
+
     def __str__(self):
         return self.user.username
 
