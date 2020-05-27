@@ -16,7 +16,7 @@ services:
       - sse:sse
       - celery:celery
     environment:
-      - DEBUG: true
+      - DEBUG: '1'
     env_file:
       - .env
       - .private.env
@@ -117,7 +117,6 @@ services:
     networks:
       - backend
     links:
-      - postgres:postgres
       - redis:redis
     volumes:
       - taskd-data:/var/taskd
