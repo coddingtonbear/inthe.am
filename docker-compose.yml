@@ -15,8 +15,8 @@ services:
       - taskd:taskd
       - sse:sse
       - celery:celery
-    environment:
-      - DEBUG: '1'
+    environment: DEBUG
+      - DEBUG=1
     env_file:
       - .env
       - .private.env
