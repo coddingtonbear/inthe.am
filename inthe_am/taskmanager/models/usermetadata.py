@@ -40,8 +40,8 @@ class UserMetadata(models.Model):
         )
         return meta
 
-    def save(self):
-        super().save()
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
         if self.tos_up_to_date and self.privacy_policy_up_to_date:
             store = models.TaskStore.get_for_user(self.user)

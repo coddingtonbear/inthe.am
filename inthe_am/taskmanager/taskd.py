@@ -75,13 +75,13 @@ class TaskdAccountManager(object):
     def suspend(self) -> None:
         self.make_user_request(
             'put',
-            data=json.dumps({'suspended': True})
+            data=json.dumps({'is_suspended': True})
         )
 
     def resume(self) -> None:
         self.make_user_request(
             'put',
-            data=json.dumps({'suspended': False})
+            data=json.dumps({'is_suspended': False})
         )
 
     def delete(self) -> None:
