@@ -293,7 +293,7 @@ class UserViewSet(viewsets.ViewSet):
     )
     def tos_accept(self, request):
         meta = models.UserMetadata.get_for_user(request.user)
-        meta.tos_version = request.POST['version']
+        meta.tos_version = int(request.POST['version'])
         meta.tos_accepted = now()
         meta.save()
 
@@ -307,7 +307,7 @@ class UserViewSet(viewsets.ViewSet):
     )
     def privacy_policy_accept(self, request):
         meta = models.UserMetadata.get_for_user(request.user)
-        meta.privacy_policy_version = request.POST['version']
+        meta.privacy_policy_version = int(request.POST['version'])
         meta.privacy_policy_accepted = now()
         meta.save()
 
