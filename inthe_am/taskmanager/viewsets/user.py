@@ -297,6 +297,10 @@ class UserViewSet(viewsets.ViewSet):
         meta.tos_accepted = now()
         meta.save()
 
+        if meta.tos_up_to_date and meta.privacy_policy_up_to_date:
+            store = models.TaskStore.get_for_user(request.user)
+            store.taskd_account.resume()
+
         return Response()
 
     @action(
@@ -310,6 +314,10 @@ class UserViewSet(viewsets.ViewSet):
         meta.privacy_policy_version = request.POST['version']
         meta.privacy_policy_accepted = now()
         meta.save()
+
+        if meta.tos_up_to_date and meta.privacy_policy_up_to_date:
+            store = models.TaskStore.get_for_user(request.user)
+            store.taskd_account.resume()
 
         return Response()
 

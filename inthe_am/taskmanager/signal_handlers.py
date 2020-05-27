@@ -28,6 +28,7 @@ def create_taskstore_for_user(sender, instance, **kwargs):
     Token.objects.get_or_create(user=instance)
     if not store.configured:
         store.autoconfigure_taskd()
+        store.taskd_account.suspend()
 
 
 @receiver(message_received, dispatch_uid='incoming_email')

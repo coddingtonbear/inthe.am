@@ -45,3 +45,4 @@ django-cors-headers==3.1.0
 uwsgi==2.0.12
 psycogreen==1.0
 progressbar2==3.20.0
+typing-extensions==3.7.4.2

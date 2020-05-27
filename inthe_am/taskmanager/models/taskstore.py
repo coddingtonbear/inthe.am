@@ -9,8 +9,6 @@ import tempfile
 import time
 import uuid
 
-import requests
-
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -36,6 +34,7 @@ from ..tasks import (
 )
 from ..taskstore_migrations import upgrade as upgrade_taskstore
 from ..taskwarrior_client import TaskwarriorClient
+from ..taskd import TaskdAccountManager
 from ..utils import OneWaySafeJSONEncoder
 from ..exceptions import InvalidTaskwarriorConfiguration
 from .taskrc import TaskRc
@@ -129,16 +128,26 @@ class TaskStore(models.Model):
         )
 
     @property
-    def metadata(self):
+    def metadata(self) -> Metadata:
         if not getattr(self, '_metadata', None):
             self._metadata = Metadata(self, self.metadata_registry)
         return self._metadata
 
     @property
-    def taskrc(self):
+    def taskrc(self) -> TaskRc:
         if not getattr(self, '_taskrc', None):
             self._taskrc = TaskRc(self.metadata['taskrc'])
         return self._taskrc
+
+    @property
+    def taskd_account(self) -> TaskdAccountManager:
+        if not getattr(self, '_taskd_account', None):
+            self._taskd_account = TaskdAccountManager(
+                settings.TASKD_ORG,
+                self.username,
+            )
+
+        return self._taskd_account
 
     @property
     def taskd_certificate_status(self):
@@ -385,10 +394,7 @@ class TaskStore(models.Model):
             )
 
         try:
-            response = requests.delete(
-                f'http://taskd/{settings.TASKD_ORG}/{self.username}/',
-            )
-            response.raise_for_status()
+            self.taskd_account.delete()
         except Exception as e:
             logger.exception(
                 "Error encountered while deleting taskserver account: %s",
@@ -819,10 +825,7 @@ class TaskStore(models.Model):
         self.log_message("Taskd settings reset to default.")
 
     def clear_taskserver_data(self):
-        response = requests.delete(
-            f'http://taskd/{settings.TASKD_ORG}/{self.username}/data/',
-        )
-        response.raise_for_status()
+        self.taskd_account.delete_data()
 
     def clear_local_task_list(self):
         for path in os.listdir(self.local_path):
@@ -867,18 +870,15 @@ class TaskStore(models.Model):
             with open(private_key_filename, 'w') as out:
                 out.write(private_key)
 
-        server_config = requests.get(f'http://taskd/').json()
         ca_cert_filename = os.path.join(
             self.local_path,
             self.DEFAULT_FILENAMES['ca_cert'],
         )
         with open(ca_cert_filename, 'w') as out:
-            out.write(server_config['ca_cert'])
+            out.write(self.taskd_account.get_ca_cert())
 
-        response = requests.put(
-            f'http://taskd/{settings.TASKD_ORG}/{self.username}'
-        ).json()
-
+        self.taskd_account.create()
+        credentials = self.taskd_account.get_credentials()
         with git_checkpoint(self, 'Save initial taskrc credentials'):
             cert_data = self.generate_new_certificate()
             cert_filename = self.taskrc.get(
@@ -898,11 +898,11 @@ class TaskStore(models.Model):
                 'taskd.key': private_key_filename,
                 'taskd.ca': ca_cert_filename,
                 'taskd.server': settings.TASKD_SERVER,
-                'taskd.credentials': response['credentials'],
+                'taskd.credentials': credentials,
                 'taskd.trust': 'ignore hostname',
             })
             self.metadata['generated_taskd_credentials'] = (
-                response['credentials']
+                credentials
             )
 
         with git_checkpoint(self, 'Initial Synchronization'):
@@ -914,10 +914,8 @@ class TaskStore(models.Model):
             self.local_path,
             self.DEFAULT_FILENAMES['key'],
         )
-        server_config = requests.get(f'http://taskd/').json()
-
         with tempfile.NamedTemporaryFile('w+') as signing_template:
-            signing_template.write(server_config['signing_template'])
+            signing_template.write(self.taskd_account.get_signing_template())
             signing_template.flush()
 
             # Create and write a new certificate
@@ -935,12 +933,7 @@ class TaskStore(models.Model):
             )
             csr = csr_proc.communicate()[0].decode('utf-8')
 
-        response = requests.post(
-            f'http://taskd/{settings.TASKD_ORG}/{self.username}/certificates/',
-            data=csr,
-        ).json()
-
-        return response['certificate']
+        return self.taskd_account.get_new_certificate(csr)
 
     def register_metadata_callback(self, callback):
         if not hasattr(self, '_metadata_callbacks'):

@@ -46,9 +46,128 @@ class Credential(db.Model):
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     deleted = db.Column(db.DateTime, nullable=True)
 
+    @classmethod
+    def create_new(cls, org_name, user_name, **params):
+        env = os.environ.copy()
+        env['TASKDDATA'] = TASKD_DATA
+
+        command = [
+            TASKD_BINARY,
+            'add',
+            'user',
+            org_name,
+            user_name
+        ]
+        key_proc = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=env,
+        )
+        key_proc_output = (
+            key_proc.communicate()[0].decode('utf-8').split('\n')
+        )
+        taskd_user_key = (
+            key_proc_output[0].split(':')[1].strip()
+        )
+        result = key_proc.wait()
+        if result != 0:
+            raise TaskdError()
+
+        params.update({
+            'user_key': taskd_user_key,
+            'org_name': org_name,
+            'user_name': user_name,
+        })
+        cred = Credential(**params)
+        db.session.add(cred)
+        db.session.commit()
+
+        return cred
+
+    def get_data_path(self, *path) -> str:
+        return os.path.join(
+            TASKD_DATA,
+            'orgs',
+            self.org_name,
+            'users',
+            self.user_key,
+            *path,
+        )
+
+    def delete(self):
+        env = os.environ.copy()
+        env['TASKDDATA'] = TASKD_DATA
+        command = [
+            TASKD_BINARY,
+            'remove',
+            'user',
+            self.org_name,
+            self.user_name
+        ]
+        delete_proc = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=env,
+        )
+        result = delete_proc.wait()
+        if result != 0:
+            raise TaskdError()
+
+        self.deleted = datetime.utcnow()
+        db.session.commit()
+
+    def suspend(self):
+        env = os.environ.copy()
+        env['TASKDDATA'] = TASKD_DATA
+
+        command = [
+            TASKD_BINARY,
+            'suspend',
+            'user',
+            self.org_name,
+            self.user_key
+        ]
+        key_proc = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=env,
+        )
+        key_proc.wait()
+
+    def resume(self):
+        env = os.environ.copy()
+        env['TASKDDATA'] = TASKD_DATA
+
+        command = [
+            TASKD_BINARY,
+            'resume',
+            'user',
+            self.org_name,
+            self.user_key
+        ]
+        key_proc = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=env,
+        )
+        key_proc.wait()
+
+    @property
+    def is_suspended(self):
+        return os.path.isfile(
+            self.get_data_path('suspended'),
+        )
+
     def as_dict(self):
         return {
             'credentials': f'{self.org_name}/{self.user_name}/{self.user_key}',
+            'created': self.created,
+            'deleted': self.deleted,
+            'is_suspended': self.is_suspended,
         }
 
 
@@ -62,6 +181,39 @@ class Certificate(db.Model):
     certificate = db.Column(db.Text, nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     revoked = db.Column(db.DateTime, nullable=True)
+
+    @classmethod
+    def create_new(cls, cred, request_data):
+        with tempfile.NamedTemporaryFile('wb+') as outf:
+            outf.write(request_data)
+            outf.flush()
+
+            cert_proc = subprocess.Popen(
+                [
+                    'certtool',
+                    '--generate-certificate',
+                    '--load-request',
+                    outf.name,
+                    '--load-ca-certificate',
+                    CA_CERT,
+                    '--load-ca-privkey',
+                    CA_KEY,
+                    '--template',
+                    CA_SIGNING_TEMPLATE
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            cert = cert_proc.communicate()[0].decode('utf-8')
+
+        cert_record = Certificate(
+            user_key=cred.user_key,
+            certificate=cert,
+        )
+        db.session.add(cert_record)
+        db.session.commit()
+
+        return cert_record
 
     def as_dict(self):
         return {
@@ -92,39 +244,23 @@ class ServerConfig(Resource):
 
 class TaskdAccount(Resource):
     def put(self, org_name, user_name):
-        env = os.environ.copy()
-        env['TASKDDATA'] = TASKD_DATA
-
-        command = [
-            TASKD_BINARY,
-            'add',
-            'user',
-            org_name,
-            user_name
-        ]
-        key_proc = subprocess.Popen(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            env=env,
-        )
-        key_proc_output = (
-            key_proc.communicate()[0].decode('utf-8').split('\n')
-        )
-        taskd_user_key = (
-            key_proc_output[0].split(':')[1].strip()
-        )
-        result = key_proc.wait()
-        if result != 0:
-            raise TaskdError()
-
-        cred = Credential(
-            org_name=org_name,
+        cred = Credential.query.filter_by(
             user_name=user_name,
-            user_key=taskd_user_key,
-        )
-        db.session.add(cred)
-        db.session.commit()
+            org_name=org_name,
+        ).first()
+
+        if not cred:
+            cred = Credential.create_new(
+                user_name=user_name,
+                org_name=org_name,
+            )
+
+        parsed = json.loads(request.data)
+        is_suspended = parsed.get('is_suspended')
+        if is_suspended is True:
+            cred.suspend()
+        elif is_suspended is False:
+            cred.resume()
 
         return redirect(
             api.url_for(
@@ -148,27 +284,7 @@ class TaskdAccount(Resource):
             org_name=org_name,
         ).first_or_404()
 
-        env = os.environ.copy()
-        env['TASKDDATA'] = TASKD_DATA
-        command = [
-            TASKD_BINARY,
-            'remove',
-            'user',
-            org_name,
-            user_name
-        ]
-        delete_proc = subprocess.Popen(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            env=env,
-        )
-        result = delete_proc.wait()
-        if result != 0:
-            raise TaskdError()
-
-        cred.deleted = datetime.utcnow()
-        db.session.commit()
+        cred.delete()
 
         return None
 
@@ -180,34 +296,7 @@ class TaskdCertificates(Resource):
             org_name=org_name,
         ).first_or_404()
 
-        with tempfile.NamedTemporaryFile('wb+') as outf:
-            outf.write(request.data)
-            outf.flush()
-
-            cert_proc = subprocess.Popen(
-                [
-                    'certtool',
-                    '--generate-certificate',
-                    '--load-request',
-                    outf.name,
-                    '--load-ca-certificate',
-                    CA_CERT,
-                    '--load-ca-privkey',
-                    CA_KEY,
-                    '--template',
-                    CA_SIGNING_TEMPLATE
-                ],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            cert = cert_proc.communicate()[0].decode('utf-8')
-
-        cert_record = Certificate(
-            user_key=cred.user_key,
-            certificate=cert,
-        )
-        db.session.add(cert_record)
-        db.session.commit()
+        cert_record = Certificate.create_new(cred, request.data)
 
         return redirect(
             api.url_for(
@@ -263,16 +352,6 @@ class TaskdCertificateDetails(Resource):
 
 
 class TaskdData(Resource):
-    def get_data_path(self, cred) -> str:
-        return os.path.join(
-            TASKD_DATA,
-            'orgs',
-            cred.org_name,
-            'users',
-            cred.user_key,
-            'tx.data',
-        )
-
     def get(self, org_name, user_name):
         cred = Credential.query.filter_by(
             user_name=user_name,
@@ -280,7 +359,7 @@ class TaskdData(Resource):
         ).first_or_404()
 
         return send_file(
-            self.get_data_path(cred),
+            cred.get_data_path('tx.data'),
             mimetype='application/octet-stream',
             as_attachment=True,
         )
@@ -291,7 +370,7 @@ class TaskdData(Resource):
             org_name=org_name,
         ).first_or_404()
 
-        os.unlink(self.get_data_path(cred))
+        os.unlink(cred.get_data_path('tx.data'))
 
         return None
 

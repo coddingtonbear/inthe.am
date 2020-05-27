@@ -263,8 +263,9 @@ AWS_QUERYSTRING_AUTH = False
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 TASK_BINARY = '/usr/local/bin/task'
-TASKD_SERVER = 'taskd:53589'
-TASKD_ORG = 'testing'
+TASKD_SERVER = os.environ.get('TASKD_SERVER', 'taskd:53589')
+TASKD_ORG = os.environ.get('TASKD_ORG', 'inthe_am')
+TASKD_HTTP = os.environ.get('TASKD_HTTP', 'taskd')
 
 TESTING_LOGIN_USER = 'im_a'
 TESTING_LOGIN_PASSWORD = 'robot'
