@@ -42,9 +42,10 @@ class UserMetadata(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        from . import TaskStore
 
         if self.tos_up_to_date and self.privacy_policy_up_to_date:
-            store = models.TaskStore.get_for_user(self.user)
+            store = TaskStore.get_for_user(self.user)
             store.taskd_account.resume()
 
     def __str__(self):
