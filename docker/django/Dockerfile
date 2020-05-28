@@ -14,7 +14,7 @@ COPY requirements-frozen.txt /tmp
 RUN pip install --no-cache -r /tmp/requirements-frozen.txt
 COPY external_python_modules/ /external_python_modules
 RUN for mod in /external_python_modules/* ; do pip install -e $mod ; done
-COPY docker/django/gitconfig /var/www/.gitconfig
+COPY docker/django/gitconfig /root/.gitconfig
 
 RUN chmod 777 /tmp/
 
@@ -22,13 +22,9 @@ VOLUME /data/web
 WORKDIR /data/web
 
 RUN mkdir /django-static
-RUN chown www-data:www-data /django-static
 VOLUME /django-static
 
 RUN mkdir /task_data
-RUN chown www-data:www-data /task_data
 VOLUME /task_data
 
 VOLUME /var/taskd
-
-USER www-data

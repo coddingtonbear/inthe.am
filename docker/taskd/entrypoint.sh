@@ -34,4 +34,4 @@ if [ ! -d ${TASKDDATA}/pki ]; then
     taskd config --force intheam.min_tos 1
     taskd config --force intheam.min_privacy 1
 fi
-/usr/bin/taskd server
+/usr/bin/taskd server --log=-
