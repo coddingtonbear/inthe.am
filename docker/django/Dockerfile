@@ -7,7 +7,7 @@ RUN apt-get update && \
 RUN apt-get install -y postgresql-client git taskwarrior \
     python-dev gettext vim libxml2-dev libxslt-dev \
     libcurl4-gnutls-dev build-essential libgnutls28-dev \
-    libpcre3 libpcre3-dev gnutls-bin
+    libpcre3 libpcre3-dev gnutls-bin supervisor
 
 RUN pip install --upgrade pip
 COPY requirements-frozen.txt /tmp
@@ -15,6 +15,8 @@ RUN pip install --no-cache -r /tmp/requirements-frozen.txt
 COPY external_python_modules/ /external_python_modules
 RUN for mod in /external_python_modules/* ; do pip install -e $mod ; done
 COPY docker/django/gitconfig /root/.gitconfig
+COPY docker/django/entrypoint.sh /app/run.sh
+COPY docker/django/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN chmod 777 /tmp/
 
@@ -28,3 +30,5 @@ RUN mkdir /task_data
 VOLUME /task_data
 
 VOLUME /var/taskd
+
+ENTRYPOINT /usr/bin/supervisord --nodaemon

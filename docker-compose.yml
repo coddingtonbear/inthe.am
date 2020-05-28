@@ -27,7 +27,6 @@ services:
       - django-static-assets:/django-static
     networks:
       - backend
-    command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate --noinput && uwsgi --ini uwsgi.ini"
   sse:
     restart: always
     build:
