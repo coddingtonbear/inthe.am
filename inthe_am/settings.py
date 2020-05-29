@@ -415,7 +415,7 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers': ['exception_log', 'store', 'sentry', 'syslog'],
+            'handlers': ['exception_log', 'store', 'sentry', 'syslog', 'console'],
             'propagate': True,
             'level': 'INFO',
         },
@@ -471,10 +471,6 @@ LOGGING = {
         }
     }
 }
-
-if os.environ.get('DOCKER', False):
-    LOGGING['loggers']['']['handlers'].append('console')
-
 
 # Application definition
 
