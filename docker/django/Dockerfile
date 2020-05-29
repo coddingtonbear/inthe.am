@@ -1,5 +1,6 @@
 FROM python:3.8-slim
 
+ARG SUPERVISORD_CONFIG
 ENV TASK_VERSION=2.5.1-r0 DJANGO_SETTINGS_MODULE=inthe_am.settings
 
 RUN apt-get update && \
@@ -14,9 +15,9 @@ COPY requirements-frozen.txt /tmp
 RUN pip install --no-cache -r /tmp/requirements-frozen.txt
 COPY external_python_modules/ /external_python_modules
 RUN for mod in /external_python_modules/* ; do pip install -e $mod ; done
-COPY docker/django/gitconfig /root/.gitconfig
-COPY docker/django/entrypoint.sh /app/run.sh
-COPY docker/django/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./docker/django/gitconfig /root/.gitconfig
+COPY ./docker/django/entrypoint.sh /app/run.sh
+COPY ${SUPERVISORD_CONFIG} /etc/supervisor/conf.d/service.conf
 
 RUN chmod 777 /tmp/
 
