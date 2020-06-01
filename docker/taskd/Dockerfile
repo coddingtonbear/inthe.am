@@ -2,11 +2,12 @@ FROM python:3.8-slim
 
 ENV TASKDDATA=/var/taskd CA_CERT=/var/taskd/pki/ca.cert.pem \
   CA_KEY=/var/taskd/pki/ca.key.pem CA_SIGNING_TEMPLATE=/var/taskd/cert.template \
-  REDIS_HOST=redis
+  REDIS_HOST=redis CERTIFICATE_DB=/var/taskd/certificates.sqlite3
 
 RUN apt-get update
 RUN apt-get install -y build-essential git supervisor uuid-dev cmake \
-  libgnutls28-dev gnutls-bin libev-dev libhiredis-dev libjsoncpp-dev
+  libgnutls28-dev gnutls-bin libev-dev libhiredis-dev libjsoncpp-dev \
+  libsqlite3-dev
 # This is the library used for communicating for Redis
 RUN git clone https://github.com/hmartiro/redox &&\
   cd redox &&\
