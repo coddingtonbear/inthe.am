@@ -64,9 +64,14 @@ class TaskdAccountManager(object):
             data=data,
         )
 
-    def get_new_certificate(self, csr: str) -> str:
+    def get_new_certificate(self, csr: str, label: str = "") -> str:
         return self.make_user_request(
-            'post', 'certificates', data=csr
+            'post',
+            'certificates',
+            data=json.dumps({
+                "csr": csr,
+                "label": label,
+            })
         ).json()['certificate']
 
     def create(self) -> None:

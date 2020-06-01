@@ -53,7 +53,7 @@ class Command(BaseCommand):
         return False
 
     def get_taskstore_for_operation(self, op):
-        group, username = op['username'].split('/')
+        username = op['username']
         return TaskStore.objects.get(
             user__username=username
         )

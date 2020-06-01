@@ -3,7 +3,6 @@ import json
 import os
 import subprocess
 import tempfile
-import uuid
 
 from flask import Flask, request, redirect, send_file
 from flask_restful import Resource, Api
@@ -172,20 +171,28 @@ class Credential(db.Model):
 
 
 class Certificate(db.Model):
-    id = db.Column(
-        db.String(36),
-        primary_key=True,
-        default=lambda: str(uuid.uuid4())
+    fingerprint = db.Column(
+        db.String(128),
+        nullable=False,
+        primary_key=True
     )
     user_key = db.Column(db.String(36), nullable=False)
-    certificate = db.Column(db.Text, nullable=False)
+    label = db.Column(db.Text, nullable=True, default="")
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     revoked = db.Column(db.DateTime, nullable=True)
 
+    @property
+    def certificate(self):
+        return self._certificate
+
+    @certificate.setter
+    def certificate(self, cert):
+        self._certificate = cert
+
     @classmethod
-    def create_new(cls, cred, request_data):
+    def create_new(cls, cred: Credential, csr: str, label: str = ''):
         with tempfile.NamedTemporaryFile('wb+') as outf:
-            outf.write(request_data)
+            outf.write(csr.encode('utf-8'))
             outf.flush()
 
             cert_proc = subprocess.Popen(
@@ -206,22 +213,46 @@ class Certificate(db.Model):
             )
             cert = cert_proc.communicate()[0].decode('utf-8')
 
+        with tempfile.NamedTemporaryFile('wb+') as outf:
+            outf.write(cert.encode('utf-8'))
+            outf.flush()
+
+            fp_proc = subprocess.Popen(
+                [
+                    'certtool',
+                    '--hash',
+                    'SHA512',
+                    '--fingerprint',
+                    '--infile',
+                    outf.name,
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            fp = fp_proc.communicate()[0].decode('utf-8').strip()
+
         cert_record = Certificate(
+            fingerprint=fp,
             user_key=cred.user_key,
-            certificate=cert,
+            label=label,
         )
+        cert_record.certificate = cert
         db.session.add(cert_record)
         db.session.commit()
 
         return cert_record
 
     def as_dict(self):
-        return {
-            'id': self.id,
-            'certificate': self.certificate,
+        base_data = {
+            'fingerprint': self.fingerprint,
+            'label': self.label,
             'created': self.created,
             'revoked': self.revoked,
         }
+        if self.certificate:
+            base_data['certificate'] = self.certificate
+
+        return base_data
 
 
 class TaskdError(Exception):
@@ -296,16 +327,23 @@ class TaskdCertificates(Resource):
             org_name=org_name,
         ).first_or_404()
 
-        cert_record = Certificate.create_new(cred, request.data)
+        parsed = json.loads(request.data)
+        cert_record = Certificate.create_new(
+            cred,
+            parsed['csr'],
+            label=parsed.get('label', '')
+        )
 
-        return redirect(
-            api.url_for(
+        headers = {
+            'Location': api.url_for(
                 TaskdCertificateDetails,
                 org_name=org_name,
                 user_name=user_name,
-                cert_id=cert_record.id,
+                fingerprint=cert_record.fingerprint
             )
-        )
+        }
+
+        return cert_record.as_dict(), 200, headers
 
     def get(self, org_name, user_name):
         cred = Credential.query.filter_by(
@@ -322,26 +360,26 @@ class TaskdCertificates(Resource):
 
 
 class TaskdCertificateDetails(Resource):
-    def get(self, org_name, user_name, cert_id):
+    def get(self, org_name, user_name, fingerprint):
         cred = Credential.query.filter_by(
             user_name=user_name,
             org_name=org_name,
         ).first_or_404()
         cert_record = Certificate.query.filter_by(
             user_key=cred.user_key,
-            id=cert_id,
+            fingerprint=fingerprint,
         ).first_or_404()
 
         return cert_record.as_dict()
 
-    def delete(self, org_name, user_name, cert_id):
+    def delete(self, org_name, user_name, fingerprint):
         cred = Credential.query.filter_by(
             user_name=user_name,
             org_name=org_name,
         ).first_or_404()
         cert_record = Certificate.query.filter_by(
             user_key=cred.user_key,
-            id=cert_id,
+            fingerprint=fingerprint,
         ).first_or_404()
 
         cert_record.revoked = datetime.utcnow()
@@ -380,7 +418,7 @@ api.add_resource(TaskdAccount, '/<org_name>/<user_name>')
 api.add_resource(TaskdCertificates, '/<org_name>/<user_name>/certificates/')
 api.add_resource(
     TaskdCertificateDetails,
-    '/<org_name>/<user_name>/certificates/<cert_id>'
+    '/<org_name>/<user_name>/certificates/<fingerprint>'
 )
 api.add_resource(TaskdData, '/<org_name>/<user_name>/data/')
 
