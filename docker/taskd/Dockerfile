@@ -8,7 +8,7 @@ RUN apt-get update
 RUN apt-get install -y build-essential git supervisor uuid-dev cmake \
   libgnutls28-dev gnutls-bin libev-dev libhiredis-dev libjsoncpp-dev \
   libsqlite3-dev
-# This is the library used for communicating for Redis
+# This is the library used for communicating with Redis
 RUN git clone https://github.com/hmartiro/redox &&\
   cd redox &&\
   cmake . &&\
