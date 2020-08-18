@@ -44,8 +44,8 @@ class Command(BaseCommand):
         parser.add_argument(
             "--force", action="store_true", default=False,
         )
-        parser.add_argument("--repack-size", type=int, default=int(5e7))
-        parser.add_argument("--squash-size", type=int, default=int(1e7))
+        parser.add_argument("--repack-size", type=int, default=int(1e7))
+        parser.add_argument("--squash-size", type=int, default=int(5e7))
         parser.add_argument("--min-use-recency-days", type=int, default=370)
 
     def handle(self, *args, **options):
