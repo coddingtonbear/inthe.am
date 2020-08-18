@@ -13,8 +13,7 @@ class TaskRc(object):
         self.include_values = {}
         for include_path in self.includes:
             self.include_values[include_path], _ = self._read(
-                os.path.abspath(include_path),
-                include_from=self.path
+                os.path.abspath(include_path), include_from=self.path
             )
 
     def _read(self, path, include_from=None):
@@ -22,20 +21,20 @@ class TaskRc(object):
         includes = []
         if include_from and include_from.find(os.path.dirname(path)) != 0:
             return config, includes
-        with open(path, 'r') as config_file:
+        with open(path, "r") as config_file:
             for line in config_file.readlines():
-                if line.startswith('#'):
+                if line.startswith("#"):
                     continue
-                if line.startswith('include '):
+                if line.startswith("include "):
                     try:
-                        left, right = line.split(' ')
+                        left, right = line.split(" ")
                         if right.strip() not in includes:
                             includes.append(right.strip())
                     except ValueError:
                         pass
                 else:
                     try:
-                        left, right = line.split('=')
+                        left, right = line.split("=")
                         key = left.strip()
                         value = right.strip()
                         config[key] = value
@@ -51,20 +50,12 @@ class TaskRc(object):
         if includes is None:
             includes = self.includes
         if self.read_only:
-            raise AttributeError(
-                "This instance is read-only."
-            )
-        with open(path, 'w') as config:
+            raise AttributeError("This instance is read-only.")
+        with open(path, "w") as config:
             for include in includes:
-                config.write(
-                    "include %s\n" % (
-                        include
-                    )
-                )
+                config.write("include %s\n" % (include))
             for key, value in data.items():
-                config.write(
-                    "%s=%s\n" % (key, value)
-                )
+                config.write("%s=%s\n" % (key, value))
 
     @property
     def assembled(self):
@@ -100,8 +91,8 @@ class TaskRc(object):
     def get_udas(self):
         udas = {}
 
-        uda_type = re.compile('^uda\.([^.]+)\.(type)$')
-        uda_label = re.compile('^uda\.([^.]+)\.(label)$')
+        uda_type = re.compile("^uda\.([^.]+)\.(type)$")
+        uda_label = re.compile("^uda\.([^.]+)\.(label)$")
         for k, v in self.items():
             for matcher in (uda_type, uda_label):
                 matches = matcher.match(k)
@@ -123,4 +114,4 @@ class TaskRc(object):
         self._write()
 
     def __str__(self):
-        return u'.taskrc at %s' % self.path
+        return u".taskrc at %s" % self.path

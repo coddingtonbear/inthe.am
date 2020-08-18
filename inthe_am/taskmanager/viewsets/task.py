@@ -10,7 +10,7 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponseNotFound,
     HttpResponseRedirect,
-    JsonResponse
+    JsonResponse,
 )
 from django.views.decorators.csrf import csrf_exempt
 from icalendar import Calendar, Event
@@ -19,7 +19,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import (
-    AllowAny, IsAuthenticatedOrReadOnly,
+    AllowAny,
+    IsAuthenticatedOrReadOnly,
 )
 from rest_framework.response import Response
 from twilio.util import RequestValidator
@@ -44,22 +45,22 @@ logger = logging.getLogger(__name__)
 
 
 class TaskViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    TASK_TYPE = 'pending'
+    TASK_TYPE = "pending"
     FILTERABLE_FIELDS = [
-        'status',
-        'due',
-        'entry',
-        'id',
-        'imask',
-        'modified',
-        'parent',
-        'recur',
-        'status',
-        'urgency',
-        'uuid',
-        'wait',
+        "status",
+        "due",
+        "entry",
+        "id",
+        "imask",
+        "modified",
+        "parent",
+        "recur",
+        "status",
+        "urgency",
+        "uuid",
+        "wait",
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -70,22 +71,22 @@ class TaskViewSet(viewsets.ViewSet):
         if metadata and not metadata.tos_up_to_date:
             return JsonResponse(
                 {
-                    'error_message': (
-                        'Please accept the terms of service at '
-                        'https://inthe.am/terms-of-use.'
+                    "error_message": (
+                        "Please accept the terms of service at "
+                        "https://inthe.am/terms-of-use."
                     )
                 },
-                status=403
+                status=403,
             )
         if metadata and not metadata.privacy_policy_up_to_date:
             return JsonResponse(
                 {
-                    'error_message': (
-                        'Please accept the privacy policy at '
-                        'https://inthe.am/privacy-policy.'
+                    "error_message": (
+                        "Please accept the privacy policy at "
+                        "https://inthe.am/privacy-policy."
                     )
                 },
-                status=403
+                status=403,
             )
         return super(TaskViewSet, self).dispatch(request, *args, **kwargs)
 
@@ -101,14 +102,12 @@ class TaskViewSet(viewsets.ViewSet):
 
     @requires_task_store
     def list(self, request, store=None):
-        if hasattr(request, 'GET'):
+        if hasattr(request, "GET"):
             filters = request.GET.copy()
 
         objects = []
-        with timed_activity(store, 'Get task list'):
-            for task_object in store.client.filter_tasks(
-                {'status': self.TASK_TYPE}
-            ):
+        with timed_activity(store, "Get task list"):
+            for task_object in store.client.filter_tasks({"status": self.TASK_TYPE}):
                 if self.passes_filters(task_object, filters):
                     objects.append(task_object)
 
@@ -116,7 +115,7 @@ class TaskViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     @requires_task_store
-    @git_managed('Create task', sync=True)
+    @git_managed("Create task", sync=True)
     def create(self, request, store=None):
         cleaned_values = {}
         for key, value in request.data.items():
@@ -129,14 +128,13 @@ class TaskViewSet(viewsets.ViewSet):
         task = serializer.create(store, serializer.validated_data)
         serializer = TaskSerializer(task, store=store)
         store.log_message(
-            'New task created: %s.',
-            serializer.data,
+            "New task created: %s.", serializer.data,
         )
         return Response(serializer.data)
 
     @requires_task_store
     def retrieve(self, request, store=None, pk=None):
-        with timed_activity(store, 'Get task by ID'):
+        with timed_activity(store, "Get task by ID"):
             task = store.client.get_task(uuid=pk)[1]
 
         if not task:
@@ -146,7 +144,7 @@ class TaskViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     @requires_task_store
-    @git_managed('Update task', sync=True)
+    @git_managed("Update task", sync=True)
     def update(self, request, store=None, pk=None):
         cleaned_values = {}
         for key, value in request.data.items():
@@ -156,28 +154,21 @@ class TaskViewSet(viewsets.ViewSet):
         serializer = TaskSerializer(data=cleaned_values, store=store)
         serializer.is_valid(raise_exception=True)
 
-        task, changes = serializer.update(
-            store,
-            pk,
-            serializer.validated_data
-        )
+        task, changes = serializer.update(store, pk, serializer.validated_data)
         store.log_message(
-            'Task %s updated: %s.',
-            pk,
-            changes,
+            "Task %s updated: %s.", pk, changes,
         )
 
         serializer = TaskSerializer(task, store=store)
         return Response(serializer.data)
 
     @requires_task_store
-    @git_managed('Complete task', sync=True)
+    @git_managed("Complete task", sync=True)
     def destroy(self, request, store=None, pk=None):
         try:
             store.client.task_done(uuid=pk)
             store.log_message(
-                'Task %s completed.',
-                pk,
+                "Task %s completed.", pk,
             )
         except ValueError:
             raise NotFound()
@@ -187,53 +178,51 @@ class TaskViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     @requires_task_store
-    @git_managed('Start task', sync=True)
-    @action(detail=True, methods=['post'])
+    @git_managed("Start task", sync=True)
+    @action(detail=True, methods=["post"])
     def start(self, request, store=None, pk=None):
         store.client.task_start(uuid=pk)
         return Response()
 
     @requires_task_store
-    @git_managed('Stop task', sync=True)
-    @action(detail=True, methods=['post'])
+    @git_managed("Stop task", sync=True)
+    @action(detail=True, methods=["post"])
     def stop(self, request, store=None, pk=None):
         store.client.task_stop(uuid=pk)
         return Response()
 
     @requires_task_store
-    @git_managed('Delete task', sync=True)
-    @action(detail=True, methods=['post'])
+    @git_managed("Delete task", sync=True)
+    @action(detail=True, methods=["post"])
     def delete(self, request, store=None, pk=None):
         store.client.task_delete(uuid=pk)
         return Response()
 
     @requires_task_store
-    @action(detail=False, methods=['delete', 'get'])
+    @action(detail=False, methods=["delete", "get"])
     def lock(self, request, store=None):
         lock_name = get_lock_name_for_store(store)
         client = get_lock_redis()
 
-        if request.method == 'DELETE':
+        if request.method == "DELETE":
             value = client.delete(lock_name)
             if value:
-                store.log_message('Lockfile manually deleted.')
-            return Response({'status': value})
-        elif request.method == 'GET':
+                store.log_message("Lockfile manually deleted.")
+            return Response({"status": value})
+        elif request.method == "GET":
             value = client.get(lock_name)
             if not value:
                 raise NotFound()
-            return Response({'status': value})
+            return Response({"status": value})
 
     @requires_task_store
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def revert(self, request, store=None):
-        old_head = store.repository.head().decode('utf-8')
-        new_head = (
-            store.repository.get_object(old_head).parents[0].decode('utf-8')
-        )
+        old_head = store.repository.head().decode("utf-8")
+        new_head = store.repository.get_object(old_head).parents[0].decode("utf-8")
 
         with git_checkpoint(store, "Reverting to previous commit", sync=True):
-            store.git_reset(new_head.encode('utf-8'))
+            store.git_reset(new_head.encode("utf-8"))
 
         store.log_message(
             "Taskstore was reverted from %s to %s via user-initiated "
@@ -242,73 +231,61 @@ class TaskViewSet(viewsets.ViewSet):
             new_head,
         )
 
-        return Response({
-            'old_head': old_head,
-            'new_head': new_head,
-        })
+        return Response({"old_head": old_head, "new_head": new_head,})
 
     @requires_task_store
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def sync(self, request, store=None):
         result = store.sync(asynchronous=False)
         if not result:
             return Response(
                 {
-                    'error_message': (
-                        'Synchronization is currently disabled '
-                        'for your account.'
+                    "error_message": (
+                        "Synchronization is currently disabled " "for your account."
                     )
                 },
-                status=406
+                status=406,
             )
         return Response()
 
     @requires_task_store
-    @action(detail=False, methods=['post'], url_path='sync-init')
+    @action(detail=False, methods=["post"], url_path="sync-init")
     def sync_init(self, request, store=None):
         store.client.sync(init=True)
         return Response()
 
     @action(
-        detail=False,
-        methods=['get'],
-        permission_classes=[AllowAny],
+        detail=False, methods=["get"], permission_classes=[AllowAny],
     )
     def trello(self, request, store=None):
-        api_key = request.GET.get('api_key', '')
+        api_key = request.GET.get("api_key", "")
         token = Token.objects.filter(key=api_key).first()
 
         if not token:
             raise PermissionDenied()
 
         return HttpResponseRedirect(
-            get_authorize_url(
-                request,
-                api_key=api_key,
-                user=token.user
-            )
+            get_authorize_url(request, api_key=api_key, user=token.user)
         )
 
     @action(
         detail=False,
-        methods=['get'],
-        url_path='trello/callback',
+        methods=["get"],
+        url_path="trello/callback",
         url_name="trello_callback",
         permission_classes=[AllowAny],
     )
     def trello_callback(self, request, store=None):
-        api_key = request.GET.get('api_key', '')
+        api_key = request.GET.get("api_key", "")
         token = Token.objects.filter(key=api_key).first()
         store = models.TaskStore.get_for_user(token.user)
 
         client = get_lock_redis()
-        raw_value = client.get(
-            '%s.trello_auth' % token.user.username,
-        )
+        raw_value = client.get("%s.trello_auth" % token.user.username,)
         if not raw_value:
             raise PermissionDenied(
-                'Arrived at Trello authorization URL without having '
-                'initiated a Trello authorization!'
+                "Arrived at Trello authorization URL without having "
+                "initiated a Trello authorization!"
             )
         request_token = json.loads(raw_value)
 
@@ -319,47 +296,47 @@ class TaskViewSet(viewsets.ViewSet):
             board = models.TrelloObject.create(
                 store=store,
                 type=models.TrelloObject.BOARD,
-                name='Inthe.AM Tasks',
-                desc='Tasks listed on your Inthe.AM account'
+                name="Inthe.AM Tasks",
+                desc="Tasks listed on your Inthe.AM account",
             )
             for list_data in board.client.get_list(board.id):
                 obj = models.TrelloObject.objects.create(
-                    id=list_data.get('id'),
+                    id=list_data.get("id"),
                     store=store,
                     type=models.TrelloObject.LIST,
                     parent=board,
-                    meta=list_data
+                    meta=list_data,
                 )
                 obj.subscribe()
 
         store.save()
         store.sync_trello()
 
-        return HttpResponseRedirect('/tasks/')
+        return HttpResponseRedirect("/tasks/")
 
     @requires_task_store
-    @action(detail=False, methods=['post'], url_path='trello/resynchronize')
+    @action(detail=False, methods=["post"], url_path="trello/resynchronize")
     def trello_resynchronize(self, request, store=None):
-        sync_trello_tasks.apply_async(args=(store.pk, ))
+        sync_trello_tasks.apply_async(args=(store.pk,))
         return Response(status=202)
 
     @requires_task_store
-    @action(detail=False, methods=['post'], url_path='trello/reset')
+    @action(detail=False, methods=["post"], url_path="trello/reset")
     def trello_reset(self, request, store=None):
-        reset_trello.apply_async(args=(store.pk, ))
+        reset_trello.apply_async(args=(store.pk,))
         return Response(status=202)
 
     @requires_task_store
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def deduplicate(self, request, store=None):
         store.deduplicate_tasks()
         return Response(status=202)
 
     @requires_task_store
-    @action(detail=False, methods=['post'], url_path='deduplication-config')
+    @action(detail=False, methods=["post"], url_path="deduplication-config")
     def deduplication_config(self, request, store=None):
         try:
-            enabled = int(request.POST.get('enabled', 0))
+            enabled = int(request.POST.get("enabled", 0))
         except (TypeError, ValueError):
             return Response(status=400)
 
@@ -369,7 +346,7 @@ class TaskViewSet(viewsets.ViewSet):
 
 
 def ical_feed(request, variant, secret_id):
-    if variant not in ('due', 'waiting'):
+    if variant not in ("due", "waiting"):
         return HttpResponseNotFound()
     try:
         store = models.TaskStore.objects.get(secret_id=secret_id)
@@ -379,53 +356,41 @@ def ical_feed(request, variant, secret_id):
     if not store.ical_enabled:
         return HttpResponseNotFound()
 
-    if variant == 'due':
+    if variant == "due":
         calendar_title = "Tasks Due"
         task_filter = {
-            'due.any': None,
-            'status': 'pending',
+            "due.any": None,
+            "status": "pending",
         }
-        field = 'due'
-    elif variant == 'waiting':
+        field = "due"
+    elif variant == "waiting":
         calendar_title = "Tasks Waiting"
         task_filter = {
-            'status': 'waiting',
+            "status": "waiting",
         }
-        field = 'wait'
+        field = "wait"
 
     tasks = store.client.filter_tasks(task_filter)
 
     calendar = Calendar()
-    calendar.add('version', '2.0')
-    calendar.add('prodid', '-//inthe.am//ical.%s//' % variant)
-    calendar.add('X-WR-CALNAME', calendar_title)
+    calendar.add("version", "2.0")
+    calendar.add("prodid", "-//inthe.am//ical.%s//" % variant)
+    calendar.add("X-WR-CALNAME", calendar_title)
 
     for task in tasks:
         if field not in task:
             continue
 
         event = Event()
-        event.add('uid', task['uuid'])
-        event.add('dtstart', task[field].date())
-        event.add(
-            'dtend',
-            task[field].date() + datetime.timedelta(days=1)
-        )
-        event.add(
-            'dtstamp',
-            task.get(
-                'modified',
-                task['entry']
-            )
-        )
-        event.add('summary', task['description'])
+        event.add("uid", task["uuid"])
+        event.add("dtstart", task[field].date())
+        event.add("dtend", task[field].date() + datetime.timedelta(days=1))
+        event.add("dtstamp", task.get("modified", task["entry"]))
+        event.add("summary", task["description"])
 
         calendar.add_component(event)
 
-    return HttpResponse(
-        calendar.to_ical(),
-        content_type='text/calendar',
-    )
+    return HttpResponse(calendar.to_ical(), content_type="text/calendar",)
 
 
 @csrf_exempt
@@ -435,16 +400,13 @@ def incoming_trello(request, secret_id):
     except:
         return HttpResponseNotFound()
 
-    if request.method == 'POST':
+    if request.method == "POST":
         process_trello_action.apply_async(
-            args=(store.pk, json.loads(request.body.decode('utf-8')))
+            args=(store.pk, json.loads(request.body.decode("utf-8")))
         )
 
     return HttpResponse(
-        json.dumps({
-            'message': 'OK',
-        }),
-        content_type='application/json',
+        json.dumps({"message": "OK",}), content_type="application/json",
     )
 
 
@@ -471,15 +433,13 @@ def incoming_sms(request, username):
         store.log_error(*log_args)
         return HttpResponse(status=404)
     if store.sms_whitelist:
-        incoming_number = re.sub('[^0-9]', '', request.POST['From'])
+        incoming_number = re.sub("[^0-9]", "", request.POST["From"])
         valid_numbers = [
-            re.sub('[^0-9]', '', n)
-            for n in store.sms_whitelist.split('\n')
+            re.sub("[^0-9]", "", n) for n in store.sms_whitelist.split("\n")
         ]
         if incoming_number not in valid_numbers:
             log_args = (
-                "Incoming SMS for %s, but phone number %s is not "
-                "in the whitelist.",
+                "Incoming SMS for %s, but phone number %s is not " "in the whitelist.",
                 user,
                 incoming_number,
             )
@@ -487,9 +447,9 @@ def incoming_sms(request, username):
             logger.warning(
                 *log_args,
                 extra={
-                    'data': {
-                        'incoming_number': incoming_number,
-                        'whitelist': valid_numbers,
+                    "data": {
+                        "incoming_number": incoming_number,
+                        "whitelist": valid_numbers,
                     }
                 }
             )
@@ -497,7 +457,7 @@ def incoming_sms(request, username):
     try:
         validator = RequestValidator(store.twilio_auth_token)
         url = request.build_absolute_uri()
-        signature = request.META['HTTP_X_TWILIO_SIGNATURE']
+        signature = request.META["HTTP_X_TWILIO_SIGNATURE"]
     except (AttributeError, KeyError) as e:
         log_args = (
             "Incoming SMS for %s, but error encountered while "
@@ -518,37 +478,30 @@ def incoming_sms(request, username):
         return HttpResponseForbidden()
 
     with git_checkpoint(store, "Incoming SMS", sync=True):
-        from_ = request.POST['From']
-        body = request.POST['Body']
+        from_ = request.POST["From"]
+        body = request.POST["Body"]
         task_info = body[4:]
 
-        if not body.lower().startswith('add'):
+        if not body.lower().startswith("add"):
             if store.sms_replies >= store.REPLY_ERROR:
                 r.sms("Bad Request: Unknown command.")
             log_args = (
-                "Incoming SMS from %s had no recognized command: '%s'." % (
-                    from_,
-                    body,
-                ),
+                "Incoming SMS from %s had no recognized command: '%s'."
+                % (from_, body,),
             )
             logger.warning(*log_args)
             store.log_error(*log_args)
         elif not task_info:
-            log_args = (
-                "Incoming SMS from %s had no content." % (
-                    from_,
-                    body,
-                ),
-            )
+            log_args = ("Incoming SMS from %s had no content." % (from_, body,),)
             logger.warning(*log_args)
             store.log_error(*log_args)
             if store.sms_replies >= store.REPLY_ERROR:
                 r.sms("Bad Request: Empty task.")
         else:
             task_args = (
-                ['add'] +
-                shlex_without_quotes(store.sms_arguments) +
-                shlex_without_quotes(task_info)
+                ["add"]
+                + shlex_without_quotes(store.sms_arguments)
+                + shlex_without_quotes(task_info)
             )
             result = store.client._execute_safe(*task_args)
             stdout, stderr = result
@@ -558,14 +511,9 @@ def incoming_sms(request, username):
             log_args = (
                 "Added task via SMS from %s; message '%s'; "
                 "automatic args: '%s';"
-                "response: '%s'." % (
-                    from_,
-                    body,
-                    store.sms_arguments,
-                    stdout,
-                ),
+                "response: '%s'." % (from_, body, store.sms_arguments, stdout,),
             )
             logger.info(*log_args)
             store.log_message(*log_args)
 
-    return HttpResponse(str(r), content_type='application/xml')
+    return HttpResponse(str(r), content_type="application/xml")

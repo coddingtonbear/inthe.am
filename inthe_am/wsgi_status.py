@@ -13,6 +13,7 @@ import urllib.parse as urlparse
 from wsgiref import util as wsgiref_utils
 
 import django
+
 django.setup()  # noqa
 
 from django.conf import settings
@@ -24,7 +25,7 @@ from inthe_am.taskmanager.lock import get_lock_redis
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "inthe_am.settings")
 
-logger = logging.getLogger('inthe_am.wsgi_status')
+logger = logging.getLogger("inthe_am.wsgi_status")
 logging.config.dictConfig(settings.LOGGING)
 
 
@@ -35,11 +36,7 @@ def get_announcements_subscription(store, username, channels):
     final_channels = []
 
     for channel in channels:
-        final_channels.append(
-            channel.format(
-                username=username.encode('utf8')
-            )
-        )
+        final_channels.append(channel.format(username=username.encode("utf8")))
 
     subscription.subscribe(*channels)
 
@@ -50,76 +47,64 @@ def sse_offload(env, start_response):
     app = Application(env, start_response)
 
     for row in app.generator():
-        yield row.encode('utf-8')
+        yield row.encode("utf-8")
 
 
 class Application(object):
     HEADERS = [
-        ('Content-Type', 'text/event-stream'),
+        ("Content-Type", "text/event-stream"),
     ]
     ERROR_RETRY_DELAY = 60 * 1000
 
     def add_message(self, name, data=None):
         if data is None:
-            data = ''
+            data = ""
 
         self.queue.put(
-            {
-                'name': name,
-                'data': data,
-            }
+            {"name": name, "data": data,}
         )
 
     def handle_local_sync(self, message):
-        new_head = json.loads(message['data'])['head']
+        new_head = json.loads(message["data"])["head"]
 
-        self.add_message('local_sync', message['data'])
+        self.add_message("local_sync", message["data"])
 
         if new_head != self.head:
             self.head = new_head
-            self.add_message('head_changed', self.head)
+            self.add_message("head_changed", self.head)
 
     def handle_changed_task(self, message):
-        self.add_message(
-            'task_changed',
-            json.loads(message['data'])['task_id']
-        )
+        self.add_message("task_changed", json.loads(message["data"])["task_id"])
 
     def handle_log_message(self, message):
-        announcement = json.loads(message['data'])
-        if announcement['error'] and not announcement['silent']:
-            self.add_message(
-                'error_logged',
-                announcement['message']
-            )
+        announcement = json.loads(message["data"])
+        if announcement["error"] and not announcement["silent"]:
+            self.add_message("error_logged", announcement["message"])
 
     def handle_personal_announcement(self, message):
-        self.add_message('personal_announcement', message['data'])
+        self.add_message("personal_announcement", message["data"])
 
     def handle_public_announcement(self, message):
-        message_data = json.loads(message['data'])
+        message_data = json.loads(message["data"])
 
         # Open the envelope, see if it's a system announcement or not.
-        if not message_data.get('system', False):
-            self.add_message('public_announcement', message['data'])
+        if not message_data.get("system", False):
+            self.add_message("public_announcement", message["data"])
         else:
-            self.add_message(
-                message_data['type'],
-                json.dumps(message_data['data'])
-            )
+            self.add_message(message_data["type"], json.dumps(message_data["data"]))
 
     def handle_message(self, message):
-        channel = message['channel'].decode('utf-8')
-        if channel.startswith('local_sync.'):
+        channel = message["channel"].decode("utf-8")
+        if channel.startswith("local_sync."):
             self.handle_local_sync(message)
             return True
-        elif channel.startswith('changed_task.'):
+        elif channel.startswith("changed_task."):
             self.handle_changed_task(message)
             return True
-        elif channel.startswith('log_message.'):
+        elif channel.startswith("log_message."):
             self.handle_log_message(message)
             return True
-        elif channel.startswith('personal.'):
+        elif channel.startswith("personal."):
             self.handle_personal_announcement(message)
             return True
         elif channel == settings.ANNOUNCEMENTS_CHANNEL:
@@ -132,14 +117,14 @@ class Application(object):
             seconds=settings.EVENT_STREAM_HEARTBEAT_INTERVAL
         )
         if (
-            not self.last_heartbeat or
-            self.last_heartbeat + heartbeat_interval < datetime.datetime.now()
+            not self.last_heartbeat
+            or self.last_heartbeat + heartbeat_interval < datetime.datetime.now()
         ):
             self.add_message("heartbeat")
             self.last_heartbeat = datetime.datetime.now()
 
     def __init__(self, env, start_response):
-        start_response('200 OK', self.HEADERS)
+        start_response("200 OK", self.HEADERS)
 
         self.last_heartbeat = None
         self.env = env
@@ -149,13 +134,9 @@ class Application(object):
         self.queue = Queue()
 
         client = get_lock_redis()
-        pickled_data = pickle.loads(
-            client.get(
-                'pickle_{}'.format(env['PICKLE_ID'])
-            )
-        )
-        self.store = pickled_data['taskstore']
-        self.username = pickled_data['username']
+        pickled_data = pickle.loads(client.get("pickle_{}".format(env["PICKLE_ID"])))
+        self.store = pickled_data["taskstore"]
+        self.username = pickled_data["username"]
 
         try:
             logger.info(
@@ -164,42 +145,35 @@ class Application(object):
                 self.username,
             )
             query = urlparse.parse_qs(
-                urlparse.urlparse(
-                    wsgiref_utils.request_uri(env)
-                ).query
+                urlparse.urlparse(wsgiref_utils.request_uri(env)).query
             )
             try:
-                self.head = query['head'][0]
+                self.head = query["head"][0]
             except (KeyError, IndexError):
-                self.head = self.store.repository.head().decode('utf-8')
+                self.head = self.store.repository.head().decode("utf-8")
 
             # Subscribe to the event stream
             self.subscription = get_announcements_subscription(
                 self.store,
                 self.username,
                 [
-                    'local_sync.{username}',
-                    'changed_task.{username}',
-                    'log_message.{username}',
-                    'personal.{username}',
+                    "local_sync.{username}",
+                    "changed_task.{username}",
+                    "log_message.{username}",
+                    "personal.{username}",
                     settings.ANNOUNCEMENTS_CHANNEL,
-                ]
+                ],
             )
 
             # Kick-off a sync just to be sure
-            kwargs = {
-                'asynchronous': True,
-                'function': (
-                    'views.Status.iterator'
-                )
-            }
-            self.store.sync(msg='Iterator initialization', **kwargs)
+            kwargs = {"asynchronous": True, "function": ("views.Status.iterator")}
+            self.store.sync(msg="Iterator initialization", **kwargs)
 
             # Let the client know the head has changed if they've asked
             # for a different head than the one we're on:
-            if self.head != self.store.repository.head().decode('utf-8'):
+            if self.head != self.store.repository.head().decode("utf-8"):
                 for task_id in self.store.get_changed_task_ids(self.head):
-                    self.add_message('task_changed', task_id)
+                    self.add_message("task_changed", task_id)
 
             self.initialized = True
 
@@ -209,7 +183,7 @@ class Application(object):
     def generator(self):
         try:
             if not self.initialized:
-                yield 'retry: %s\n\n' % self.ERROR_RETRY_DELAY
+                yield "retry: %s\n\n" % self.ERROR_RETRY_DELAY
                 return
 
             self.beat_heart()
@@ -231,14 +205,10 @@ class Application(object):
                     if not message:
                         continue
 
-                    if message.get('name'):
-                        yield 'event: {name}\n'.format(
-                            name=message['name']
-                        )
-                    yield 'data: {data}\n'.format(
-                        data=message.get('data', '')
-                    )
-                    yield '\n'
+                    if message.get("name"):
+                        yield "event: {name}\n".format(name=message["name"])
+                    yield "data: {data}\n".format(data=message.get("data", ""))
+                    yield "\n"
 
                 # Relax
                 sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
@@ -253,7 +223,4 @@ class Application(object):
 try:
     application = sse_offload
 except Exception as e:
-    logging.exception(
-        'Event stream terminated by uncaught exception: %s',
-        str(e)
-    )
+    logging.exception("Event stream terminated by uncaught exception: %s", str(e))

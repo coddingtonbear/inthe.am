@@ -11,12 +11,8 @@ class Metadata(object):
 
     def _init(self):
         self.config = {
-            'files': {
-            },
-            'taskrc': os.path.join(
-                self.store.local_path,
-                '.taskrc',
-            ),
+            "files": {},
+            "taskrc": os.path.join(self.store.local_path, ".taskrc",),
         }
         self._write()
         return self.config
@@ -25,11 +21,11 @@ class Metadata(object):
         if not os.path.isfile(self.path):
             return self._init()
 
-        with open(self.path, 'r') as config_file:
+        with open(self.path, "r") as config_file:
             return json.loads(config_file.read())
 
     def _write(self):
-        with open(self.path, 'w') as config_file:
+        with open(self.path, "w") as config_file:
             config_file.write(json.dumps(self.config))
 
     def items(self):
@@ -52,4 +48,4 @@ class Metadata(object):
         self._write()
 
     def __str__(self):
-        return u'metadata at %s' % self.path
+        return u"metadata at %s" % self.path

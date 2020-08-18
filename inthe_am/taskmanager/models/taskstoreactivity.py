@@ -9,12 +9,10 @@ from django.utils.timezone import now
 
 class TaskStoreActivity(models.Model):
     store = models.ForeignKey(
-        'TaskStore',
-        related_name='syncs',
-        on_delete=models.CASCADE,
+        "TaskStore", related_name="syncs", on_delete=models.CASCADE,
     )
     activity = models.CharField(max_length=255)
-    metadata_version = models.CharField(max_length=10, default='v5')
+    metadata_version = models.CharField(max_length=10, default="v5")
 
     message = models.TextField(blank=True)
     metadata = JSONField(null=True, blank=True)
@@ -26,53 +24,46 @@ class TaskStoreActivity(models.Model):
 
     def add_message_line(self, message):
         if self.message is None:
-            self.message = ''
+            self.message = ""
 
         message = message.strip()
-        self.message = self.message + message + '\n'
+        self.message = self.message + message + "\n"
 
     def handle_metadata_message(self, variant, *args, **kwargs):
         metadata = self.metadata
         if metadata is None:
             metadata = {}
 
-        if variant == 'taskwarrior.execute':
-            if 'taskwarrior' not in metadata:
-                metadata['taskwarrior'] = {}
-            if 'execute' not in metadata['taskwarrior']:
-                metadata['taskwarrior']['execute'] = []
-            metadata['taskwarrior']['execute'].append(
-                args[0]
-            )
+        if variant == "taskwarrior.execute":
+            if "taskwarrior" not in metadata:
+                metadata["taskwarrior"] = {}
+            if "execute" not in metadata["taskwarrior"]:
+                metadata["taskwarrior"]["execute"] = []
+            metadata["taskwarrior"]["execute"].append(args[0])
 
-        all_durations = [
-            v['duration'] for v in metadata['taskwarrior']['execute']
-        ]
+        all_durations = [v["duration"] for v in metadata["taskwarrior"]["execute"]]
         stats = {}
         if len(all_durations) > 1:
-            stats.update({
-                'max': max(all_durations),
-                'min': min(all_durations),
-                'stdev': statistics.stdev(all_durations),
-                'mean': statistics.mean(all_durations),
-                'sum': sum(all_durations),
-            })
-        metadata['taskwarrior']['statistics'] = stats
+            stats.update(
+                {
+                    "max": max(all_durations),
+                    "min": min(all_durations),
+                    "stdev": statistics.stdev(all_durations),
+                    "mean": statistics.mean(all_durations),
+                    "sum": sum(all_durations),
+                }
+            )
+        metadata["taskwarrior"]["statistics"] = stats
 
         self.metadata = metadata
 
     def save(self, *args, **kwargs):
         if not self.started and self.duration_seconds:
-            self.started = (
-                now() - datetime.timedelta(seconds=self.duration_seconds)
-            )
+            self.started = now() - datetime.timedelta(seconds=self.duration_seconds)
         super(TaskStoreActivity, self).save(*args, **kwargs)
 
     def __str__(self):
-        return u"%ss sync of %s" % (
-            self.duration_seconds,
-            self.store,
-        )
+        return u"%ss sync of %s" % (self.duration_seconds, self.store,)
 
     class Meta:
-        app_label = 'taskmanager'
+        app_label = "taskmanager"

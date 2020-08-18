@@ -7,18 +7,13 @@ from .taskstore import TaskStore
 
 def get_attachment_path(instance, filename):
     return os.path.join(
-        'attachments',
-        instance.store.username,
-        instance.task_id,
-        filename,
+        "attachments", instance.store.username, instance.task_id, filename,
     )
 
 
 class TaskAttachment(models.Model):
     store = models.ForeignKey(
-        TaskStore,
-        related_name='attachments',
-        on_delete=models.CASCADE,
+        TaskStore, related_name="attachments", on_delete=models.CASCADE,
     )
     task_id = models.CharField(max_length=36)
     name = models.CharField(max_length=256)
@@ -30,8 +25,8 @@ class TaskAttachment(models.Model):
         return u"%s: %s (%s MB)" % (
             self.task_id,
             self.name,
-            round(float(self.size) / 2**20, 1)
+            round(float(self.size) / 2 ** 20, 1),
         )
 
     class Meta:
-        app_label = 'taskmanager'
+        app_label = "taskmanager"

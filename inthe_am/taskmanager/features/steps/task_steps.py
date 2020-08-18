@@ -12,32 +12,24 @@ from inthe_am.taskmanager.merge_tasks import (
     find_duplicate_tasks,
     merge_duplicate_tasks,
     merge_all_duplicate_tasks,
-    merge_task_data
+    merge_task_data,
 )
 
 from utils import get_store
 
 
-def get_json_value(value, time_zone='UTC'):
-    matched = re.match(r'^\d{8}T\d{6}Z$', value)
+def get_json_value(value, time_zone="UTC"):
+    matched = re.match(r"^\d{8}T\d{6}Z$", value)
     if matched:
-        return pytz.UTC.localize(
-            datetime.datetime.strptime(
-                value,
-                '%Y%m%dT%H%M%SZ'
-            )
-        )
-    matched = re.match(r'^(?P<date>\d{8}T\d{6}) (?P<zone>.*)$', value)
+        return pytz.UTC.localize(datetime.datetime.strptime(value, "%Y%m%dT%H%M%SZ"))
+    matched = re.match(r"^(?P<date>\d{8}T\d{6}) (?P<zone>.*)$", value)
     if matched:
-        date_str = matched.groupdict()['date']
-        zone_str = matched.groupdict()['zone']
-        if zone_str.lower() == 'local':
+        date_str = matched.groupdict()["date"]
+        zone_str = matched.groupdict()["zone"]
+        if zone_str.lower() == "local":
             zone_str = time_zone
         return pytz.timezone(zone_str).localize(
-            datetime.datetime.strptime(
-                date_str,
-                '%Y%m%dT%H%M%S'
-            )
+            datetime.datetime.strptime(date_str, "%Y%m%dT%H%M%S")
         )
     return json.loads(value)
 
@@ -45,56 +37,35 @@ def get_json_value(value, time_zone='UTC'):
 @then(u'a task with the {field} "{value}" will exist')
 def task_with_field_exists(context, field, value):
     store = get_store()
-    matches = store.client.filter_tasks({
-        field: value
-    })
-    assert len(matches) > 0, "No task found with %s == %s" % (
-        field, value
-    )
+    matches = store.client.filter_tasks({field: value})
+    assert len(matches) > 0, "No task found with %s == %s" % (field, value)
 
 
-@then(u'a single {status} task with the following details will exist')
+@then(u"a single {status} task with the following details will exist")
 def task_with_details(context, status):
     store = get_store()
-    tasks = store.client.filter_tasks({'status': status})
-    assert len(tasks) == 1, "Asserted single task to be found, found %s" % (
-        len(tasks)
-    )
+    tasks = store.client.filter_tasks({"status": status})
+    assert len(tasks) == 1, "Asserted single task to be found, found %s" % (len(tasks))
     task = tasks[0]
     for key, value in context.table.rows:
         assert task.get(key) == get_json_value(
             value, time_zone=context.time_zone
-        ), (
-            "Task field %s's value is %s, not %s" % (
-                key,
-                task.get(key),
-                value,
-            )
-        )
+        ), "Task field %s's value is %s, not %s" % (key, task.get(key), value,)
 
 
-@given(u'the user\'s task store is configured with the following options')
+@given(u"the user's task store is configured with the following options")
 def store_configuration(context):
     store = get_store()
     for key, value in context.table.rows:
-        setattr(
-            store,
-            key,
-            get_json_value(
-                value,
-                time_zone=context.time_zone
-            )
-        )
+        setattr(store, key, get_json_value(value, time_zone=context.time_zone))
     store.save()
 
 
 @then(u'a single {status} task will have its "{field}" field set')
 def task_non_null_field(context, status, field):
     store = get_store()
-    tasks = store.client.filter_tasks({'status': status})
-    assert len(tasks) == 1, "Asserted single task to be found, found %s" % (
-        len(tasks)
-    )
+    tasks = store.client.filter_tasks({"status": status})
+    assert len(tasks) == 1, "Asserted single task to be found, found %s" % (len(tasks))
     task = tasks[0]
     assert task.get(field)
 
@@ -102,10 +73,8 @@ def task_non_null_field(context, status, field):
 @then(u'a single {status} task will not have its "{field}" field set')
 def task_null_field(context, status, field):
     store = get_store()
-    tasks = store.client.filter_tasks({'status': status})
-    assert len(tasks) == 1, "Asserted single task to be found, found %s" % (
-        len(tasks)
-    )
+    tasks = store.client.filter_tasks({"status": status})
+    assert len(tasks) == 1, "Asserted single task to be found, found %s" % (len(tasks))
     task = tasks[0]
     assert not task.get(field)
 
@@ -114,113 +83,118 @@ def task_null_field(context, status, field):
 def task_existing_with_value(context, field, value):
     store = get_store()
     basic_task = {
-        'description': 'Gather at Terminus for Hari Seldon\'s Address',
-        'project': 'terminus_empire',
-        'tags': ['next_steps', 'mule'],
+        "description": "Gather at Terminus for Hari Seldon's Address",
+        "project": "terminus_empire",
+        "tags": ["next_steps", "mule"],
     }
-    if field == 'tags':
-        value = value.split(',')
+    if field == "tags":
+        value = value.split(",")
     basic_task[field] = value
     task = store.client.task_add(**basic_task)
-    context.created_task_id = task['uuid']
+    context.created_task_id = task["uuid"]
 
 
 @then(u'a task named "{value}" is visible in the task list')
 def task_with_description_visible(context, value):
-    context.execute_steps(u'''
+    context.execute_steps(
+        u"""
         then the element at CSS selector "{selector}" has text "{value}"
-    '''.format(
-        selector='div.task-list-item p.description',
-        value=value
-    ))
+    """.format(
+            selector="div.task-list-item p.description", value=value
+        )
+    )
 
 
 @then(u'a task named "{value}" is the opened task')
 def task_with_description_visible_main(context, value):
-    context.execute_steps(u'''
+    context.execute_steps(
+        u"""
         then the element at CSS selector "{selector}" has text "{value}"
-    '''.format(
-        selector='h1.title',
-        value=value
-    ))
+    """.format(
+            selector="h1.title", value=value
+        )
+    )
 
 
 @when(u'the user creates a new task with the description "{value}"')
 def task_with_new_description(context, value):
-    context.execute_steps(u'''
+    context.execute_steps(
+        u"""
         When the user clicks the link "New"
         And the user waits for 1 seconds
         And the user enters the text "{val}" into the field named "description"
         And the user clicks the button labeled "Save"
         And the user waits for 1 seconds
-    '''.format(
-        val=value
-    ))
+    """.format(
+            val=value
+        )
+    )
 
 
 @given(u'the user is viewing an existing task with the {field} "{value}"')
 def logged_in_and_viewing_task(context, field, value):
-    context.execute_steps(u'''
+    context.execute_steps(
+        u"""
         Given the user is logged-in
         And a task with the {field} "{value}" exists
         And the user goes to the task's URL
-    '''.format(
-        field=field,
-        value=value,
-    ))
+    """.format(
+            field=field, value=value,
+        )
+    )
 
 
-@step(u'the user goes to the task\'s URL')
+@step(u"the user goes to the task's URL")
 def user_goes_to_tasks_url(context):
-    context.execute_steps(u'''
+    context.execute_steps(
+        u"""
         then the user accesses the url "%s"
-    ''' % (
-        '/tasks/%s' % context.created_task_id
-    ))
+    """
+        % ("/tasks/%s" % context.created_task_id)
+    )
 
 
-@step(u'the user clicks the refresh button')
+@step(u"the user clicks the refresh button")
 def user_clicks_refresh(context):
-    context.browser.find_by_id('refresh-link').first.find_by_tag('a').click()
+    context.browser.find_by_id("refresh-link").first.find_by_tag("a").click()
     time.sleep(1)
 
 
-@given(u'a task with the following details exists')
+@given(u"a task with the following details exists")
 def existing_task_with_details(context):
-    task = {
-        'description': 'Untitled'
-    }
+    task = {"description": "Untitled"}
     for key, value in context.table.rows:
         task[key] = get_json_value(value, time_zone=context.time_zone)
-    task['uuid'] = str(uuid.uuid4())
+    task["uuid"] = str(uuid.uuid4())
 
-    if 'annotations' in task:
+    if "annotations" in task:
         final_annotations = []
-        for annotation in task['annotations']:
+        for annotation in task["annotations"]:
             if isinstance(annotation, basestring):
-                final_annotations.append({
-                    'description': annotation,
-                    'entry': datetime.datetime.utcnow()
-                })
+                final_annotations.append(
+                    {"description": annotation, "entry": datetime.datetime.utcnow()}
+                )
             else:
                 final_annotations.append(annotation)
-        task['annotations'] = final_annotations
+        task["annotations"] = final_annotations
 
     store = get_store()
     task = store.client.import_task(task)
 
-    context.created_task_id = task['uuid']
-    context.execute_steps(u'''
+    context.created_task_id = task["uuid"]
+    context.execute_steps(
+        u"""
         then the user clicks the refresh button
-    ''')
+    """
+    )
 
 
-@then(u'{count} {status} tasks exist in the user\'s task list')
+@then(u"{count} {status} tasks exist in the user's task list")
 def task_count_matches(context, count, status):
     count = int(count)
 
     store = get_store()
-    tasks = store.client.filter_tasks({'status': status})
+    tasks = store.client.filter_tasks({"status": status})
 
     assert len(tasks) == count
 
@@ -229,44 +203,38 @@ def task_count_matches(context, count, status):
 def following_values_visible_details(context):
     visible_data = {}
     for row in context.browser.find_by_xpath("//table[@class='details']//tr"):
-        key = row.find_by_tag('th')[0].text.lower()
-        value = row.find_by_tag('td')[0].text
+        key = row.find_by_tag("th")[0].text.lower()
+        value = row.find_by_tag("td")[0].text
         visible_data[key] = value
 
     for key, value in context.table.rows:
         actual_value = visible_data.get(key.lower(), None)
-        assert actual_value == value, "%s != %s" % (
-            actual_value,
-            value,
-        )
+        assert actual_value == value, "%s != %s" % (actual_value, value,)
 
 
 @given(u'a task "{name}" with the following details')
 def task_with_following_details(context, name):
     task = {
-        row[0]: get_json_value(
-            row[1],
-            time_zone=context.time_zone
-        ) for row in context.table.rows
+        row[0]: get_json_value(row[1], time_zone=context.time_zone)
+        for row in context.table.rows
     }
-    task['uuid'] = str(uuid.uuid4())
+    task["uuid"] = str(uuid.uuid4())
 
-    if 'annotations' in task:
+    if "annotations" in task:
         final_annotations = []
-        for annotation in task['annotations']:
+        for annotation in task["annotations"]:
             if isinstance(annotation, basestring):
-                final_annotations.append({
-                    'description': annotation,
-                    'entry': datetime.datetime.utcnow()
-                })
+                final_annotations.append(
+                    {"description": annotation, "entry": datetime.datetime.utcnow()}
+                )
             else:
                 final_annotations.append(annotation)
-        task['annotations'] = final_annotations
+        task["annotations"] = final_annotations
 
     store = get_store()
     task = store.client.import_task(task)
 
-    if not hasattr(context, 'named_tasks'):
+    if not hasattr(context, "named_tasks"):
         context.named_tasks = {}
 
     context.named_tasks[name] = task
@@ -287,32 +255,24 @@ def named_tasks_merged(context, left, right):
 def task_annotated_as_duplicate(context, left, right):
     store = get_store()
 
-    beta = store.client.filter_tasks(
-        {'uuid': context.named_tasks[left]['uuid']}
-    )[0]
-    alpha = store.client.filter_tasks(
-        {'uuid': context.named_tasks[right]['uuid']}
-    )[0]
+    beta = store.client.filter_tasks({"uuid": context.named_tasks[left]["uuid"]})[0]
+    alpha = store.client.filter_tasks({"uuid": context.named_tasks[right]["uuid"]})[0]
 
-    assert alpha['intheammergedfrom'] == str(beta['uuid']), (
-        "No backreference set."
-    )
-    assert beta['intheamduplicateof'] == str(alpha['uuid']), (
-        "Not marked as duplicate."
-    )
+    assert alpha["intheammergedfrom"] == str(beta["uuid"]), "No backreference set."
+    assert beta["intheamduplicateof"] == str(alpha["uuid"]), "Not marked as duplicate."
 
     context.named_tasks[left] = beta
     context.named_tasks[right] = alpha
 
 
-@when(u'I search for duplicate tasks')
+@when(u"I search for duplicate tasks")
 def when_search_for_duplicate_tasks(context):
     store = get_store()
 
     context.duplicates_found = find_all_duplicate_tasks(store)
 
 
-@when(u'I merge duplicate tasks')
+@when(u"I merge duplicate tasks")
 def when_merge_duplicate_tasks(context):
     store = get_store()
 
@@ -332,14 +292,12 @@ def task_whatever_is_marked_as_whatnot(context, name, fieldname, value):
     store = get_store()
     old_task_data = context.named_tasks[name]
 
-    task = store.client.filter_tasks({'uuid': old_task_data['uuid']})[0]
+    task = store.client.filter_tasks({"uuid": old_task_data["uuid"]})[0]
 
-    assert task[fieldname] == value, (
-        "Task %s '%s' does not match expectation '%s'" % (
-            fieldname,
-            task[fieldname],
-            value,
-        )
+    assert task[fieldname] == value, "Task %s '%s' does not match expectation '%s'" % (
+        fieldname,
+        task[fieldname],
+        value,
     )
 
 
@@ -348,7 +306,7 @@ def tasks_are_found_as_duplicates(context, left, right):
     alpha = context.named_tasks[left]
     beta = context.named_tasks[right]
 
-    to_find = {alpha['uuid'], beta['uuid']}
+    to_find = {alpha["uuid"], beta["uuid"]}
     assert to_find in context.duplicates_found, (
         "Tasks were not found in duplicates: %s" % context.duplicates_found
     )
@@ -363,12 +321,11 @@ def task_search_for_duplicates_of(context, name):
 
 
 @then(
-    u'the task I searched for duplicates of is found to be a '
-    u'duplicate of "{name}"'
+    u"the task I searched for duplicates of is found to be a " u'duplicate of "{name}"'
 )
 def task_found_to_be_duplicate_of(context, name):
     task = context.named_tasks[name]
 
-    assert context.duplicate_found == {task['uuid']}, (
+    assert context.duplicate_found == {task["uuid"]}, (
         "Appropriate duplicate was not found: %s" % context.duplicate_found
     )

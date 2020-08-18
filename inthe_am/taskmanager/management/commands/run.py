@@ -17,23 +17,24 @@ class Command(BaseCommand):
     def run_runserver(self):
         proc = subprocess.Popen(
             [
-                CONFIG.get('python_path', '/usr/bin/python'),
-                'manage.py',
-                'runserver',
-                '0.0.0.0:%s' % CONFIG.get('runserver_port', 8001)
+                CONFIG.get("python_path", "/usr/bin/python"),
+                "manage.py",
+                "runserver",
+                "0.0.0.0:%s" % CONFIG.get("runserver_port", 8001),
             ],
-            env=os.environ.copy()
+            env=os.environ.copy(),
         )
         self.pids.append(proc.pid)
         os.waitpid(proc.pid, 0)
 
     def run_ember(self, **kwargs):
-        kwargs['env'] = os.environ.copy()
+        kwargs["env"] = os.environ.copy()
         proc = subprocess.Popen(
             [
-                CONFIG.get('ember_path', '/usr/bin/ember'),
-                'server',
-                '--live-reload-port', str(CONFIG.get('ember_port', 8009)),
+                CONFIG.get("ember_path", "/usr/bin/ember"),
+                "server",
+                "--live-reload-port",
+                str(CONFIG.get("ember_port", 8009)),
             ],
             **kwargs
         )
@@ -51,8 +52,7 @@ class Command(BaseCommand):
         print("\033[31m Note: It will take a few seconds for both necessary")
         print("      servers to start.  Once you see the message")
         print(
-            "      message '\033[32mBuild Successful\033[31m', both "
-            "servers are up."
+            "      message '\033[32mBuild Successful\033[31m', both " "servers are up."
         )
         print("\033[m")
         runserver = threading.Thread(target=self.run_runserver)
@@ -67,13 +67,9 @@ class Command(BaseCommand):
             while True:
                 time.sleep(1)
                 if not runserver.is_alive():
-                    raise Exception(
-                        'Runserver has stopped.'
-                    )
+                    raise Exception("Runserver has stopped.")
                 if not ember.is_alive():
-                    raise Exception(
-                        'Ember has stopped.'
-                    )
+                    raise Exception("Ember has stopped.")
         except KeyboardInterrupt:
             pass
         self.teardown()

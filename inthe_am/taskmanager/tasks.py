@@ -28,14 +28,14 @@ logger = logging.getLogger(__name__)
 def project_setup_logging(loglevel, logfile, format, colorize, **kwargs):
     import logging.config
     from django.conf import settings
+
     logging.config.dictConfigClass(settings.LOGGING).configure()
 
 
-@shared_task(
-    bind=True,
-)
+@shared_task(bind=True,)
 def autoconfigure_taskd(self, store_id):
     from .models import TaskStore
+
     store = TaskStore.objects.get(pk=store_id)
 
     try:
@@ -50,28 +50,24 @@ def autoconfigure_taskd(self, store_id):
 
 
 @shared_task(
-    bind=True,
-    time_limit=120,
-    default_retry_delay=120,
-    max_retries=10,
+    bind=True, time_limit=120, default_retry_delay=120, max_retries=10,
 )
 def sync_repository(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore
+
     store = TaskStore.objects.get(pk=store_id)
     try:
         store.sync(
             asynchronous=False,
-            function='tasks.sync_repository',
-            args=(store_id, ),
-            kwargs={'debounce_id': debounce_id},
+            function="tasks.sync_repository",
+            args=(store_id,),
+            kwargs={"debounce_id": debounce_id},
         )
     except Exception as e:
         raise self.retry(exc=e)
 
 
-@shared_task(
-    bind=True,
-)
+@shared_task(bind=True,)
 def process_email_message(self, message_id):
     from .models import TaskAttachment, TaskStore
 
@@ -80,16 +76,16 @@ def process_email_message(self, message_id):
         args = []
 
         arg_string = address[36:]
-        for arg in re.split('__|\+', arg_string):
+        for arg in re.split("__|\+", arg_string):
             if not arg:
                 continue
-            if '=' in arg:
-                params = arg.split('=')
-                if params[0] == 'priority':
+            if "=" in arg:
+                params = arg.split("=")
+                if params[0] == "priority":
                     params[1] = params[1].upper()
                 args.append('%s:"%s"' % tuple(params))
             else:
-                args.append('+%s' % arg)
+                args.append("+%s" % arg)
 
         return inbox_id, args
 
@@ -102,85 +98,77 @@ def process_email_message(self, message_id):
     # Check for matching To: addresses.
     for address in message.to_addresses:
         try:
-            inbox_id, additional_args = get_secret_id_and_args(
-                address.split('@')[0]
-            )
+            inbox_id, additional_args = get_secret_id_and_args(address.split("@")[0])
 
-            store = TaskStore.objects.get(
-                secret_id=inbox_id
-            )
+            store = TaskStore.objects.get(secret_id=inbox_id)
             break
         except (TaskStore.DoesNotExist, IndexError):
             pass
 
     # Check for 'Received' headers matching a known e-mail address.
     if store is None:
-        email_regex = re.compile(r'([0-9a-fA-F-]{36}@inthe.am)')
-        all_received_headers = message.get_email_object().get_all('Received')
+        email_regex = re.compile(r"([0-9a-fA-F-]{36}@inthe.am)")
+        all_received_headers = message.get_email_object().get_all("Received")
         for header in all_received_headers:
             matched_email = email_regex.search(header)
             if matched_email:
                 address = matched_email.group(1)
                 try:
                     inbox_id, additional_args = get_secret_id_and_args(
-                        address.split('@')[0]
+                        address.split("@")[0]
                     )
 
-                    store = TaskStore.objects.get(
-                        secret_id=inbox_id
-                    )
+                    store = TaskStore.objects.get(secret_id=inbox_id)
                     break
                 except (TaskStore.DoesNotExist, IndexError):
                     pass
 
     if store is None:
         logger.error(
-            "Could not find task store for e-mail message (ID %s) addressed "
-            "to %s",
+            "Could not find task store for e-mail message (ID %s) addressed " "to %s",
             message.pk,
-            message.to_addresses
+            message.to_addresses,
         )
         return
 
     allowed = False
-    for address in store.email_whitelist.split('\n'):
+    for address in store.email_whitelist.split("\n"):
         if glob(message.from_address[0], address):
             allowed = True
 
     if not allowed:
         log_args = (
             "Incoming task creation e-mail (ID: %s) from '%s' "
-            "does not match email whitelist and was ignored." % (
-                message.pk,
-                message.from_address[0]
-            ),
+            "does not match email whitelist and was ignored."
+            % (message.pk, message.from_address[0]),
         )
         logger.info(*log_args)
         store.log_message(*log_args)
         return
 
-    if (
-        not message.subject
-        or message.subject.lower() in ['add', 'create', 'new'],
-    ):
-        with git_checkpoint(store, 'Incoming E-mail'):
-            task_args = [
-                'add',
-                'intheamoriginalemailsubject:"%s"' % message.subject,
-                'intheamoriginalemailid:%s' % message.pk,
-            ] + additional_args + shlex.split(
-                message.text.split('\n\n')[0]  # Only use text up to the first
-                                               # blank line.
+    if (not message.subject or message.subject.lower() in ["add", "create", "new"],):
+        with git_checkpoint(store, "Incoming E-mail"):
+            task_args = (
+                [
+                    "add",
+                    'intheamoriginalemailsubject:"%s"' % message.subject,
+                    "intheamoriginalemailid:%s" % message.pk,
+                ]
+                + additional_args
+                + shlex.split(
+                    message.text.split("\n\n")[0]  # Only use text up to the first
+                    # blank line.
+                )
             )
             stdout, stderr = store.client._execute_safe(*task_args)
             task = store.client.get_task(intheamoriginalemailid=message.pk)[1]
-            task_id = str(task['uuid'])
+            task_id = str(task["uuid"])
 
-            attachment_urls_raw = task.get('intheamattachments')
+            attachment_urls_raw = task.get("intheamattachments")
             if not attachment_urls_raw:
                 attachment_urls = []
             else:
-                attachment_urls = attachment_urls_raw.split('|')
+                attachment_urls = attachment_urls_raw.split("|")
 
             for record in message.attachments.all():
                 attachment = record.document
@@ -195,7 +183,8 @@ def process_email_message(self, message_id):
                         "bytes to be saved to a task, but the "
                         "attachment %s received for task ID %s "
                         "is %s bytes in size and was not saved "
-                        "as a result." % (
+                        "as a result."
+                        % (
                             settings.FILE_UPLOAD_MAXIMUM_BYTES,
                             attachment.file.name,
                             task_id,
@@ -212,103 +201,88 @@ def process_email_message(self, message_id):
                     size=attachment.file.size,
                 )
                 document.document.save(
-                    record.get_filename(),
-                    attachment.file,
+                    record.get_filename(), attachment.file,
                 )
-                attachment_urls.append(
-                    document.document.url
-                )
+                attachment_urls.append(document.document.url)
                 store.client.task_annotate(
-                    task, 'Attached File: %s' % document.document.url
+                    task, "Attached File: %s" % document.document.url
                 )
 
             if attachment_urls:
-                task['intheamattachments'] = ' '.join(attachment_urls)
+                task["intheamattachments"] = " ".join(attachment_urls)
                 store.client.task_update(task)
 
         log_args = (
-            "Added task %s via e-mail %s from %s." % (
-                task_id,
-                message.pk,
-                message.from_address[0]
-            ),
+            "Added task %s via e-mail %s from %s."
+            % (task_id, message.pk, message.from_address[0]),
         )
         logger.info(*log_args)
         store.log_message(*log_args)
     else:
         log_args = (
-            "Unable to process e-mail %s from %s; unknown subject '%s'" % (
-                message.pk,
-                message.from_address[0],
-                message.subject,
-            ),
+            "Unable to process e-mail %s from %s; unknown subject '%s'"
+            % (message.pk, message.from_address[0], message.subject,),
         )
         logger.info(*log_args)
         store.log_message(*log_args)
 
 
 @shared_task(
-    bind=True,
-    default_retry_delay=60,
-    max_retries=1,
+    bind=True, default_retry_delay=60, max_retries=1,
 )
 def reset_trello(self, store_id, **kwargs):
     from .models import TaskStore, TrelloObject
+
     store = TaskStore.objects.get(pk=store_id)
 
     for obj in TrelloObject.objects.filter(store=store):
         obj.delete()
 
-    store.trello_auth_token = ''
-    store.trello_local_head = ''
+    store.trello_auth_token = ""
+    store.trello_local_head = ""
     store.save()
 
-    with git_checkpoint(
-        store, "Reset trello IDs for pending/waiting tasks."
-    ):
-        for task in store.client.filter_tasks({
-            'intheamtrelloid.any': None,
-            'or': [
-                ('status', 'pending'),
-                ('status', 'waiting'),
-            ]
-        }):
-            task['intheamtrelloid'] = ''
-            task['intheamtrelloboardid'] = ''
-            task['intheamtrellolistid'] = ''
+    with git_checkpoint(store, "Reset trello IDs for pending/waiting tasks."):
+        for task in store.client.filter_tasks(
+            {
+                "intheamtrelloid.any": None,
+                "or": [("status", "pending"), ("status", "waiting"),],
+            }
+        ):
+            task["intheamtrelloid"] = ""
+            task["intheamtrelloboardid"] = ""
+            task["intheamtrellolistid"] = ""
             store.client.task_update(task)
 
-    store.publish_personal_announcement({
-        'title': 'Trello',
-        'message': 'Trello has been successfully reset.'
-    })
+    store.publish_personal_announcement(
+        {"title": "Trello", "message": "Trello has been successfully reset."}
+    )
 
 
 @shared_task(
-    bind=True,
-    default_retry_delay=60,
-    max_retries=10,
+    bind=True, default_retry_delay=60, max_retries=10,
 )
 def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore, TrelloObject
+
     store = TaskStore.objects.get(pk=store_id)
     client = get_lock_redis()
 
-    starting_head = store.repository.head().decode('utf-8')
+    starting_head = store.repository.head().decode("utf-8")
 
-    debounce_key = get_debounce_name_for_store(store, 'trello')
+    debounce_key = get_debounce_name_for_store(store, "trello")
     try:
         expected_debounce_id = client.get(debounce_key)
     except (ValueError, TypeError):
         expected_debounce_id = None
 
     if (
-        expected_debounce_id and debounce_id and
-        (float(debounce_id) < float(expected_debounce_id))
+        expected_debounce_id
+        and debounce_id
+        and (float(debounce_id) < float(expected_debounce_id))
     ):
         logger.warning(
-            "Trello Debounce Failed: %s<%s; "
-            "skipping trello synchronization for %s",
+            "Trello Debounce Failed: %s<%s; " "skipping trello synchronization for %s",
             debounce_id,
             expected_debounce_id,
             store.pk,
@@ -319,50 +293,43 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
         logger.warning(
             "'sync_trello_tasks' task received, but no Trello auth token "
             "is available!",
-            extra={
-                'stack': True,
-            }
+            extra={"stack": True,},
         )
         return
 
-    with git_checkpoint(store, 'Reconciling trello board', sync=False):
+    with git_checkpoint(store, "Reconciling trello board", sync=False):
         store.trello_board.reconcile()
 
     open_local_tasks = {
-        t['uuid']: t for t in store.client.filter_tasks({
-            'status': 'pending'
-        })
+        t["uuid"]: t for t in store.client.filter_tasks({"status": "pending"})
     }
-    with git_checkpoint(
-        store, 'Deleting non-pending tasks from trello', sync=False
-    ):
-        for task in store.client.filter_tasks({
-            'intheamtrelloid.any': None,
-            'or': [
-                ('status', 'waiting'),
-                ('status', 'completed'),
-                ('status', 'deleted'),
-            ],
-        }):
+    with git_checkpoint(store, "Deleting non-pending tasks from trello", sync=False):
+        for task in store.client.filter_tasks(
+            {
+                "intheamtrelloid.any": None,
+                "or": [
+                    ("status", "waiting"),
+                    ("status", "completed"),
+                    ("status", "deleted"),
+                ],
+            }
+        ):
             try:
-                tob = TrelloObject.objects.get(
-                    id=task['intheamtrelloid'],
-                    store=store,
-                )
+                tob = TrelloObject.objects.get(id=task["intheamtrelloid"], store=store,)
                 tob.delete()
             except TrelloObject.DoesNotExist:
                 pass
 
     open_trello_cards = {
-        c['id']: c for c in store.trello_board.client.get_card_filter(
-            'open',
-            store.trello_board.id,
+        c["id"]: c
+        for c in store.trello_board.client.get_card_filter(
+            "open", store.trello_board.id,
         )
     }
     to_reconcile = []
     with git_checkpoint(
         store,
-        'Adding pending tasks to Trello & deleting tasks remotely deleted',
+        "Adding pending tasks to Trello & deleting tasks remotely deleted",
         sync=False,
     ):
         todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
@@ -370,32 +337,31 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
             # If this task has a trello board ID, but it doesn't match the
             # board we're currently on, let's pretend that it doesn't have
             # an id at all -- it was probably un-deleted or restored
-            task_board_id = task.get('intheamtrelloboardid')
+            task_board_id = task.get("intheamtrelloboardid")
             if task_board_id and task_board_id != store.trello_board.id:
-                task['intheamtrelloid'] = ''
+                task["intheamtrelloid"] = ""
 
-            if not task.get('intheamtrelloid'):
+            if not task.get("intheamtrelloid"):
                 tob = TrelloObject.create(
                     store=store,
                     type=TrelloObject.CARD,
-                    name=task['description'],
+                    name=task["description"],
                     idList=todo_column.id,
                 )
-                task['intheamtrelloid'] = tob.id
-                task['intheamtrelloboardid'] = store.trello_board.id
+                task["intheamtrelloid"] = tob.id
+                task["intheamtrelloboardid"] = store.trello_board.id
                 store.client.task_update(task)
 
                 to_reconcile.append(tob)
             else:
-                res = open_trello_cards.pop(task.get('intheamtrelloid'), None)
+                res = open_trello_cards.pop(task.get("intheamtrelloid"), None)
                 if res is None:
-                    store.client.task_done(uuid=task.get('uuid'))
+                    store.client.task_done(uuid=task.get("uuid"))
                     continue
 
                 try:
                     tob = TrelloObject.objects.get(
-                        id=task['intheamtrelloid'],
-                        store=store,
+                        id=task["intheamtrelloid"], store=store,
                     )
                     tob.meta = res
                     tob.save()
@@ -407,60 +373,51 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
                     )
 
     with git_checkpoint(
-        store,
-        'Reconcile all known trello tasks.',
-        sync=False,
+        store, "Reconcile all known trello tasks.", sync=False,
     ):
         for task in to_reconcile:
             task.reconcile()
 
     with git_checkpoint(
-        store,
-        'Add local tasks to match tasks created in Trello',
-        sync=False,
+        store, "Add local tasks to match tasks created in Trello", sync=False,
     ):
         for task in open_trello_cards.values():
-            name = task.get('name')
-            id = task.get('id')
+            name = task.get("name")
+            id = task.get("id")
 
             tob = TrelloObject.objects.create(
-                id=id,
-                store=store,
-                type=TrelloObject.CARD,
-                meta=task,
+                id=id, store=store, type=TrelloObject.CARD, meta=task,
             )
             tob.subscribe()
             data = {
-                'description': name,
-                'intheamtrelloid': id,
-                'intheamtrelloboardid': store.trello_board.id,
+                "description": name,
+                "intheamtrelloid": id,
+                "intheamtrelloboardid": store.trello_board.id,
             }
             store.client.task_add(**data),
 
-    ending_head = store.repository.head().decode('utf-8')
+    ending_head = store.repository.head().decode("utf-8")
     store.trello_local_head = ending_head
     store.save()
 
     if store.get_changed_task_ids(ending_head, start=starting_head):
         store.sync()
 
-    store.publish_personal_announcement({
-        'title': 'Trello',
-        'message': 'Synchronization completed successfully.'
-    })
+    store.publish_personal_announcement(
+        {"title": "Trello", "message": "Synchronization completed successfully."}
+    )
 
 
 @shared_task(
-    bind=True,
-    default_retry_delay=30,
-    max_retries=10,
+    bind=True, default_retry_delay=30, max_retries=10,
 )
 def process_trello_action(self, store_id, data, **kwargs):
     from .models import TaskStore, TrelloObject, TrelloObjectAction
+
     store = TaskStore.objects.get(pk=store_id)
 
     try:
-        with git_checkpoint(store, 'Processing Trello Action', data=data):
+        with git_checkpoint(store, "Processing Trello Action", data=data):
             try:
                 TrelloObjectAction.create_from_request(data)
             except TrelloObject.DoesNotExist:
@@ -470,26 +427,20 @@ def process_trello_action(self, store_id, data, **kwargs):
 
 
 @shared_task(
-    bind=True,
-    default_retry_delay=30,
-    max_retries=10,
+    bind=True, default_retry_delay=30, max_retries=10,
 )
-def update_trello_task(
-    self, object_id, **kwargs
-):
+def update_trello_task(self, object_id, **kwargs):
     from inthe_am.taskmanager.models import TrelloObject
+
     obj = TrelloObject.objects.get(pk=object_id)
 
-    with git_checkpoint(obj.store, 'Updating trello task'):
+    with git_checkpoint(obj.store, "Updating trello task"):
         try:
             obj.update_trello()
         except TrelloObjectRecentlyModified as e:
             self.retry(exc=e, countdown=settings.TRELLO_UPDATE_MARGIN_SECONDS)
         except Exception as e:
-            logger.exception(
-                "Error encountered while updating task: %s",
-                str(e)
-            )
+            logger.exception("Error encountered while updating task: %s", str(e))
             raise
 
         task = obj.get_task()
@@ -497,33 +448,31 @@ def update_trello_task(
         # Clear trello ID if we've just marked the task as closed;
         # this will cause us to re-create the record if it ever
         # enters the "pending" status.
-        if task['status'] in ('waiting', 'closed', 'deleted'):
-            task['intheamtrelloid'] = ''
+        if task["status"] in ("waiting", "closed", "deleted"):
+            task["intheamtrelloid"] = ""
 
         obj.store.client.task_update(task)
 
 
 @shared_task(
-    bind=True,
-    default_retry_delay=30,
-    max_retries=10,
+    bind=True, default_retry_delay=30, max_retries=10,
 )
-def update_trello(
-    self, store_id, debounce_id=None, current_head=None, **kwargs
-):
+def update_trello(self, store_id, debounce_id=None, current_head=None, **kwargs):
     from .models import TaskStore, TrelloObject
+
     store = TaskStore.objects.get(pk=store_id)
     client = get_lock_redis()
 
-    debounce_key = get_debounce_name_for_store(store, 'trello_outgoing')
+    debounce_key = get_debounce_name_for_store(store, "trello_outgoing")
     try:
         expected_debounce_id = client.get(debounce_key)
     except (ValueError, TypeError):
         expected_debounce_id = None
 
     if (
-        expected_debounce_id and debounce_id and
-        (float(debounce_id) < float(expected_debounce_id))
+        expected_debounce_id
+        and debounce_id
+        and (float(debounce_id) < float(expected_debounce_id))
     ):
         logger.warning(
             "Trello Outgoing Debounce Failed: %s<%s; "
@@ -534,24 +483,17 @@ def update_trello(
         )
         return
 
-    ending_head = store.repository.head().decode('utf-8')
+    ending_head = store.repository.head().decode("utf-8")
     starting_head = store.trello_local_head
-    changed_ids = store.get_changed_task_ids(
-        ending_head,
-        start=starting_head
-    )
+    changed_ids = store.get_changed_task_ids(ending_head, start=starting_head)
     with git_checkpoint(
-        store,
-        "Create trello records for changed tasks.",
-        data=changed_ids,
+        store, "Create trello records for changed tasks.", data=changed_ids,
     ):
         todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
 
         for task_id in changed_ids:
             try:
-                task = store.client.filter_tasks({
-                    'uuid': task_id,
-                })[0]
+                task = store.client.filter_tasks({"uuid": task_id,})[0]
             except IndexError:
                 logger.exception(
                     "Attempted to update task object for {trello_id}, "
@@ -562,80 +504,67 @@ def update_trello(
                 continue
 
             # Do not send recurring tasks to trello
-            if task['status'] == 'recurring':
+            if task["status"] == "recurring":
                 continue
 
             try:
-                obj = TrelloObject.objects.get(pk=task.get('intheamtrelloid'))
+                obj = TrelloObject.objects.get(pk=task.get("intheamtrelloid"))
             except TrelloObject.DoesNotExist:
-                if task.get('intheamtrelloid'):
+                if task.get("intheamtrelloid"):
                     logger.warning(
                         "Unable to update task %s; assigned trello object "
                         " %s is not tracked.  This should not happen.",
-                        task.get('uuid'),
-                        task.get('intheamtrelloid'),
-                        extra={
-                            'stack': True,
-                        }
+                        task.get("uuid"),
+                        task.get("intheamtrelloid"),
+                        extra={"stack": True,},
                     )
                     continue
 
                 # If we are going to have to create this task, only do that
                 # if the task is currently open.
-                if task['status'] != 'pending':
+                if task["status"] != "pending":
                     continue
 
                 obj = TrelloObject.create(
                     store=store,
                     type=TrelloObject.CARD,
-                    name=task['description'],
-                    idList=todo_column.id
+                    name=task["description"],
+                    idList=todo_column.id,
                 )
                 result = obj.client_request(
-                    'PUT',
-                    '/1/cards/%s/pos' % obj.id,
-                    data={'value': 'top'},
+                    "PUT", "/1/cards/%s/pos" % obj.id, data={"value": "top"},
                 )
                 if not (200 <= result.status_code < 300):
                     logger.warning(
                         "Unable to set card position: %s",
                         result.content,
-                        extra={
-                            'data': {
-                                'result': result.json(),
-                            }
-                        }
+                        extra={"data": {"result": result.json(),}},
                     )
-                task['intheamtrelloid'] = obj.pk
-                task['intheamtrelloboardid'] = store.trello_board.pk
+                task["intheamtrelloid"] = obj.pk
+                task["intheamtrelloboardid"] = store.trello_board.pk
 
             # Try changing lists, too, if requested
-            if task.get('intheamtrellolistname'):
+            if task.get("intheamtrellolistname"):
                 try:
                     list_requested = obj.store.trello_board.get_list_by_type(
-                        task.get('intheamtrellolistname')
+                        task.get("intheamtrellolistname")
                     )
-                    if list_requested.pk != task.get('intheamtrellolistid'):
-                        task['intheamtrellolistid'] = list_requested.pk
+                    if list_requested.pk != task.get("intheamtrellolistid"):
+                        task["intheamtrellolistid"] = list_requested.pk
                 except TrelloObject.DoesNotExist:
                     try:
                         list_actual = obj.store.trello_board.children.get(
-                            id=task.get('intheamtrellolistid')
+                            id=task.get("intheamtrellolistid")
                         )
-                        task['intheamtrellolistname'] = list_actual.meta.get(
-                            'name'
-                        )
+                        task["intheamtrellolistname"] = list_actual.meta.get("name")
                     except TrelloObject.DoesNotExist:
-                        task['intheamtrellolistid'] = todo_column.pk
-                        task['intheamtrellolistname'] = todo_column.meta.get(
-                            'name'
-                        )
+                        task["intheamtrellolistid"] = todo_column.pk
+                        task["intheamtrellolistname"] = todo_column.meta.get("name")
 
             store.client.task_update(task)
 
             update_trello_task.apply_async(
-                args=(obj.pk, ),
-                countdown=settings.TRELLO_UPDATE_MARGIN_SECONDS
+                args=(obj.pk,), countdown=settings.TRELLO_UPDATE_MARGIN_SECONDS
             )
 
         store.trello_local_head = ending_head
@@ -643,54 +572,54 @@ def update_trello(
 
 
 @shared_task(
-    bind=True,
-    default_retry_delay=30,
-    max_retries=10,
+    bind=True, default_retry_delay=30, max_retries=10,
 )
 def deduplicate_tasks(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore
+
     store = TaskStore.objects.get(pk=store_id)
 
     client = get_lock_redis()
 
-    debounce_key = get_debounce_name_for_store(store, 'deduplication')
+    debounce_key = get_debounce_name_for_store(store, "deduplication")
     try:
         expected_debounce_id = client.get(debounce_key)
     except (ValueError, TypeError):
         expected_debounce_id = None
 
     if (
-        expected_debounce_id and debounce_id and
-        (float(debounce_id) < float(expected_debounce_id))
+        expected_debounce_id
+        and debounce_id
+        and (float(debounce_id) < float(expected_debounce_id))
     ):
         logger.warning(
-            'Deduplication debounce failed: %s<%s for %s.',
+            "Deduplication debounce failed: %s<%s for %s.",
             debounce_id,
             expected_debounce_id,
             store.pk,
         )
         return
 
-    with git_checkpoint(store, 'Deduplicate tasks'):
+    with git_checkpoint(store, "Deduplicate tasks"):
         results = merge_all_duplicate_tasks(store)
 
         for alpha, betas in results.items():
             store.log_message(
                 "Tasks %s merged into %s.",
-                ', '.join([str(b) for b in betas]),
+                ", ".join([str(b) for b in betas]),
                 str(alpha),
             )
 
-    store.publish_personal_announcement({
-        'title': 'Deduplication',
-        'message': 'Deduplication process completed successfully.'
-    })
+    store.publish_personal_announcement(
+        {
+            "title": "Deduplication",
+            "message": "Deduplication process completed successfully.",
+        }
+    )
 
 
 @shared_task(
-    bind=True,
-    default_retry_delay=15,
-    max_retries=10,
+    bind=True, default_retry_delay=15, max_retries=10,
 )
 def send_rest_hook_message(self, rest_hook_id, task_id, **kwargs):
     from . import models
@@ -703,9 +632,7 @@ def send_rest_hook_message(self, rest_hook_id, task_id, **kwargs):
         data=JSONRenderer().render(
             TaskSerializer(task_data, store=rest_hook.task_store).data
         ),
-        headers={
-            'Content-type': 'application/json',
-        }
+        headers={"Content-type": "application/json",},
     )
     if result.status_code == 410:
         rest_hook.delete()

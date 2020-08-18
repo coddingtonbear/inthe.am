@@ -21,7 +21,7 @@ class Command(BaseCommand):
     NO_RECENT_MESSAGES = 11
 
     def get_redis_connection(self):
-        if not hasattr(self, '_redis'):
+        if not hasattr(self, "_redis"):
             self._redis = get_lock_redis()
             self._subscription = None
 
@@ -32,7 +32,7 @@ class Command(BaseCommand):
 
         if not self._subscription:
             self._subscription = connection.pubsub()
-            self._subscription.psubscribe('sync.*')
+            self._subscription.psubscribe("sync.*")
 
         return self._subscription
 
@@ -41,29 +41,22 @@ class Command(BaseCommand):
         return subscription.get_message()
 
     def operation_requires_sync(self, op):
-        if (
-            (
-                op.get('stored_count', 0) > 0 or op.get('merged_count', 0) > 0
-            )
-            and (
-                op.get('ip', '') not in self.local_ips
-            )
+        if (op.get("stored_count", 0) > 0 or op.get("merged_count", 0) > 0) and (
+            op.get("ip", "") not in self.local_ips
         ):
             return True
         return False
 
     def get_taskstore_for_operation(self, op):
-        group, username = op['username'].split('/')
-        return TaskStore.objects.get(
-            user__username=username
-        )
+        group, username = op["username"].split("/")
+        return TaskStore.objects.get(user__username=username)
 
     @property
     def local_ips(self):
-        if not hasattr(self, '_local_ips'):
+        if not hasattr(self, "_local_ips"):
             self._local_ips = [
                 socket.gethostbyname(socket.gethostname()),
-                '127.0.0.1',
+                "127.0.0.1",
             ]
         return self._local_ips
 
@@ -76,7 +69,7 @@ class Command(BaseCommand):
                 if not message:
                     time.sleep(0.1)
                     continue
-                elif message['type'] != 'pmessage':
+                elif message["type"] != "pmessage":
                     continue
                 else:
                     # This was an actual message we'd like to use.
@@ -85,37 +78,30 @@ class Command(BaseCommand):
                 logger.info("Received message: %s", message)
 
                 try:
-                    operation = json.loads(message['data'])
+                    operation = json.loads(message["data"])
                     if self.operation_requires_sync(operation):
                         repo = self.get_taskstore_for_operation(operation)
                         logger.info(
-                            "Queueing sync for %s",
-                            repo,
+                            "Queueing sync for %s", repo,
                         )
                         repo.sync()
                 except InterfaceError:
                     raise
                 except Exception as e:
                     logger.exception(
-                        "Error encountered while processing sync event: %s",
-                        e
+                        "Error encountered while processing sync event: %s", e
                     )
 
-                if (
-                    last_sync_queued and
-                    (
-                        (now() - last_sync_queued) >
-                        datetime.timedelta(
-                            seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT
-                        )
-                    )
+                if last_sync_queued and (
+                    (now() - last_sync_queued)
+                    > datetime.timedelta(seconds=settings.SYNC_LISTENER_WARNING_TIMEOUT)
                 ):
                     logger.error(
                         "No synchronizations have been queued during the last "
                         "%s minutes;  it is likely that something has gone "
                         "awry; Suiciding; will be restarted automatically.",
-                        round((now() - last_sync_queued).seconds / 60.0)
+                        round((now() - last_sync_queued).seconds / 60.0),
                     )
                     sys.exit(11)
         except Exception as e:
-            logger.exception('Fatal error encountered: %s', e)
+            logger.exception("Fatal error encountered: %s", e)

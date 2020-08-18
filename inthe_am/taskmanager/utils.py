@@ -5,16 +5,14 @@ import shlex
 
 
 UUID_FINDER = re.compile(
-    r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
 )
 
 
 class OneWaySafeJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
-            return obj.strftime(
-                "%Y%m%dT%H%M%SZ"
-            )
+            return obj.strftime("%Y%m%dT%H%M%SZ")
 
         try:
             json.JSONEncoder.default(self, obj)

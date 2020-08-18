@@ -6,7 +6,7 @@ from ..serializers.activity_log import ActivityLogSerializer
 
 
 class ActivityLogViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ActivityLogSerializer
 
     def get_queryset(self):
@@ -14,4 +14,4 @@ class ActivityLogViewSet(viewsets.ModelViewSet):
             return models.TaskStoreActivityLog.objects.none()
         return models.TaskStoreActivityLog.objects.filter(
             store__user=self.request.user
-        ).order_by('-last_seen')
+        ).order_by("-last_seen")
