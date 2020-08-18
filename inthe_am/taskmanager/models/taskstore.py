@@ -585,18 +585,28 @@ class TaskStore(models.Model):
             }
             return results
 
-    def squash(self, force=False):
+    def squash(self, force=False, max_trello_lag=datetime.timedelta(days=7)):
         lock_name = get_lock_name_for_store(self)
 
         with redis_lock(
             lock_name, message="Squash", lock_timeout=60 * 60, wait_timeout=60,
         ):
-            if (
-                self.trello_local_head
-                and self.trello_local_head != self.repository.head().decode("utf-8")
-                and not force
-            ):
-                raise ValueError("Trello head out-of-date; aborting!")
+            if self.trello_local_head:
+                try:
+                    commit = self.repository.get_object(
+                        self.trello_local_head.encode("ascii")
+                    )
+                except AssertionError:
+                    commit = None
+
+                if (
+                    not force
+                    and commit is not None
+                    and self.trello_local_head != self.repository.head().decode("utf-8")
+                    and (time.time() - commit.commit_time)
+                    < max_trello_lag.total_seconds()
+                ):
+                    raise ValueError("Trello head out-of-date; aborting!")
 
             head_commit, _ = self._git_command(
                 "rev-list", "--max-parents=0", "HEAD",
