@@ -5,6 +5,7 @@ Developing for Inthe.AM
    :target: https://travis-ci.org/coddingtonbear/inthe.am
 
 .. toctree::
+   architecture
    development_environment_setup
    testing
    contributions
