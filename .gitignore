@@ -15,6 +15,9 @@ libpeerconnection.log
 npm-debug.log
 testem.log
 taskd/
+local/
+env/
+.cache/
 .DS_Store
 tasks/*
 assets/icon.xcf.tmp.png

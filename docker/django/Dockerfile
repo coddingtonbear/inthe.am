@@ -1,14 +1,15 @@
 FROM python:3.8-slim
 
-ARG SUPERVISORD_CONFIG
 ENV TASK_VERSION=2.5.1-r0 DJANGO_SETTINGS_MODULE=inthe_am.settings
+
+EXPOSE 8000
 
 RUN apt-get update && \
   apt-get upgrade
 RUN apt-get install -y postgresql-client git taskwarrior \
-    python-dev gettext vim libxml2-dev libxslt-dev \
-    libcurl4-gnutls-dev build-essential libgnutls28-dev \
-    libpcre3 libpcre3-dev gnutls-bin supervisor
+  python-dev gettext vim libxml2-dev libxslt-dev \
+  libcurl4-gnutls-dev build-essential libgnutls28-dev \
+  libpcre3 libpcre3-dev gnutls-bin supervisor
 
 RUN pip install --upgrade pip
 COPY requirements-frozen.txt /tmp
