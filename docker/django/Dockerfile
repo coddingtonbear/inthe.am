@@ -13,9 +13,7 @@ RUN apt-get install -y postgresql-client git taskwarrior \
 
 RUN pip install --upgrade pip
 COPY requirements-frozen.txt /tmp
-RUN pip install --no-cache -r /tmp/requirements-frozen.txt
-COPY external_python_modules/ /external_python_modules
-RUN for mod in /external_python_modules/* ; do pip install -e $mod ; done
+RUN pip install -r /tmp/requirements-frozen.txt
 COPY ./docker/django/gitconfig /root/.gitconfig
 COPY ./docker/django/entrypoint.sh /app/run.sh
 COPY ${SUPERVISORD_CONFIG} /etc/supervisor/conf.d/service.conf

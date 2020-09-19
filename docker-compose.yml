@@ -21,7 +21,6 @@ services:
     volumes:
       - ./:/data/web
       - task-data:/task_data
-      - ./external_python_modules:/external_python_modules
       - django-static-assets:/django-static
     networks:
       - backend
@@ -45,7 +44,6 @@ services:
     volumes:
       - ./:/data/web
       - task-data:/task_data
-      - ./external_python_modules:/external_python_modules
     networks:
       - backend
   celery:
@@ -66,7 +64,6 @@ services:
     volumes:
       - ./:/data/web
       - task-data:/task_data
-      - ./external_python_modules:/external_python_modules
     networks:
       - backend
   nginx:
