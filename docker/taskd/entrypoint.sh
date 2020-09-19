@@ -27,10 +27,6 @@ if [ ! -d ${TASKDDATA}/pki ]; then
     taskd config --force server 0.0.0.0:53589
 
     # Configure database settings for looking up account information
-    taskd config --force intheam.db.host postgres
-    taskd config --force intheam.db.name ${DB_NAME}
-    taskd config --force intheam.db.user ${DB_USER}
-    taskd config --force intheam.db.password ${DB_PASS}
     taskd config --force intheam.min_tos 1
     taskd config --force intheam.min_privacy 1
 fi
