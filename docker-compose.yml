@@ -6,15 +6,14 @@ services:
     build:
       context: ./
       dockerfile: ./docker/django/Dockerfile
+      args:
+        SUPERVISORD_CONFIG: ./docker/django/supervisord.conf
     links:
       - postgres:postgres
       - redis:redis
       - memcached:memcached
       - taskd:taskd
       - sse:sse
-    environment:
-      - DEBUG=1
-      - SUPERVISORD_CONFIG=./docker/django/supervisord.conf
     env_file:
       - .env
       - .private.env
@@ -29,8 +28,8 @@ services:
     build:
       context: ./
       dockerfile: ./docker/django/Dockerfile
-    environment:
-      - SUPERVISORD_CONFIG=./docker/django/supervisord.sse.conf
+      args:
+        SUPERVISORD_CONFIG: ./docker/django/supervisord.sse.conf
     expose:
       - "8001"
     links:
@@ -51,8 +50,8 @@ services:
     build:
       context: ./
       dockerfile: ./docker/django/Dockerfile
-    environment:
-      - SUPERVISORD_CONFIG=./docker/django/supervisord.celery.conf
+      args:
+        SUPERVISORD_CONFIG: ./docker/django/supervisord.celery.conf
     links:
       - postgres:postgres
       - redis:redis

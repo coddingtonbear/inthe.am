@@ -16,7 +16,9 @@ COPY requirements-frozen.txt /tmp
 RUN pip install -r /tmp/requirements-frozen.txt
 COPY ./docker/django/gitconfig /root/.gitconfig
 COPY ./docker/django/entrypoint.sh /app/run.sh
-COPY ${SUPERVISORD_CONFIG} /etc/supervisor/conf.d/service.conf
+
+ARG SUPERVISORD_CONFIG
+COPY $SUPERVISORD_CONFIG /etc/supervisor/conf.d/service.conf
 
 RUN chmod 777 /tmp/
 
