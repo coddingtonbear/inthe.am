@@ -9,9 +9,8 @@ RUN apt-get install -y build-essential git supervisor uuid-dev cmake \
   libgnutls28-dev gnutls-bin libev-dev libhiredis-dev libjsoncpp-dev \
   libsqlite3-dev
 # This is the library used for communicating with Redis
-RUN git clone https://github.com/coddingtonbear/redox &&\
+RUN git clone https://github.com/hmartiro/redox &&\
   cd redox &&\
-  git checkout intheam_debug &&\
   cmake . &&\
   make && make install &&\
   mv /usr/local/lib64/* /usr/lib/x86_64-linux-gnu
@@ -36,5 +35,5 @@ RUN pip install -r /tmp/requirements.txt
 # Configure container
 VOLUME ["${TASKDDATA}"]
 EXPOSE 53589
-EXPOSE 80
+EXPOSE 8000
 ENTRYPOINT /usr/bin/supervisord --nodaemon
