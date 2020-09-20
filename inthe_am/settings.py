@@ -275,7 +275,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "localhost")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
-EMAIL_PORT = int(os.environ.get("EMAIL_HOST_PASSWORD", 587))
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
 
 TRELLO_API_KEY = os.environ.get("TRELLO_API_KEY", "")
 TRELLO_API_SECRET = os.environ.get("TRELLO_API_SECRET", "")
