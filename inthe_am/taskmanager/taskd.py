@@ -48,7 +48,7 @@ class TaskdAccountManager:
     ) -> requests.models.Response:
         final_path = f"{self._org_name}/{self._user_name}/"
         if path:
-            final_path = final_path + "/" + path + "/"
+            final_path = final_path + path + "/"
 
         return self._make_request(
             method, final_path, raise_for_error=raise_for_error, data=data,
