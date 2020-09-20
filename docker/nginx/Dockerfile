@@ -1,7 +1,7 @@
 FROM madnificent/ember:2.18.0 as ember
 
 COPY /ember /app
-RUN cd /app && npm install && bower install && ember build --environment=${EMBER_BUILD_ENVIRONMENT}
+RUN cd /app && npm install && bower install && ember build
 
 FROM nginx
 
