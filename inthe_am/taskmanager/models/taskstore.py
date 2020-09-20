@@ -1,4 +1,3 @@
-import datetime
 import hashlib
 import json
 import logging
@@ -98,7 +97,7 @@ class TaskStore(models.Model):
     def username(self):
         try:
             return self.user.username
-        except:
+        except Exception:
             return "(None)"
 
     @property
@@ -258,8 +257,8 @@ class TaskStore(models.Model):
             if pattern.match(key) and verifier(val):
                 return True, None
             elif pattern.match(key):
-                return False, "Setting '%s' has an invalid value." % key
-        return False, "Setting '%s' could not be applied." % key
+                return False, f"Setting '${key}' has an invalid value."
+        return False, f"Setting '${key}' could not be applied."
 
     def apply_extras(self):
         default_extras_path = os.path.join(self.local_path, ".taskrc_extras",)
@@ -344,7 +343,7 @@ class TaskStore(models.Model):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return "Tasks for %s" % self.username
+        return f"Tasks for ${self.username}"
 
     #  Git-related methods
 
@@ -373,8 +372,8 @@ class TaskStore(models.Model):
     def _git_command(self, *args):
         command = [
             "git",
-            "--work-tree=%s" % self.local_path,
-            "--git-dir=%s" % os.path.join(self.local_path, ".git"),
+            f"--work-tree=${self.local_path}",
+            f"--git-dir=${os.path.join(self.local_path, '.git')}",
         ] + list(args)
         return subprocess.Popen(
             command,
@@ -532,7 +531,7 @@ class TaskStore(models.Model):
 
     def get_repository_size(self):
         total_size = 0
-        for dirpath, dirnames, filenames in os.walk(self.local_path):
+        for dirpath, _, filenames in os.walk(self.local_path):
             for f in filenames:
                 fp = os.path.join(dirpath, f)
                 total_size += os.path.getsize(fp)
@@ -810,7 +809,7 @@ class TaskStore(models.Model):
             self.save()
             self.client.sync(init=True)
 
-    def generate_new_certificate(self) -> bytes:
+    def generate_new_certificate(self) -> str:
         private_key_filename = os.path.join(
             self.local_path, self.DEFAULT_FILENAMES["key"],
         )
@@ -833,7 +832,7 @@ class TaskStore(models.Model):
             )
             csr = csr_proc.communicate()[0].decode("utf-8")
 
-        return self.taskd_account.get_new_certificate(csr).encode("utf-8")
+        return self.taskd_account.get_new_certificate(csr)
 
     def register_metadata_callback(self, callback):
         if not hasattr(self, "_metadata_callbacks"):
