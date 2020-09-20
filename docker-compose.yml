@@ -70,6 +70,9 @@ services:
     build:
       dockerfile: ./docker/nginx/Dockerfile
       context: ./
+    env_file:
+      - .env
+      - .private.env
     ports:
       - "80:80"
       - "443:443"
