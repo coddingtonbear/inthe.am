@@ -103,6 +103,8 @@ services:
     build:
       dockerfile: ./docker/taskd/Dockerfile
       context: ./
+    ports:
+      - "53589:53589"
     networks:
       - backend
     links:
