@@ -160,6 +160,8 @@ class TaskStore(models.Model):
     @classmethod
     def get_for_user(cls, user):
         store, created = TaskStore.objects.get_or_create(user=user,)
+        if created:
+            logger.info(f"Created new taskstore for {user}")
         upgrade_taskstore(store)
         return store
 
@@ -257,8 +259,8 @@ class TaskStore(models.Model):
             if pattern.match(key) and verifier(val):
                 return True, None
             elif pattern.match(key):
-                return False, f"Setting '${key}' has an invalid value."
-        return False, f"Setting '${key}' could not be applied."
+                return False, f"Setting '{key}' has an invalid value."
+        return False, f"Setting '{key}' could not be applied."
 
     def apply_extras(self):
         default_extras_path = os.path.join(self.local_path, ".taskrc_extras",)
@@ -343,7 +345,7 @@ class TaskStore(models.Model):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return f"Tasks for ${self.username}"
+        return f"Tasks for {self.username}"
 
     #  Git-related methods
 
@@ -372,8 +374,8 @@ class TaskStore(models.Model):
     def _git_command(self, *args):
         command = [
             "git",
-            f"--work-tree=${self.local_path}",
-            f"--git-dir=${os.path.join(self.local_path, '.git')}",
+            f"--work-tree={self.local_path}",
+            f"--git-dir={os.path.join(self.local_path, '.git')}",
         ] + list(args)
         return subprocess.Popen(
             command,
