@@ -220,15 +220,19 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
 }
 
 if os.path.exists(os.path.join(BASE_DIR, ".git")):
-    VERSION = check_output(
-        [
-            "git",
-            "--work-tree=%s" % BASE_DIR,
-            "--git-dir=%s" % os.path.join(BASE_DIR, ".git"),
-            "rev-parse",
-            "HEAD",
-        ]
-    ).strip()
+    VERSION = (
+        check_output(
+            [
+                "git",
+                "--work-tree=%s" % BASE_DIR,
+                "--git-dir=%s" % os.path.join(BASE_DIR, ".git"),
+                "rev-parse",
+                "HEAD",
+            ]
+        )
+        .strip()
+        .decode("utf-8")
+    )
 else:
     VERSION = "development"
 
@@ -470,4 +474,3 @@ DATABASES = {
         "CONN_MAX_AGE": 30,
     }
 }
-

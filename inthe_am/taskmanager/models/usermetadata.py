@@ -5,25 +5,13 @@ from django.db import models
 
 class UserMetadata(models.Model):
     user = models.ForeignKey(
-        User,
-        related_name='metadata',
-        unique=True,
-        on_delete=models.CASCADE
+        User, related_name="metadata", unique=True, on_delete=models.CASCADE
     )
     tos_version = models.IntegerField(default=0)
-    tos_accepted = models.DateTimeField(
-        default=None,
-        null=True,
-    )
+    tos_accepted = models.DateTimeField(default=None, null=True,)
     privacy_policy_version = models.IntegerField(default=0)
-    privacy_policy_accepted = models.DateTimeField(
-        default=None,
-        null=True,
-    )
-    colorscheme = models.CharField(
-        default='dark-yellow-green.theme',
-        max_length=255,
-    )
+    privacy_policy_accepted = models.DateTimeField(default=None, null=True,)
+    colorscheme = models.CharField(default="dark-yellow-green.theme", max_length=255,)
 
     @property
     def tos_up_to_date(self):
@@ -35,9 +23,7 @@ class UserMetadata(models.Model):
 
     @classmethod
     def get_for_user(cls, user):
-        meta, created = UserMetadata.objects.get_or_create(
-            user=user
-        )
+        meta, created = UserMetadata.objects.get_or_create(user=user)
         return meta
 
     def save(self, *args, **kwargs):
@@ -52,4 +38,4 @@ class UserMetadata(models.Model):
         return self.user.username
 
     class Meta:
-        app_label = 'taskmanager'
+        app_label = "taskmanager"

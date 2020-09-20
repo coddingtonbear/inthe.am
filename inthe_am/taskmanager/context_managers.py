@@ -19,19 +19,14 @@ logger = logging.getLogger(__name__)
 def timed_activity(store, activity):
     from .models import TaskStoreActivity
 
-    record = TaskStoreActivity.objects.create(
-        store=store,
-        activity=activity,
-    )
+    record = TaskStoreActivity.objects.create(store=store, activity=activity,)
 
     def add_message_to_activity(message, *params):
         try:
             record.add_message_line(message % params)
         except Exception:
             logger.exception(
-                "Error formatting logging message: %s %% %s",
-                message,
-                params,
+                "Error formatting logging message: %s %% %s", message, params,
             )
 
     def add_metadata_to_activity(variant, *params):
@@ -39,9 +34,7 @@ def timed_activity(store, activity):
             record.handle_metadata_message(variant, *params)
         except Exception:
             logger.exception(
-                "Error handling metadata message: %s %s",
-                variant,
-                params,
+                "Error handling metadata message: %s %s", variant, params,
             )
 
     uid = store.register_logging_callback(add_message_to_activity)
@@ -56,35 +49,36 @@ def timed_activity(store, activity):
     try:
         record.save()
     except Exception:
-        logger.exception(
-            "Error encountered recording outcome of timed activity."
-        )
+        logger.exception("Error encountered recording outcome of timed activity.")
 
 
 @contextmanager
 def git_checkpoint(
-    store, message, function=None, args=None, kwargs=None,
-    sync=None, gc=False, notify_rollback=True,
-    emit_announcements=True, data=None,
+    store,
+    message,
+    function=None,
+    args=None,
+    kwargs=None,
+    sync=None,
+    gc=False,
+    notify_rollback=True,
+    emit_announcements=True,
+    data=None,
     wait_timeout=settings.LOCKFILE_WAIT_TIMEOUT,
     lock_timeout=settings.LOCKFILE_TIMEOUT_SECONDS,
 ):
     lock_name = get_lock_name_for_store(store)
     try:
-        pre_work_sha = store.repository.head().decode('utf-8')
+        pre_work_sha = store.repository.head().decode("utf-8")
     except KeyError:
         pre_work_sha = None
     checkpoint_id = uuid.uuid4()
 
-    if(hasattr(store, '_active_checkpoint')):
+    if hasattr(store, "_active_checkpoint"):
         exception_message = (
             "Store %s attempted to acquire a checkpoint for '%s', but "
             "the repository was already locked for '%s'."
-        ) % (
-            store,
-            message,
-            store._active_checkpoint
-        )
+        ) % (store, message, store._active_checkpoint)
         raise NestedCheckpointError(exception_message)
     store._active_checkpoint = message
 
@@ -96,17 +90,9 @@ def git_checkpoint(
         lock_timeout=lock_timeout,
         wait_timeout=wait_timeout,
     ):
-        start_head = store.repository.head().decode('utf-8')
-        git_index_lock_path = os.path.join(
-            store.local_path,
-            '.git/index.lock'
-        )
-        if os.path.exists(
-            os.path.join(
-                store.local_path,
-                '.git/index.lock'
-            )
-        ):
+        start_head = store.repository.head().decode("utf-8")
+        git_index_lock_path = os.path.join(store.local_path, ".git/index.lock")
+        if os.path.exists(os.path.join(store.local_path, ".git/index.lock")):
             try:
                 os.remove(git_index_lock_path)
                 logger.warning(
@@ -141,10 +127,7 @@ def git_checkpoint(
                 store.client.gc()
             # We do not need to store undo.data since we're handling
             # history using a git repo and can revert using that.
-            undo_path = os.path.join(
-                store.local_path,
-                'undo.data'
-            )
+            undo_path = os.path.join(store.local_path, "undo.data")
             if os.path.isfile(undo_path):
                 os.unlink(undo_path)
             store.create_git_checkpoint(
@@ -156,30 +139,23 @@ def git_checkpoint(
                 data=data,
             )
 
-            end_head = store.repository.head().decode('utf-8')
+            end_head = store.repository.head().decode("utf-8")
             recurring_task_found = False
-            for task_id in store.get_changed_task_ids(
-                end_head, start=start_head
-            ):
-                task = store.client.get_task(
-                    uuid=task_id
-                )[1]
+            for task_id in store.get_changed_task_ids(end_head, start=start_head):
+                task = store.client.get_task(uuid=task_id)[1]
                 store.send_rest_hook_messages(task_id)
                 if emit_announcements:
                     store.publish_announcement(
-                        'changed_task',
+                        "changed_task",
                         {
-                            'username': store.user.username,
-                            'start': start_head,
-                            'head': end_head,
-                            'task_id': task_id,
-                            'task_data': dict(task)
-                        }
+                            "username": store.user.username,
+                            "start": start_head,
+                            "head": end_head,
+                            "task_id": task_id,
+                            "task_data": dict(task),
+                        },
                     )
-                if (
-                    store.auto_deduplicate and
-                    task.get('recur')
-                ):
+                if store.auto_deduplicate and task.get("recur"):
                     recurring_task_found = True
 
             if recurring_task_found:
@@ -190,19 +166,14 @@ def git_checkpoint(
             pass
         except Exception as e:
             store.create_git_checkpoint(
-                u'%s (%s)' % (
-                    message,
-                    force_text(e, errors='replace')
-                ),
+                "{} ({})".format(message, force_text(e, errors="replace")),
                 function=function,
                 args=args,
                 kwargs=kwargs,
-                rollback=True
+                rollback=True,
             )
-            dangling_sha = store.repository.head().decode('utf-8')
-            changes_were_stored = (
-                dangling_sha and dangling_sha != pre_work_sha
-            )
+            dangling_sha = store.repository.head().decode("utf-8")
+            changes_were_stored = dangling_sha and dangling_sha != pre_work_sha
 
             # Create a second checkpoint, and force the commit to occur
             # so we have a nice traceback.
@@ -214,7 +185,7 @@ def git_checkpoint(
                 rollback=False,
                 force_commit=True,
             )
-            dangling_sha = store.repository.head().decode('utf-8')
+            dangling_sha = store.repository.head().decode("utf-8")
 
             if changes_were_stored:
                 logger.exception(
@@ -241,17 +212,15 @@ def git_checkpoint(
                     "An error occurred that did not require rolling-back "
                     "the git repository at %s (at %s)",
                     store.local_path,
-                    pre_work_sha
+                    pre_work_sha,
                 )
             raise
 
-    delattr(store, '_active_checkpoint')
+    delattr(store, "_active_checkpoint")
 
     if sync is True:
         store.sync()
     elif sync is None and start_head and end_head:
-        changed_task_ids = store.get_changed_task_ids(
-            end_head, start=start_head
-        )
+        changed_task_ids = store.get_changed_task_ids(end_head, start=start_head)
         if changed_task_ids:
             store.sync()

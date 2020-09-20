@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import os
 
-if os.environ.get('EVENTLET'):
+if os.environ.get("EVENTLET"):
     from eventlet.patcher import monkey_patch
+
     monkey_patch()
 
 import sys
@@ -14,8 +15,9 @@ if __name__ == "__main__":
     from django.conf import settings
 
     if settings.DEBUG:
-        if os.environ.get('RUN_MAIN') or os.environ.get('WERKZEUG_RUN_MAIN'):
+        if os.environ.get("RUN_MAIN") or os.environ.get("WERKZEUG_RUN_MAIN"):
             import ptvsd
-            ptvsd.enable_attach(address=('0.0.0.0', 3000))
+
+            ptvsd.enable_attach(address=("0.0.0.0", 3000))
 
     execute_from_command_line(sys.argv)

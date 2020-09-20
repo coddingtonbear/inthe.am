@@ -14,7 +14,7 @@ class TrelloObjectAction(models.Model):
     action_id = models.CharField(max_length=100)
     model = models.ForeignKey(
         TrelloObject,
-        related_name='actions',
+        related_name="actions",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -26,26 +26,24 @@ class TrelloObjectAction(models.Model):
 
     @classmethod
     def create_from_request(cls, data):
-        occurred = parse(
-            data['action']['date']
-        ).replace(tzinfo=pytz.UTC)
+        occurred = parse(data["action"]["date"]).replace(tzinfo=pytz.UTC)
 
         try:
             instance = cls.objects.create(
-                action_id=data['action']['id'],
-                type=data['action']['type'],
-                model=TrelloObject.objects.get(pk=data['model']['id']),
+                action_id=data["action"]["id"],
+                type=data["action"]["type"],
+                model=TrelloObject.objects.get(pk=data["model"]["id"]),
                 occurred=occurred,
                 meta=data,
             )
         except IntegrityError:
             instance = cls.objects.get(
-                action_id=data['action']['id'],
-                model=TrelloObject.objects.get(pk=data['model']['id']),
+                action_id=data["action"]["id"],
+                model=TrelloObject.objects.get(pk=data["model"]["id"]),
             )
 
         model = instance.model
-        model.meta = data['model']
+        model.meta = data["model"]
         model.last_action = occurred
         model.save()
 
@@ -54,32 +52,26 @@ class TrelloObjectAction(models.Model):
         return instance
 
     def reconcile_addLabelToCard(self):
-        card_data = (
-            self.meta.get('action', {})
-                .get('data', {})
-                .get('card', {})
-        )
-        label = slugify(self.meta['action']['data']['text'])
+        card_data = self.meta.get("action", {}).get("data", {}).get("card", {})
+        label = slugify(self.meta["action"]["data"]["text"])
 
         try:
             to = TrelloObject.objects.get(
-                id=card_data.get('id'),
-                store=self.model.store,
+                id=card_data.get("id"), store=self.model.store,
             )
             task = to.get_task()
 
-            tags = task.get('tags', [])
+            tags = task.get("tags", [])
             if label not in tags:
                 tags.append(label)
-            task['tags'] = tags
-            task['intheamtrellolastupdated'] = to.meta['dateLastActivity']
+            task["tags"] = tags
+            task["intheamtrellolastupdated"] = to.meta["dateLastActivity"]
             to.store.client.task_update(task)
 
             self.model.store.log_message(
-                "Label added to Trello card %s; updating task %s: "
-                " %s",
+                "Label added to Trello card %s; updating task %s: " " %s",
                 to.pk,
-                task['uuid'],
+                task["uuid"],
                 task.get_changes(keep=True),
             )
         except TrelloTaskDoesNotExist:
@@ -88,34 +80,28 @@ class TrelloObjectAction(models.Model):
             return
 
     def reconcile_removeLabelFromCard(self):
-        card_data = (
-            self.meta.get('action', {})
-                .get('data', {})
-                .get('card', {})
-        )
-        label = slugify(self.meta['action']['data']['text'])
+        card_data = self.meta.get("action", {}).get("data", {}).get("card", {})
+        label = slugify(self.meta["action"]["data"]["text"])
 
         try:
             to = TrelloObject.objects.get(
-                id=card_data.get('id'),
-                store=self.model.store,
+                id=card_data.get("id"), store=self.model.store,
             )
             task = to.get_task()
 
-            tags = task.get('tags', [])
+            tags = task.get("tags", [])
             try:
                 tags.remove(label)
             except ValueError:
                 return
-            task['tags'] = tags
-            task['intheamtrellolastupdated'] = to.meta['dateLastActivity']
+            task["tags"] = tags
+            task["intheamtrellolastupdated"] = to.meta["dateLastActivity"]
             to.store.client.task_update(task)
 
             self.model.store.log_message(
-                "Label removed from Trello card %s; updating task %s: "
-                " %s",
+                "Label removed from Trello card %s; updating task %s: " " %s",
                 to.pk,
-                task['uuid'],
+                task["uuid"],
                 task.get_changes(keep=True),
             )
         except TrelloTaskDoesNotExist:
@@ -128,19 +114,14 @@ class TrelloObjectAction(models.Model):
         if not self.model.type == TrelloObject.BOARD:
             return
 
-        card_data = (
-            self.meta.get('action', {})
-                .get('data', {})
-                .get('card', {})
-        )
+        card_data = self.meta.get("action", {}).get("data", {}).get("card", {})
 
-        if not card_data.get('closed', False):
+        if not card_data.get("closed", False):
             return
 
         try:
             to = TrelloObject.objects.get(
-                id=card_data.get('id'),
-                store=self.model.store,
+                id=card_data.get("id"), store=self.model.store,
             )
             to.update_data()
             to.reconcile()
@@ -153,7 +134,7 @@ class TrelloObjectAction(models.Model):
             self.model.store.log_message(
                 "Trello card %s updated; updating task %s: %s",
                 to.pk,
-                task['uuid'],
+                task["uuid"],
                 task.get_changes(keep=True),
             )
         except TrelloObject.DoesNotExist:
@@ -164,25 +145,22 @@ class TrelloObjectAction(models.Model):
         if not self.model.type == TrelloObject.BOARD:
             return
 
-        new_card_id = self.meta['action']['data']['card']['id']
+        new_card_id = self.meta["action"]["data"]["card"]["id"]
 
         try:
-            to = TrelloObject.objects.get(
-                id=new_card_id,
-                store=self.model.store,
-            )
+            to = TrelloObject.objects.get(id=new_card_id, store=self.model.store,)
         except TrelloObject.DoesNotExist:
             to = TrelloObject.objects.create(
                 id=new_card_id,
                 store=self.model.store,
                 type=TrelloObject.CARD,
-                meta=self.meta['action']['data']['card'],
+                meta=self.meta["action"]["data"]["card"],
             )
             to.subscribe()
             self.model.store.client.task_add(
-                description=to.meta['name'],
+                description=to.meta["name"],
                 intheamtrelloid=new_card_id,
-                intheamtrelloboardid=self.model.store.trello_board.pk
+                intheamtrelloboardid=self.model.store.trello_board.pk,
             )
 
         to.update_data()
@@ -195,9 +173,7 @@ class TrelloObjectAction(models.Model):
             task = {}
 
         self.model.store.log_message(
-            "Trello card %s added; adding task %s",
-            to.pk,
-            task.get('uuid', '?')
+            "Trello card %s added; adding task %s", to.pk, task.get("uuid", "?")
         )
 
     def reconcile_action(self):
@@ -206,20 +182,17 @@ class TrelloObjectAction(models.Model):
 
         self.model.reconcile()
 
-        reconciliation_method = 'reconcile_%s' % self.type
+        reconciliation_method = "reconcile_%s" % self.type
         if hasattr(self, reconciliation_method):
             getattr(self, reconciliation_method)()
 
     def __str__(self):
-        return (
-            u'{type} action #{id} on trello {model_type} '
-            '#{model_id}'.format(
-                type=self.type.title(),
-                id=self.id,
-                model_type=self.model.type.title(),
-                model_id=self.model.id
-            )
+        return "{type} action #{id} on trello {model_type} " "#{model_id}".format(
+            type=self.type.title(),
+            id=self.id,
+            model_type=self.model.type.title(),
+            model_id=self.model.id,
         )
 
     class Meta:
-        app_label = 'taskmanager'
+        app_label = "taskmanager"

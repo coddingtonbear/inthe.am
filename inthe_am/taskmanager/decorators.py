@@ -14,7 +14,9 @@ def process_authentication(required=True):
             if required and not request.user.is_authenticated():
                 raise PermissionDenied()
             return f(self, request, *args, **kwargs)
+
         return wrapper
+
     return authenticate
 
 
@@ -26,9 +28,10 @@ def requires_task_store(f):
             raise PermissionDenied()
 
         store = models.TaskStore.get_for_user(request.user)
-        kwargs['store'] = store
+        kwargs["store"] = store
         result = f(self, *args, **kwargs)
         return result
+
     return wrapper
 
 
@@ -40,17 +43,19 @@ def git_managed(message, sync=False, gc=True):
                 user = args[0].user
             except IndexError:
                 # Tastypie Views
-                user = kwargs['bundle'].request.user
+                user = kwargs["bundle"].request.user
 
             if not user.is_authenticated():
                 raise PermissionDenied()
 
             store = models.TaskStore.get_for_user(user)
-            kwargs['store'] = store
+            kwargs["store"] = store
             with git_checkpoint(
                 store, message, f.__name__, args[1:], kwargs, sync=sync, gc=gc
             ):
                 result = f(self, *args, **kwargs)
             return result
+
         return wrapper
+
     return git_sync

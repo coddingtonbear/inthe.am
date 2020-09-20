@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# type: ignore
 #
 # Inthe.AM documentation build configuration file, created by
 # sphinx-quickstart on Sat Sep 13 15:53:25 2014.
@@ -46,8 +46,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"Inthe.AM"
-copyright = u"2015, Adam Coddington"
+project = "Inthe.AM"
+copyright = "2015, Adam Coddington"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -197,7 +197,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    ("index", "IntheAM.tex", u"Inthe.AM Documentation", u"Adam Coddington", "manual"),
+    ("index", "IntheAM.tex", "Inthe.AM Documentation", "Adam Coddington", "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -225,7 +225,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", "intheam", u"Inthe.AM Documentation", [u"Adam Coddington"], 1)]
+man_pages = [("index", "intheam", "Inthe.AM Documentation", ["Adam Coddington"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -240,8 +240,8 @@ texinfo_documents = [
     (
         "index",
         "IntheAM",
-        u"Inthe.AM Documentation",
-        u"Adam Coddington",
+        "Inthe.AM Documentation",
+        "Adam Coddington",
         "IntheAM",
         "One line description of project.",
         "Miscellaneous",
@@ -259,4 +259,3 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 # texinfo_no_detailmenu = False
-

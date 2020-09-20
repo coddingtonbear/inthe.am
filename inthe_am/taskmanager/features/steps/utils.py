@@ -2,17 +2,20 @@ import time
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from selenium.common.exceptions import (
-    StaleElementReferenceException,
-)
+from selenium.common.exceptions import StaleElementReferenceException
 
 from inthe_am.taskmanager.models import TaskStore
 
 
 def find_element_and_do(
-    selector, args=None, kwargs=None,
-    test=lambda x: x.visible, action=lambda x: x.click(),
-    retries=3, retry_sleep=1, post_sleep=1,
+    selector,
+    args=None,
+    kwargs=None,
+    test=lambda x: x.visible,
+    action=lambda x: x.click(),
+    retries=3,
+    retry_sleep=1,
+    post_sleep=1,
 ):
     if args is None:
         args = []
@@ -34,17 +37,20 @@ def find_element_and_do(
 
 
 def monkey_patch_browser(context):
-    context.browser.execute_script("""
+    context.browser.execute_script(
+        """
         window.confirm = function(message) {
             lastConfirmationMessage = message; return true;
         }
-    """.replace('\n', ' '))
+    """.replace(
+            "\n", " "
+        )
+    )
 
 
 def get_user():
     u, _ = User.objects.get_or_create(
-        username='integration-test',
-        email=settings.TESTING_LOGIN_USER
+        username="integration-test", email=settings.TESTING_LOGIN_USER
     )
     u.set_password(settings.TESTING_LOGIN_PASSWORD)
     u.save()

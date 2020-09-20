@@ -22,25 +22,17 @@ except ImportError:
 
 def logout_and_redirect(request):
     logout(request)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect("/")
 
 
 def status_offload(request):
     if not uwsgi or not settings.STATUS_OFFLOAD_SOCKET:
         return JsonResponse(
-            {
-                'error': 'Status unavailable in this environment.',
-            },
-            status=404,
+            {"error": "Status unavailable in this environment.",}, status=404,
         )
 
     if not request.user.is_authenticated():
-        return JsonResponse(
-            {
-                'error': 'Unauthenticated',
-            },
-            status=401
-        )
+        return JsonResponse({"error": "Unauthenticated",}, status=401)
 
     redis = get_lock_redis()
 
@@ -48,30 +40,25 @@ def status_offload(request):
 
     pickle_id = str(uuid.uuid4())
 
-    pickled_data = pickle.dumps({
-        'taskstore': taskstore,
-        'username': request.user.username
-    })
-
-    redis.set(
-        'pickle_{}'.format(pickle_id),
-        pickled_data,
-        ex=60
+    pickled_data = pickle.dumps(
+        {"taskstore": taskstore, "username": request.user.username}
     )
 
-    hostname, port = settings.STATUS_OFFLOAD_SOCKET.split(':')
+    redis.set(f"pickle_{pickle_id}", pickled_data, ex=60)
+
+    hostname, port = settings.STATUS_OFFLOAD_SOCKET.split(":")
     offload_ip = socket.gethostbyname(hostname)
 
     uwsgi.add_var("PICKLE_ID", str(pickle_id))
     uwsgi.add_var("OFFLOAD_TO_SSE", "y")
-    uwsgi.add_var("OFFLOAD_SERVER", ':'.join([offload_ip, port]))
+    uwsgi.add_var("OFFLOAD_SERVER", ":".join([offload_ip, port]))
     return HttpResponse()
 
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^logout/', logout_and_redirect, name='logout'),
-    url(r'^status/', status_offload),
-    url('', include('social_django.urls', namespace='social')),
-    url('', include('inthe_am.taskmanager.urls')),
- ] + staticfiles_urlpatterns()
+    url(r"^admin/", include(admin.site.urls)),
+    url(r"^logout/", logout_and_redirect, name="logout"),
+    url(r"^status/", status_offload),
+    url("", include("social_django.urls", namespace="social")),
+    url("", include("inthe_am.taskmanager.urls")),
+] + staticfiles_urlpatterns()

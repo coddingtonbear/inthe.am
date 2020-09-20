@@ -19,21 +19,21 @@ def artificial_login(**credentials):
     # Create a fake request that goes through request middleware
     request = WSGIRequest(
         {
-            'HTTP_COOKIE': cookies.output(header='', sep=';'),
-            'PATH_INFO': str('/'),
-            'REMOTE_ADDR': str('127.0.0.1'),
-            'REQUEST_METHOD': str('GET'),
-            'SCRIPT_NAME': str(''),
-            'SERVER_NAME': str('testserver'),
-            'SERVER_PORT': str('80'),
-            'SERVER_PROTOCOL': str('HTTP/1.1'),
-            'wsgi.version': (1, 0),
-            'wsgi.url_scheme': str('http'),
-            'wsgi.input': BytesIO(),
-            'wsgi.errors': BytesIO(),
-            'wsgi.multiprocess': True,
-            'wsgi.multithread': False,
-            'wsgi.run_once': False,
+            "HTTP_COOKIE": cookies.output(header="", sep=";"),
+            "PATH_INFO": "/",
+            "REMOTE_ADDR": "127.0.0.1",
+            "REQUEST_METHOD": "GET",
+            "SCRIPT_NAME": "",
+            "SERVER_NAME": "testserver",
+            "SERVER_PORT": "80",
+            "SERVER_PROTOCOL": "HTTP/1.1",
+            "wsgi.version": (1, 0),
+            "wsgi.url_scheme": "http",
+            "wsgi.input": BytesIO(),
+            "wsgi.errors": BytesIO(),
+            "wsgi.multiprocess": True,
+            "wsgi.multithread": False,
+            "wsgi.run_once": False,
         }
     )
     request.session = engine.SessionStore()
@@ -46,11 +46,11 @@ def artificial_login(**credentials):
     session_cookie = settings.SESSION_COOKIE_NAME
     cookies[session_cookie] = request.session.session_key
     cookie_data = {
-        'max-age': None,
-        'path': '/',
-        'domain': settings.SESSION_COOKIE_DOMAIN,
-        'secure': settings.SESSION_COOKIE_SECURE or None,
-        'expires': None,
+        "max-age": None,
+        "path": "/",
+        "domain": settings.SESSION_COOKIE_DOMAIN,
+        "secure": settings.SESSION_COOKIE_SECURE or None,
+        "expires": None,
     }
     cookies[session_cookie].update(cookie_data)
     return {

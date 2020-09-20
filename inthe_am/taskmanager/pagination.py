@@ -17,9 +17,9 @@ class HeaderLimitOffsetPagination(LimitOffsetPagination):
         elif previous_url is not None:
             link = '<{previous_url}>; rel="prev"'
         else:
-            link = ''
+            link = ""
 
         link = link.format(next_url=next_url, previous_url=previous_url)
-        headers = {'Link': link} if link else {}
+        headers = {"Link": link} if link else {}
 
         return Response(data, headers=headers)
