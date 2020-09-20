@@ -36,9 +36,10 @@ RUN_LOCALLY = {
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = [
-    os.environ["HOSTNAME"],
-]
+DOMAIN_NAME = os.environ.get("DOMAIN_NAME", "localhost")
+
+# Nginx is the only route to reach this, and it will be
+ALLOWED_HOSTS = [DOMAIN_NAME]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -246,7 +247,7 @@ TASKD_HTTP = os.environ.get("TASKD_HTTP", "taskd:8000")
 TESTING_LOGIN_USER = "im_a"
 TESTING_LOGIN_PASSWORD = "robot"
 
-TRELLO_SUBSCRIPTION_DOMAIN = "https://inthe.am"
+TRELLO_SUBSCRIPTION_DOMAIN = f"https://${DOMAIN_NAME}"
 TRELLO_UPDATE_MARGIN_SECONDS = 15
 
 ANNOUNCEMENTS_CHANNEL = "__general__"
