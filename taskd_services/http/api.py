@@ -4,7 +4,7 @@ import os
 import subprocess
 import tempfile
 
-from flask import Flask, request, redirect, send_file
+from flask import Flask, request, send_file
 from flask_restful import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 
@@ -231,9 +231,7 @@ class TaskdAccount(Resource):
         elif is_suspended is False:
             cred.resume()
 
-        return redirect(
-            api.url_for(TaskdAccount, org_name=org_name, user_name=user_name,)
-        )
+        return None
 
     def get(self, org_name, user_name):
         cred = Credential.query.filter_by(
