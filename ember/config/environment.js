@@ -41,6 +41,10 @@ module.exports = function(environment) {
     ENV.APP.rootElement = '#ember-testing';
   }
 
+  if (environment === 'staging') {
+    ENV.APP.API_HOST = 'https://staging.inthe.am/';
+  }
+
   if (environment === 'production') {
     ENV.APP.API_HOST = 'https://inthe.am/';
   }
