@@ -20,8 +20,8 @@ RUN git clone https://github.com/coddingtonbear/taskserver &&\
   git pull &&\
   git checkout inthe_am_dockerized &&\
   cmake \
-    -DCMAKE_INSTALL_PREFIX=/usr \
-    -DREDOX_INCLUDE_DIR=../redox/include &&\
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DREDOX_INCLUDE_DIR=../redox/include &&\
   make && make install
 
 COPY docker/taskd/simple_taskd_configuration.conf /var/taskd/config
@@ -31,7 +31,7 @@ COPY docker/taskd/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY taskd_services/http/api.py /app/api.py
 COPY taskd_services/http/requirements.txt /tmp/requirements.txt
 
-RUN pip install --no-cache -r /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
 
 # Configure container
 VOLUME ["${TASKDDATA}"]
