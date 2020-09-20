@@ -9,15 +9,15 @@ RUN apt-get install -y build-essential git supervisor uuid-dev cmake \
   libgnutls28-dev gnutls-bin libev-dev libhiredis-dev libjsoncpp-dev \
   libsqlite3-dev
 # This is the library used for communicating with Redis
-RUN git clone https://github.com/hmartiro/redox &&\
+RUN git clone https://github.com/coddingtonbear/redox &&\
   cd redox &&\
+  git checkout intheam_debug &&\
   cmake . &&\
   make && make install &&\
   mv /usr/local/lib64/* /usr/lib/x86_64-linux-gnu
 # & install the taskserver itself
 RUN git clone https://github.com/coddingtonbear/taskserver &&\
   cd taskserver &&\
-  git pull &&\
   git checkout inthe_am_dockerized &&\
   cmake \
   -DCMAKE_INSTALL_PREFIX=/usr \
