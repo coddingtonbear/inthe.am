@@ -334,10 +334,10 @@ class TaskdData(Resource):
 
 
 api.add_resource(ServerConfig, "/")
-api.add_resource(TaskdAccount, "/<org_name>/<user_name>")
+api.add_resource(TaskdAccount, "/<org_name>/<user_name>/")
 api.add_resource(TaskdCertificates, "/<org_name>/<user_name>/certificates/")
 api.add_resource(
-    TaskdCertificateDetails, "/<org_name>/<user_name>/certificates/<fingerprint>"
+    TaskdCertificateDetails, "/<org_name>/<user_name>/certificates/<fingerprint>/"
 )
 api.add_resource(TaskdData, "/<org_name>/<user_name>/data/")
 
