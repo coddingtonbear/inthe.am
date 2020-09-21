@@ -12,6 +12,9 @@
     "build": "ember build",
     "test": "ember test"
   },
+  "jshintConfig": {
+    "esversion": 6
+  },
   "repository": "",
   "engines": {
     "node": ">= 0.10.0"

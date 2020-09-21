@@ -65,24 +65,36 @@ services:
       - task-data:/task_data
     networks:
       - backend
+  ember:
+    build:
+      dockerfile: ./docker/ember/Dockerfile
+      context: ./
+    volumes:
+      - ./ember:/app
+      - ember-assets:/dist
+    env_file:
+      - .env
+      - .private.env
+    networks:
+      - backend
   nginx:
     restart: always
     build:
       dockerfile: ./docker/nginx/Dockerfile
       context: ./
-      args:
-        EMBER_BUILD_ENVIRONMENT: 'development'
     ports:
       - "80:80"
       - "443:443"
     links:
       - web:web
     volumes:
-      - django-static-assets:/app/static:ro
+      - ember-assets:/app
+      - django-static-assets:/app/static
     networks:
       - backend
     links:
       - web:web
+      - ember:ember
   postgres:
     restart: always
     image: postgres:alpine
@@ -121,5 +133,6 @@ volumes:
   taskd-data:
     external: true
   django-static-assets:
+  ember-assets:
 networks:
   backend:

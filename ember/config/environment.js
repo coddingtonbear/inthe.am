@@ -19,7 +19,7 @@ module.exports = function(environment) {
     }
   };
 
-  ENV.APP.API_HOST = 'https://localhost'
+  ENV.APP.API_HOST = 'https://' + process.env.DOMAIN_NAME
   ENV.APP.API_NAMESPACE = 'api/v2'
 
   if (environment === 'development') {
