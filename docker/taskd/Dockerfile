@@ -32,8 +32,11 @@ COPY taskd_services/http/requirements.txt /tmp/requirements.txt
 
 RUN pip install -r /tmp/requirements.txt
 
-# Configure container
-VOLUME ["${TASKDDATA}"]
+VOLUME /var/taskd
+
+RUN mkdir -p /var/taskd/pki
+VOLUME /var/taskd/pki
+
 EXPOSE 53589
 EXPOSE 8000
 ENTRYPOINT /usr/bin/supervisord --nodaemon

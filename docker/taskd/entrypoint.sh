@@ -5,13 +5,13 @@ if [ ! -d $TASKDDATA ]; then
     echo "Task data is not mounted!"
     exit 1
 fi
-if [ ! -d ${TASKDDATA}/pki ]; then
+if [ ! -f ${TASKDDATA}/pki/generated ]; then
     cd $TASKDDATA
     taskd init
     taskd add org inthe_am
     taskd add org testing
 
-    mkdir ${TASKDDATA}/pki
+    touch ${TASKDDATA}/pki/generated
     cp /taskserver/pki/generate* ${TASKDDATA}/pki
     cp /taskserver/pki/vars ${TASKDDATA}/pki
     cd ${TASKDDATA}/pki

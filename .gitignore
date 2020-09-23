@@ -52,3 +52,4 @@ docker/data/
 .mypy_cache
 taskd_services/http/env
 test_taskstore/*
+secrets/*

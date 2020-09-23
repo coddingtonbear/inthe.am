@@ -9,3 +9,4 @@ RUN mkdir /app
 
 VOLUME /app
 VOLUME /app/static
+VOLUME /certificates
