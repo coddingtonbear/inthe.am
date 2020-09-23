@@ -52,7 +52,7 @@ services:
       dockerfile: ./docker/django/Dockerfile
       args:
         SUPERVISORD_CONFIG: ./docker/django/supervisord.celery.conf
-        CRONTAB: ./docker/django/janitor.crontab
+        CRONTAB: ./docker/django/celery.crontab
     links:
       - postgres:postgres
       - redis:redis
