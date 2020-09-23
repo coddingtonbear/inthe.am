@@ -9,13 +9,18 @@ RUN apt-get update && \
 RUN apt-get install -y postgresql-client git taskwarrior \
   python-dev gettext vim libxml2-dev libxslt-dev \
   libcurl4-gnutls-dev build-essential libgnutls28-dev \
-  libpcre3 libpcre3-dev gnutls-bin supervisor
+  libpcre3 libpcre3-dev gnutls-bin supervisor cron
 
 RUN pip install --upgrade pip
 COPY requirements-frozen.txt /tmp
 RUN pip install -r /tmp/requirements-frozen.txt
 COPY ./docker/django/gitconfig /root/.gitconfig
 COPY ./docker/django/entrypoint.sh /app/run.sh
+
+ARG CRONTAB=./docker/django/empty.crontab
+COPY ${CRONTAB} /etc/cron/tasks.crontab
+RUN chmod 0644 /etc/cron/tasks.crontab &&\
+  crontab /etc/cron/tasks.crontab
 
 ARG SUPERVISORD_CONFIG
 COPY $SUPERVISORD_CONFIG /etc/supervisor/conf.d/service.conf

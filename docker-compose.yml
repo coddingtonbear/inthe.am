@@ -45,6 +45,27 @@ services:
       - task-data:/task_data
     networks:
       - backend
+  janitor:
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./docker/django/Dockerfile
+      args:
+        SUPERVISORD_CONFIG: ./docker/django/supervisord.janitor.conf
+        CRONTAB: ./docker/django/janitor.crontab
+    links:
+      - postgres:postgres
+      - redis:redis
+      - memcached:memcached
+      - taskd:taskd
+    env_file:
+      - .env
+      - .private.env
+    volumes:
+      - ./:/data/web
+      - task-data:/task_data
+    networks:
+      - backend
   celery:
     restart: always
     build:
