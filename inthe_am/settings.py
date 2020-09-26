@@ -270,11 +270,16 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
     "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", ""
 )
 
-AWS_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY", "")
+AWS_DEFAULT_ACL = None
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
 AWS_STORAGE_BUCKET_NAME = os.environ.get(
     "AWS_STORAGE_BUCKET_NAME", "intheam-attachments"
 )
+
+INCOMING_TASK_MAILBOX_NAME = "Incoming Tasks"
+INCOMING_TASK_MAIL_HOSTNAME = "0.0.0.0"
+INCOMING_TASK_MAIL_PORT = 8025
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "localhost")
