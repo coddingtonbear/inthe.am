@@ -14,3 +14,4 @@ tmp/*
 ember/bower_components/*
 ember/dist/*
 ember/node_modules/*
+ember/tmp/*
