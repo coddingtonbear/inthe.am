@@ -1,0 +1,16 @@
+.git/*
+bin/*
+env/*
+dist/*
+.cache/*
+include/*
+lib/*
+share/*
+src/*
+.mypy_cahce/*
+logs/*
+tmp/*
+.vscode/*
+ember/bower_components/*
+ember/dist/*
+ember/node_modules/*
