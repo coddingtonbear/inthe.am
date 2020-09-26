@@ -61,6 +61,8 @@ services:
     env_file:
       - .env
       - .private.env
+    ports:
+      - "25:8025"
     volumes:
       - ./:/data/web
       - task-data:/task_data
