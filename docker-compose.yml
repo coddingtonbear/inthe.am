@@ -89,7 +89,7 @@ services:
     links:
       - web:web
     volumes:
-      - ./secrets/nginx:/certificates
+      - ./docker/nginx/secrets:/certificates
       - ember-assets:/app
       - django-static-assets:/app/static
     networks:
@@ -127,7 +127,7 @@ services:
       - redis:redis
     volumes:
       - taskd-data:/var/taskd
-      - ./secrets/taskd:/var/taskd/pki
+      - ./docker/taskd/secrets:/var/taskd/pki
 volumes:
   db-data:
     external: true
