@@ -20,6 +20,7 @@ class TaskStoreActivityLog(models.Model):
         self.store.publish_announcement(
             "log_message",
             {
+                "username": self.store.user.username,
                 "md5hash": self.md5hash,
                 "last_seen": self.last_seen,
                 "created": self.created,

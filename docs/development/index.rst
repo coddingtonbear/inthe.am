@@ -6,6 +6,7 @@ Developing for Inthe.AM
 
 .. toctree::
    architecture
+   event_bus
    development_environment_setup
    testing
    contributions

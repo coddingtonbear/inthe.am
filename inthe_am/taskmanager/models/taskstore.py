@@ -476,6 +476,7 @@ class TaskStore(models.Model):
         return self._redis
 
     def publish_personal_announcement(self, message):
+        message["username"] = self.user.username
         self.publish_announcement("personal", message)
 
     def publish_announcement(self, prefix, message):
