@@ -64,9 +64,9 @@ def process_email_message(self, message_id):
                 params = arg.split("=")
                 if params[0] == "priority":
                     params[1] = params[1].upper()
-                args.append('%s:"%s"' % tuple(params))
+                args.append(f'{params[0]}:"{params[1]}"')
             else:
-                args.append("+%s" % arg)
+                args.append(f"+{arg}")
 
         return inbox_id, args
 
@@ -116,7 +116,7 @@ def process_email_message(self, message_id):
         "username": store.user.username,
         "message_id": message.pk,
         "subject": message.subject,
-        "accepted": True
+        "accepted": True,
     }
 
     allowed = False
@@ -126,25 +126,25 @@ def process_email_message(self, message_id):
 
     if not allowed:
         log_args = (
-            "Incoming task creation e-mail (ID: %s) from '%s' "
-            "does not match email whitelist and was ignored."
-            % (message.pk, message.from_address[0]),
+            f"Incoming task creation e-mail (ID: {message.pk}) from "
+            f"'{message.from_address[0]}' does not match email "
+            "whitelist and was ignored."
         )
         logger.info(*log_args)
         store.log_message(*log_args)
 
         pubsub_message["accepted"] = False
-        pubsub_message["rejection_reason"] = 'passlist'
+        pubsub_message["rejection_reason"] = "passlist"
         store.publish_announcement("incoming_mail", pubsub_message)
         return
 
-    if (not message.subject or message.subject.lower() in ["add", "create", "new"]):
+    if not message.subject or message.subject.lower() in ["add", "create", "new"]:
         with git_checkpoint(store, "Incoming E-mail"):
             task_args = (
                 [
                     "add",
-                    'intheamoriginalemailsubject:"%s"' % message.subject,
-                    "intheamoriginalemailid:%s" % message.pk,
+                    f'intheamoriginalemailsubject:"{message.subject}"',
+                    f"intheamoriginalemailid:{message.pk}",
                 ]
                 + additional_args
                 + shlex.split(
@@ -171,17 +171,13 @@ def process_email_message(self, message_id):
                         attachment.file.size,
                     )
                     store.log_message(
-                        "Attachments must be smaller than %s "
+                        "Attachments must be smaller than "
+                        f"{settings.FILE_UPLOAD_MAXIMUM_BYTES} "
                         "bytes to be saved to a task, but the "
-                        "attachment %s received for task ID %s "
-                        "is %s bytes in size and was not saved "
-                        "as a result."
-                        % (
-                            settings.FILE_UPLOAD_MAXIMUM_BYTES,
-                            attachment.file.name,
-                            task_id,
-                            attachment.file.size,
-                        )
+                        f"attachment {attachment.file.name} "
+                        f"received for task ID {task_id} "
+                        f"is {attachment.file.size} bytes in size "
+                        "and was not saved as a result."
                     )
                     attachment.delete()
                     continue
@@ -197,7 +193,7 @@ def process_email_message(self, message_id):
                 )
                 attachment_urls.append(document.document.url)
                 store.client.task_annotate(
-                    task, "Attached File: %s" % document.document.url
+                    task, f"Attached File: {document.document.url}"
                 )
 
             if attachment_urls:
@@ -205,24 +201,25 @@ def process_email_message(self, message_id):
                 store.client.task_update(task)
 
         log_args = (
-            "Added task %s via e-mail %s from %s."
-            % (task_id, message.pk, message.from_address[0]),
+            f"Added task {task.id} via e-mail {message.pk} "
+            f"from {message.from_address[0]}."
         )
         logger.info(*log_args)
         store.log_message(*log_args)
 
-        pubsub_message['task_id'] = task_id
+        pubsub_message["task_id"] = task_id
         store.publish_announcement("incoming_mail", pubsub_message)
     else:
         log_args = (
-            "Unable to process e-mail %s from %s; unknown subject '%s'"
-            % (message.pk, message.from_address[0], message.subject,),
+            f"Unable to process e-mail {message.pk} "
+            f"from {message.from_address[0]}; "
+            f"unknown subject '{message.subject}'"
         )
         logger.info(*log_args)
         store.log_message(*log_args)
 
         pubsub_message["accepted"] = False
-        pubsub_message["rejection_reason"] = 'subject'
+        pubsub_message["rejection_reason"] = "subject"
         store.publish_announcement("incoming_mail", pubsub_message)
 
 
@@ -531,7 +528,7 @@ def update_trello(self, store_id, debounce_id=None, current_head=None, **kwargs)
                     idList=todo_column.id,
                 )
                 result = obj.client_request(
-                    "PUT", "/1/cards/%s/pos" % obj.id, data={"value": "top"},
+                    "PUT", f"/1/cards/{obj.id}/pos", data={"value": "top"},
                 )
                 if not (200 <= result.status_code < 300):
                     logger.warning(
