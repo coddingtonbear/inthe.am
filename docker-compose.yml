@@ -3,6 +3,7 @@ version: '3'
 services:
   web:
     restart: always
+    image: coddingtonbear/intheam_web
     build:
       context: ./
       dockerfile: ./docker/django/Dockerfile
@@ -25,6 +26,7 @@ services:
       - backend
   sse:
     restart: always
+    image: coddingtonbear/intheam_sse
     build:
       context: ./
       dockerfile: ./docker/django/Dockerfile
@@ -47,6 +49,7 @@ services:
       - backend
   celery:
     restart: always
+    image: coddingtonbear/intheam_celery
     build:
       context: ./
       dockerfile: ./docker/django/Dockerfile
@@ -69,6 +72,7 @@ services:
     networks:
       - backend
   ember:
+    image: coddingtonbear/intheam_ember
     build:
       dockerfile: ./docker/ember/Dockerfile
       context: ./
@@ -82,6 +86,7 @@ services:
       - backend
   nginx:
     restart: always
+    image: coddingtonbear/intheam_nginx
     build:
       dockerfile: ./docker/nginx/Dockerfile
       context: ./
@@ -118,6 +123,7 @@ services:
     networks:
       - backend
   taskd:
+    image: coddingtonbear/intheam_taskd
     build:
       dockerfile: ./docker/taskd/Dockerfile
       context: ./
