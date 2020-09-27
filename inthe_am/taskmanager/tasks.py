@@ -1,8 +1,8 @@
 from fnmatch import fnmatch as glob
-import json
 import logging
 import re
 import shlex
+from typing import Dict, Any, Optional
 
 from celery import shared_task
 from celery.signals import setup_logging
@@ -74,7 +74,7 @@ def process_email_message(self, message_id):
     message.read = now()
     message.save()
 
-    store = None
+    store: Optional[TaskStore] = None
     additional_args = []
     # Check for matching To: addresses.
     for address in message.to_addresses:
@@ -112,6 +112,13 @@ def process_email_message(self, message_id):
         )
         return
 
+    pubsub_message: Dict[str, Any] = {
+        "username": store.user.username,
+        "message_id": message.pk,
+        "subject": message.subject,
+        "accepted": True
+    }
+
     allowed = False
     for address in store.email_whitelist.split("\n"):
         if glob(message.from_address[0], address):
@@ -125,9 +132,13 @@ def process_email_message(self, message_id):
         )
         logger.info(*log_args)
         store.log_message(*log_args)
+
+        pubsub_message["accepted"] = False
+        pubsub_message["rejection_reason"] = 'passlist'
+        store.publish_announcement("incoming_mail", pubsub_message)
         return
 
-    if (not message.subject or message.subject.lower() in ["add", "create", "new"],):
+    if (not message.subject or message.subject.lower() in ["add", "create", "new"]):
         with git_checkpoint(store, "Incoming E-mail"):
             task_args = (
                 [
@@ -141,7 +152,7 @@ def process_email_message(self, message_id):
                     # blank line.
                 )
             )
-            stdout, stderr = store.client._execute_safe(*task_args)
+            store.client._execute_safe(*task_args)
             task = store.client.get_task(intheamoriginalemailid=message.pk)[1]
             task_id = str(task["uuid"])
 
@@ -199,6 +210,9 @@ def process_email_message(self, message_id):
         )
         logger.info(*log_args)
         store.log_message(*log_args)
+
+        pubsub_message['task_id'] = task_id
+        store.publish_announcement("incoming_mail", pubsub_message)
     else:
         log_args = (
             "Unable to process e-mail %s from %s; unknown subject '%s'"
@@ -206,6 +220,10 @@ def process_email_message(self, message_id):
         )
         logger.info(*log_args)
         store.log_message(*log_args)
+
+        pubsub_message["accepted"] = False
+        pubsub_message["rejection_reason"] = 'subject'
+        store.publish_announcement("incoming_mail", pubsub_message)
 
 
 @shared_task(

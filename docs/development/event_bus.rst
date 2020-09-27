@@ -79,6 +79,20 @@ to a user's taskstore logs.
      count: number  // Number of times this message has been seen
    }
 
+`incoming_mail.<USERNAME>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: ts
+
+   interface Message {
+     username: string
+     message_id: number
+     subject: string
+     accepted: boolean
+     rejection_reason?: 'passlist' | 'subject'  // If not accepted
+     task_id?: string  // UUID
+   }
+
 
 Taskd
 -----
