@@ -3,7 +3,6 @@ import logging
 
 import oauthlib.oauth1
 import requests
-import urllib
 from urllib.parse import parse_qs, urlencode
 
 from django.conf import settings
@@ -56,7 +55,7 @@ def get_authorize_url(request, api_key, user):
 
     client = get_lock_redis()
     client.setex(
-        "%s.trello_auth" % user.username, 600, json.dumps(request_token),
+        f"{user.username}.trello_auth", 600, json.dumps(request_token),
     )
 
     params = {
@@ -65,7 +64,7 @@ def get_authorize_url(request, api_key, user):
         "expiration": "never",
         "scope": "read,write",
     }
-    return "{url}?{params}".format(url=AUTHORIZE_URL, params=urlencode(params))
+    return f"{AUTHORIZE_URL}?{urlencode(params)}"
 
 
 def get_access_token(request, api_key, request_token):

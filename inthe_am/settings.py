@@ -30,7 +30,7 @@ DEBUG = bool(os.environ.get("DEBUG", False))
 RUN_LOCALLY = {
     "python_path": "python3",
     "runserver_port": 8001,
-    "ember_path": "%s/node_modules/.bin/ember" % BASE_DIR,
+    "ember_path": f"{BASE_DIR}/node_modules/.bin/ember",
     "ember_port": 8009,
 }
 
@@ -224,8 +224,8 @@ if os.path.exists(os.path.join(BASE_DIR, ".git")):
         check_output(
             [
                 "git",
-                "--work-tree=%s" % BASE_DIR,
-                "--git-dir=%s" % os.path.join(BASE_DIR, ".git"),
+                f"--work-tree={BASE_DIR}",
+                f"--git-dir={os.path.join(BASE_DIR, '.git')}",
                 "rev-parse",
                 "HEAD",
             ]

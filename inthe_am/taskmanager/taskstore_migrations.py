@@ -12,7 +12,7 @@ CURRENT_TASKSTORE_VERSION = 1
 def upgrade(store):
     while store.version < CURRENT_TASKSTORE_VERSION:
         target_version = store.version + 1
-        migrator = getattr(sys.modules[__name__], "migrate_%s" % target_version, None)
+        migrator = getattr(sys.modules[__name__], f"migrate_{target_version}", None)
         if migrator is None:
             logger.error(
                 "Attempted to migrate %s to %s but migration not found!",

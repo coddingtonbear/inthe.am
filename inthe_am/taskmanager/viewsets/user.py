@@ -40,7 +40,7 @@ def get_published_properties(user, store, meta):
         "sms_arguments": store.sms_arguments,
         "sms_replies": store.sms_replies,
         "email_whitelist": store.email_whitelist,
-        "task_creation_email_address": "%s@inthe.am" % (store.secret_id),
+        "task_creation_email_address": f"{store.secret_id}@inthe.am",
         "taskrc_extras": store.taskrc_extras,
         "api_key": store.api_key.key,
         "tos_up_to_date": meta.tos_up_to_date,
@@ -87,12 +87,8 @@ def get_system_udas_as_config():
     for uda_name, uda_properties in config_overrides.items():
         overrides.extend(
             [
-                "uda.{name}.type={type}".format(
-                    name=uda_name, type=uda_properties.get("type"),
-                ),
-                "uda.{name}.label={label}".format(
-                    name=uda_name, label=uda_properties.get("label"),
-                ),
+                f"uda.{uda_name}.type={uda_properties.get('type')}",
+                f"uda.{uda_name}.label={uda_properties.get('label')}",
             ]
         )
     return "\n".join(overrides)
@@ -117,7 +113,7 @@ class UserViewSet(viewsets.ViewSet):
             response = HttpResponse(outfile.read(), content_type=content_type)
             response[
                 "Content-Disposition"
-            ] = 'attachment; filename="%s"' % os.path.basename(filepath)
+            ] = f'attachment; filename="{os.path.basename(filepath)}"'
             return response
 
     @action(detail=False, methods=["get"])

@@ -5,7 +5,6 @@ WSGI config for Inthe.AM's status server.
 import datetime
 import json
 import logging
-import os
 import pickle
 from queue import Queue
 import time
@@ -133,7 +132,7 @@ class Application:
         self.queue = Queue()
 
         client = get_lock_redis()
-        pickled_data = pickle.loads(client.get("pickle_{}".format(env["PICKLE_ID"])))
+        pickled_data = pickle.loads(client.get(f"pickle_{env['PICKLE_ID']}"))
         self.store = pickled_data["taskstore"]
         self.username = pickled_data["username"]
 
@@ -182,7 +181,7 @@ class Application:
     def generator(self):
         try:
             if not self.initialized:
-                yield "retry: %s\n\n" % self.ERROR_RETRY_DELAY
+                yield f"retry: {self.ERROR_RETRY_DELAY}\n\n"
                 return
 
             self.beat_heart()
@@ -205,15 +204,15 @@ class Application:
                         continue
 
                     if message.get("name"):
-                        yield "event: {name}\n".format(name=message["name"])
-                    yield "data: {data}\n".format(data=message.get("data", ""))
+                        yield f"event: {message['name']}\n"
+                    yield f"data: {message.get('data', '')}\n"
                     yield "\n"
 
                 # Relax
                 sleep(settings.EVENT_STREAM_LOOP_INTERVAL)
             self.subscription.unsubscribe()
             self.subscription.close()
-        except Exception as e:
+        except Exception:
             self.subscription.unsubscribe()
             self.subscription.close()
             raise

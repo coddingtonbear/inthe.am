@@ -84,9 +84,7 @@ def clicks_link(context, anchor_text):
 
 @when('the user clicks the link with the class "{class_name}"')
 def clicks_link_class(context, class_name):
-    result = find_element_and_do(
-        context.browser.find_by_css, args=(".%s" % class_name,)
-    )
+    result = find_element_and_do(context.browser.find_by_css, args=(f".{class_name}",))
     if not result:
         assert False, f"No links having the class {class_name} are clickable."
 
@@ -120,7 +118,7 @@ def user_clicks_button_labeled(context, label):
         test=lambda x: x.visible and x.text == label,
     )
     if not result:
-        assert False, "No button with label %s could be clicked" % label
+        assert False, f"No button with label {label} could be clicked"
 
 
 @when("the user enters his credentials if necessary")
@@ -182,7 +180,7 @@ def save_page_details(context):
 @step('save a screenshot as "{name}"')
 def save_a_screenshot(context, name=None):
     if name is None:
-        name = "screenshot_%s" % datetime.datetime.now().isoformat("T")
+        name = f"screenshot_{datetime.datetime.now().isoformat('T')}"
     context.browser.screenshot(name)
 
 
@@ -190,9 +188,9 @@ def save_a_screenshot(context, name=None):
 @step('save console output as "{name}"')
 def save_console_output(context, name=None):
     if name is None:
-        name = "console_%s" % datetime.datetime.now().isoformat("T")
+        name = f"console_{datetime.datetime.now().isoformat('T')}"
     result = context.browser.evaluate_script("CONSOLE_LOG")
-    with open("/tmp/%s.txt" % name, "w") as out:
+    with open(f"/tmp/{name}.txt", "w") as out:
         for row in result:
             out.write(" ".join([json.dumps(o) for o in row]) + "\n")
 
@@ -205,4 +203,4 @@ def watch_for_page_transition(context, url):
         if url in context.browser.driver.current_url:
             return True
         time.sleep(1)
-    assert False, "Current URL is %s" % context.browser.driver.current_url
+    assert False, f"Current URL is {context.browser.driver.current_url}"

@@ -21,7 +21,7 @@ class Command(BaseCommand):
                 CONFIG.get("python_path", "/usr/bin/python"),
                 "manage.py",
                 "runserver",
-                "0.0.0.0:%s" % CONFIG.get("runserver_port", 8001),
+                f"0.0.0.0:{CONFIG.get('runserver_port', 8001)}",
             ],
             env=os.environ.copy(),
         )
@@ -37,7 +37,7 @@ class Command(BaseCommand):
                 "--live-reload-port",
                 str(CONFIG.get("ember_port", 8009)),
             ],
-            **kwargs
+            **kwargs,
         )
         self.pids.append(proc.pid)
         os.waitpid(proc.pid, 0)
@@ -46,8 +46,8 @@ class Command(BaseCommand):
         for pid in self.pids:
             try:
                 os.kill(pid, signal.SIGKILL)
-            except:
-                print("\033[31mFailed to kill PID %s\033[m" % pid)
+            except Exception:
+                print(f"Failed to kill PID {pid}")
 
     def handle(self, *args, **kwargs):
         print("\033[31m Note: It will take a few seconds for both necessary")

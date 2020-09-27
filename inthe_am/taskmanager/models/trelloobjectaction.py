@@ -182,7 +182,7 @@ class TrelloObjectAction(models.Model):
 
         self.model.reconcile()
 
-        reconciliation_method = "reconcile_%s" % self.type
+        reconciliation_method = f"reconcile_{self.type}"
         if hasattr(self, reconciliation_method):
             getattr(self, reconciliation_method)()
 

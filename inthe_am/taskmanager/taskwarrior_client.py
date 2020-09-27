@@ -8,7 +8,6 @@ import tempfile
 import uuid
 import weakref
 
-import six
 import taskw.utils
 from taskw import TaskWarriorShellout, utils
 from taskw.task import Task as TaskwTask
@@ -124,7 +123,7 @@ class TaskwarriorClient(TaskWarriorShellout):
         logger = self._get_logger(args)
 
         command = (
-            ["task", "rc:%s" % self.config_filename,]
+            ["task", f"rc:{self.config_filename}",]
             + config_overrides
             + [str(arg) for arg in args]
         )
@@ -162,8 +161,8 @@ class TaskwarriorClient(TaskWarriorShellout):
         base_command = args[0]
         if proc.returncode != 0 and base_command not in self.NONZERO_ALERT_EXEMPT:
             logger.warning(
-                "Non-zero return code returned from taskwarrior: %s; %s"
-                % (proc.returncode, stderr,),
+                "Non-zero return code returned from taskwarrior: "
+                f"{proc.returncode}; {stderr}",
                 extra={
                     "stack": True,
                     "data": {

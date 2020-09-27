@@ -2,7 +2,6 @@ import datetime
 import json
 import logging
 import re
-import uuid
 
 from django.contrib.auth.models import User
 from django.http import (
@@ -32,7 +31,6 @@ from ..decorators import git_managed, requires_task_store
 from ..lock import get_lock_name_for_store, get_lock_redis
 from ..serializers.task import TaskSerializer
 from ..tasks import (
-    deduplicate_tasks,
     process_trello_action,
     reset_trello,
     sync_trello_tasks,
@@ -281,7 +279,7 @@ class TaskViewSet(viewsets.ViewSet):
         store = models.TaskStore.get_for_user(token.user)
 
         client = get_lock_redis()
-        raw_value = client.get("%s.trello_auth" % token.user.username,)
+        raw_value = client.get(f"{token.user.username}.trello_auth",)
         if not raw_value:
             raise PermissionDenied(
                 "Arrived at Trello authorization URL without having "
@@ -350,7 +348,7 @@ def ical_feed(request, variant, secret_id):
         return HttpResponseNotFound()
     try:
         store = models.TaskStore.objects.get(secret_id=secret_id)
-    except:
+    except Exception:
         return HttpResponseNotFound()
 
     if not store.ical_enabled:
@@ -374,7 +372,7 @@ def ical_feed(request, variant, secret_id):
 
     calendar = Calendar()
     calendar.add("version", "2.0")
-    calendar.add("prodid", "-//inthe.am//ical.%s//" % variant)
+    calendar.add("prodid", f"-//inthe.am//ical.{variant}//")
     calendar.add("X-WR-CALNAME", calendar_title)
 
     for task in tasks:
@@ -397,7 +395,7 @@ def ical_feed(request, variant, secret_id):
 def incoming_trello(request, secret_id):
     try:
         store = models.TaskStore.objects.get(secret_id=secret_id)
-    except:
+    except Exception:
         return HttpResponseNotFound()
 
     if request.method == "POST":
@@ -439,7 +437,7 @@ def incoming_sms(request, username):
         ]
         if incoming_number not in valid_numbers:
             log_args = (
-                "Incoming SMS for %s, but phone number %s is not " "in the whitelist.",
+                "Incoming SMS for %s, but phone number %s is not in the passlist.",
                 user,
                 incoming_number,
             )
@@ -486,8 +484,7 @@ def incoming_sms(request, username):
             if store.sms_replies >= store.REPLY_ERROR:
                 r.sms("Bad Request: Unknown command.")
             log_args = (
-                "Incoming SMS from %s had no recognized command: '%s'."
-                % (from_, body,),
+                f"Incoming SMS from {from_} had no recognized command: '{body}'.",
             )
             logger.warning(*log_args)
             store.log_error(*log_args)
@@ -509,9 +506,10 @@ def incoming_sms(request, username):
                 r.sms("Added.")
 
             log_args = (
-                "Added task via SMS from %s; message '%s'; "
-                "automatic args: '%s';"
-                "response: '%s'." % (from_, body, store.sms_arguments, stdout,),
+                f"Added task via SMS from {from_}; "
+                f"message '{body}'; "
+                f"automatic args: '{store.sms_arguments}'; "
+                f"response: '{stdout}'."
             )
             logger.info(*log_args)
             store.log_message(*log_args)

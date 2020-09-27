@@ -357,7 +357,7 @@
                                 <div class="block warning">
                                     <p>
                                         For your security, the ability to receive tasks via email
-                                        requires that you enter email addresses into the whitelist
+                                        requires that you enter email addresses into the passlist
                                         below to prevent others from being able to add tasks to your
                                         task list.
                                     </p>
@@ -427,10 +427,10 @@
                             {{/unless}}
                         </div>
                         <div class="large-12 columns">
-                            <label>Email Address Whitelist</label>
+                            <label>Email Address Passlist</label>
                             {{textarea name="email_whitelist" value=applicationController.user.email_whitelist placeholder="me@somesite.com"}}
                             <p class="input-note">
-                                Only email messages received from addresses matching one of the above whitelisted email addresses will be accepted.
+                                Only email messages received from addresses matching one of the above passlisted email addresses will be accepted.
                                 Please enter only one email address per line.
                                 You may use '*' and '?' for more sophisticated email matching.
                             </p>
@@ -533,7 +533,7 @@
                             }}
                         </div>
                         <div class="large-12 columns">
-                            <label>Phone Number Whitelist</label>
+                            <label>Phone Number Passlist</label>
                             {{textarea name="sms_whitelist" value=applicationController.user.sms_whitelist placeholder="+15555555555"}}
                             <p class='input-note'>
                                 One phone number per line.  Leave empty to allow messages from any phone number.

@@ -65,7 +65,7 @@ def redis_lock(
             # Got the lock!
             try:
                 yield
-            except:
+            except Exception:
                 client.delete(name)
                 raise
             # Make sure that this operation didn't take longer than
@@ -101,7 +101,7 @@ def redis_lock(
             )
             try:
                 yield
-            except:
+            except Exception:
                 client.delete(name)
                 raise
             # Make sure that this operation didn't take longer than
@@ -137,4 +137,4 @@ def redis_lock(
         extra={"stack": True,},
         exc_info=True,
     )
-    raise LockTimeout("Unable to acquire lock %s" % name)
+    raise LockTimeout(f"Unable to acquire lock {name}")

@@ -24,8 +24,4 @@ class RestHook(models.Model):
         )
 
     def __str__(self):
-        return "{task_store} ({event_type}) --> {target_url}".format(
-            task_store=self.task_store,
-            event_type=self.event_type,
-            target_url=self.target_url,
-        )
+        return f"{self.task_store} ({self.event_type}) --> {self.target_url}"

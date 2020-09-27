@@ -53,7 +53,7 @@ class TaskRc:
             raise AttributeError("This instance is read-only.")
         with open(path, "w") as config:
             for include in includes:
-                config.write("include %s\n" % (include))
+                config.write(f"include {include}\n")
             for key, value in data.items():
                 config.write(f"{key}={value}\n")
 
@@ -114,4 +114,4 @@ class TaskRc:
         self._write()
 
     def __str__(self):
-        return ".taskrc at %s" % self.path
+        return f".taskrc at {self.path}"

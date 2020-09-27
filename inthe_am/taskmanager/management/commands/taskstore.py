@@ -1,5 +1,4 @@
 import datetime
-import json
 import traceback
 
 import progressbar
@@ -10,11 +9,7 @@ from django.db.models import Q
 from django.utils.timezone import now
 
 from inthe_am.taskmanager.models import TaskStore, TaskStoreStatistic
-from inthe_am.taskmanager.lock import (
-    get_lock_name_for_store,
-    get_lock_redis,
-    redis_lock,
-)
+from inthe_am.taskmanager.lock import get_lock_redis
 
 
 class Command(BaseCommand):
@@ -124,7 +119,7 @@ class Command(BaseCommand):
                             )
                         )
                     except Exception as e:
-                        print("> FAILED: %s" % e)
+                        print(f"> FAILED: {e}")
                         traceback.print_exc()
                 elif last_size_measurement.value > repack_size:
                     print(f"> Repacking {store}...")
@@ -139,7 +134,7 @@ class Command(BaseCommand):
                             )
                         )
                     except Exception as e:
-                        print("> FAILED: %s" % e)
+                        print(f"> FAILED: {e}")
                         traceback.print_exc()
         elif subcommand == "squash":
             store = TaskStore.objects.get(user__username=username)
@@ -150,18 +145,14 @@ class Command(BaseCommand):
             store.gc()
             ending_size = store.get_repository_size()
 
-            print(
-                ">> {diff} MB recovered".format(
-                    diff=int((starting_size - ending_size) / 1e6)
-                )
-            )
+            print(f">> {int((starting_size - ending_size) / 1000000.0)} MB recovered")
         elif subcommand == "delete_old_accounts":
             min_action_recency = now() - datetime.timedelta(days=min_use_recency_days)
             for store in TaskStore.objects.filter(
                 last_synced__lt=min_action_recency,
                 user__last_login__lt=min_action_recency,
             ).order_by("-last_synced"):
-                print("> Deleting %s" % store.local_path)
+                print(f"> Deleting {store.local_path}")
                 store.delete()
                 store.user.delete()
         elif subcommand == "list_old_accounts":

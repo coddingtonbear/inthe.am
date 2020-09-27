@@ -2,7 +2,6 @@ import datetime
 import json
 import logging
 import pytz
-import re
 import requests
 
 from dateutil.parser import parse
@@ -77,7 +76,7 @@ class TrelloObject(models.Model):
             method,
             "https://trello.com" + url,
             params=dict(key=client._apikey, token=client._token),
-            **request_kwargs
+            **request_kwargs,
         )
 
     def get_task(self):
@@ -130,7 +129,7 @@ class TrelloObject(models.Model):
         for list_data in self.client.get_list(self.id):
             try:
                 obj = TrelloObject.objects.get(id=list_data.get("id"))
-                self.add_log_data("Updating list %s" % list_data.get("id"))
+                self.add_log_data(f"Updating list {list_data.get('id')}")
                 obj.meta = list_data
                 obj.save()
                 known_lists.pop(obj.pk, None)
@@ -142,7 +141,7 @@ class TrelloObject(models.Model):
                     parent=self.store.trello_board,
                     meta=list_data,
                 )
-                self.add_log_data("Created list %s" % list_data.get("id"))
+                self.add_log_data(f"Created list {list_data.get('id')}")
                 obj.subscribe()
 
         for deleted_list in known_lists.values():
@@ -298,7 +297,7 @@ class TrelloObject(models.Model):
             label_map = {
                 slugify(label_data["name"]): label_data["id"]
                 for label_data in board.client_request(
-                    "GET", "/1/boards/%s/labels" % board.pk,
+                    "GET", f"/1/boards/{board.pk}/labels",
                 ).json()
                 if label_data["name"]
             }
@@ -368,9 +367,9 @@ class TrelloObject(models.Model):
         if self.type != self.BOARD:
             raise ValueError("This method is valid only for Board objects.")
 
-        for l in self.children.all():
-            if l.meta["name"] == name:
-                return l
+        for list_ in self.children.all():
+            if list_.meta["name"] == name:
+                return list_
 
         raise TrelloObject.DoesNotExist()
 
@@ -395,9 +394,7 @@ class TrelloObject(models.Model):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return "Trello {type} #{id} ({user})".format(
-            type=self.type.title(), id=self.id, user=self.store.user.username,
-        )
+        return f"Trello {self.type.title()} #{self.id} ({self.store.user.username})"
 
     class Meta:
         app_label = "taskmanager"

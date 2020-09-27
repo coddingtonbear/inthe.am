@@ -24,6 +24,4 @@ class TaskStoreStatistic(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "{value} {measure} for {store} at {date}".format(
-            value=self.value, measure=self.measure, store=self.store, date=self.created,
-        )
+        return f"{self.value} {self.measure} for {self.store} at {self.created}"

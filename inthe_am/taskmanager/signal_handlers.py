@@ -39,7 +39,7 @@ def handle_incoming_forwardable_message(sender, message, **kwargs):
             try:
                 email = EmailMultiAlternatives(
                     subject=" ".join(
-                        ["[Inthe.AM]", message.subject, "(%s)" % message.pk,]
+                        ["[Inthe.AM]", message.subject, f"({message.pk})"]
                     ),
                     body=message.text,
                     to=[settings.MAIL_FORWARDING[address]],
@@ -56,10 +56,8 @@ def handle_incoming_forwardable_message(sender, message, **kwargs):
                         mimetypes.guess_type(attachment.get_filename(),)[0],
                     )
                 email.send()
-            except:
+            except Exception:
                 mail_admins(
-                    "Error processing forwarding rule for %s" % address,
-                    "See message ID {}.\n\n{}".format(
-                        message.pk, traceback.format_exc()
-                    ),
+                    f"Error processing forwarding rule for {address}",
+                    f"See message ID {message.pk}.\n\n{traceback.format_exc()}",
                 )

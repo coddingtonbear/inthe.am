@@ -76,9 +76,10 @@ def git_checkpoint(
 
     if hasattr(store, "_active_checkpoint"):
         exception_message = (
-            "Store %s attempted to acquire a checkpoint for '%s', but "
-            "the repository was already locked for '%s'."
-        ) % (store, message, store._active_checkpoint)
+            f"Store {store} attempted to acquire a checkpoint for "
+            f"'{message}', but the repository was already locked for "
+            f"'{store._active_checkpoint}'"
+        )
         raise NestedCheckpointError(exception_message)
     store._active_checkpoint = message
 
@@ -100,7 +101,7 @@ def git_checkpoint(
                     "task repository lock; removing lock.",
                     store.local_path,
                 )
-            except:
+            except Exception:
                 logger.exception(
                     "Error encountered while cleaning-up git index lock at %s",
                     git_index_lock_path,
@@ -166,7 +167,7 @@ def git_checkpoint(
             pass
         except Exception as e:
             store.create_git_checkpoint(
-                "{} ({})".format(message, force_text(e, errors="replace")),
+                f"{message} ({force_text(e, errors='replace')})",
                 function=function,
                 args=args,
                 kwargs=kwargs,

@@ -53,7 +53,7 @@ class TaskFeed(Feed):
         return "\n".join(lines)
 
     def item_link(self, item):
-        return "/tasks/{uuid}".format(uuid=item.get("uuid"))
+        return f"/tasks/{item.get('uuid')}"
 
     def items(self, store):
         tasks = store.client.filter_tasks({"status": "pending", "limit": "100"})
@@ -72,9 +72,7 @@ class TaskFeed(Feed):
         return reverse("feed", kwargs={"uuid": store.secret_id})
 
     def title(self, store):
-        return "{first_name} {last_name}'s tasks".format(
-            first_name=store.user.first_name, last_name=store.user.last_name
-        )
+        return f"{store.user.first_name} {store.user.last_name}'s tasks"
 
 
 def debug_login(request):
@@ -105,7 +103,7 @@ def rest_exception_handler(e, context):
         # was a problem with their task list, or that of a Kanban board.
         store = TaskStore.get_for_user(request.user)
         message = f"({e.code}) {e.stderr}"
-        store.log_silent_error("Taskwarrior Error: %s" % message)
+        store.log_silent_error(f"Taskwarrior Error: {message}")
         return Response({"error_message": message}, status=400,)
     elif isinstance(e, LockTimeout):
         message = "Your task list is currently in use; please try again later."
@@ -145,7 +143,7 @@ class RestHookHandler(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
-        except:
+        except Exception:
             return JsonResponse({}, status=400)
 
         store = TaskStore.get_for_user(request.user)

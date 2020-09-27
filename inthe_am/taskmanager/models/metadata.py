@@ -48,4 +48,4 @@ class Metadata:
         self._write()
 
     def __str__(self):
-        return "metadata at %s" % self.path
+        return f"metadata at {self.path}"

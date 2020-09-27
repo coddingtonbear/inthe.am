@@ -34,7 +34,7 @@ def merge_task_data(alpha, beta):
         elif alpha[field] != beta[field]:
             unsalvageable[field] = beta[field]
 
-    message = "Task %s merged." % beta["uuid"]
+    message = f"Task {beta['uuid']} merged."
     if unsalvageable:
         extra_data = "\n".join(
             # Note -- two trailing spaces to trigger a newline insertion.
@@ -43,8 +43,7 @@ def merge_task_data(alpha, beta):
         message = message + "\nExtra fields:\n" + extra_data
     alpha["annotations"].append(message)
     beta["annotations"].append(
-        "This task has been merged with another task. "
-        "See {uuid}.".format(uuid=alpha.get("uuid"))
+        f"This task has been merged with another task. See {alpha.get('uuid')}."
     )
     beta["intheamduplicateof"] = str(alpha.get("uuid"))
 
@@ -63,8 +62,8 @@ def find_all_duplicate_tasks(store):
         ).add(task["uuid"])
 
     duplicates = []
-    for parent, imask_data in all_tasks_by_imask.items():
-        for imask, task_list in imask_data.items():
+    for _, imask_data in all_tasks_by_imask.items():
+        for _, task_list in imask_data.items():
             if len(task_list) > 1:
                 duplicates.append(task_list)
 
