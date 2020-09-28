@@ -201,7 +201,7 @@ def process_email_message(self, message_id):
                 store.client.task_update(task)
 
         log_args = (
-            f"Added task {task.id} via e-mail {message.pk} "
+            f"Added task {task_id} via e-mail {message.pk} "
             f"from {message.from_address[0]}."
         )
         logger.info(*log_args)
