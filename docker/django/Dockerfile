@@ -4,8 +4,7 @@ ENV TASK_VERSION=2.5.1-r0 DJANGO_SETTINGS_MODULE=inthe_am.settings
 
 EXPOSE 8000
 
-RUN apt-get update && \
-  apt-get upgrade
+RUN apt-get update
 RUN apt-get install -y postgresql-client git taskwarrior \
   python-dev gettext vim libxml2-dev libxslt-dev \
   libcurl4-gnutls-dev build-essential libgnutls28-dev \
