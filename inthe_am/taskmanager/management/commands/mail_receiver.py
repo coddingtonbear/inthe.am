@@ -1,4 +1,5 @@
 import email
+import time
 
 from aiosmtpd.controller import Controller
 
@@ -38,6 +39,6 @@ class Command(BaseCommand):
         try:
             controller.start()
             while True:
-                continue
+                time.sleep(0.1)
         except KeyboardInterrupt:
             controller.stop()
