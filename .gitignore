@@ -4,8 +4,8 @@ node_modules/
 task_data/
 logs/
 static/
-bower_components/
-node_modules/
+ember/bower_components/
+ember/node_modules/
 dist/
 tmp/
 .sass-cache
