@@ -408,7 +408,9 @@ var controller = Ember.Controller.extend({
     for (var key in this.get("statusActions")) {
       updater.addEventListener(key, this.get("statusActions")[key].bind(this));
     }
-    updater.addEventListener("error", this.get("eventStreamError").bind(this));
+    updater.addEventListener("error", () => {
+      setTimeout(this.get("eventStreamError").bind(this), 5000);
+    });
   },
   statusActions: {
     task_changed: function (evt) {
