@@ -1,7 +1,7 @@
-import Ember from 'ember'
+import Ember from "ember";
 
 var view = Ember.View.extend({
-  templateName: 'editTask'
-})
+  templateName: "editTask",
+});
 
-export default view
+export default view;

@@ -1,9 +1,9 @@
-import Ember from 'ember'
+import Ember from "ember";
 
 var route = Ember.Route.extend({
   renderTemplate: function () {
-    this.render('index')
-  }
-})
+    this.render("index");
+  },
+});
 
-export default route
+export default route;

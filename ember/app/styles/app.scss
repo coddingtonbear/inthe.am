@@ -9,23 +9,61 @@
   }
 }
 
-html, body {
+html,
+body {
   height: 100%;
   overflow: hidden;
 
-  >.ember-view {
+  > .ember-view {
     height: 100%;
-    >.ember-view {
+    > .ember-view {
       height: 100%;
     }
 
-    background: rgba(224,224,224,1);
-    background: -moz-linear-gradient(left, rgba(224,224,224,1) 0%, rgba(255,255,255,1) 20%, rgba(255,255,255,1) 80%, rgba(224,224,224,1) 100%);
-    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(224,224,224,1)), color-stop(20%, rgba(255,255,255,1)), color-stop(80%, rgba(255,255,255,1)), color-stop(100%, rgba(224,224,224,1)));
-    background: -webkit-linear-gradient(left, rgba(224,224,224,1) 0%, rgba(255,255,255,1) 20%, rgba(255,255,255,1) 80%, rgba(224,224,224,1) 100%);
-    background: -o-linear-gradient(left, rgba(224,224,224,1) 0%, rgba(255,255,255,1) 20%, rgba(255,255,255,1) 80%, rgba(224,224,224,1) 100%);
-    background: -ms-linear-gradient(left, rgba(224,224,224,1) 0%, rgba(255,255,255,1) 20%, rgba(255,255,255,1) 80%, rgba(224,224,224,1) 100%);
-    background: linear-gradient(to right, rgba(224,224,224,1) 0%, rgba(255,255,255,1) 20%, rgba(255,255,255,1) 80%, rgba(224,224,224,1) 100%);
+    background: rgba(224, 224, 224, 1);
+    background: -moz-linear-gradient(
+      left,
+      rgba(224, 224, 224, 1) 0%,
+      rgba(255, 255, 255, 1) 20%,
+      rgba(255, 255, 255, 1) 80%,
+      rgba(224, 224, 224, 1) 100%
+    );
+    background: -webkit-gradient(
+      left top,
+      right top,
+      color-stop(0%, rgba(224, 224, 224, 1)),
+      color-stop(20%, rgba(255, 255, 255, 1)),
+      color-stop(80%, rgba(255, 255, 255, 1)),
+      color-stop(100%, rgba(224, 224, 224, 1))
+    );
+    background: -webkit-linear-gradient(
+      left,
+      rgba(224, 224, 224, 1) 0%,
+      rgba(255, 255, 255, 1) 20%,
+      rgba(255, 255, 255, 1) 80%,
+      rgba(224, 224, 224, 1) 100%
+    );
+    background: -o-linear-gradient(
+      left,
+      rgba(224, 224, 224, 1) 0%,
+      rgba(255, 255, 255, 1) 20%,
+      rgba(255, 255, 255, 1) 80%,
+      rgba(224, 224, 224, 1) 100%
+    );
+    background: -ms-linear-gradient(
+      left,
+      rgba(224, 224, 224, 1) 0%,
+      rgba(255, 255, 255, 1) 20%,
+      rgba(255, 255, 255, 1) 80%,
+      rgba(224, 224, 224, 1) 100%
+    );
+    background: linear-gradient(
+      to right,
+      rgba(224, 224, 224, 1) 0%,
+      rgba(255, 255, 255, 1) 20%,
+      rgba(255, 255, 255, 1) 80%,
+      rgba(224, 224, 224, 1) 100%
+    );
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0e0e0', endColorstr='#e0e0e0', GradientType=1 );
   }
 }
@@ -45,7 +83,8 @@ textarea {
 }
 
 i.fa {
-  font-family: FontAwesome,"Helvetica Neue","Helvetica",Helvetica,Arial,sans-serif;
+  font-family: FontAwesome, "Helvetica Neue", "Helvetica", Helvetica, Arial,
+    sans-serif;
 }
 
 i.fa:before {
@@ -208,7 +247,8 @@ div.row {
       position: relative;
     }
 
-    ul, ol {
+    ul,
+    ol {
       margin-left: 30px;
       margin-bottom: 20px;
     }
@@ -218,13 +258,14 @@ div.row {
     }
   }
   .info-box {
-    background: rgba(255,255,255,.8);
+    background: rgba(255, 255, 255, 0.8);
     border: 2px solid #eee;
     padding: 20px;
   }
 }
 
-#list, #mobile-list {
+#list,
+#mobile-list {
   width: 25%;
   min-width: 350px;
   letter-spacing: normal;
@@ -264,7 +305,7 @@ div.row {
     }
 
     .task-item {
-      padding: 0.9em 1.0em;
+      padding: 0.9em 1em;
       min-height: 45px;
 
       .task-list-icon {
@@ -309,7 +350,7 @@ div.row {
   h1 {
     font-size: 1.75rem;
   }
-  &>div {
+  & > div {
     padding-left: 15px;
     padding-right: 25px;
   }
@@ -338,23 +379,23 @@ div.row {
 
     #task-actions {
       list-style: none;
-      margin:0;
-      padding:0;
+      margin: 0;
+      padding: 0;
       display: table;
       width: 100%;
 
       li {
-        background-color: #C0C0C0;
-        border-right: 1px solid #A0A0A0;
+        background-color: #c0c0c0;
+        border-right: 1px solid #a0a0a0;
         display: table-cell;
         text-align: center;
         float: none;
 
         &:hover {
-          background-color: #B0B0B0;
+          background-color: #b0b0b0;
 
           a {
-            color: #F0F0F0;
+            color: #f0f0f0;
           }
         }
 
@@ -367,8 +408,7 @@ div.row {
     }
   }
   #task-header {
-
-    &>div {
+    & > div {
       margin-left: 15px;
     }
   }
@@ -395,7 +435,8 @@ div.row {
     margin-right: inherit;
 
     ul.depends_tickets {
-      li.completed, li.deleted {
+      li.completed,
+      li.deleted {
         text-decoration: line-through;
       }
     }
@@ -409,7 +450,7 @@ div.reveal-modal {
 }
 
 .growl {
-  opacity: .95;
+  opacity: 0.95;
 }
 div.growl-message {
   a {
@@ -424,7 +465,7 @@ table.log {
 
   tr.error {
     td.message {
-      color: #A02020;
+      color: #a02020;
     }
   }
   tr.info {
@@ -443,8 +484,8 @@ span {
 }
 
 div.block.error {
-  background-color: #FFEEEE;
-  border: 1px solid #FF0000;
+  background-color: #ffeeee;
+  border: 1px solid #ff0000;
   padding: 15px;
   margin-bottom: 10px;
   box-shadow: 3px 3px 3px #aaa;
@@ -454,8 +495,8 @@ div.block.error {
   }
 }
 div.block.warning {
-  border: 1px solid #FFFF00;
-  background-color: #FFFFDD;
+  border: 1px solid #ffff00;
+  background-color: #ffffdd;
   padding: 15px;
   margin-bottom: 10px;
   box-shadow: 3px 3px 3px #aaa;
@@ -485,8 +526,8 @@ pre.para {
 }
 
 div.alert-box.error {
-  background-color: #AA0000;
-  border-color: #AA0000;
+  background-color: #aa0000;
+  border-color: #aa0000;
 }
 
 @media screen and (max-width: 1000px) {
@@ -503,10 +544,11 @@ div.alert-box.error {
 
 @media screen and (max-width: 850px) {
   // Hide text content of buttons
-  html, body {
+  html,
+  body {
     overflow: hidden;
 
-    >.ember-view {
+    > .ember-view {
       background: #fff !important;
     }
   }
@@ -522,7 +564,8 @@ div.alert-box.error {
     margin-left: 0px;
     margin-right: 0px;
   }
-  .column, .columns {
+  .column,
+  .columns {
     padding-right: 0px;
     padding-left: 0px;
   }
@@ -547,7 +590,20 @@ div.alert-box.error {
   button {
     padding: 10px;
   }
-  input[type="text"], input[type="password"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="month"], input[type="week"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="time"], input[type="url"], textarea {
+  input[type="text"],
+  input[type="password"],
+  input[type="date"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="month"],
+  input[type="week"],
+  input[type="email"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="time"],
+  input[type="url"],
+  textarea {
     margin: 0 0 0.25rem 0;
   }
   div.row.standalone {
@@ -570,7 +626,7 @@ div.alert-box.error {
     margin-left: 0px;
     padding-left: 0px;
 
-    &>div{
+    & > div {
       padding-left: 0px;
       padding-right: 0px;
     }
@@ -591,7 +647,7 @@ div.alert-box.error {
   }
   nav {
     .chardinjs-show-element {
-      color: #FFFFFF;
+      color: #ffffff;
     }
     .top-bar-section {
       li.desktop-only {
@@ -608,7 +664,8 @@ div.alert-box.error {
 }
 
 @media screen and (max-width: 700px) {
-  nav, #task-details {
+  nav,
+  #task-details {
     i.fa {
       font-size: 0px;
       &::before {
@@ -672,8 +729,8 @@ input#filter-string {
       padding: 20px;
       width: 80px;
       position: relative;
-      background-color: #EEEEEE;
-      background-color: rgba(220,220,220,0.5);
+      background-color: #eeeeee;
+      background-color: rgba(220, 220, 220, 0.5);
       border-radius: 25px;
       text-align: center;
 
@@ -769,9 +826,21 @@ input#filter-string {
   -ms-border-radius: 0.5em;
   -o-border-radius: 0.5em;
   border-radius: 0.5em;
-  -webkit-box-shadow: rgba(0, 0, 51, 0.3) 1.5em 0 0 0, rgba(0, 0, 51, 0.3) 1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) 0 1.5em 0 0, rgba(0, 0, 51, 0.3) -1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) -1.5em 0 0 0, rgba(0, 0, 51, 0.3) -1.1em -1.1em 0 0, rgba(0, 0, 51, 0.3) 0 -1.5em 0 0, rgba(0, 0, 51, 0.3) 1.1em -1.1em 0 0;
-  -moz-box-shadow: rgba(0, 0, 51, 0.3) 1.5em 0 0 0, rgba(0, 0, 51, 0.3) 1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) 0 1.5em 0 0, rgba(0, 0, 51, 0.3) -1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) -1.5em 0 0 0, rgba(0, 0, 51, 0.3) -1.1em -1.1em 0 0, rgba(0, 0, 51, 0.3) 0 -1.5em 0 0, rgba(0, 0, 51, 0.3) 1.1em -1.1em 0 0;
-  box-shadow: rgba(0, 0, 51, 0.3) 1.5em 0 0 0, rgba(0, 0, 51, 0.3) 1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) 0 1.5em 0 0, rgba(0, 0, 51, 0.3) -1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) -1.5em 0 0 0, rgba(0, 0, 51, 0.3) -1.1em -1.1em 0 0, rgba(0, 0, 51, 0.3) 0 -1.5em 0 0, rgba(0, 0, 51, 0.3) 1.1em -1.1em 0 0;
+  -webkit-box-shadow: rgba(0, 0, 51, 0.3) 1.5em 0 0 0,
+    rgba(0, 0, 51, 0.3) 1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) 0 1.5em 0 0,
+    rgba(0, 0, 51, 0.3) -1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) -1.5em 0 0 0,
+    rgba(0, 0, 51, 0.3) -1.1em -1.1em 0 0, rgba(0, 0, 51, 0.3) 0 -1.5em 0 0,
+    rgba(0, 0, 51, 0.3) 1.1em -1.1em 0 0;
+  -moz-box-shadow: rgba(0, 0, 51, 0.3) 1.5em 0 0 0,
+    rgba(0, 0, 51, 0.3) 1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) 0 1.5em 0 0,
+    rgba(0, 0, 51, 0.3) -1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) -1.5em 0 0 0,
+    rgba(0, 0, 51, 0.3) -1.1em -1.1em 0 0, rgba(0, 0, 51, 0.3) 0 -1.5em 0 0,
+    rgba(0, 0, 51, 0.3) 1.1em -1.1em 0 0;
+  box-shadow: rgba(0, 0, 51, 0.3) 1.5em 0 0 0,
+    rgba(0, 0, 51, 0.3) 1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) 0 1.5em 0 0,
+    rgba(0, 0, 51, 0.3) -1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) -1.5em 0 0 0,
+    rgba(0, 0, 51, 0.3) -1.1em -1.1em 0 0, rgba(0, 0, 51, 0.3) 0 -1.5em 0 0,
+    rgba(0, 0, 51, 0.3) 1.1em -1.1em 0 0;
   display: inline-block;
   font-size: 10px;
   width: 1em;
@@ -784,10 +853,10 @@ input#filter-string {
 /* HELP OVERLAY */
 @mixin transition($property) {
   -webkit-transition: $property;
-     -moz-transition: $property;
-      -ms-transition: $property;
-       -o-transition: $property;
-          transition: $property;
+  -moz-transition: $property;
+  -ms-transition: $property;
+  -o-transition: $property;
+  transition: $property;
 }
 
 .chardinjs-overlay {
@@ -819,10 +888,22 @@ input#filter-string {
   color: white;
   @include transition(all 0.3s ease-out);
 
-  &.chardinjs-left { border-left: solid white 1px; margin-left: -10px; }
-  &.chardinjs-right { border-right: solid white 1px; padding-right: 10px; }
-  &.chardinjs-bottom { border-bottom: solid white 1px; padding-bottom: 10px; }
-  &.chardinjs-top { border-top: solid white 1px; padding-top: 10px; }
+  &.chardinjs-left {
+    border-left: solid white 1px;
+    margin-left: -10px;
+  }
+  &.chardinjs-right {
+    border-right: solid white 1px;
+    padding-right: 10px;
+  }
+  &.chardinjs-bottom {
+    border-bottom: solid white 1px;
+    padding-bottom: 10px;
+  }
+  &.chardinjs-top {
+    border-top: solid white 1px;
+    padding-top: 10px;
+  }
 }
 
 .chardinjs-tooltip {
@@ -830,12 +911,27 @@ input#filter-string {
   @include transition(opacity 0.1s ease-out);
   max-width: 200px;
 
-  &.chardinjs-left { margin-left: -135px; padding-right: 10px; }
-  &.chardinjs-right { margin-right: -135px; padding-left: 10px; }
-  &.chardinjs-bottom { margin-bottom: -50px; padding-top: 10px; }
-  &.chardinjs-top { margin-top: -50px; padding-bottom: 10px; }
+  &.chardinjs-left {
+    margin-left: -135px;
+    padding-right: 10px;
+  }
+  &.chardinjs-right {
+    margin-right: -135px;
+    padding-left: 10px;
+  }
+  &.chardinjs-bottom {
+    margin-bottom: -50px;
+    padding-top: 10px;
+  }
+  &.chardinjs-top {
+    margin-top: -50px;
+    padding-bottom: 10px;
+  }
 
-  &.chardinjs-right:before, &.chardinjs-left:after, &.chardinjs-bottom:before, &.chardinjs-top:after {
+  &.chardinjs-right:before,
+  &.chardinjs-left:after,
+  &.chardinjs-bottom:before,
+  &.chardinjs-top:after {
     content: ".";
     display: inline-block;
     background-color: white;
@@ -844,21 +940,31 @@ input#filter-string {
     position: absolute;
   }
 
-  &.chardinjs-right:before, &.chardinjs-left:after {
+  &.chardinjs-right:before,
+  &.chardinjs-left:after {
     width: 100px;
     top: 50%;
   }
 
-  &.chardinjs-bottom:before, &.chardinjs-top:after {
+  &.chardinjs-bottom:before,
+  &.chardinjs-top:after {
     width: 1px;
     height: 50px;
     left: 50%;
   }
 
-  &.chardinjs-bottom:before { top: -50px; }
-  &.chardinjs-top:after { bottom: -50px; }
-  &.chardinjs-right:before { left: -100px; }
-  &.chardinjs-left:after { right: -100px; }
+  &.chardinjs-bottom:before {
+    top: -50px;
+  }
+  &.chardinjs-top:after {
+    bottom: -50px;
+  }
+  &.chardinjs-right:before {
+    left: -100px;
+  }
+  &.chardinjs-left:after {
+    right: -100px;
+  }
 }
 
 .chardinjs-show-element {

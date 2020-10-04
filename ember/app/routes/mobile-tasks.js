@@ -1,6 +1,5 @@
-import TasksRoute from './tasks'
+import TasksRoute from "./tasks";
 
-var route = TasksRoute.extend({
-})
+var route = TasksRoute.extend({});
 
-export default route
+export default route;

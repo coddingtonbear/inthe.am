@@ -1,40 +1,40 @@
-import Ember from 'ember'
+import Ember from "ember";
 
 var field = Ember.TextField.extend({
-  moment_format: 'YYYY-MM-DD HH:mm',
-  picker_format: 'Y-m-d H:i',
+  moment_format: "YYYY-MM-DD HH:mm",
+  picker_format: "Y-m-d H:i",
   init: function () {
-    this._super()
-    this.updateModel()
+    this._super();
+    this.updateModel();
   },
   updateModel: function () {
-    var raw_value = this.get('date')
-    var value = moment(raw_value)
+    var raw_value = this.get("date");
+    var value = moment(raw_value);
     if (!raw_value || !value.isValid()) {
-      this.set('value', '')
+      this.set("value", "");
     } else {
-      this.set('value', value.format(this.moment_format))
+      this.set("value", value.format(this.moment_format));
     }
-  }.observes('identity'),
+  }.observes("identity"),
   updateDate: function () {
-    var raw_value = this.get('value')
+    var raw_value = this.get("value");
     if (raw_value.length === 0) {
-      this.set('date', '')
+      this.set("date", "");
     } else {
-      var value = moment(raw_value)
+      var value = moment(raw_value);
       if (value.isValid()) {
-        this.set('date', value.toDate())
+        this.set("date", value.toDate());
       }
     }
-  }.observes('value'),
+  }.observes("value"),
   didInsertElement: function () {
     if ($(document).width() > 350) {
       this.$().datetimepicker({
         format: this.picker_format,
-        allowBlank: true
-      })
+        allowBlank: true,
+      });
     }
-  }
-})
+  },
+});
 
-export default field
+export default field;

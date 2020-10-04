@@ -1,5 +1,5 @@
-import Ember from 'ember'
+import Ember from "ember";
 
-var route = Ember.Route.extend({})
+var route = Ember.Route.extend({});
 
-export default route
+export default route;

@@ -1,19 +1,15 @@
-import Ember from 'ember'
+import Ember from "ember";
 
 export default {
-  name: 'foundation',
+  name: "foundation",
   initialize: function (application) {
     Ember.View.reopen({
       _initializeFoundation: function () {
-        $(document).foundation()
+        $(document).foundation();
       },
       initializeFoundation: function () {
-        Ember.run.debounce(
-                    null,
-                    this._initializeFoundation,
-                    500
-                )
-      }.on('didInsertElement')
-    })
-  }
-}
+        Ember.run.debounce(null, this._initializeFoundation, 500);
+      }.on("didInsertElement"),
+    });
+  },
+};

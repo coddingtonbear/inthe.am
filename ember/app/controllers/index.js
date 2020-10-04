@@ -1,18 +1,18 @@
-import Ember from 'ember'
+import Ember from "ember";
 
 var controller = Ember.Controller.extend({
-  applicationController: Ember.inject.controller('application'),
+  applicationController: Ember.inject.controller("application"),
   notifyUserLoaded: function () {
-    var user = this.get('applicationController.user')
-    var handler = this.get('applicationController').getHandlerPath()
-    if (handler === 'index' && user.logged_in) {
-      if (this.get('applicationController').isSmallScreen()) {
-        this.transitionToRoute('mobile-tasks')
+    var user = this.get("applicationController.user");
+    var handler = this.get("applicationController").getHandlerPath();
+    if (handler === "index" && user.logged_in) {
+      if (this.get("applicationController").isSmallScreen()) {
+        this.transitionToRoute("mobile-tasks");
       } else {
-        this.transitionToRoute('tasks')
+        this.transitionToRoute("tasks");
       }
     }
-  }
-})
+  },
+});
 
-export default controller
+export default controller;
