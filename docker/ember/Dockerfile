@@ -1,11 +1,12 @@
 FROM madnificent/ember:2.18.0 as ember
 
 COPY /ember /app
-RUN cd /app && npm install -g && bower install -g
+
+RUN cd /app && npm install && bower install
 
 WORKDIR /app
 
-VOLUME /app
+VOLUME /app/app
 
 RUN mkdir -p /dist
 VOLUME /dist

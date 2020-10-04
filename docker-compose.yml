@@ -77,7 +77,7 @@ services:
       dockerfile: ./docker/ember/Dockerfile
       context: ./
     volumes:
-      - ./ember:/app
+      - ./ember/app:/app/app
       - ember-assets:/dist
     env_file:
       - .env
