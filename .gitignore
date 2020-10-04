@@ -6,6 +6,7 @@ logs/
 static/
 ember/bower_components/
 ember/node_modules/
+ember/tmp/
 dist/
 tmp/
 .sass-cache

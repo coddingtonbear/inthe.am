@@ -39,4 +39,4 @@ VOLUME /var/taskd/pki
 
 EXPOSE 53589
 EXPOSE 8000
-ENTRYPOINT /usr/bin/supervisord --nodaemon
+CMD /usr/bin/supervisord --nodaemon

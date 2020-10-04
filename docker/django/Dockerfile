@@ -37,4 +37,4 @@ VOLUME /task_data
 
 VOLUME /var/taskd
 
-ENTRYPOINT /usr/bin/supervisord --nodaemon
+CMD /usr/bin/supervisord --nodaemon

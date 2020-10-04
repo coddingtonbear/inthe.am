@@ -10,4 +10,4 @@ VOLUME /app
 RUN mkdir -p /dist
 VOLUME /dist
 
-ENTRYPOINT ember build --watch --output-path=/dist
+CMD ember build --watch --output-path=/dist
