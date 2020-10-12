@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import re
+from typing import Any, Dict
 
 from django.contrib.auth.models import User
 from django.http import (
@@ -88,7 +89,7 @@ class TaskViewSet(viewsets.ViewSet):
             )
         return super().dispatch(request, *args, **kwargs)
 
-    def passes_filters(self, task, filters):
+    def passes_filters(self, task, filters: Dict[str, Any]):
         passes = True
         for key, value in filters.items():
             if key not in self.FILTERABLE_FIELDS:
@@ -100,8 +101,9 @@ class TaskViewSet(viewsets.ViewSet):
 
     @requires_task_store
     def list(self, request, store=None):
+        filters = {}
         if hasattr(request, "GET"):
-            filters = request.GET.copy()
+            filters = request.GET.dict()
 
         objects = []
         for task_object in store.client.filter_tasks({"status": self.TASK_TYPE}):
