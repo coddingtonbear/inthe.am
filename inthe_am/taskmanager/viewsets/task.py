@@ -26,7 +26,7 @@ from twilio.request_validator import RequestValidator
 from twilio.twiml.messaging_response import MessagingResponse as TwilioResponse
 
 from .. import models
-from ..context_managers import git_checkpoint, timed_activity
+from ..context_managers import git_checkpoint
 from ..decorators import git_managed, requires_task_store
 from ..lock import get_lock_name_for_store, get_lock_redis
 from ..serializers.task import TaskSerializer
@@ -104,10 +104,9 @@ class TaskViewSet(viewsets.ViewSet):
             filters = request.GET.copy()
 
         objects = []
-        with timed_activity(store, "Get task list"):
-            for task_object in store.client.filter_tasks({"status": self.TASK_TYPE}):
-                if self.passes_filters(task_object, filters):
-                    objects.append(task_object)
+        for task_object in store.client.filter_tasks({"status": self.TASK_TYPE}):
+            if self.passes_filters(task_object, filters):
+                objects.append(task_object)
 
         serializer = TaskSerializer(objects, many=True, store=store)
         return Response(serializer.data)
@@ -132,8 +131,7 @@ class TaskViewSet(viewsets.ViewSet):
 
     @requires_task_store
     def retrieve(self, request, store=None, pk=None):
-        with timed_activity(store, "Get task by ID"):
-            task = store.client.get_task(uuid=pk)[1]
+        task = store.client.get_task(uuid=pk)[1]
 
         if not task:
             raise NotFound()

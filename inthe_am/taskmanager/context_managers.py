@@ -6,50 +6,12 @@ import uuid
 
 from django.conf import settings
 from django.utils.encoding import force_text
-from django.utils.timezone import now
 
 from .exceptions import NestedCheckpointError, InvalidTaskwarriorConfiguration
 from .lock import get_lock_name_for_store, redis_lock
 
 
 logger = logging.getLogger(__name__)
-
-
-@contextmanager
-def timed_activity(store, activity):
-    from .models import TaskStoreActivity
-
-    record = TaskStoreActivity.objects.create(store=store, activity=activity,)
-
-    def add_message_to_activity(message, *params):
-        try:
-            record.add_message_line(message % params)
-        except Exception:
-            logger.exception(
-                "Error formatting logging message: %s %% %s", message, params,
-            )
-
-    def add_metadata_to_activity(variant, *params):
-        try:
-            record.handle_metadata_message(variant, *params)
-        except Exception:
-            logger.exception(
-                "Error handling metadata message: %s %s", variant, params,
-            )
-
-    uid = store.register_logging_callback(add_message_to_activity)
-    m_uid = store.register_metadata_callback(add_metadata_to_activity)
-
-    yield record
-
-    store.unregister_logging_callback(uid)
-    store.unregister_metadata_callback(m_uid)
-
-    record.duration_seconds = (now() - record.started).total_seconds()
-    try:
-        record.save()
-    except Exception:
-        logger.exception("Error encountered recording outcome of timed activity.")
 
 
 @contextmanager
@@ -118,8 +80,6 @@ def git_checkpoint(
                 checkpoint_id=checkpoint_id,
                 data=data,
             )
-            with timed_activity(store, message):
-                yield
             # We need to force taskw to garbage collect after engaging
             # in operations that might alter the task ID#s, otherwise
             # they'll hang out as uncommitted changes until the next

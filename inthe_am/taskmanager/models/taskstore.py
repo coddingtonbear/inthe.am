@@ -837,40 +837,9 @@ class TaskStore(models.Model):
 
         return self.taskd_account.get_new_certificate(csr)
 
-    def register_metadata_callback(self, callback):
-        if not hasattr(self, "_metadata_callbacks"):
-            self._metadata_callbacks = {}
-
-        random_uuid = str(uuid.uuid4())
-        self._metadata_callbacks[random_uuid] = callback
-
-        return random_uuid
-
-    def unregister_metadata_callback(self, uid):
-        del self._metadata_callbacks[uid]
-
-    def register_logging_callback(self, callback):
-        if not hasattr(self, "_logging_callbacks"):
-            self._logging_callbacks = {}
-
-        random_uuid = str(uuid.uuid4())
-        self._logging_callbacks[random_uuid] = callback
-
-        return random_uuid
-
-    def unregister_logging_callback(self, uid):
-        del self._logging_callbacks[uid]
-
     def _log_entry(self, message, error=False, params=None, silent=False):
         if params is None:
             params = []
-
-        if hasattr(self, "_logging_callbacks"):
-            for callback in self._logging_callbacks.values():
-                try:
-                    callback(message, *params)
-                except Exception as e:
-                    logger.exception("Error invoking logging callback: %s", e)
 
         message_hash = hashlib.md5(
             (self.local_path + message % params).encode("utf-8")
