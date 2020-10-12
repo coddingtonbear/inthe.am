@@ -1,5 +1,5 @@
 # make sure to `git submodule update --init` before building images
-version: '3'
+version: "3"
 services:
   web:
     restart: always
@@ -93,8 +93,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    links:
-      - web:web
     volumes:
       - ./docker/nginx/secrets:/certificates
       - ember-assets:/app
@@ -119,7 +117,7 @@ services:
     networks:
       - backend
   memcached:
-    image: 'bitnami/memcached:latest'
+    image: "bitnami/memcached:latest"
     networks:
       - backend
   taskd:
