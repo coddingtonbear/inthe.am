@@ -22,6 +22,7 @@ services:
       - ./:/data/web
       - task-data:/task_data
       - django-static-assets:/django-static
+      - ./docker/migration-data:/migration-data
     networks:
       - backend
   sse:
@@ -107,6 +108,7 @@ services:
     image: postgres:alpine
     volumes:
       - db-data:/var/lib/postgresql/data
+      - ./docker/migration-data:/migration-data
     env_file:
       - .env
     networks:
@@ -134,6 +136,7 @@ services:
     volumes:
       - taskd-data:/var/taskd
       - ./docker/taskd/secrets:/var/taskd/pki
+      - ./docker/migration-data:/migration-data
 volumes:
   db-data:
     external: true
