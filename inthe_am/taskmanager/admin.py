@@ -11,7 +11,6 @@ from .models import (
     Announcement,
     TaskAttachment,
     TaskStore,
-    TaskStoreActivity,
     TaskStoreActivityLog,
     TrelloObject,
     TrelloObjectAction,
@@ -28,13 +27,13 @@ class DefaultFilterMixIn(admin.ModelAdmin):
         full_path = request.get_full_path()
         path_info = urllib.parse.urlparse(full_path)
         referrer = request.META.get("HTTP_REFERER", "")
-        if not path_info.path in referrer:
+        if path_info.path not in referrer:
             q = request.GET.copy()
             try:
                 for key, value in self.default_filters.items():
                     q[key] = str(value)
                 request.GET = q
-            except:
+            except Exception:
                 request.GET = q
             request.META["QUERY_STRING"] = request.GET.urlencode()
         return super().changelist_view(request, extra_context=extra_context)
@@ -369,30 +368,3 @@ class TaskStoreActivityStatusListFilter(admin.SimpleListFilter):
         if self.value() == "no":
             return queryset.exclude(duration_seconds=None)
         return queryset
-
-
-class TaskStoreActivityAdmin(DefaultFilterMixIn, admin.ModelAdmin):
-    list_display = (
-        "store",
-        "metadata_version",
-        "activity",
-        "duration_seconds",
-        "started",
-    )
-    raw_id_fields = ("store",)
-    list_filter = (
-        TaskStoreActivityStatusListFilter,
-        "metadata_version",
-        "activity",
-    )
-    ordering = ("-updated",)
-    search_fields = (
-        "store__user__username",
-        "message",
-    )
-    default_filters = {
-        "failed_incomplete": "no",
-    }
-
-
-admin.site.register(TaskStoreActivity, TaskStoreActivityAdmin)
