@@ -14,7 +14,7 @@ RUN pip install --upgrade pip
 COPY requirements-frozen.txt /tmp
 RUN pip install -r /tmp/requirements-frozen.txt
 COPY ./docker/django/gitconfig /root/.gitconfig
-COPY ./docker/django/entrypoint.sh /app/run.sh
+COPY ./docker/django/entrypoint.sh /data/web/run.sh
 
 ARG CRONTAB=./docker/django/empty.crontab
 COPY ${CRONTAB} /etc/cron/tasks.crontab
