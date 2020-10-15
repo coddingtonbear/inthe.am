@@ -80,6 +80,7 @@ def git_checkpoint(
                 checkpoint_id=checkpoint_id,
                 data=data,
             )
+            yield
             # We need to force taskw to garbage collect after engaging
             # in operations that might alter the task ID#s, otherwise
             # they'll hang out as uncommitted changes until the next
