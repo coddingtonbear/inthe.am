@@ -19,7 +19,7 @@ module.exports = function (environment) {
     },
   };
 
-  ENV.APP.API_HOST = "/x/";
+  ENV.APP.API_HOST = "";
   ENV.APP.API_NAMESPACE = "api/v2";
 
   if (environment === "development") {
