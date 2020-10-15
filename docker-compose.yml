@@ -97,7 +97,7 @@ services:
     volumes:
       - ./docker/nginx/secrets:/certificates
       - ember-assets:/app
-      - django-static-assets:/app/static
+      - django-static-assets:/django-static
     networks:
       - backend
     links:
