@@ -1,5 +1,8 @@
+from contextlib import contextmanager
 import datetime
+import os
 import traceback
+import uuid
 
 import progressbar
 
@@ -11,7 +14,42 @@ from dulwich.client import NotGitRepository
 
 from inthe_am.taskmanager.models import TaskStore, TaskStoreStatistic
 from inthe_am.taskmanager.lock import get_lock_redis
-from inthe_am.taskmanager.context_managers import git_checkpoint
+
+
+@contextmanager
+def fast_git_checkpoint(
+    store, message, function=None, args=None, kwargs=None, data=None
+):
+    checkpoint_id = uuid.uuid4()
+    store.create_git_repository()
+
+    try:
+        store.create_git_checkpoint(
+            message,
+            function=function,
+            args=args,
+            kwargs=kwargs,
+            pre_operation=True,
+            checkpoint_id=checkpoint_id,
+            data=data,
+        )
+        yield
+
+        # We do not need to store undo.data since we're handling
+        # history using a git repo and can revert using that.
+        undo_path = os.path.join(store.local_path, "undo.data")
+        if os.path.isfile(undo_path):
+            os.unlink(undo_path)
+        store.create_git_checkpoint(
+            message,
+            function=function,
+            args=args,
+            kwargs=kwargs,
+            checkpoint_id=checkpoint_id,
+            data=data,
+        )
+    except Exception:
+        raise
 
 
 class Command(BaseCommand):
@@ -135,7 +173,7 @@ class Command(BaseCommand):
                         except (KeyError, NotGitRepository):
                             store.create_git_repository()
 
-                        with git_checkpoint(store, "Migrating"):
+                        with fast_git_checkpoint(store, "Migrating"):
                             try:
                                 for k, v in store.metadata.items():
                                     if isinstance(v, str):
