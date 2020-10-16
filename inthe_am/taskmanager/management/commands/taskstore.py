@@ -97,6 +97,38 @@ class Command(BaseCommand):
                         run_id=run_id,
                     )
                     bar.update(idx)
+        elif subcommand == "migrate_all":
+            old_path = "/var/www/twweb/task_data/"
+            new_path = "/task_data/"
+            with progressbar.ProgressBar(
+                max_value=TaskStore.objects.count(),
+                widgets=[
+                    " [",
+                    progressbar.Timer(),
+                    "] ",
+                    progressbar.Bar(),
+                    " (",
+                    progressbar.ETA(),
+                    ") ",
+                ],
+            ) as bar:
+                for idx, store in enumerate(TaskStore.objects.order_by("-last_synced")):
+                    store.local_path = store.local_path.replace(old_path, new_path)
+                    store.save()
+
+                    try:
+                        for k, v in store.taskrc.items():
+                            store.taskrc[k] = v.replace(old_path, new_path)
+                    except Exception:
+                        print(f"Failed to update taskrc for {store}")
+
+                    try:
+                        for k, v in store.metadata.items():
+                            store.metadata[k] = v.replace(old_path, new_path)
+                    except Exception:
+                        print(f"Failed to update metadata for {store}")
+
+                    bar.update(idx)
         elif subcommand == "gc_large_repos":
             for store in TaskStore.objects.order_by("-last_synced"):
                 try:
