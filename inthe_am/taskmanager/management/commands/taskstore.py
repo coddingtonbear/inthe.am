@@ -118,6 +118,11 @@ class Command(BaseCommand):
                 for idx, store in enumerate(TaskStore.objects.order_by("-last_synced")):
                     success = True
 
+                    try:
+                        success_rate = successful / total * 100
+                    except Exception:
+                        success_rate = 0
+
                     store.local_path = store.local_path.replace(old_path, new_path)
 
                     try:
@@ -135,7 +140,7 @@ class Command(BaseCommand):
                             store.metadata[k] = v.replace(old_path, new_path)
                     except Exception:
                         print(
-                            f"Failed to update metadata for {store}: {successful/total*100}% OK"
+                            f"Failed to update metadata for {store}: {success_rate}% OK"
                         )
                         success = False
 
@@ -154,7 +159,7 @@ class Command(BaseCommand):
                             store.taskrc[k] = v.replace(old_path, new_path)
                     except Exception:
                         print(
-                            f"Failed to update taskrc for {store}: {successful/total*100}% OK"
+                            f"Failed to update taskrc for {store}: {success_rate}% OK"
                         )
                         success = False
 
