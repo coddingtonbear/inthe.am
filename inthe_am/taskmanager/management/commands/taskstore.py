@@ -112,7 +112,11 @@ class Command(BaseCommand):
                     ") ",
                 ],
             ) as bar:
+                successful = 0
+                total = 0
                 for idx, store in enumerate(TaskStore.objects.order_by("-last_synced")):
+                    success = True
+
                     store.local_path = store.local_path.replace(old_path, new_path)
                     store.save()
 
@@ -120,13 +124,23 @@ class Command(BaseCommand):
                         for k, v in store.taskrc.items():
                             store.taskrc[k] = v.replace(old_path, new_path)
                     except Exception:
-                        print(f"Failed to update taskrc for {store}")
+                        print(
+                            f"Failed to update taskrc for {store}: {successful/total*100}% OK"
+                        )
+                        success = False
 
                     try:
                         for k, v in store.metadata.items():
                             store.metadata[k] = v.replace(old_path, new_path)
                     except Exception:
-                        print(f"Failed to update metadata for {store}")
+                        print(
+                            f"Failed to update metadata for {store}: {successful/total*100}% OK"
+                        )
+                        success = False
+
+                    if success:
+                        successful += 1
+                    total += 1
 
                     bar.update(idx)
         elif subcommand == "gc_large_repos":
