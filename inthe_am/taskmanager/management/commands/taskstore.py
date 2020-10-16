@@ -10,6 +10,7 @@ from django.utils.timezone import now
 
 from inthe_am.taskmanager.models import TaskStore, TaskStoreStatistic
 from inthe_am.taskmanager.lock import get_lock_redis
+from inthe_am.taskmanager.context_managers import git_checkpoint
 
 
 class Command(BaseCommand):
@@ -123,58 +124,69 @@ class Command(BaseCommand):
                     except Exception:
                         success_rate = 0
 
-                    store.local_path = store.local_path.replace(old_path, new_path)
-
                     try:
-                        del store._metadata
-                    except AttributeError:
-                        pass
+                        with git_checkpoint(store, "Migrating"):
+                            store.local_path = store.local_path.replace(
+                                old_path, new_path
+                            )
 
-                    try:
-                        del store._taskrc
-                    except AttributeError:
-                        pass
+                            try:
+                                del store._metadata
+                            except AttributeError:
+                                pass
 
-                    try:
-                        for k, v in store.metadata.items():
-                            if isinstance(v, str):
-                                store.metadata[k] = v.replace(old_path, new_path)
-                    except Exception:
+                            try:
+                                del store._taskrc
+                            except AttributeError:
+                                pass
+
+                            try:
+                                for k, v in store.metadata.items():
+                                    if isinstance(v, str):
+                                        store.metadata[k] = v.replace(
+                                            old_path, new_path
+                                        )
+                            except Exception as e:
+                                print(
+                                    f"Failed to update metadata for {store}: {success_rate}% OK: {e}"
+                                )
+                                success = False
+
+                            try:
+                                del store._metadata
+                            except AttributeError:
+                                pass
+
+                            try:
+                                del store._taskrc
+                            except AttributeError:
+                                pass
+
+                            try:
+                                for k, v in store.taskrc.items():
+                                    store.taskrc[k] = v.replace(old_path, new_path)
+                            except Exception as e:
+                                print(
+                                    f"Failed to update taskrc for {store}: {success_rate}% OK: {e}"
+                                )
+                                success = False
+
+                            try:
+                                del store._metadata
+                            except AttributeError:
+                                pass
+
+                            try:
+                                del store._taskrc
+                            except AttributeError:
+                                pass
+
+                            store.save()
+                    except Exception as e:
                         print(
-                            f"Failed to update metadata for {store}: {success_rate}% OK"
+                            f"Failed to update taskrc for {store}: {success_rate}% OK: {e}"
                         )
                         success = False
-
-                    try:
-                        del store._metadata
-                    except AttributeError:
-                        pass
-
-                    try:
-                        del store._taskrc
-                    except AttributeError:
-                        pass
-
-                    try:
-                        for k, v in store.taskrc.items():
-                            store.taskrc[k] = v.replace(old_path, new_path)
-                    except Exception:
-                        print(
-                            f"Failed to update taskrc for {store}: {success_rate}% OK"
-                        )
-                        success = False
-
-                    try:
-                        del store._metadata
-                    except AttributeError:
-                        pass
-
-                    try:
-                        del store._taskrc
-                    except AttributeError:
-                        pass
-
-                    store.save()
 
                     if success:
                         successful += 1
