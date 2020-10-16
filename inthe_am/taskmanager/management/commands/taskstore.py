@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils.timezone import now
+from dulwich.client import NotGitRepository
 
 from inthe_am.taskmanager.models import TaskStore, TaskStoreStatistic
 from inthe_am.taskmanager.lock import get_lock_redis
@@ -129,6 +130,11 @@ class Command(BaseCommand):
                     try:
                         store.local_path = store.local_path.replace(old_path, new_path)
                         store.clear_cached_properties()
+
+                        try:
+                            store.repository.head().decode("utf-8")
+                        except (KeyError, NotGitRepository):
+                            store.create_git_repository()
 
                         with git_checkpoint(store, "Migrating"):
                             try:
