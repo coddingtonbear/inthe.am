@@ -150,6 +150,17 @@ class Command(BaseCommand):
                                 print(f"Failed to update taskrc: {e}")
                                 raise
 
+                            try:
+                                includes = {
+                                    include.replace(old_path, new_path)
+                                    for include in store.includes
+                                }
+                                store.includes = list(includes)
+                                store._write()
+                            except Exception as e:
+                                print(f"Failed to update taskrc: {e}")
+                                raise
+
                             store.clear_cached_properties()
 
                             store.save()
