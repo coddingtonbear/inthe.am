@@ -27,6 +27,7 @@ class Command(BaseCommand):
                 "squash",
                 "delete_old_accounts",
                 "list_old_accounts",
+                "migrate_all",
             ],
             type=str,
         )
