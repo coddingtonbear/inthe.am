@@ -326,6 +326,9 @@ class TaskdData(Resource):
             user_name=user_name, org_name=org_name,
         ).first_or_404()
 
+        if not os.path.isfile(cred.get_data_path("tx.data")):
+            return "", 404
+
         os.unlink(cred.get_data_path("tx.data"))
 
         return None

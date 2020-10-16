@@ -79,4 +79,7 @@ class TaskdAccountManager:
         return response.content
 
     def delete_data(self) -> None:
-        self.make_user_request("delete", "data")
+        try:
+            self.make_user_request("delete", "data")
+        except TaskdAccountManagementError:
+            pass
