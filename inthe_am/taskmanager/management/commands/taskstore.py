@@ -122,20 +122,20 @@ class Command(BaseCommand):
                     store.save()
 
                     try:
-                        for k, v in store.taskrc.items():
-                            store.taskrc[k] = v.replace(old_path, new_path)
-                    except Exception:
-                        print(
-                            f"Failed to update taskrc for {store}: {successful/total*100}% OK"
-                        )
-                        success = False
-
-                    try:
                         for k, v in store.metadata.items():
                             store.metadata[k] = v.replace(old_path, new_path)
                     except Exception:
                         print(
                             f"Failed to update metadata for {store}: {successful/total*100}% OK"
+                        )
+                        success = False
+
+                    try:
+                        for k, v in store.taskrc.items():
+                            store.taskrc[k] = v.replace(old_path, new_path)
+                    except Exception:
+                        print(
+                            f"Failed to update taskrc for {store}: {successful/total*100}% OK"
                         )
                         success = False
 
