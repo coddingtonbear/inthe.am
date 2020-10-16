@@ -130,8 +130,6 @@ class TaskStore(models.Model):
             self._taskd_account = TaskdAccountManager(
                 settings.TASKD_ORG, self.username,
             )
-            if not self._taskd_account.exists():
-                self._taskd_account.create()
 
         return self._taskd_account
 
