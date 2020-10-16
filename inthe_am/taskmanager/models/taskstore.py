@@ -133,6 +133,11 @@ class TaskStore(models.Model):
 
         return self._taskd_account
 
+    def clear_cached_properties(self):
+        for prop_name in ("_metadata", "_taskrc", "_taskd_account"):
+            if hasattr(self, prop_name):
+                delattr(self, prop_name)
+
     @property
     def taskd_certificate_status(self):
         results = {}

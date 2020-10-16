@@ -102,6 +102,8 @@ class Command(BaseCommand):
         elif subcommand == "migrate_all":
             old_path = "/var/www/twweb/task_data/"
             new_path = "/task_data/"
+
+            trap_errors = True
             with progressbar.ProgressBar(
                 max_value=TaskStore.objects.count(),
                 widgets=[
@@ -126,18 +128,9 @@ class Command(BaseCommand):
 
                     try:
                         store.local_path = store.local_path.replace(old_path, new_path)
+                        store.clear_cached_properties()
 
                         with git_checkpoint(store, "Migrating"):
-                            try:
-                                del store._metadata
-                            except AttributeError:
-                                pass
-
-                            try:
-                                del store._taskrc
-                            except AttributeError:
-                                pass
-
                             try:
                                 for k, v in store.metadata.items():
                                     if isinstance(v, str):
@@ -145,46 +138,28 @@ class Command(BaseCommand):
                                             old_path, new_path
                                         )
                             except Exception as e:
-                                print(
-                                    f"Failed to update metadata for {store}: {success_rate}% OK: {e}"
-                                )
-                                success = False
+                                print(f"Failed to update metadata: {e}")
+                                raise
 
-                            try:
-                                del store._metadata
-                            except AttributeError:
-                                pass
-
-                            try:
-                                del store._taskrc
-                            except AttributeError:
-                                pass
+                            store.clear_cached_properties()
 
                             try:
                                 for k, v in store.taskrc.items():
                                     store.taskrc[k] = v.replace(old_path, new_path)
                             except Exception as e:
-                                print(
-                                    f"Failed to update taskrc for {store}: {success_rate}% OK: {e}"
-                                )
-                                success = False
+                                print(f"Failed to update taskrc: {e}")
+                                raise
 
-                            try:
-                                del store._metadata
-                            except AttributeError:
-                                pass
-
-                            try:
-                                del store._taskrc
-                            except AttributeError:
-                                pass
+                            store.clear_cached_properties()
 
                             store.save()
                     except Exception as e:
-                        print(
-                            f"Failed to update taskrc for {store}: {success_rate}% OK: {e}"
-                        )
+                        print(f"Failed to migrate {store}: {success_rate}% OK: {e}")
                         success = False
+                        if trap_errors:
+                            import pdb
+
+                            pdb.set_trace()
 
                     if success:
                         successful += 1
