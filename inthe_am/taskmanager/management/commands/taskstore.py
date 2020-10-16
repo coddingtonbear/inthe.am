@@ -156,7 +156,7 @@ class Command(BaseCommand):
                                     for include in store.taskrc.includes
                                 }
                                 store.taskrc.includes = list(includes)
-                                store._write()
+                                store.taskrc._write()
                             except Exception as e:
                                 print(f"Failed to update taskrc: {e}")
                                 raise
