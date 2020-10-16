@@ -130,6 +130,8 @@ class TaskStore(models.Model):
             self._taskd_account = TaskdAccountManager(
                 settings.TASKD_ORG, self.username,
             )
+            if not self._taskd_account.exists():
+                self._taskd_account.create()
 
         return self._taskd_account
 
@@ -732,8 +734,6 @@ class TaskStore(models.Model):
                 "taskd.credentials": self.metadata["generated_taskd_credentials"],
             }
         )
-        if not self.taskd_account.exists():
-            self.taskd_account.create()
 
         self.generate_new_certificate()
         self.clear_taskserver_data()
