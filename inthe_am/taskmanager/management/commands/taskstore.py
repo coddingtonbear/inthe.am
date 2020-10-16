@@ -137,7 +137,8 @@ class Command(BaseCommand):
 
                     try:
                         for k, v in store.metadata.items():
-                            store.metadata[k] = v.replace(old_path, new_path)
+                            if isinstance(v, str):
+                                store.metadata[k] = v.replace(old_path, new_path)
                     except Exception:
                         print(
                             f"Failed to update metadata for {store}: {success_rate}% OK"
