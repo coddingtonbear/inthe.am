@@ -122,6 +122,16 @@ class Command(BaseCommand):
                     store.save()
 
                     try:
+                        del store._metadata
+                    except AttributeError:
+                        pass
+
+                    try:
+                        del store._taskrc
+                    except AttributeError:
+                        pass
+
+                    try:
                         for k, v in store.metadata.items():
                             store.metadata[k] = v.replace(old_path, new_path)
                     except Exception:
@@ -129,6 +139,16 @@ class Command(BaseCommand):
                             f"Failed to update metadata for {store}: {successful/total*100}% OK"
                         )
                         success = False
+
+                    try:
+                        del store._metadata
+                    except AttributeError:
+                        pass
+
+                    try:
+                        del store._taskrc
+                    except AttributeError:
+                        pass
 
                     try:
                         for k, v in store.taskrc.items():
