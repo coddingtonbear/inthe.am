@@ -732,6 +732,9 @@ class TaskStore(models.Model):
                 "taskd.credentials": self.metadata["generated_taskd_credentials"],
             }
         )
+        if not self.taskd_account.exists():
+            self.taskd_account.create()
+
         self.generate_new_certificate()
         self.clear_taskserver_data()
         try:

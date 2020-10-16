@@ -71,6 +71,9 @@ class TaskdAccountManager:
     def delete(self) -> None:
         self.make_user_request("delete")
 
+    def exists(self) -> bool:
+        return self.make_user_request("get").status_code == 200
+
     def get_data(self) -> bytes:
         response = self.make_user_request("get", "data")
         return response.content
