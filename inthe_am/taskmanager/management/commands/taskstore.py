@@ -174,7 +174,6 @@ class Command(BaseCommand):
                     except AttributeError:
                         pass
 
-                    print(store.local_path)
                     store.save()
 
                     if success:
