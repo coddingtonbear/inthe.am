@@ -125,11 +125,9 @@ class Command(BaseCommand):
                         success_rate = 0
 
                     try:
-                        with git_checkpoint(store, "Migrating"):
-                            store.local_path = store.local_path.replace(
-                                old_path, new_path
-                            )
+                        store.local_path = store.local_path.replace(old_path, new_path)
 
+                        with git_checkpoint(store, "Migrating"):
                             try:
                                 del store._metadata
                             except AttributeError:
