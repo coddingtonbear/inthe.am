@@ -72,7 +72,7 @@ class TaskdAccountManager:
         self.make_user_request("delete")
 
     def exists(self) -> bool:
-        return self.make_user_request("get").status_code == 200
+        return self.make_user_request("get", raise_for_error=False).status_code == 200
 
     def get_data(self) -> bytes:
         response = self.make_user_request("get", "data")
