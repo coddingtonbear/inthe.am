@@ -166,6 +166,7 @@ class Command(BaseCommand):
                             store.save()
                     except Exception as e:
                         print(f"Failed to migrate {store}: {success_rate}% OK: {e}")
+                        traceback.print_exc()
                         success = False
                         if trap_errors:
                             import pdb
