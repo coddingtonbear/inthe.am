@@ -104,7 +104,6 @@ class Command(BaseCommand):
             old_path = "/var/www/twweb/task_data/"
             new_path = "/task_data/"
 
-            trap_errors = True
             with progressbar.ProgressBar(
                 max_value=TaskStore.objects.count(),
                 widgets=[
@@ -174,10 +173,6 @@ class Command(BaseCommand):
                         print(f"Failed to migrate {store}: {success_rate}% OK: {e}")
                         traceback.print_exc()
                         success = False
-                        if trap_errors:
-                            import pdb
-
-                            pdb.set_trace()
 
                     if success:
                         successful += 1
