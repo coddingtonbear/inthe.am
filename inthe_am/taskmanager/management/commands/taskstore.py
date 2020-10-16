@@ -119,7 +119,6 @@ class Command(BaseCommand):
                     success = True
 
                     store.local_path = store.local_path.replace(old_path, new_path)
-                    store.save()
 
                     try:
                         del store._metadata
@@ -158,6 +157,18 @@ class Command(BaseCommand):
                             f"Failed to update taskrc for {store}: {successful/total*100}% OK"
                         )
                         success = False
+
+                    try:
+                        del store._metadata
+                    except AttributeError:
+                        pass
+
+                    try:
+                        del store._taskrc
+                    except AttributeError:
+                        pass
+
+                    store.save()
 
                     if success:
                         successful += 1
