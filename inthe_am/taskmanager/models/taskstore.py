@@ -737,9 +737,7 @@ class TaskStore(models.Model):
                 "taskd.key": os.path.join(
                     self.local_path, self.DEFAULT_FILENAMES["key"]
                 ),
-                "taskd.ca": os.path.join(
-                    self.local_path, self.DEFAULT_FILENAMES["ca_cert"]
-                ),
+                "taskd.ca": settings.CA_CERT_PATH,
                 "taskd.trust": "ignore hostname",
                 "taskd.server": settings.TASKD_SERVER,
                 "taskd.credentials": self.metadata["generated_taskd_credentials"],
