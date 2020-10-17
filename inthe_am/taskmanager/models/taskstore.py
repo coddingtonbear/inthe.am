@@ -796,12 +796,6 @@ class TaskStore(models.Model):
             with open(private_key_filename, "w") as out:
                 out.write(private_key)
 
-        ca_cert_filename = os.path.join(
-            self.local_path, self.DEFAULT_FILENAMES["ca_cert"],
-        )
-        with open(ca_cert_filename, "w") as out:
-            out.write(self.taskd_account.get_ca_cert())
-
         self.taskd_account.create()
         credentials = self.taskd_account.get_credentials()
         with git_checkpoint(self, "Save initial taskrc credentials"):
@@ -819,7 +813,7 @@ class TaskStore(models.Model):
                     "data.location": self.local_path,
                     "taskd.certificate": cert_filename,
                     "taskd.key": private_key_filename,
-                    "taskd.ca": ca_cert_filename,
+                    "taskd.ca": settings.CA_CERT_PATH,
                     "taskd.server": settings.TASKD_SERVER,
                     "taskd.credentials": credentials,
                     "taskd.trust": "ignore hostname",

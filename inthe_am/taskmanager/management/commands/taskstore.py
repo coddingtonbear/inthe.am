@@ -7,6 +7,7 @@ import uuid
 import progressbar
 
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils.timezone import now
@@ -187,6 +188,8 @@ class Command(BaseCommand):
                             store.clear_cached_properties()
 
                             try:
+                                store.taskrc["taskd.ca"] = settings.CA_CERT_PATH
+                                store.taskrc["taskd.server"] = settings.TASKD_SERVER
                                 for k, v in store.taskrc.items():
                                     store.taskrc[k] = v.replace(old_path, new_path)
                             except Exception as e:
