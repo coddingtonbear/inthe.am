@@ -297,7 +297,7 @@ var controller = Ember.Controller.extend({
     );
 
     if (window.location.hostname === "inthe.am") {
-      this.set("logo", "/static/logo.png");
+      this.set("logo", "/assets/logo.png");
       this.set("applicationName", "Inthe.AM");
     }
     document.title = this.get("applicationName");
