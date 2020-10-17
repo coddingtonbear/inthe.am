@@ -11,7 +11,6 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils.timezone import now
-from dulwich.client import NotGitRepository
 
 from inthe_am.taskmanager.models import TaskStore, TaskStoreStatistic
 from inthe_am.taskmanager.lock import get_lock_redis
@@ -166,43 +165,12 @@ class Command(BaseCommand):
                         success_rate = 0
 
                     try:
-                        store.local_path = store.local_path.replace(old_path, new_path)
-                        store.clear_cached_properties()
-
-                        try:
-                            store.repository.head().decode("utf-8")
-                        except (KeyError, NotGitRepository):
-                            store.create_git_repository()
-
                         with fast_git_checkpoint(store, "Migrating"):
-                            try:
-                                for k, v in store.metadata.items():
-                                    if isinstance(v, str):
-                                        store.metadata[k] = v.replace(
-                                            old_path, new_path
-                                        )
-                            except Exception as e:
-                                print(f"Failed to update metadata: {e}")
-                                raise
-
-                            store.clear_cached_properties()
-
                             try:
                                 store.taskrc["taskd.ca"] = settings.CA_CERT_PATH
                                 store.taskrc["taskd.server"] = settings.TASKD_SERVER
                                 for k, v in store.taskrc.items():
                                     store.taskrc[k] = v.replace(old_path, new_path)
-                            except Exception as e:
-                                print(f"Failed to update taskrc: {e}")
-                                raise
-
-                            try:
-                                includes = {
-                                    include.replace(old_path, new_path)
-                                    for include in store.taskrc.includes
-                                }
-                                store.taskrc.includes = list(includes)
-                                store.taskrc._write()
                             except Exception as e:
                                 print(f"Failed to update taskrc: {e}")
                                 raise
