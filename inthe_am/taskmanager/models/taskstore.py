@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import json
 import logging
@@ -42,6 +43,8 @@ HEX_COLOR_RE = re.compile(r"^#(?:[0-9a-fA-F]{3}){1,2}$")
 
 
 class TaskStore(models.Model):
+    MAX_TRELLO_LAG = datetime.timedelta(days=7)
+
     REPLY_ALL = 9
     REPLY_ERROR = 5
     REPLY_NEVER = 0
@@ -582,7 +585,7 @@ class TaskStore(models.Model):
             }
             return results
 
-    def squash(self, force=False, max_trello_lag=datetime.timedelta(days=7)):
+    def squash(self, force=False, max_trello_lag=MAX_TRELLO_LAG):
         lock_name = get_lock_name_for_store(self)
 
         with redis_lock(

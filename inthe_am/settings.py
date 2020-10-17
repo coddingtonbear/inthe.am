@@ -34,6 +34,8 @@ RUN_LOCALLY = {
     "ember_port": 8009,
 }
 
+CA_CERT_PATH = "/tmp/ca.crt"
+
 TEMPLATE_DEBUG = True
 
 DOMAIN_NAME = os.environ.get("DOMAIN_NAME", "localhost")
@@ -437,7 +439,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "social_django",
     "gunicorn",
-    "inthe_am.taskmanager",
+    "inthe_am.taskmanager.apps.TaskmanagerConfig",
     "django_mailbox",
     "rest_framework",
     "rest_framework.authtoken",
