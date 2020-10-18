@@ -228,7 +228,7 @@ var controller = Ember.Controller.extend({
     if (this.get("taskUpdateStreamEnabled")) {
       this.set("statusUpdaterLog", []);
       this.startEventStream();
-      window.setInterval(this.checkStatusUpdater.bind(this), 500);
+      window.setInterval(this.checkStatusUpdater.bind(this), 30000);
     }
 
     // Set up left-right swipe for returning to the task list
