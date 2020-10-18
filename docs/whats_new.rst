@@ -1,8 +1,15 @@
 What's New?
 ===========
 
-15 Dec 2018
------------
+16 October 2020
+---------------
+
+* Docker: Inthe.am's development and production environments have been containerized.
+  You can now start up a development environment much more easily than before;
+  see :ref:`development-environment-setup`.
+
+15 December 2018
+----------------
 
 * Bugwarrior support removed (see https://github.com/coddingtonbear/inthe.am/issues/303)
 
@@ -20,7 +27,7 @@ Features
 Features
 ~~~~~~~~
 
-* kugwarrior: Bugwarrior is a tool that allows you to synchronize issues
+* Bugwarrior: Bugwarrior is a tool that allows you to synchronize issues
   assigned to you from JIRA, Github, and other services with your Taskwarrior
   task list.  Now, you can use Bugwarrior directly with Inthe.AM.
 

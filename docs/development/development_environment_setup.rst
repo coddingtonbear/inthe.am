@@ -1,3 +1,5 @@
+.. _development-environment-setup:
+
 Setting up a Development Environment
 ====================================
 
@@ -9,12 +11,18 @@ Prerequisites
 Setup
 -----
 
-From a your clone of the Inthe.AM repository, run the following command to
-bring up your development environment::
+Before starting your environment, you will need to generate a keypair for the HTTPS server. 
+From a your clone of the Inthe.AM repository,
+run the following commands::
+
+    cd docker/nginx/secrets
+    openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 365 -nodes
+
+After that, you can bring up your development environment::
 
     docker-compose up
 
-You can now access the site by connecting to `https://localhost/ <https://localhost/>`_.
+You can now access the site by connecting to `https://127.0.0.1/ <https://127.0.0.1/>`_.
 
 Troubleshooting your Development Environment
 --------------------------------------------
@@ -24,5 +32,5 @@ Troubleshooting your Development Environment
   to use the site; see :ref:`google_oauth_keys` for details regarding what you
   should set these variables to:
 
-  * ``TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY``
-  * ``TWWEB_SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET``
+  * ``SOCIAL_AUTH_GOOGLE_OAUTH2_KEY``
+  * ``SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET``
