@@ -22,7 +22,7 @@ After that, you can bring up your development environment::
 
     docker-compose up
 
-You can now access the site by connecting to `https://127.0.0.1/ <https://127.0.0.1/>`_.
+You can now access the site by connecting to `https://localhost/ <https://localhost/>`_.
 
 Troubleshooting your Development Environment
 --------------------------------------------
