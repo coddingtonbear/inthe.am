@@ -5,6 +5,7 @@ WSGI config for Inthe.AM's status server.
 import datetime
 import json
 import logging
+import logging.config
 import pickle
 from queue import Queue
 import time
@@ -15,12 +16,11 @@ import django
 
 django.setup()  # noqa
 
-from django.conf import settings
-from django.core.signing import Signer
+from django.conf import settings  # noqa
 
-from gevent import sleep
+from gevent import sleep  # noqa
 
-from inthe_am.taskmanager.lock import get_lock_redis
+from inthe_am.taskmanager.lock import get_lock_redis  # noqa
 
 
 logger = logging.getLogger("inthe_am.wsgi_status")
@@ -34,7 +34,7 @@ def get_announcements_subscription(store, username, channels):
     final_channels = []
 
     for channel in channels:
-        final_channels.append(channel.format(username=username.encode("utf8")))
+        final_channels.append(channel)
 
     subscription.subscribe(*channels)
 
@@ -57,6 +57,8 @@ class Application:
     def add_message(self, name, data=None):
         if data is None:
             data = ""
+
+        logger.debug("Adding message %s: %s", name, data)
 
         self.queue.put(
             {"name": name, "data": data,}
@@ -125,9 +127,6 @@ class Application:
         start_response("200 OK", self.HEADERS)
 
         self.last_heartbeat = None
-        self.env = env
-        self.response = env
-        self.signer = Signer()
         self.initialized = False
         self.queue = Queue()
 
@@ -155,10 +154,10 @@ class Application:
                 self.store,
                 self.username,
                 [
-                    "local_sync.{username}",
-                    "changed_task.{username}",
-                    "log_message.{username}",
-                    "personal.{username}",
+                    f"local_sync.{self.username}",
+                    f"changed_task.{self.username}",
+                    f"log_message.{self.username}",
+                    f"personal.{self.username}",
                     settings.ANNOUNCEMENTS_CHANNEL,
                 ],
             )
@@ -192,6 +191,7 @@ class Application:
                 # Queue-up all messages that have occurred
                 while True:
                     message = self.subscription.get_message()
+                    logger.debug("Found message: %s", message)
                     if not message:
                         break
 
@@ -203,6 +203,7 @@ class Application:
                     if not message:
                         continue
 
+                    logger.debug("Emitting %s on bus", message)
                     if message.get("name"):
                         yield f"event: {message['name']}\n"
                     yield f"data: {message.get('data', '')}\n"
