@@ -72,14 +72,14 @@ services:
       - task-data:/task_data
     networks:
       - backend
-  ember:
-    image: coddingtonbear/intheam_ember
+  redux:
+    image: coddingtonbear/intheam_redux
     build:
-      dockerfile: ./docker/ember/Dockerfile
+      dockerfile: ./docker/redux/Dockerfile
       context: ./
     volumes:
-      - ./ember/app:/app/app
-      - ember-assets:/dist
+      - ./ui:/app
+      - redux-assets:/app/dist
     env_file:
       - .env
       - .private.env
@@ -96,13 +96,13 @@ services:
       - "443:443"
     volumes:
       - ./docker/nginx/secrets:/certificates
-      - ember-assets:/app
+      - redux-assets:/app/dist
       - django-static-assets:/django-static
     networks:
       - backend
     links:
       - web:web
-      - ember:ember
+      - redux:redux
   postgres:
     restart: always
     image: postgres:alpine
@@ -145,6 +145,6 @@ volumes:
   taskd-data:
     external: true
   django-static-assets:
-  ember-assets:
+  redux-assets:
 networks:
   backend:

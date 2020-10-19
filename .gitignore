@@ -7,6 +7,7 @@ static/
 ember/bower_components/
 ember/node_modules/
 ember/tmp/
+ui/node_modules/
 dist/
 tmp/
 .sass-cache
@@ -55,3 +56,4 @@ taskd_services/http/env
 test_taskstore/*
 docker/nginx/secrets/*
 docker/taskd/secrets/*
+package-lock.json
