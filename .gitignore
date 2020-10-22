@@ -57,3 +57,4 @@ test_taskstore/*
 docker/nginx/secrets/*
 docker/taskd/secrets/*
 package-lock.json
+ui/supervisord.pid

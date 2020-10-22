@@ -72,14 +72,16 @@ services:
       - task-data:/task_data
     networks:
       - backend
-  redux:
-    image: coddingtonbear/intheam_redux
+  static-builder:
+    image: coddingtonbear/intheam_static-builder
     build:
-      dockerfile: ./docker/redux/Dockerfile
+      dockerfile: ./docker/static-builder/Dockerfile
       context: ./
+    environment:
+      BUILD_MODE: development
     volumes:
       - ./ui:/app
-      - redux-assets:/app/dist
+      - static-assets:/app/dist
     env_file:
       - .env
       - .private.env
@@ -96,13 +98,13 @@ services:
       - "443:443"
     volumes:
       - ./docker/nginx/secrets:/certificates
-      - redux-assets:/app/dist
+      - static-assets:/app/dist
       - django-static-assets:/django-static
     networks:
       - backend
     links:
       - web:web
-      - redux:redux
+      - static-builder:static-builder
   postgres:
     restart: always
     image: postgres:alpine
@@ -145,6 +147,6 @@ volumes:
   taskd-data:
     external: true
   django-static-assets:
-  redux-assets:
+  static-assets:
 networks:
   backend:
