@@ -1,0 +1,25 @@
+.task-list {
+  background-color: #202020;
+  color: #DEDEDE; }
+
+.task.active {
+  background-color: #131313; }
+
+.task .alternate {
+  background-color: #000000; }
+
+.task.active .alternate {
+  background-color: black; }
+
+.task .pri__M {
+  color: #ffff00; }
+
+.task .pri__L {
+  color: #008000; }
+
+.task .pri__H {
+  color: #0000ff; }
+
+.task .active {
+  color: #ff0000; }
+

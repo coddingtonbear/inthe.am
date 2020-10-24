@@ -98,7 +98,7 @@ services:
       - "443:443"
     volumes:
       - ./docker/nginx/secrets:/certificates
-      - static-assets:/app/dist
+      - static-assets:/app
       - django-static-assets:/django-static
     networks:
       - backend

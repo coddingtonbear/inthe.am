@@ -18,3 +18,4 @@ ember/tmp/*
 docker/taskd/secrets/*
 docker/nginx/secrets/*
 ui/node_modules/*
+ui/supervisord.pid

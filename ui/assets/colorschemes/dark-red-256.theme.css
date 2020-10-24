@@ -1,0 +1,129 @@
+.task-list {
+  background-color: #202020;
+  color: #DEDEDE; }
+
+.task.active {
+  background-color: #131313; }
+
+.task .calendar__today {
+  background-color: #ff5f5f; }
+
+.task.active .calendar__today {
+  background-color: #ff4545; }
+
+.task .footnote {
+  color: #5f3737; }
+
+.task .history__delete {
+  background-color: #ff3737; }
+
+.task.active .history__delete {
+  background-color: #ff1e1e; }
+
+.task .sync__rejected {
+  color: #873737; }
+
+.task .summary__background {
+  color: #ffffff; }
+
+.task .blocked {
+  color: #ffffff;
+  background-color: #5f3737; }
+
+.task.active .blocked {
+  background-color: #4f2e2e; }
+
+.task .calendar__weeknumber {
+  color: #5f3737; }
+
+.task .sync__added {
+  color: #2c2c2c; }
+
+.task .summary__bar {
+  color: #ffffff;
+  background-color: #af3737; }
+
+.task.active .summary__bar {
+  background-color: #9c3131; }
+
+.task .sync__changed {
+  color: #d75f5f; }
+
+.task .burndown__started {
+  background-color: #d75f5f; }
+
+.task.active .burndown__started {
+  background-color: #d24b4b; }
+
+.task .history__done {
+  background-color: #af3737; }
+
+.task.active .history__done {
+  background-color: #9c3131; }
+
+.task .recurring {
+  color: #ff5f5f; }
+
+.task .undo__after {
+  color: #ff37af; }
+
+.task .calendar__holiday {
+  color: #ff8787;
+  background-color: #af3737; }
+
+.task.active .calendar__holiday {
+  background-color: #9c3131; }
+
+.task .burndown__done {
+  background-color: #2c2c2c; }
+
+.task.active .burndown__done {
+  background-color: #1f1f1f; }
+
+.task .pri__M {
+  color: #d73737; }
+
+.task .pri__L {
+  color: #af3737; }
+
+.task .pri__H {
+  color: #ff3737; }
+
+.task .active {
+  color: #ff3737;
+  background-color: #5f3737; }
+
+.task.active .active {
+  background-color: #4f2e2e; }
+
+.task .undo__before {
+  color: #af375f; }
+
+.task .blocking {
+  color: #ffffff;
+  background-color: #873737; }
+
+.task.active .blocking {
+  background-color: #753030; }
+
+.task .burndown__pending {
+  background-color: #873737; }
+
+.task.active .burndown__pending {
+  background-color: #753030; }
+
+.task .header {
+  color: #5f3737; }
+
+.task .history__add {
+  background-color: #5f3737; }
+
+.task.active .history__add {
+  background-color: #4f2e2e; }
+
+.task .error {
+  color: #5f3737; }
+
+.task .debug {
+  color: #5f3737; }
+

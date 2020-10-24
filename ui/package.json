@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.4.0",
+    "@types/react-router-dom": "^5.1.6",
     "autoprefixer": "^10.0.1",
     "browser-sync": "^2.26.13",
     "foundation-cli": "^2.2.6",
@@ -19,6 +20,7 @@
     "react-dom": "^16.14.0",
     "react-foundation": "^0.9.6",
     "react-redux": "^7.2.1",
+    "react-router-dom": "^5.2.0",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-toolkit": "^1.1.2",

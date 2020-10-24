@@ -22,9 +22,17 @@ function sass() {
   )
 }
 
+function copyIndex() {
+  return gulp.src('src/index.html').pipe(gulp.dest('dist'))
+}
+
+function copyAssets() {
+  return gulp.src('assets/**/*').pipe(gulp.dest('dist/assets'))
+}
+
 function watch() {
   gulp.watch('scss/*.scss', sass)
 }
 
 gulp.task('sass', sass)
-gulp.task('default', gulp.series('sass', watch))
+gulp.task('default', gulp.series('sass', copyIndex, copyAssets, watch))
