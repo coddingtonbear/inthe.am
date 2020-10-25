@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 import tempfile
+from typing import Optional
 
 from flask import Flask, request, send_file
 from flask_restful import Resource, Api
@@ -128,11 +129,13 @@ class Certificate(db.Model):  # type: ignore
     revoked = db.Column(db.DateTime, nullable=True)
 
     @property
-    def certificate(self):
-        return self._certificate
+    def certificate(self) -> Optional[str]:
+        if hasattr(self, "_certificate"):
+            return self._certificate
+        return None
 
     @certificate.setter
-    def certificate(self, cert):
+    def certificate(self, cert: str):
         self._certificate = cert
 
     @classmethod
