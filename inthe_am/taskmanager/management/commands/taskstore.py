@@ -1,7 +1,9 @@
 from contextlib import contextmanager
 import datetime
+import json
 import os
 import traceback
+from typing import cast
 import uuid
 
 import progressbar
@@ -138,20 +140,27 @@ class Command(BaseCommand):
                     )
                     bar.update(idx)
         elif subcommand == "migrate_all":
-            with progressbar.ProgressBar(
-                max_value=TaskStore.objects.count(),
-                widgets=[
-                    " [",
-                    progressbar.Timer(),
-                    "] ",
-                    progressbar.Bar(),
-                    " (",
-                    progressbar.ETA(),
-                    ") ",
-                ],
-            ) as bar:
-                for idx, store in enumerate(TaskStore.objects.order_by("-last_synced")):
-                    bar.update(idx)
+            for store in TaskStore.objects.order_by("-last_synced"):
+                store = cast(TaskStore, store)
+                print(store)
+
+                if not store.taskd_account.exists():
+                    try:
+                        cert_fingerprint = store.taskrc.get_certificate_fingerprint()
+                        user_key = store.taskrc["taskd.credentials"].split("/")[2]
+
+                        store.taskd_account.make_user_request(
+                            "PUT", data=json.dumps({"user_key": user_key,})
+                        )
+                        store.taskd_account.make_user_request(
+                            "PUT", path=f"certificates/{cert_fingerprint}"
+                        )
+                        print("> OK")
+                    except Exception:
+                        print("> FAILED")
+                        traceback.print_exc()
+                else:
+                    print("> EXISTS")
         elif subcommand == "gc_large_repos":
             for store in TaskStore.objects.order_by("-last_synced"):
                 try:
