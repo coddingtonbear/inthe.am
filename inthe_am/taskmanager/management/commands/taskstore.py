@@ -7,7 +7,6 @@ import uuid
 import progressbar
 
 from django.contrib.auth.models import User
-from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils.timezone import now
@@ -139,9 +138,6 @@ class Command(BaseCommand):
                     )
                     bar.update(idx)
         elif subcommand == "migrate_all":
-            old_path = "/var/www/twweb/task_data/"
-            new_path = "/task_data/"
-
             with progressbar.ProgressBar(
                 max_value=TaskStore.objects.count(),
                 widgets=[
@@ -154,39 +150,7 @@ class Command(BaseCommand):
                     ") ",
                 ],
             ) as bar:
-                successful = 0
-                total = 0
                 for idx, store in enumerate(TaskStore.objects.order_by("-last_synced")):
-                    success = True
-
-                    try:
-                        success_rate = successful / total * 100
-                    except Exception:
-                        success_rate = 0
-
-                    try:
-                        with fast_git_checkpoint(store, "Migrating"):
-                            try:
-                                store.taskrc["taskd.ca"] = settings.CA_CERT_PATH
-                                store.taskrc["taskd.server"] = settings.TASKD_SERVER
-                                for k, v in store.taskrc.items():
-                                    store.taskrc[k] = v.replace(old_path, new_path)
-                            except Exception as e:
-                                print(f"Failed to update taskrc: {e}")
-                                raise
-
-                            store.clear_cached_properties()
-
-                            store.save()
-                    except Exception as e:
-                        print(f"Failed to migrate {store}: {success_rate}% OK: {e}")
-                        traceback.print_exc()
-                        success = False
-
-                    if success:
-                        successful += 1
-                    total += 1
-
                     bar.update(idx)
         elif subcommand == "gc_large_repos":
             for store in TaskStore.objects.order_by("-last_synced"):
