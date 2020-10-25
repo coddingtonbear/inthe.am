@@ -1,9 +1,7 @@
 from contextlib import contextmanager
 import datetime
-import json
 import os
 import traceback
-from typing import cast
 import uuid
 
 import progressbar
@@ -139,42 +137,6 @@ class Command(BaseCommand):
                         run_id=run_id,
                     )
                     bar.update(idx)
-        elif subcommand == "migrate_all":
-            for store in TaskStore.objects.order_by("-last_synced"):
-                store = cast(TaskStore, store)
-                print(store)
-
-                if not store.taskd_account.exists():
-                    try:
-                        user_key = store.taskrc["taskd.credentials"].split("/")[2]
-
-                        store.taskd_account.make_user_request(
-                            "PUT", data=json.dumps({"user_key": user_key,})
-                        )
-                        print("> ACCOUNT CREATION OK")
-                    except Exception:
-                        print("> ACCOUNT CREATION FAILED")
-                        continue
-                else:
-                    print("> ACCOUNT EXISTS")
-
-                certs = store.taskd_account.make_user_request(
-                    "GET", "certificates"
-                ).json()
-                if not certs:
-                    try:
-                        cert_fingerprint = store.taskrc.get_certificate_fingerprint()
-                        store.taskd_account.make_user_request(
-                            "PUT",
-                            data=json.dumps({}),
-                            path=f"certificates/{cert_fingerprint}",
-                        )
-                        print("> CERT SET OK")
-                    except Exception:
-                        print("> CERT SET FAILED")
-                        continue
-                else:
-                    print("> CERT ALREADY SET")
         elif subcommand == "gc_large_repos":
             for store in TaskStore.objects.order_by("-last_synced"):
                 try:
