@@ -1,9 +1,12 @@
 import os
 import re
+import subprocess
+from typing import Dict, List, cast
+from typing_extensions import Literal
 
 
 class TaskRc:
-    def __init__(self, path, read_only=False):
+    def __init__(self, path: str, read_only=False):
         self.path = path
         self.read_only = read_only
         if not os.path.isfile(self.path):
@@ -16,9 +19,9 @@ class TaskRc:
                 os.path.abspath(include_path), include_from=self.path
             )
 
-    def _read(self, path, include_from=None):
-        config = {}
-        includes = []
+    def _read(self, path: str, include_from: str = None):
+        config: Dict[str, str] = {}
+        includes: List[str] = []
         if include_from and include_from.find(os.path.dirname(path)) != 0:
             return config, includes
         with open(path, "r") as config_file:
@@ -42,7 +45,9 @@ class TaskRc:
                         pass
         return config, includes
 
-    def _write(self, path=None, data=None, includes=None):
+    def _write(
+        self, path: str = None, data: Dict[str, str] = None, includes: List[str] = None
+    ):
         if path is None:
             path = self.path
         if data is None:
@@ -58,7 +63,7 @@ class TaskRc:
                 config.write(f"{key}={value}\n")
 
     @property
-    def assembled(self):
+    def assembled(self) -> Dict[str, str]:
         all_items = {}
         for include_values in self.include_values.values():
             all_items.update(include_values)
@@ -71,25 +76,25 @@ class TaskRc:
     def keys(self):
         return self.assembled.keys()
 
-    def get(self, item, default=None):
+    def get(self, item: str, default=None):
         try:
             return self.assembled[item]
         except KeyError:
             return default
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str):
         return self.assembled[item]
 
-    def __setitem__(self, item, value):
+    def __setitem__(self, item: str, value: str):
         self.config[item] = str(value)
         self._write()
 
-    def update(self, value):
+    def update(self, value: Dict[str, str]):
         self.config.update(value)
         self._write()
 
-    def get_udas(self):
-        udas = {}
+    def get_udas(self) -> Dict[str, Dict[Literal["type", "label"], str]]:
+        udas: Dict[str, Dict[Literal["type", "label"], str]] = {}
 
         uda_type = re.compile(r"^uda\.([^.]+)\.(type)$")
         uda_label = re.compile(r"^uda\.([^.]+)\.(label)$")
@@ -99,19 +104,36 @@ class TaskRc:
                 if matches:
                     if matches.group(1) not in udas:
                         udas[matches.group(1)] = {}
-                    udas[matches.group(1)][matches.group(2)] = v
+                    udas[matches.group(1)][
+                        cast(Literal["type", "label"], matches.group(2))
+                    ] = v
 
         return udas
 
-    def add_include(self, item):
+    def add_include(self, item) -> None:
         if item not in self.includes:
             self.includes.append(item)
         self._write()
 
-    def remove_include(self, item):
+    def remove_include(self, item) -> None:
         if item in self.includes:
             self.includes.remove(item)
         self._write()
+
+    def get_certificate_fingerprint(self) -> str:
+        fp_proc = subprocess.Popen(
+            [
+                "certtool",
+                "--hash",
+                "SHA512",
+                "--fingerprint",
+                "--infile",
+                self["taskd.certificate"],
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        return fp_proc.communicate()[0].decode("utf-8").strip()
 
     def __str__(self):
         return f".taskrc at {self.path}"
