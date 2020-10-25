@@ -217,15 +217,27 @@ class ServerConfig(Resource):
 
 class TaskdAccount(Resource):
     def put(self, org_name, user_name):
-        cred = Credential.query.filter_by(
-            user_name=user_name, org_name=org_name,
-        ).first()
-
-        if not cred:
-            cred = Credential.create_new(user_name=user_name, org_name=org_name,)
-
         parsed = json.loads(request.data)
+
         is_suspended = parsed.get("is_suspended")
+        user_key = parsed.get("user_key")
+
+        if user_key:
+            # If `user_key` is provided in the PUT, this account was
+            # already created in Taskd, we just need to update our records.
+            cred = Credential(
+                user_key=user_key, org_name=org_name, user_name=user_name,
+            )
+            db.session.add(cred)
+            db.session.commit()
+        else:
+            cred = Credential.query.filter_by(
+                user_name=user_name, org_name=org_name,
+            ).first()
+
+            if not cred:
+                cred = Credential.create_new(user_name=user_name, org_name=org_name)
+
         if is_suspended is True:
             cred.suspend()
         elif is_suspended is False:
@@ -284,6 +296,18 @@ class TaskdCertificates(Resource):
 
 
 class TaskdCertificateDetails(Resource):
+    def put(self, org_name, user_name, fingerprint):
+        cred = Credential.query.filter_by(
+            user_name=user_name, org_name=org_name,
+        ).first_or_404()
+
+        parsed = json.loads(request.data)
+        label = parsed.get("label", "")
+
+        Certificate(
+            fingerprint=fingerprint, user_key=cred.user_key, label=label,
+        )
+
     def get(self, org_name, user_name, fingerprint):
         cred = Credential.query.filter_by(
             user_name=user_name, org_name=org_name,
