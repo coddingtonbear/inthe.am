@@ -154,6 +154,7 @@ class Command(BaseCommand):
                         print("> ACCOUNT CREATION OK")
                     except Exception:
                         print("> ACCOUNT CREATION FAILED")
+                        continue
                 else:
                     print("> ACCOUNT EXISTS")
 
@@ -171,6 +172,7 @@ class Command(BaseCommand):
                         print("> CERT SET OK")
                     except Exception:
                         print("> CERT SET FAILED")
+                        continue
                 else:
                     print("> CERT ALREADY SET")
         elif subcommand == "gc_large_repos":
