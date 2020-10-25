@@ -146,21 +146,31 @@ class Command(BaseCommand):
 
                 if not store.taskd_account.exists():
                     try:
-                        cert_fingerprint = store.taskrc.get_certificate_fingerprint()
                         user_key = store.taskrc["taskd.credentials"].split("/")[2]
 
                         store.taskd_account.make_user_request(
                             "PUT", data=json.dumps({"user_key": user_key,})
                         )
-                        store.taskd_account.make_user_request(
-                            "PUT", path=f"certificates/{cert_fingerprint}"
-                        )
-                        print("> OK")
+                        print("> ACCOUNT CREATION OK")
                     except Exception:
-                        print("> FAILED")
-                        traceback.print_exc()
+                        print("> ACCOUNT CREATION FAILED")
                 else:
-                    print("> EXISTS")
+                    print("> ACCOUNT EXISTS")
+
+                certs = store.taskd_account.make_user_request("GET", "certificates")
+                if not certs:
+                    try:
+                        cert_fingerprint = store.taskrc.get_certificate_fingerprint()
+                        store.taskd_account.make_user_request(
+                            "PUT",
+                            data=json.dumps({}),
+                            path=f"certificates/{cert_fingerprint}",
+                        )
+                        print("> CERT SET OK")
+                    except Exception:
+                        print("> CERT SET FAILED")
+                else:
+                    print("> CERT ALREADY SET")
         elif subcommand == "gc_large_repos":
             for store in TaskStore.objects.order_by("-last_synced"):
                 try:
