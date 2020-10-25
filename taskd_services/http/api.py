@@ -304,9 +304,13 @@ class TaskdCertificateDetails(Resource):
         parsed = json.loads(request.data)
         label = parsed.get("label", "")
 
-        Certificate(
+        cert_record = Certificate(
             fingerprint=fingerprint, user_key=cred.user_key, label=label,
         )
+        db.session.add(cert_record)
+        db.session.commit()
+
+        return None
 
     def get(self, org_name, user_name, fingerprint):
         cred = Credential.query.filter_by(
