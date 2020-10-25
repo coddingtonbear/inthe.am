@@ -157,7 +157,9 @@ class Command(BaseCommand):
                 else:
                     print("> ACCOUNT EXISTS")
 
-                certs = store.taskd_account.make_user_request("GET", "certificates")
+                certs = store.taskd_account.make_user_request(
+                    "GET", "certificates"
+                ).json()
                 if not certs:
                     try:
                         cert_fingerprint = store.taskrc.get_certificate_fingerprint()
