@@ -1,20 +1,19 @@
-import React from 'react'
-import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom'
+import React, {FunctionComponent} from 'react'
+import {Route, Switch, Redirect} from 'react-router'
+import {ConnectedRouter} from 'connected-react-router/immutable'
+import {history} from '../store'
 
 import About from './About'
 
-const App = () => {
+const App: FunctionComponent = () => {
   return (
-    <BrowserRouter>
+    <ConnectedRouter history={history}>
       <Switch>
-        <Route path="/about">
+        <Route path="/">
           <About />
         </Route>
-        <Route path="/">
-          <Redirect to="/about" />
-        </Route>
       </Switch>
-    </BrowserRouter>
+    </ConnectedRouter>
   )
 }
 

@@ -8,22 +8,15 @@ var sassPaths = [
 ]
 
 function sass() {
-  return (
-    gulp
-      .src('scss/app.scss')
-      .pipe(
-        $.sass({
-          includePaths: sassPaths,
-          outputStyle: 'compressed', // if css compressed **file size**
-        }).on('error', $.sass.logError)
-      )
-      //.pipe($.postcss([autoprefixer({browsers: ['last 2 versions', 'ie >= 9']})]))
-      .pipe(gulp.dest('dist/css'))
-  )
-}
-
-function copyIndex() {
-  return gulp.src('src/index.html').pipe(gulp.dest('dist'))
+  return gulp
+    .src('scss/app.scss')
+    .pipe(
+      $.sass({
+        includePaths: sassPaths,
+        outputStyle: 'compressed', // if css compressed **file size**
+      }).on('error', $.sass.logError)
+    )
+    .pipe(gulp.dest('dist/css'))
 }
 
 function copyAssets() {
@@ -35,4 +28,4 @@ function watch() {
 }
 
 gulp.task('sass', sass)
-gulp.task('default', gulp.series('sass', copyIndex, copyAssets, watch))
+gulp.task('default', gulp.series('sass', copyAssets, watch))
