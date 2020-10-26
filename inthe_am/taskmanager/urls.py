@@ -1,9 +1,7 @@
-import os
-
 from django.conf import settings
 from django.conf.urls import include, url
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
-from django.urls import reverse
+from django.template.response import TemplateResponse
+from django.http import HttpResponseNotFound
 from rest_framework import routers
 
 from .views import debug_login, TaskFeed, RestHookHandler
@@ -27,11 +25,8 @@ def unmatched(request):
     return HttpResponseNotFound()
 
 
-def fallback(request):
-    # This will redirect to the root path (which will be served for ember
-    # via nginx directly); we'll see the 'path=' parameter and ember will
-    # use its internal navigation to route you to the proper path
-    return HttpResponseRedirect("".join([reverse("fallback"), "?path=", request.path,]))
+def serve_ui(request):
+    return TemplateResponse(request, "serve_ui.html")
 
 
 def view_does_not_exist(request):
@@ -63,7 +58,7 @@ urlpatterns = [
     ),
     url("^api/v[1-2]/task/feed/(?P<uuid>[^/]+)/", TaskFeed(), name="feed"),
     url("^api/.*", unmatched,),
-    url("^", fallback, name="fallback"),
+    url("^", serve_ui, name="serve_ui"),
 ]
 
 if settings.DEBUG:
