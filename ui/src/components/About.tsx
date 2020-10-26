@@ -1,7 +1,7 @@
 import React, {FunctionComponent} from 'react'
-import {Icon} from 'react-foundation'
 
 import Footer from './Footer'
+import Icon from './Icon'
 
 export const About: FunctionComponent = () => {
   return (
@@ -25,7 +25,7 @@ export const About: FunctionComponent = () => {
         </div>
         <div className="medium-12 features">
           <div className="promo_cell">
-            <Icon prefix="fi" name="refresh" />
+            <Icon name="refresh" />
             <p>
               <span className="headline">Built-In Taskserver</span>
               We've built in an automatically-configured synchronization server
@@ -34,7 +34,7 @@ export const About: FunctionComponent = () => {
             </p>
           </div>
           <div className="promo_cell">
-            <Icon prefix="fi" name="mail" />
+            <Icon name="mail" />
             <p>
               <span className="headline">E-mail</span>
               You can easily add tasks to your task list by sending an e-mail to
@@ -42,7 +42,7 @@ export const About: FunctionComponent = () => {
             </p>
           </div>
           <div className="promo_cell">
-            <Icon prefix="fi" name="rss" />
+            <Icon name="rss" />
             <p>
               <span className="headline">RSS Feeds</span>
               You can use the provided RSS feed functionality to display your
@@ -50,7 +50,7 @@ export const About: FunctionComponent = () => {
             </p>
           </div>
           <div className="promo_cell">
-            <Icon prefix="fi" name="arrows-out" />
+            <Icon name="arrows-out" />
             <p>
               <span className="headline">Trello Integration</span>
               Ever wanted to use a Trello or kanban with your Taskwarrior tasks?
@@ -58,7 +58,7 @@ export const About: FunctionComponent = () => {
             </p>
           </div>
           <div className="promo_cell">
-            <Icon prefix="fi" name="calendar" />
+            <Icon name="calendar" />
             <p>
               <span className="headline">iCal Feed</span>
               Want an easy way for you to see what tasks are due today in Google
@@ -67,7 +67,7 @@ export const About: FunctionComponent = () => {
             </p>
           </div>
           <div className="promo_cell">
-            <Icon prefix="fi" name="mobile" />
+            <Icon name="mobile" />
             <p>
               <span className="headline">SMS</span>
               Have you ever wanted to quickly add a task to your task list while
@@ -76,7 +76,7 @@ export const About: FunctionComponent = () => {
             </p>
           </div>
           <div className="promo_cell">
-            <Icon prefix="fi" name="cloud" />
+            <Icon name="cloud" />
             <p>
               <span className="headline">Mobile-ready web UI</span>
               Inthe.AM is mobile-ready, and looks just about as good on small
@@ -85,7 +85,7 @@ export const About: FunctionComponent = () => {
             </p>
           </div>
           <div className="promo_cell">
-            <Icon prefix="fi" name="lightbulb" />
+            <Icon name="lightbulb" />
             <p>
               <span className="headline">Open Source</span>
               Inthe.AM is an open-source application relying upon open-source
@@ -97,7 +97,7 @@ export const About: FunctionComponent = () => {
             </p>
           </div>
           <div className="promo_cell">
-            <Icon prefix="fi" name="widget" />
+            <Icon name="widget" />
             <p>
               <span className="headline">RESTful API</span>
               You can write your own tools for creating, reading, changing,
