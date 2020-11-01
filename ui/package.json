@@ -19,7 +19,7 @@
     "gulp-load-plugins": "^2.0.5",
     "gulp-postcss": "^9.0.0",
     "gulp-sass": "^4.1.0",
-    "history": "^5.0.0",
+    "history": "^4.10.1",
     "motion-ui": "^2.0.3",
     "postcss": "^8.1.2",
     "react": "^16.14.0",

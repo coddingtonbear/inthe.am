@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 import {getApiUrl, getCSRFToken} from './utils'
-import {getAuthenticationToken} from '../reducers/authenticationToken'
 
 export interface UdaDefinition {
   field: string

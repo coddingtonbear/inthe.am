@@ -19,21 +19,22 @@ const authenticationTokenSlice = createSlice({
   },
 })
 
-export const getAuthenticationToken = async (dispatch: AppDispatch, getState: () => RootState): Promise<string | null> {
-    const state = getState()
+export const getAuthenticationToken = async (
+  dispatch: AppDispatch,
+  getState: () => RootState
+): Promise<string | null> => {
+  const state = getState()
 
-    if (state.authenticationToken) {
-      return state.authenticationToken
-    }
+  if (state.authenticationToken) {
+    return state.authenticationToken
+  }
 
-    const token = await retrieveAuthenticationToken()
-    if (token) {
-      dispatch(
-        authenticationTokenSlice.actions.authenticationTokenUpdated(token)
-      )
-    }
+  const token = await retrieveAuthenticationToken()
+  if (token) {
+    dispatch(authenticationTokenSlice.actions.authenticationTokenUpdated(token))
+  }
 
-    return token
+  return token
 }
 
 export default authenticationTokenSlice.reducer
