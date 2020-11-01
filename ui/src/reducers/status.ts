@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
+import {useSelector} from 'react-redux'
 
-import {Status, getStatus} from '../clients/status'
+import {Status, URLList, getStatus} from '../clients/status'
 import {getAuthenticationToken} from '../reducers/authenticationToken'
 import {AppDispatch, RootState} from '../store'
 
@@ -32,9 +33,13 @@ export const refreshStatus = createAsyncThunk<
     if (authenticationToken) {
       const status = await getStatus(authenticationToken)
       thunkAPI.dispatch(statusSlice.actions.statusUpdated(status))
-    } else {
     }
   }
 )
 
 export default statusSlice.reducer
+
+export const useUrls = (): URLList | undefined =>
+  useSelector<RootState, URLList | undefined>((s) => {
+    return s.status.urls
+  })
