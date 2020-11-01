@@ -168,27 +168,11 @@ label[for] {
   left: 0px;
   width: 100%;
   z-index: 1000000;
+  height: 2.8rem;
+  padding: 0;
 
-  &.expanded {
-    background-color: #333;
-  }
+  background-color: #333;
 
-  .top-bar-section {
-    ul {
-      height: auto !important;
-      width: auto !important;
-      display: inline !important;
-
-      li {
-        float: left;
-      }
-      li#refresh-link {
-        i.auto {
-          color: #555;
-        }
-      }
-    }
-  }
   button {
     margin-bottom: 0px;
   }
@@ -203,8 +187,18 @@ label[for] {
     h1 {
       a {
         width: auto;
+        font-size: 1rem;
       }
     }
+  }
+  .dropdown.menu > li > a {
+    padding: 0rem 1rem;
+    color: #fff;
+    line-height: 45px;
+    font-size: 13px;
+  }
+  ul {
+    background-color: #333;
   }
 }
 

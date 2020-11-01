@@ -4,7 +4,7 @@ import {ConnectedRouter} from 'connected-react-router/immutable'
 import {history, useAppDispatch} from '../store'
 import {refreshStatus} from '../reducers/status'
 
-import AuthenticatedRoute from './AuthentedRoute'
+import AuthenticatedRoute from './AuthenticatedRoute'
 import About from './About'
 import GettingStarted from './GettingStarted'
 import Configure from './Configure'

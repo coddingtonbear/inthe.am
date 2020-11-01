@@ -17,6 +17,44 @@ from ..decorators import git_managed, requires_task_store
 from ..serializers.user import UserSerializer
 
 
+URLS = {
+    "login": "/login/google-oauth2/",
+    "logout": "/logout/",
+    "about": "/about/",
+    "generate_new_certificate": "/api/v2/user/generate-new-certificate/",
+    "ca_certificate": "/api/v2/user/ca-certificate/",
+    "my_certificate": "/api/v2/user/my-certificate/",
+    "my_key": "/api/v2/user/my-key/",
+    "taskrc_extras": "/api/v2/user/taskrc/",
+    "taskd_settings": "/api/v2/user/configure-taskd/",
+    "taskd_reset": "/api/v2/user/reset-taskd-configuration/",
+    "email_integration": "/api/v2/user/email-integration/",
+    "twilio_integration": "/api/v2/user/twilio-integration/",
+    "tos_accept": "/api/v2/user/tos-accept/",
+    "privacy_policy_accept": "/api/v2/user/privacy-policy-accept/",
+    "clear_task_data": "/api/v2/user/clear-task-data/",
+    "set_colorscheme": "/api/v2/user/colorscheme/",
+    "enable_sync": "/api/v2/user/enable-sync/",
+    "mirakel_configuration": "/api/v2/user/mirakel-configuration/",
+    "configure_pebble_cards": "/api/v2/user/pebble-cards-config/",
+    "configure_feed": "/api/v2/user/feed-config/",
+    "configure_ical": "/api/v2/user/ical-config/",
+    "user_status": "/api/v2/user/status/",
+    "announcements": "/api/v2/user/announcements/",
+    "refresh": "/api/v2/tasks/refresh/",
+    "clear_lock": "/api/v2/tasks/lock/",
+    "sync_init": "/api/v2/tasks/sync-init/",
+    "revert_to_last_commit": "/api/v2/tasks/revert/",
+    "sync": "/api/v2/tasks/sync/",
+    "trello_authorization_url": "/api/v2/tasks/trello/",
+    "trello_resynchronization_url": "/api/v2/tasks/trello/resynchronize/",
+    "trello_reset_url": "/api/v2/tasks/trello/reset/",
+    "deduplicate_tasks": "/api/v2/tasks/deduplicate/",
+    "deduplication_config": "/api/v2/tasks/deduplication-config/",
+    "status_feed": "/status/",
+}
+
+
 def get_published_properties(user, store, meta):
     signer = Signer()
 
@@ -64,6 +102,7 @@ def get_published_properties(user, store, meta):
             store.trello_board.meta["url"] if store.trello_board else None
         ),
         "system_udas": get_system_udas_as_config(),
+        "urls": URLS,
     }
 
     try:
@@ -125,6 +164,7 @@ class UserViewSet(viewsets.ViewSet):
         else:
             user_data = {
                 "logged_in": False,
+                "urls": URLS,
             }
 
         return Response(user_data)
