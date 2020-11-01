@@ -6,12 +6,15 @@ import {routerMiddleware} from 'connected-react-router'
 
 export const history = createBrowserHistory()
 
+const rootReducer = createRootReducer(history)
+
 const store = configureStore({
-  reducer: createRootReducer(history),
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(routerMiddleware(history)),
 })
 
+export type RootState = ReturnType<typeof rootReducer>
 export type AppDispatch = typeof store.dispatch
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 
