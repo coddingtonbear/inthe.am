@@ -4,6 +4,7 @@ import {ConnectedRouter} from 'connected-react-router/immutable'
 import {history, useAppDispatch} from '../store'
 import {refreshStatus} from '../reducers/status'
 
+import AuthenticatedRoute from './AuthentedRoute'
 import About from './About'
 import GettingStarted from './GettingStarted'
 import Configure from './Configure'
@@ -16,9 +17,13 @@ const App: FunctionComponent = () => {
   return (
     <ConnectedRouter history={history}>
       <Switch>
-        <Route exact path="/getting-started" component={GettingStarted} />
-        <Route exact path="/configuration" component={Configure} />
-        <Route exact path="/tasks" component={Tasks} />
+        <AuthenticatedRoute
+          exact
+          path="/getting-started"
+          component={GettingStarted}
+        />
+        <AuthenticatedRoute exact path="/configuration" component={Configure} />
+        <AuthenticatedRoute exact path="/tasks" component={Tasks} />
         <Route path="/" component={About} />
       </Switch>
     </ConnectedRouter>

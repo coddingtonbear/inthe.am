@@ -1,9 +1,18 @@
 import React, {FunctionComponent} from 'react'
+import {useSelector} from 'react-redux'
+import {Redirect} from 'react-router'
 
+import {RootState} from '../store'
 import Footer from './Footer'
 import Icon from './Icon'
 
 export const About: FunctionComponent = () => {
+  const isLoggedIn = useSelector((state: RootState) => state.status.logged_in)
+
+  if (isLoggedIn) {
+    return <Redirect to="/tasks" />
+  }
+
   return (
     <div className="row standalone homepage">
       <div className="standalone-content">
