@@ -20,7 +20,7 @@ const Tasks: FunctionComponent<Props> = ({match, ...rest}) => {
     : null
   const dispatch = useAppDispatch()
   const stylesheet = useSelector((state: RootState) =>
-    state.status.logged_in ? state.status.colorscheme : null
+    state.status.logged_in === true ? state.status.colorscheme : null
   )
 
   React.useEffect(() => {
