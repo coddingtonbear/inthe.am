@@ -12,7 +12,7 @@ import Icon from './Icon'
 const userIsAuthenticated = (
   status: RootState['status']
 ): status is AuthenticatedStatus => {
-  return status.logged_in
+  return status.logged_in ?? false
 }
 
 const AuthenticatedRoute: FunctionComponent<RouteProps> = ({

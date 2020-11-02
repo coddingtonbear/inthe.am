@@ -90,6 +90,7 @@ export interface UnauthenticatedStatus {
 
 export interface UndeterminedStatus {
   logged_in: null
+  urls?: URLList
 }
 
 export type Status =
