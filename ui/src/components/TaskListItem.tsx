@@ -1,6 +1,7 @@
 import React, {FunctionComponent} from 'react'
 import classnames from 'classnames'
 import {DateTime, Duration} from 'luxon'
+import {Link} from 'react-router-dom'
 
 import {Task} from '../clients/tasks'
 
@@ -103,43 +104,45 @@ export interface Props {
 
 const TaskListItem: FunctionComponent<Props> = ({tasks, task}) => {
   return (
-    <div className="task">
-      <div
-        className={classnames('task-item', getTaskwarriorClass(tasks, task))}
-      >
-        <div className={classnames('task-list-icon', task.status)}>
-          <Icon name={getTaskIcon(task)} />
-        </div>
-        <div className="task-list-item">
-          {task.project && (
-            <h5 className="status" title={task.project}>
-              {task.project}
-            </h5>
-          )}
-          <p className="description">{task.description}</p>
-          <p className="tags">
-            {task.annotations && <Icon name="page-edit" />}
-            {task.tags &&
-              task.tags.map((tag) => {
-                return (
-                  <React.Fragment key={tag}>
-                    <Icon name="price-tag" />
-                    {tag}
-                  </React.Fragment>
-                )
-              })}
-          </p>
-          <p className="duedatetime">
-            {task.due && (
-              <>
-                <Icon name="clock" />
-                {DateTime.fromISO(task.due).toRelative()}
-              </>
+    <Link to={`/tasks/${task.uuid}`}>
+      <div className="task">
+        <div
+          className={classnames('task-item', getTaskwarriorClass(tasks, task))}
+        >
+          <div className={classnames('task-list-icon', task.status)}>
+            <Icon name={getTaskIcon(task)} />
+          </div>
+          <div className="task-list-item">
+            {task.project && (
+              <h5 className="status" title={task.project}>
+                {task.project}
+              </h5>
             )}
-          </p>
+            <p className="description">{task.description}</p>
+            <p className="tags">
+              {task.annotations && <Icon name="page-edit" />}
+              {task.tags &&
+                task.tags.map((tag) => {
+                  return (
+                    <React.Fragment key={tag}>
+                      <Icon name="price-tag" />
+                      {tag}
+                    </React.Fragment>
+                  )
+                })}
+            </p>
+            <p className="duedatetime">
+              {task.due && (
+                <>
+                  <Icon name="clock" />
+                  {DateTime.fromISO(task.due).toRelative()}
+                </>
+              )}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 

@@ -9,6 +9,7 @@ import About from './About'
 import GettingStarted from './GettingStarted'
 import Configure from './Configure'
 import Tasks from './Tasks'
+import RedirectToFirstTask from './RedirectToFirstTask'
 
 const App: FunctionComponent = () => {
   const dispatch = useAppDispatch()
@@ -23,7 +24,12 @@ const App: FunctionComponent = () => {
           component={GettingStarted}
         />
         <AuthenticatedRoute exact path="/configuration" component={Configure} />
-        <AuthenticatedRoute exact path="/tasks" component={Tasks} />
+        <AuthenticatedRoute exact path="/tasks/:taskId" component={Tasks} />
+        <AuthenticatedRoute
+          exact
+          path="/tasks"
+          component={RedirectToFirstTask}
+        />
         <Route path="/" component={About} />
       </Switch>
     </ConnectedRouter>
