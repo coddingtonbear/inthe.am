@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import {DateTime, Duration} from 'luxon'
 import {Link} from 'react-router-dom'
 
+import {taskIsBlocked, taskIsBlocking} from '../utils/task'
 import {Task} from '../clients/tasks'
 
 import Icon from './Icon'
@@ -20,35 +21,6 @@ export type TaskClass =
   | 'pri__L'
   | 'tagged'
   | ''
-
-export const taskIsRelevant = (task: Task): boolean => {
-  return !['completed', 'deleted'].includes(task.status)
-}
-
-export const taskIsBlocking = (tasks: Task[], task: Task): boolean => {
-  const blockedTasks = tasks.filter(
-    (otherTask) => task.blocks && task.blocks.includes(otherTask.uuid)
-  )
-  for (const otherTask of blockedTasks) {
-    if (taskIsRelevant(otherTask)) {
-      return true
-    }
-  }
-  return false
-}
-
-export const taskIsBlocked = (tasks: Task[], task: Task): boolean => {
-  for (const otherTask of tasks) {
-    if (
-      otherTask.blocks &&
-      otherTask.blocks.includes(task.uuid) &&
-      taskIsRelevant(otherTask)
-    ) {
-      return true
-    }
-  }
-  return false
-}
 
 export const getTaskwarriorClass = (tasks: Task[], task: Task): TaskClass => {
   if (task.start) {
