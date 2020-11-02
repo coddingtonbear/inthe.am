@@ -133,7 +133,7 @@ const TaskListItem: FunctionComponent<Props> = ({tasks, task}) => {
             {task.due && (
               <>
                 <Icon name="clock" />
-                {task.due}
+                {DateTime.fromISO(task.due).toRelative()}
               </>
             )}
           </p>
