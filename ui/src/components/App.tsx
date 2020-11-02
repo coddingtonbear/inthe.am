@@ -1,4 +1,5 @@
 import React, {FunctionComponent} from 'react'
+import {useSelector} from 'react-redux'
 import {Route, Switch} from 'react-router'
 import {ConnectedRouter} from 'connected-react-router/immutable'
 import {history, useAppDispatch} from '../store'
@@ -10,29 +11,45 @@ import GettingStarted from './GettingStarted'
 import Configure from './Configure'
 import Tasks from './Tasks'
 import RedirectToFirstTask from './RedirectToFirstTask'
+import {RootState} from '../store'
 
 const App: FunctionComponent = () => {
+  const loggedIn = useSelector((state: RootState) => state.status.logged_in)
   const dispatch = useAppDispatch()
-  dispatch(refreshStatus())
+
+  dispatch(refreshStatus)
 
   return (
-    <ConnectedRouter history={history}>
-      <Switch>
-        <AuthenticatedRoute
-          exact
-          path="/getting-started"
-          component={GettingStarted}
-        />
-        <AuthenticatedRoute exact path="/configuration" component={Configure} />
-        <AuthenticatedRoute exact path="/tasks/:taskId" component={Tasks} />
-        <AuthenticatedRoute
-          exact
-          path="/tasks"
-          component={RedirectToFirstTask}
-        />
-        <Route path="/" component={About} />
-      </Switch>
-    </ConnectedRouter>
+    <>
+      {/* Checking for null here to prevent us from processing routes
+          until we know whether (or not) the user is logged-in -- otherwise
+          we might redirect folks to the 'About' or ''Redirect to first task'
+          when we really don't need to do so
+      */}
+      {loggedIn !== null && (
+        <ConnectedRouter history={history}>
+          <Switch>
+            <AuthenticatedRoute
+              exact
+              path="/getting-started"
+              component={GettingStarted}
+            />
+            <AuthenticatedRoute
+              exact
+              path="/configuration"
+              component={Configure}
+            />
+            <AuthenticatedRoute exact path="/tasks/:taskId" component={Tasks} />
+            <AuthenticatedRoute
+              exact
+              path="/tasks"
+              component={RedirectToFirstTask}
+            />
+            <Route path="/" component={About} />
+          </Switch>
+        </ConnectedRouter>
+      )}
+    </>
   )
 }
 

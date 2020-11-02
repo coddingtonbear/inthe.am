@@ -43,8 +43,12 @@ export interface UdaDefinition {
   type: 'string' | 'numeric' | 'date' | 'duration'
 }
 
-export interface AuthenticatedStatus {
-  logged_in: true
+export interface BaseStatus {
+  logged_in: boolean | null
+  urls?: URLList
+}
+
+export interface AuthenticatedStatus extends BaseStatus {
   uid: number
   username: string
   name: string
@@ -80,17 +84,14 @@ export interface AuthenticatedStatus {
   trello_board_url: string | null
   system_udas: string
   udas: UdaDefinition[]
-  urls: URLList
 }
 
-export interface UnauthenticatedStatus {
+export interface UnauthenticatedStatus extends BaseStatus {
   logged_in: false
-  urls?: URLList
 }
 
-export interface UndeterminedStatus {
+export interface UndeterminedStatus extends BaseStatus {
   logged_in: null
-  urls?: URLList
 }
 
 export type Status =
