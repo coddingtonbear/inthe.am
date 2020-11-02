@@ -11,20 +11,20 @@ export interface Task {
   status: 'pending' | 'completed' | 'deleted' | 'recurring' | 'waiting'
   urgency: number
   description: string
-  priority: string // traditionally: 'H', 'M', and 'L', but configurable
-  project: string
-  due: DateTime
+  priority?: string // traditionally: 'H', 'M', and 'L', but configurable
+  project?: string
+  due?: DateTime
   entry: DateTime
   modified: DateTime
-  start: DateTime
-  wait: DateTime
-  until: DateTime
-  scheduled: DateTime
-  depends: UUID[]
-  blocks: UUID[]
-  annotations: string[]
-  tags: string[]
-  imask: string
+  start?: DateTime
+  wait?: DateTime
+  until?: DateTime
+  scheduled?: DateTime
+  depends?: UUID[]
+  blocks?: UUID[]
+  annotations?: string[]
+  tags?: string[]
+  imask?: string
   udas: {
     [key: string]: any | undefined
   }
