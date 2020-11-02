@@ -22,18 +22,14 @@ const statusSlice = createSlice({
   },
 })
 
-export const refreshStatus = createAsyncThunk<
-  void,
-  undefined,
-  {state: RootState; dispatch: AppDispatch}
->(
-  'status/refreshStatus',
-  async (_, thunkAPI): Promise<void> => {
-    const authenticationToken = await thunkAPI.dispatch(getAuthenticationToken)
-    const status = await getStatus(authenticationToken ?? '')
-    thunkAPI.dispatch(statusSlice.actions.statusUpdated(status))
-  }
-)
+export const refreshStatus = async (
+  dispatch: AppDispatch,
+  getState: () => RootState
+): Promise<void> => {
+  const authenticationToken = await dispatch(getAuthenticationToken)
+  const status = await getStatus(authenticationToken ?? '')
+  dispatch(statusSlice.actions.statusUpdated(status))
+}
 
 export default statusSlice.reducer
 
