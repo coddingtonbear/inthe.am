@@ -4,11 +4,14 @@ import {Task, getTasks} from '../clients/tasks'
 import {getAuthenticationToken} from '../reducers/authenticationToken'
 import {AppDispatch, RootState} from '../store'
 
-const tasksUpdated = (tasks: Task[], action: PayloadAction<Task[]>): Task[] => {
+const tasksUpdated = (
+  tasks: Task[] | null,
+  action: PayloadAction<Task[]>
+): Task[] => {
   return action.payload
 }
 
-const initialState = [] as Task[]
+const initialState = null as Task[] | null
 
 const tasksSlice = createSlice({
   name: 'tasks',

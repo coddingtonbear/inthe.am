@@ -1,16 +1,27 @@
 import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
+import {RouteComponentProps} from 'react-router'
 
 import {RootState, useAppDispatch} from '../store'
 import {refreshTasks} from '../reducers/tasks'
 import TaskListItem from './TaskListItem'
 
-const Tasks: FunctionComponent = () => {
+interface MatchParams {
+  taskId: string
+}
+
+interface Props extends RouteComponentProps<MatchParams> {}
+
+const Tasks: FunctionComponent<Props> = ({match, ...rest}) => {
   const tasks = useSelector((state: RootState) => state.tasks)
+  const task = match
+    ? tasks?.filter((task) => task.uuid === match.params.taskId)[0]
+    : null
   const dispatch = useAppDispatch()
   const stylesheet = useSelector((state: RootState) =>
     state.status.logged_in ? state.status.colorscheme : null
   )
+  console.log(task)
 
   React.useEffect(() => {
     const stylesheetId = 'colorscheme-stylesheet'
@@ -34,13 +45,17 @@ const Tasks: FunctionComponent = () => {
   }, [])
 
   return (
-    <div className="row full-width">
-      <div id="list" className="task-list">
-        {tasks.map((task) => (
-          <TaskListItem tasks={tasks} task={task} key={task.id} />
-        ))}
+    <>
+      <div className="row full-width">
+        <div id="list" className="task-list">
+          {tasks &&
+            tasks.map((task) => (
+              <TaskListItem tasks={tasks} task={task} key={task.id} />
+            ))}
+        </div>
+        {task && <div id="task-details">{task.uuid}</div>}
       </div>
-    </div>
+    </>
   )
 }
 
