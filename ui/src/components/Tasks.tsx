@@ -5,6 +5,7 @@ import {RouteComponentProps} from 'react-router'
 import {RootState, useAppDispatch} from '../store'
 import {refreshTasks} from '../reducers/tasks'
 import TaskListItem from './TaskListItem'
+import TaskDetails from './TaskDetails'
 
 interface MatchParams {
   taskId: string
@@ -21,7 +22,6 @@ const Tasks: FunctionComponent<Props> = ({match, ...rest}) => {
   const stylesheet = useSelector((state: RootState) =>
     state.status.logged_in ? state.status.colorscheme : null
   )
-  console.log(task)
 
   React.useEffect(() => {
     const stylesheetId = 'colorscheme-stylesheet'
@@ -53,7 +53,7 @@ const Tasks: FunctionComponent<Props> = ({match, ...rest}) => {
               <TaskListItem tasks={tasks} task={task} key={task.id} />
             ))}
         </div>
-        {task && <div id="task-details">{task.uuid}</div>}
+        {task && tasks && <TaskDetails tasks={tasks} task={task} />}
       </div>
     </>
   )
