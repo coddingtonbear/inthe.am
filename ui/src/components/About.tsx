@@ -12,6 +12,11 @@ export const About: FunctionComponent = () => {
   if (isLoggedIn) {
     return <Redirect to="/tasks" />
   }
+  if (isLoggedIn === null) {
+    // We're still trying to figure out if we're logged in -- let's
+    // let things settle before rendering anything
+    return <></>
+  }
 
   return (
     <div className="row standalone homepage">

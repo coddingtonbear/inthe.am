@@ -12,7 +12,7 @@ const statusUpdated = (
   return action.payload
 }
 
-const initialState = {logged_in: false} as Status
+const initialState = {logged_in: null} as Status
 
 const statusSlice = createSlice({
   name: 'status',
@@ -30,10 +30,8 @@ export const refreshStatus = createAsyncThunk<
   'status/refreshStatus',
   async (_, thunkAPI): Promise<void> => {
     const authenticationToken = await thunkAPI.dispatch(getAuthenticationToken)
-    if (authenticationToken) {
-      const status = await getStatus(authenticationToken)
-      thunkAPI.dispatch(statusSlice.actions.statusUpdated(status))
-    }
+    const status = await getStatus(authenticationToken ?? '')
+    thunkAPI.dispatch(statusSlice.actions.statusUpdated(status))
   }
 )
 
