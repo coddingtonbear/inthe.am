@@ -88,7 +88,14 @@ export interface UnauthenticatedStatus {
   urls?: URLList
 }
 
-export type Status = AuthenticatedStatus | UnauthenticatedStatus
+export interface UndeterminedStatus {
+  logged_in: null
+}
+
+export type Status =
+  | AuthenticatedStatus
+  | UnauthenticatedStatus
+  | UndeterminedStatus
 
 export async function getStatus(token: string): Promise<Status> {
   return request<Status>('GET', 'user/status', {token})
