@@ -10,18 +10,10 @@ export interface RequestParams extends AxiosRequestConfig {
 export async function request<T>(
   method: AxiosRequestConfig['method'],
   url: string,
-  {
-    token = '',
-    lookupApiUrl = true,
-    headers = {},
-    ...requestParams
-  }: RequestParams
+  {lookupApiUrl = true, headers = {}, ...requestParams}: RequestParams
 ): Promise<T> {
   const requestHeaders: {[key: string]: string | undefined} = {
     'X-CSRFToken': getCSRFToken(),
-  }
-  if (token) {
-    requestHeaders.Authorization = `Token ${token}`
   }
   Object.assign(requestHeaders, headers)
 

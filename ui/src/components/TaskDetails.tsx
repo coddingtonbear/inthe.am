@@ -45,10 +45,10 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
 
             {task.tags?.map((tag) => {
               return (
-                <>
+                <React.Fragment key={tag}>
                   <Icon name="price-tag" />
                   {tag}
-                </>
+                </React.Fragment>
               )
             })}
           </div>
@@ -99,9 +99,12 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                   <th>Depends Upon</th>
                   <td>
                     <ul className="depends_tickets">
-                      {blocking.map((blocking) => (
-                        <li className={blocking.status}>
-                          {blocking.description}
+                      {blocking.map((blocking_task) => (
+                        <li
+                          className={blocking_task.status}
+                          key={blocking_task.uuid}
+                        >
+                          {blocking_task.description}
                         </li>
                       ))}
                     </ul>
@@ -113,9 +116,12 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                   <th>Blocks</th>
                   <td>
                     <ul className="blocked_tickets">
-                      {blocked.map((blocked) => (
-                        <li className={blocked.status}>
-                          {blocked.description}
+                      {blocked.map((blocked_task) => (
+                        <li
+                          className={blocked_task.status}
+                          key={blocked_task.uuid}
+                        >
+                          {blocked_task.description}
                         </li>
                       ))}
                     </ul>
@@ -140,10 +146,10 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 <th>Tags</th>
                 <td>
                   {task.tags?.map((tag) => (
-                    <>
+                    <React.Fragment key={tag}>
                       <Icon name="price-tag" />
                       {tag}
-                    </>
+                    </React.Fragment>
                   ))}
                 </td>
               </tr>
@@ -188,7 +194,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
               {udas?.map((uda) => {
                 {
                   task.udas[uda.field] && (
-                    <tr>
+                    <tr key={uda.field + task.udas[uda.field]}>
                       <th>{uda.label}</th>
                       <td>{task.udas[uda.field]}</td>
                     </tr>
@@ -202,7 +208,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
           <ul className="annotation_list">
             {task.annotations?.map((annotation) => {
               return (
-                <li>
+                <li key={annotation}>
                   <span className="annotation_tools">
                     <a className="delete-annotation-link">&#215;</a>
                   </span>
