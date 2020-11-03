@@ -29,7 +29,7 @@ export const refreshStatus = async (
   dispatch(statusSlice.actions.statusUpdated(status))
 }
 
-export default statusSlice.reducer
+export default statusSlice
 
 export const useUrls = (): URLList | undefined =>
   useSelector<RootState, URLList | undefined>((s) => {

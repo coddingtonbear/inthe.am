@@ -8,7 +8,9 @@ import tasks from './tasks'
 const createRootReducer = (history: ReturnType<typeof createBrowserHistory>) =>
   combineReducers({
     router: connectRouter(history),
-    status,
-    tasks,
+    status: status.reducer,
+    tasks: tasks.reducer,
   })
+
 export default createRootReducer
+export const {actions: taskActions} = tasks
