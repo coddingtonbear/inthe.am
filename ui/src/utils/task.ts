@@ -1,17 +1,13 @@
 import {Task} from '../clients/tasks'
 
 export const taskIsEditable = (task: Task): boolean => {
-  return !['pending', 'waiting'].includes(task.status)
-}
-
-export const taskIsRelevant = (task: Task): boolean => {
-  return !['completed', 'deleted'].includes(task.status)
+  return ['pending', 'waiting'].includes(task.status)
 }
 
 export const getBlockedTasks = (tasks: Task[], task: Task): Task[] => {
   return tasks.filter(
     (otherTask) =>
-      taskIsRelevant(otherTask) &&
+      taskIsEditable(otherTask) &&
       task.blocks &&
       task.blocks.includes(otherTask.uuid)
   )
@@ -24,7 +20,7 @@ export const getBlockingTasks = (tasks: Task[], task: Task): Task[] => {
     if (
       otherTask.blocks &&
       otherTask.blocks.includes(task.uuid) &&
-      taskIsRelevant(otherTask)
+      taskIsEditable(otherTask)
     ) {
       blockingTasks.push(otherTask)
     }

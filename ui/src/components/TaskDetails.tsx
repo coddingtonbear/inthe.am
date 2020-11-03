@@ -37,9 +37,10 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
           )}
           <div className="tags">
             {task.due && (
-              <i className="fa fa-clock-o">
+              <>
+                <Icon name="clock" />
                 {DateTime.fromISO(task.due).toRelative()}
-              </i>
+              </>
             )}
 
             {task.tags?.map((tag) => {
@@ -58,38 +59,32 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
           {taskIsEditable(task) && (
             <ul id="task-actions" className="inline-list">
               {task.start && (
-                <li data-intro="alt+s">
-                  <a>
-                    <i className="fa fa-star-o">Stop</i>
-                  </a>
+                <li>
+                  <Icon name="stop" />
+                  Stop
                 </li>
               )}
               {!task.start && (
-                <li data-intro="alt+s">
-                  <a>
-                    <i className="fa fa-star">Start</i>
-                  </a>
+                <li>
+                  <Icon name="play" />
+                  Start
                 </li>
               )}
-              <li data-intro="alt+a">
-                <a>
-                  <i className="fa fa-pencil">Add Annotation</i>
-                </a>
+              <li>
+                <Icon name="comment" />
+                Add Annotation
               </li>
-              <li data-intro="alt+e">
-                <a>
-                  <i className="fa fa-pencil-square-o">Edit</i>
-                </a>
+              <li>
+                <Icon name="page-edit" />
+                Edit
               </li>
-              <li data-intro="alt+c">
-                <a>
-                  <i className="fa fa-check-circle-o">Mark Completed</i>
-                </a>
+              <li>
+                <Icon name="check" />
+                Mark Completed
               </li>
-              <li data-intro="alt+d">
-                <a>
-                  <i className="fa fa-ban">Delete</i>
-                </a>
+              <li>
+                <Icon name="x" />
+                Delete
               </li>
             </ul>
           )}
@@ -99,7 +94,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
         <div className="medium-6 columns details_table">
           <table className="details">
             <tbody>
-              {blocking && (
+              {blocking.length > 0 && (
                 <tr>
                   <th>Depends Upon</th>
                   <td>
@@ -113,7 +108,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                   </td>
                 </tr>
               )}
-              {blocked && (
+              {blocked.length > 0 && (
                 <tr>
                   <th>Blocks</th>
                   <td>

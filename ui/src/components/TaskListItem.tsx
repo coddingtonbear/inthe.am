@@ -92,7 +92,7 @@ const TaskListItem: FunctionComponent<Props> = ({tasks, task}) => {
             )}
             <p className="description">{task.description}</p>
             <p className="tags">
-              {task.annotations && <Icon name="page-edit" />}
+              {task.annotations && <Icon name="comment" />}
               {task.tags &&
                 task.tags.map((tag) => {
                   return (
