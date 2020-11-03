@@ -191,11 +191,17 @@ label[for] {
       }
     }
   }
-  .dropdown.menu > li > a {
-    padding: 0rem 1rem;
-    color: #fff;
-    line-height: 45px;
-    font-size: 13px;
+  .dropdown.menu {
+    & > li > a {
+      padding: 0rem 1rem;
+      color: #fff;
+      line-height: 45px;
+      font-size: 13px;
+    }
+
+    & > li.home a {
+      font-size: 17px;
+    }
   }
   ul {
     background-color: #333;
