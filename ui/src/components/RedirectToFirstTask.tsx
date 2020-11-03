@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux'
 import {Redirect} from 'react-router'
 
 import {RootState, useAppDispatch} from '../store'
-import {refreshTasks} from '../reducers/tasks'
+import {refreshTasks} from '../thunks/tasks'
 
 const RedirectToFirstTask: FunctionComponent = () => {
   const tasks = useSelector((state: RootState) => state.tasks)

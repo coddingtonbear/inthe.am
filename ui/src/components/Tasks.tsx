@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux'
 import {RouteComponentProps} from 'react-router'
 
 import {RootState, useAppDispatch} from '../store'
-import {refreshTasks} from '../reducers/tasks'
+import {refreshTasks} from '../thunks/tasks'
 import TaskListItem from './TaskListItem'
 import TaskDetails from './TaskDetails'
 

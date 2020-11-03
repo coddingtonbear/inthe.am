@@ -1,11 +1,13 @@
 import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
 import {DateTime} from 'luxon'
+import {Link} from 'react-router-dom'
 
-import {Task} from '../clients/tasks'
+import {Task, UUID} from '../clients/tasks'
 import Icon from './Icon'
 import {taskIsEditable, getBlockedTasks, getBlockingTasks} from '../utils/task'
-import {RootState} from '../store'
+import {stopTask, startTask} from '../thunks/tasks'
+import {RootState, useAppDispatch} from '../store'
 
 export interface Props {
   tasks: Task[]
@@ -13,6 +15,7 @@ export interface Props {
 }
 
 const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
+  const dispatch = useAppDispatch()
   const udas = useSelector((state: RootState) =>
     state.status.logged_in ? state.status.udas : null
   )
@@ -24,6 +27,14 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
     setBlocking(getBlockingTasks(tasks, task))
     setBlocked(getBlockedTasks(tasks, task))
   }, [JSON.stringify(tasks), task.uuid])
+
+  function onStartTask() {
+    dispatch(startTask(task.uuid))
+  }
+
+  function onStopTask() {
+    dispatch(stopTask(task.uuid))
+  }
 
   return (
     <div id="task-details">
@@ -59,13 +70,13 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
           {taskIsEditable(task) && (
             <ul id="task-actions" className="inline-list">
               {task.start && (
-                <li>
+                <li onClick={onStopTask}>
                   <Icon name="stop" />
                   Stop
                 </li>
               )}
               {!task.start && (
-                <li>
+                <li onClick={onStartTask}>
                   <Icon name="play" />
                   Start
                 </li>

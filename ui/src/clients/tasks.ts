@@ -1,7 +1,7 @@
 import request from './request'
 
-type UUID = string
-type DateTime = string
+export type UUID = string
+export type DateTime = string
 
 export interface Task {
   id: UUID
@@ -38,10 +38,10 @@ export async function getTask(uuid: UUID): Promise<Task> {
   return request<Task>('GET', `tasks/${uuid}`, {})
 }
 
-export async function startTask(token: string, uuid: UUID): Promise<void> {
-  return request<void>('GET', `tasks/${uuid}/start`, {})
+export async function startTask(uuid: UUID): Promise<void> {
+  return request<void>('POST', `tasks/${uuid}/start`, {})
 }
 
-export async function stopTask(token: string, uuid: UUID): Promise<void> {
-  return request<void>('GET', `tasks/${uuid}/start`, {})
+export async function stopTask(uuid: UUID): Promise<void> {
+  return request<void>('POST', `tasks/${uuid}/stop`, {})
 }

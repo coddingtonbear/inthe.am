@@ -1,35 +1,26 @@
-import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit'
+import {createSlice, PayloadAction, Slice} from '@reduxjs/toolkit'
 
-import {Task, getTasks} from '../clients/tasks'
-import {AppDispatch, RootState} from '../store'
+import {Task} from '../clients/tasks'
+
+type TaskState = Task[] | null
 
 const tasksUpdated = (
-  tasks: Task[] | null,
+  tasks: TaskState,
   action: PayloadAction<Task[]>
 ): Task[] => {
   return action.payload
 }
 
-const initialState = null as Task[] | null
+const reducers = {tasksUpdated}
 
-const tasksSlice = createSlice({
+export type TaskSlice = Slice<TaskState, typeof reducers, 'tasks'>
+
+const initialState = null as TaskState
+
+const tasksSlice: TaskSlice = createSlice({
   name: 'tasks',
   initialState,
-  reducers: {
-    tasksUpdated,
-  },
+  reducers: reducers,
 })
 
-export const refreshTasks = createAsyncThunk<
-  void,
-  undefined,
-  {state: RootState; dispatch: AppDispatch}
->(
-  'tasks/refreshTasks',
-  async (_, thunkAPI): Promise<void> => {
-    const tasks = await getTasks()
-    thunkAPI.dispatch(tasksSlice.actions.tasksUpdated(tasks))
-  }
-)
-
-export default tasksSlice.reducer
+export default tasksSlice
