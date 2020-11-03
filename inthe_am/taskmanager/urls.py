@@ -1,12 +1,9 @@
-from typing import Optional
-
 from django.conf import settings
 from django.conf.urls import include, url
 from django.template.response import TemplateResponse
-from django.http import HttpResponseNotFound, JsonResponse
+from django.http import HttpResponseNotFound
 from rest_framework import routers
 
-from .models import TaskStore
 from .views import debug_login, TaskFeed, RestHookHandler
 from .viewsets.activity_log import ActivityLogViewSet
 from .viewsets.task import (
@@ -36,18 +33,7 @@ def view_does_not_exist(request):
     return HttpResponseNotFound()
 
 
-def get_authentication_token(request):
-    token: Optional[str] = None
-
-    if hasattr(request, "user") and request.user.is_authenticated():
-        store = TaskStore.get_for_user(request.user)
-        token = store.api_key.key
-
-    return JsonResponse({"token": token})
-
-
 urlpatterns = [
-    url("^api/token/", get_authentication_token),
     url("^api/v2/", include(router.urls, namespace="api")),
     url("^api/v2/hook/$", RestHookHandler.as_view(), name="rest_hook_list"),
     url(

@@ -99,6 +99,6 @@ export type Status =
   | UnauthenticatedStatus
   | UndeterminedStatus
 
-export async function getStatus(token: string): Promise<Status> {
-  return request<Status>('GET', 'user/status', {token})
+export async function getStatus(): Promise<Status> {
+  return request<Status>('GET', 'user/status', {})
 }

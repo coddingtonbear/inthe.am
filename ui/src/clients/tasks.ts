@@ -30,18 +30,18 @@ export interface Task {
   }
 }
 
-export async function getTasks(token: string): Promise<Task[]> {
-  return request<Task[]>('GET', 'tasks', {token})
+export async function getTasks(): Promise<Task[]> {
+  return request<Task[]>('GET', 'tasks', {})
 }
 
-export async function getTask(token: string, uuid: UUID): Promise<Task> {
-  return request<Task>('GET', `tasks/${uuid}`, {token})
+export async function getTask(uuid: UUID): Promise<Task> {
+  return request<Task>('GET', `tasks/${uuid}`, {})
 }
 
 export async function startTask(token: string, uuid: UUID): Promise<void> {
-  return request<void>('GET', `tasks/${uuid}/start`, {token})
+  return request<void>('GET', `tasks/${uuid}/start`, {})
 }
 
 export async function stopTask(token: string, uuid: UUID): Promise<void> {
-  return request<void>('GET', `tasks/${uuid}/start`, {token})
+  return request<void>('GET', `tasks/${uuid}/start`, {})
 }
