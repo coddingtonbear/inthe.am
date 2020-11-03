@@ -32,7 +32,7 @@ export const startTask = createAsyncThunk<
   client.UUID,
   {state: RootState; dispatch: AppDispatch}
 >(
-  'tasks/stopTask',
+  'tasks/startTask',
   async (taskId, thunkAPI): Promise<void> => {
     return await client.startTask(taskId)
   }
