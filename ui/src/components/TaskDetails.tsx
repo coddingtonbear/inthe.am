@@ -75,7 +75,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 Add Annotation
               </li>
               <li>
-                <Icon name="page-edit" />
+                <Icon name="pencil" />
                 Edit
               </li>
               <li>
