@@ -27,6 +27,17 @@ export const stopTask = createAsyncThunk<
   }
 )
 
+export const deleteTask = createAsyncThunk<
+  void,
+  client.UUID,
+  {state: RootState; dispatch: AppDispatch}
+>(
+  'tasks/deleteTask',
+  async (taskId, thunkAPI): Promise<void> => {
+    return await client.deleteTask(taskId)
+  }
+)
+
 export const startTask = createAsyncThunk<
   void,
   client.UUID,

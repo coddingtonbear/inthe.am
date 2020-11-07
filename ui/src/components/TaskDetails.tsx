@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom'
 import {Task, UUID} from '../clients/tasks'
 import Icon from './Icon'
 import {taskIsEditable, getBlockedTasks, getBlockingTasks} from '../utils/task'
-import {stopTask, startTask, completeTask} from '../thunks/tasks'
+import {stopTask, startTask, completeTask, deleteTask} from '../thunks/tasks'
 import {RootState, useAppDispatch} from '../store'
 
 export interface Props {
@@ -38,6 +38,10 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
 
   function onCompleteTask() {
     dispatch(completeTask(task.uuid))
+  }
+
+  function onDeleteTask() {
+    dispatch(deleteTask(task.uuid))
   }
 
   return (
@@ -97,7 +101,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 <Icon name="check" />
                 Mark Completed
               </li>
-              <li>
+              <li onClick={onDeleteTask}>
                 <Icon name="x" />
                 Delete
               </li>

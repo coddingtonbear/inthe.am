@@ -42,6 +42,10 @@ export async function completeTask(uuid: UUID): Promise<void> {
   return request<void>('DELETE', `tasks/${uuid}`, {})
 }
 
+export async function deleteTask(uuid: UUID): Promise<void> {
+  return request<void>('POST', `tasks/${uuid}/delete`, {})
+}
+
 export async function startTask(uuid: UUID): Promise<void> {
   return request<void>('POST', `tasks/${uuid}/start`, {})
 }
