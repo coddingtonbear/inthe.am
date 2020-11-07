@@ -38,6 +38,10 @@ export async function getTask(uuid: UUID): Promise<Task> {
   return request<Task>('GET', `tasks/${uuid}`, {})
 }
 
+export async function completeTask(uuid: UUID): Promise<void> {
+  return request<void>('DELETE', `tasks/${uuid}`, {})
+}
+
 export async function startTask(uuid: UUID): Promise<void> {
   return request<void>('POST', `tasks/${uuid}/start`, {})
 }
