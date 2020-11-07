@@ -93,8 +93,8 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 <Icon name="pencil" />
                 Edit
               </li>
-              <li>
-                <Icon name="check" onClick={onCompleteTask} />
+              <li onClick={onCompleteTask}>
+                <Icon name="check" />
                 Mark Completed
               </li>
               <li>
