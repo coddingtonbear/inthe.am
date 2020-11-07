@@ -37,3 +37,14 @@ export const startTask = createAsyncThunk<
     return await client.startTask(taskId)
   }
 )
+
+export const completeTask = createAsyncThunk<
+  void,
+  client.UUID,
+  {state: RootState; dispatch: AppDispatch}
+>(
+  'tasks/completeTask',
+  async (taskId, thunkAPI): Promise<void> => {
+    return await client.completeTask(taskId)
+  }
+)
