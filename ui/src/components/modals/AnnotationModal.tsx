@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from 'react'
+import React, {FormEvent, FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
 import clone from 'clone'
 
@@ -13,7 +13,9 @@ const AnnotationModal: FunctionComponent = () => {
   )
   const dispatch = useAppDispatch()
 
-  function onSaveAnnotation() {
+  function onSaveAnnotation(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
     if (!selectedTask) {
       throw Error('No selected task was found')
     }
@@ -39,6 +41,10 @@ const AnnotationModal: FunctionComponent = () => {
     setAnnotation('')
   }, [selectedTask?.uuid])
 
+  React.useEffect(() => {
+    document.getElementById('annotation')?.focus()
+  })
+
   return (
     <>
       {selectedTask && (
@@ -49,24 +55,23 @@ const AnnotationModal: FunctionComponent = () => {
               Enter the annotation you'd like to add to "
               {selectedTask.description}"
             </p>
-            <textarea
-              value={annotation}
-              onChange={(e) => setAnnotation(e.target.value)}
-            />
-            <button
-              type="button"
-              className="button"
-              onClick={onCancelAnnotation}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="success button"
-              onClick={onSaveAnnotation}
-            >
-              Save
-            </button>
+            <form onSubmit={onSaveAnnotation}>
+              <textarea
+                value={annotation}
+                id="annotation"
+                onChange={(e) => setAnnotation(e.target.value)}
+              />
+              <button
+                type="button"
+                className="button"
+                onClick={onCancelAnnotation}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="success button">
+                Save
+              </button>
+            </form>
           </div>
         </div>
       )}
