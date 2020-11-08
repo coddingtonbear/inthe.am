@@ -185,10 +185,6 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 <td>{task.urgency}</td>
               </tr>
               <tr>
-                <th>Priority</th>
-                <td>{task.priority}</td>
-              </tr>
-              <tr>
                 <th>Due</th>
                 <td>{task.due}</td>
               </tr>
