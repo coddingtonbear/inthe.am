@@ -14,6 +14,7 @@ class TaskSerializer(serializers.Serializer):
     entry = serializers.DateTimeField(read_only=True)
     modified = serializers.DateTimeField(read_only=True)
     start = serializers.DateTimeField(required=False)
+    end = serializers.DateTimeField(required=False)
     wait = serializers.DateTimeField(required=False)
     until = serializers.DateTimeField(required=False)
     scheduled = serializers.DateTimeField(required=False)
