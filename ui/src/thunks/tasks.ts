@@ -1,10 +1,9 @@
 import {createAsyncThunk} from '@reduxjs/toolkit'
 import {AppDispatch, RootState} from '../store'
 
-import {DateTime} from 'luxon'
-
 import * as client from '../clients/tasks'
 import {taskActions} from '../reducers'
+import {currentTimestamp} from '../utils/task'
 
 export const refreshTasks = createAsyncThunk<
   void,
@@ -30,7 +29,7 @@ export const stopTask = createAsyncThunk<
         taskId,
         update: {
           start: '',
-          end: DateTime.utc().toISO(),
+          end: currentTimestamp(),
         },
       })
     )
@@ -60,7 +59,7 @@ export const startTask = createAsyncThunk<
       taskActions.updateTask({
         taskId,
         update: {
-          start: DateTime.utc().toISO(),
+          start: currentTimestamp(),
         },
       })
     )
