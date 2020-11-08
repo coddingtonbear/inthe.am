@@ -1,5 +1,6 @@
 import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
+import {Action} from '@reduxjs/toolkit'
 import {DateTime} from 'luxon'
 
 import {Task} from '../clients/tasks'
@@ -8,7 +9,6 @@ import {taskIsEditable, getBlockedTasks, getBlockingTasks} from '../utils/task'
 import {stopTask, startTask, completeTask, deleteTask} from '../thunks/tasks'
 import {RootState, useAppDispatch} from '../store'
 import {annotationModalActions} from '../reducers'
-import {AnyAction} from 'redux'
 
 export interface Props {
   tasks: Task[]
@@ -33,8 +33,20 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
     dispatch(annotationModalActions.selectTaskForNewAnnotation(task))
   }
 
-  function onModifyTask(fn: (taskId: string) => void) {
-    fn(task.uuid)
+  function onStartTask() {
+    dispatch(startTask(task.uuid))
+  }
+
+  function onStopTask() {
+    dispatch(stopTask(task.uuid))
+  }
+
+  function onCompleteTask() {
+    dispatch(completeTask(task.uuid))
+  }
+
+  function onDeleteTask() {
+    dispatch(deleteTask(task.uuid))
   }
 
   return (
@@ -71,18 +83,18 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
           {taskIsEditable(task) && (
             <ul id="task-actions" className="inline-list">
               {task.start && (
-                <li onClick={() => onModifyTask(stopTask)}>
+                <li onClick={onStopTask}>
                   <Icon name="stop" />
                   Stop
                 </li>
               )}
               {!task.start && (
-                <li onClick={() => onModifyTask(startTask)}>
+                <li onClick={onStartTask}>
                   <Icon name="play" />
                   Start
                 </li>
               )}
-              <li onClick={() => onAddAnnotation()}>
+              <li onClick={onAddAnnotation}>
                 <Icon name="comment" />
                 Add Annotation
               </li>
@@ -90,11 +102,11 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 <Icon name="pencil" />
                 Edit
               </li>
-              <li onClick={() => onModifyTask(completeTask)}>
+              <li onClick={onCompleteTask}>
                 <Icon name="check" />
                 Mark Completed
               </li>
-              <li onClick={() => onModifyTask(deleteTask)}>
+              <li onClick={onDeleteTask}>
                 <Icon name="x" />
                 Delete
               </li>
