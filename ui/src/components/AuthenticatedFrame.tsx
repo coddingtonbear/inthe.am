@@ -3,9 +3,10 @@ import {useSelector} from 'react-redux'
 import {Link} from 'react-router-dom'
 import {RouteProps} from 'react-router'
 
-import {TopBar, TopBarRight, TopBarLeft, TopBarTitle} from 'react-foundation'
+import {TopBar, TopBarRight, TopBarLeft} from 'react-foundation'
 
-import {RootState} from '../store'
+import {editTaskModalActions} from '../reducers'
+import {RootState, useAppDispatch} from '../store'
 import {useUrls} from '../reducers/status'
 import Icon from './Icon'
 
@@ -17,6 +18,7 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
   component,
   ...props
 }) => {
+  const dispatch = useAppDispatch()
   const status = useSelector((state: RootState) => state.status)
   const trelloBoardUrl = useSelector((state: RootState) =>
     status.logged_in ? status.trello_board_url : null
@@ -26,11 +28,13 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
   )
   const urls = useUrls()
 
-  function showHelp() {}
+  function onShowHelp() {}
 
-  function createTask() {}
+  function onCreateTask() {
+    dispatch(editTaskModalActions.selectTaskForEdit({}))
+  }
 
-  function refresh() {}
+  function onRefresh() {}
 
   const ReactComponent = component as FunctionComponent
   return (
@@ -89,14 +93,14 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
               )}
             </li>
             <li className="desktop-only" data-intro="alt+n">
-              <a onClick={createTask}>
+              <a onClick={onCreateTask}>
                 <Icon name="pencil" />
                 New
               </a>
             </li>
 
             <li id="refresh-link" data-intro="alt+r">
-              <a onClick={refresh}>
+              <a onClick={onRefresh}>
                 <Icon name="refresh" />
               </a>
             </li>
@@ -105,7 +109,7 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
         <TopBarRight>
           <ul className="dropdown menu">
             <li className="desktop-only">
-              <a title="Help" onClick={showHelp}>
+              <a title="Help" onClick={onShowHelp}>
                 ?
               </a>
             </li>

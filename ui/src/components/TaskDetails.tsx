@@ -1,6 +1,5 @@
 import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
-import {Action} from '@reduxjs/toolkit'
 import {DateTime} from 'luxon'
 
 import {Task} from '../clients/tasks'
@@ -8,7 +7,7 @@ import Icon from './Icon'
 import {taskIsEditable, getBlockedTasks, getBlockingTasks} from '../utils/task'
 import {stopTask, startTask, completeTask, deleteTask} from '../thunks/tasks'
 import {RootState, useAppDispatch} from '../store'
-import {annotationModalActions} from '../reducers'
+import {annotationModalActions, editTaskModalActions} from '../reducers'
 
 export interface Props {
   tasks: Task[]
@@ -31,6 +30,10 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
 
   function onAddAnnotation() {
     dispatch(annotationModalActions.selectTaskForNewAnnotation(task))
+  }
+
+  function onEditTask() {
+    dispatch(editTaskModalActions.selectTaskForEdit(task))
   }
 
   function onStartTask() {
@@ -98,7 +101,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 <Icon name="comment" />
                 Add Annotation
               </li>
-              <li>
+              <li onClick={onEditTask}>
                 <Icon name="pencil" />
                 Edit
               </li>
