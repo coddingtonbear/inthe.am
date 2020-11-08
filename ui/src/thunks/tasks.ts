@@ -1,5 +1,6 @@
 import {createAsyncThunk} from '@reduxjs/toolkit'
 import {AppDispatch, RootState} from '../store'
+import {push} from 'connected-react-router'
 
 import * as client from '../clients/tasks'
 import {taskActions} from '../reducers'
@@ -44,6 +45,7 @@ export const deleteTask = createAsyncThunk<
 >(
   'tasks/deleteTask',
   async (taskId, thunkAPI): Promise<void> => {
+    thunkAPI.dispatch(taskActions.removeTask(taskId))
     return await client.deleteTask(taskId)
   }
 )
@@ -82,7 +84,11 @@ export const completeTask = createAsyncThunk<
         },
       })
     )
-    return await client.completeTask(taskId)
+    const result = await client.completeTask(taskId)
+
+    setTimeout(() => thunkAPI.dispatch(taskActions.removeTask(taskId)), 3000)
+
+    return result
   }
 )
 
@@ -101,5 +107,18 @@ export const commitTask = createAsyncThunk<
     }
 
     return await client.updateTask(thisTask)
+  }
+)
+
+export const createTask = createAsyncThunk<
+  void,
+  client.TaskUpdate,
+  {state: RootState; dispatch: AppDispatch}
+>(
+  'tasks/createTask',
+  async (partialTask, thunkAPI): Promise<void> => {
+    const task = await client.createTask(partialTask)
+    thunkAPI.dispatch(taskActions.addTask(task))
+    thunkAPI.dispatch(push(`tasks/${task.uuid}`))
   }
 )

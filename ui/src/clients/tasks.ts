@@ -41,6 +41,12 @@ export async function getTask(uuid: UUID): Promise<Task> {
   return request<Task>('GET', `tasks/${uuid}`, {})
 }
 
+export async function createTask(task: TaskUpdate): Promise<Task> {
+  return request<Task>('POST', `tasks`, {
+    data: task,
+  })
+}
+
 export async function updateTask(task: Task): Promise<void> {
   return request<void>('PUT', `tasks/${task.uuid}`, {
     data: task,

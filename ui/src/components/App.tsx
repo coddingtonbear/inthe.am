@@ -13,6 +13,7 @@ import Configure from './Configure'
 import Tasks from './Tasks'
 import RedirectToFirstTask from './RedirectToFirstTask'
 import {RootState} from '../store'
+import EditTaskModal from './modals/EditTaskModal'
 
 const App: FunctionComponent = () => {
   const loggedIn = useSelector((state: RootState) => state.status.logged_in)
@@ -55,6 +56,7 @@ const App: FunctionComponent = () => {
             </Switch>
           </ConnectedRouter>
           <AnnotationModal />
+          <EditTaskModal />
         </>
       )}
     </>

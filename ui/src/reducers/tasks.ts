@@ -11,6 +11,18 @@ const tasksUpdated = (
   return action.payload
 }
 
+const removeTask = (tasks: TaskState, action: PayloadAction<UUID>): void => {
+  const taskIndex = tasks?.findIndex((task) => task.uuid === action.payload)
+  if (taskIndex === -1 || taskIndex === undefined) {
+    throw Error(`Could not find matching task for ${action.payload}`)
+  }
+  tasks?.splice(taskIndex, 1)
+}
+
+const addTask = (tasks: TaskState, action: PayloadAction<Task>): void => {
+  tasks?.splice(0, 0, action.payload)
+}
+
 export interface UpdateTaskRequest {
   taskId: UUID
   update: TaskUpdate
@@ -43,7 +55,7 @@ const updateTask = (
   tasks[existingTaskIndex] = task
 }
 
-const reducers = {tasksUpdated, updateTask}
+const reducers = {tasksUpdated, updateTask, addTask, removeTask}
 
 export type TaskSlice = Slice<TaskState, typeof reducers, 'tasks'>
 
