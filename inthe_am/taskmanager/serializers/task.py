@@ -8,7 +8,6 @@ class TaskSerializer(serializers.Serializer):
     status = serializers.CharField(required=False)
     urgency = serializers.FloatField(read_only=True)
     description = serializers.CharField(required=True)
-    priority = serializers.CharField(required=False, allow_blank=True)
     project = serializers.CharField(required=False, allow_blank=True)
     due = serializers.DateTimeField(required=False)
     entry = serializers.DateTimeField(read_only=True)
@@ -47,8 +46,6 @@ class TaskSerializer(serializers.Serializer):
     def update(self, store, pk, data):
         original = store.client.get_task(uuid=pk)[1]
         for k, v in data.items():
-            if k == "priority" and v == "":
-                v = None
             original[k] = v
 
         changes = original.get_changes(keep=True)

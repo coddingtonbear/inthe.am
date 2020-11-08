@@ -16,9 +16,6 @@ export type TaskClass =
   | 'due__today'
   | 'due'
   | 'recurring'
-  | 'pri__H'
-  | 'pri__M'
-  | 'pri__L'
   | 'tagged'
   | ''
 
@@ -44,12 +41,6 @@ export const getTaskwarriorClass = (tasks: Task[], task: Task): TaskClass => {
     return 'due'
   } else if (task.imask) {
     return 'recurring'
-  } else if (task.priority === 'H') {
-    return 'pri__H'
-  } else if (task.priority === 'M') {
-    return 'pri__M'
-  } else if (task.priority === 'L') {
-    return 'pri__L'
   } else if (task.tags && task.tags.length) {
     return 'tagged'
   }

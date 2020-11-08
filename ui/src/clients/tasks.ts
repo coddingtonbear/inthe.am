@@ -11,7 +11,6 @@ export interface Task {
   status: 'pending' | 'completed' | 'deleted' | 'recurring' | 'waiting'
   urgency: number
   description: string
-  priority?: string // traditionally: 'H', 'M', and 'L', but configurable
   project?: string
   due?: DateTime
   entry: DateTime
