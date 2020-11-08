@@ -72,12 +72,13 @@ export const getTaskIcon = (task: Task): string => {
 export interface Props {
   tasks: Task[]
   task: Task
+  active: boolean
 }
 
-const TaskListItem: FunctionComponent<Props> = ({tasks, task}) => {
+const TaskListItem: FunctionComponent<Props> = ({tasks, task, active}) => {
   return (
     <Link to={`/tasks/${task.uuid}`}>
-      <div className="task">
+      <div className={classnames('task', {active: active})}>
         <div
           className={classnames('task-item', getTaskwarriorClass(tasks, task))}
         >
