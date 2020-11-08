@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from 'react'
+import React, {FormEvent, FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
 import {Grid, Cell} from 'react-foundation'
 import DatePicker from 'react-datepicker'
@@ -41,9 +41,15 @@ const EditTaskModal: FunctionComponent = () => {
     }
   }, [JSON.stringify(selectedTask)])
 
+  React.useEffect(() => {
+    document.getElementById('edit-task-description')?.focus()
+  })
+
   const dispatch = useAppDispatch()
 
-  function onSaveTask() {
+  function onSaveTask(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
     if (!selectedTask) {
       throw Error('No selected task was found')
     }
@@ -101,86 +107,89 @@ const EditTaskModal: FunctionComponent = () => {
             {selectedTask.uuid && <h1>Change your task</h1>}
             {!selectedTask.uuid && <h1>Create a new task</h1>}
 
-            <Grid>
-              <Cell medium={12}>
-                <label>
-                  Description
-                  <input
-                    type="text"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </label>
-              </Cell>
-            </Grid>
-            <Grid>
-              <Cell medium={4}>
-                <label>
-                  Project
-                  <input
-                    type="text"
-                    value={project}
-                    onChange={(e) => setProject(e.target.value)}
-                  />
-                </label>
-              </Cell>
-              <Cell medium={8}>
-                <label>
-                  Tags
-                  <input
-                    type="text"
-                    value={tags.join(' ')}
-                    placeholder="tag1 tag2 tag3"
-                    onChange={(e) => setTags(e.target.value.split(' '))}
-                  />
-                </label>
-              </Cell>
-            </Grid>
-            <Grid>
-              <Cell medium={4}>
-                <label>
-                  Due
-                  <DatePicker
-                    selected={due}
-                    showTimeSelect={true}
-                    onChange={(date) => setDue(getSingleDateOrUndefined(date))}
-                  />
-                </label>
-              </Cell>
-              <Cell medium={4}>
-                <label>
-                  Wait
-                  <DatePicker
-                    selected={wait}
-                    showTimeSelect={true}
-                    onChange={(date) => setWait(getSingleDateOrUndefined(date))}
-                  />
-                </label>
-              </Cell>
-              <Cell medium={4}>
-                <label>
-                  Scheduled
-                  <DatePicker
-                    selected={scheduled}
-                    showTimeSelect={true}
-                    onChange={(date) =>
-                      setScheduled(getSingleDateOrUndefined(date))
-                    }
-                  />
-                </label>
-              </Cell>
-            </Grid>
+            <form onSubmit={onSaveTask}>
+              <Grid>
+                <Cell medium={12}>
+                  <label>
+                    Description
+                    <input
+                      type="text"
+                      value={description}
+                      id="edit-task-description"
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </label>
+                </Cell>
+              </Grid>
+              <Grid>
+                <Cell medium={4}>
+                  <label>
+                    Project
+                    <input
+                      type="text"
+                      value={project}
+                      onChange={(e) => setProject(e.target.value)}
+                    />
+                  </label>
+                </Cell>
+                <Cell medium={8}>
+                  <label>
+                    Tags
+                    <input
+                      type="text"
+                      value={tags.join(' ')}
+                      placeholder="tag1 tag2 tag3"
+                      onChange={(e) => setTags(e.target.value.split(' '))}
+                    />
+                  </label>
+                </Cell>
+              </Grid>
+              <Grid>
+                <Cell medium={4}>
+                  <label>
+                    Due
+                    <DatePicker
+                      selected={due}
+                      showTimeSelect={true}
+                      onChange={(date) =>
+                        setDue(getSingleDateOrUndefined(date))
+                      }
+                    />
+                  </label>
+                </Cell>
+                <Cell medium={4}>
+                  <label>
+                    Wait
+                    <DatePicker
+                      selected={wait}
+                      showTimeSelect={true}
+                      onChange={(date) =>
+                        setWait(getSingleDateOrUndefined(date))
+                      }
+                    />
+                  </label>
+                </Cell>
+                <Cell medium={4}>
+                  <label>
+                    Scheduled
+                    <DatePicker
+                      selected={scheduled}
+                      showTimeSelect={true}
+                      onChange={(date) =>
+                        setScheduled(getSingleDateOrUndefined(date))
+                      }
+                    />
+                  </label>
+                </Cell>
+              </Grid>
 
-            <button type="button" className="button" onClick={onCancelEdit}>
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="success button"
-              onClick={onSaveTask}
-            >
-              Save
-            </button>
+              <button type="button" className="button" onClick={onCancelEdit}>
+                Cancel
+              </button>
+              <button type="submit" className="success button">
+                Save
+              </button>
+            </form>
           </div>
         </div>
       )}
