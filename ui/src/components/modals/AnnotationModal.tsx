@@ -1,5 +1,7 @@
 import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
+import clone from 'clone'
+
 import {RootState, useAppDispatch} from '../../store'
 import {annotationModalActions, taskActions} from '../../reducers'
 import {commitTask} from '../../thunks/tasks'
@@ -16,7 +18,7 @@ const AnnotationModal: FunctionComponent = () => {
       throw Error('No selected task was found')
     }
 
-    const annotations = selectedTask.annotations || []
+    const annotations = clone(selectedTask.annotations, false) || []
     annotations.push(annotation)
 
     dispatch(
