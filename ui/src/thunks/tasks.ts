@@ -59,3 +59,21 @@ export const completeTask = createAsyncThunk<
     return await client.completeTask(taskId)
   }
 )
+
+export const commitTask = createAsyncThunk<
+  void,
+  client.UUID,
+  {state: RootState; dispatch: AppDispatch}
+>(
+  'tasks/commitTask',
+  async (taskId, thunkAPI): Promise<void> => {
+    const taskState = thunkAPI.getState()
+    const thisTask = taskState.tasks?.find((task) => task.uuid === taskId)
+
+    if (!thisTask) {
+      throw Error(`Could not find task by ID ${taskId}`)
+    }
+
+    return await client.updateTask(thisTask)
+  }
+)

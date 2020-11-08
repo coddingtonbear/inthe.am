@@ -1,13 +1,13 @@
 import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
 import {DateTime} from 'luxon'
-import {Link} from 'react-router-dom'
 
-import {Task, UUID} from '../clients/tasks'
+import {Task} from '../clients/tasks'
 import Icon from './Icon'
 import {taskIsEditable, getBlockedTasks, getBlockingTasks} from '../utils/task'
 import {stopTask, startTask, completeTask, deleteTask} from '../thunks/tasks'
 import {RootState, useAppDispatch} from '../store'
+import {annotationModalActions} from '../reducers'
 
 export interface Props {
   tasks: Task[]
@@ -28,20 +28,12 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
     setBlocked(getBlockedTasks(tasks, task))
   }, [JSON.stringify(tasks), task.uuid])
 
-  function onStartTask() {
-    dispatch(startTask(task.uuid))
+  function onAddAnnotation() {
+    dispatch(annotationModalActions.selectTaskForNewAnnotation(task))
   }
 
-  function onStopTask() {
-    dispatch(stopTask(task.uuid))
-  }
-
-  function onCompleteTask() {
-    dispatch(completeTask(task.uuid))
-  }
-
-  function onDeleteTask() {
-    dispatch(deleteTask(task.uuid))
+  function onModifyTask(fn: (taskId: string) => void) {
+    fn(task.uuid)
   }
 
   return (
@@ -78,18 +70,18 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
           {taskIsEditable(task) && (
             <ul id="task-actions" className="inline-list">
               {task.start && (
-                <li onClick={onStopTask}>
+                <li onClick={() => onModifyTask(stopTask)}>
                   <Icon name="stop" />
                   Stop
                 </li>
               )}
               {!task.start && (
-                <li onClick={onStartTask}>
+                <li onClick={() => onModifyTask(startTask)}>
                   <Icon name="play" />
                   Start
                 </li>
               )}
-              <li>
+              <li onClick={() => onAddAnnotation()}>
                 <Icon name="comment" />
                 Add Annotation
               </li>
@@ -97,11 +89,11 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 <Icon name="pencil" />
                 Edit
               </li>
-              <li onClick={onCompleteTask}>
+              <li onClick={() => onModifyTask(completeTask)}>
                 <Icon name="check" />
                 Mark Completed
               </li>
-              <li onClick={onDeleteTask}>
+              <li onClick={() => onModifyTask(deleteTask)}>
                 <Icon name="x" />
                 Delete
               </li>
