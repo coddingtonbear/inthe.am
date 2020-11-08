@@ -3,11 +3,9 @@ import {Task} from '../clients/tasks'
 import {DateTime} from 'luxon'
 
 export const currentTimestamp = (): string => {
-  const result = DateTime.utc()
+  return DateTime.utc()
     .set({millisecond: 0})
     .toISO({suppressMilliseconds: true})
-  console.log(result)
-  return result
 }
 
 export const taskIsEditable = (task: Task): boolean => {
