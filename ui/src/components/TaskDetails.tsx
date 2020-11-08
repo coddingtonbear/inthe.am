@@ -1,13 +1,24 @@
 import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
 import {DateTime} from 'luxon'
+import clone from 'clone'
 
 import {Task} from '../clients/tasks'
 import Icon from './Icon'
 import {taskIsEditable, getBlockedTasks, getBlockingTasks} from '../utils/task'
-import {stopTask, startTask, completeTask, deleteTask} from '../thunks/tasks'
+import {
+  stopTask,
+  startTask,
+  completeTask,
+  deleteTask,
+  commitTask,
+} from '../thunks/tasks'
 import {RootState, useAppDispatch} from '../store'
-import {annotationModalActions, editTaskModalActions} from '../reducers'
+import {
+  annotationModalActions,
+  editTaskModalActions,
+  taskActions,
+} from '../reducers'
 
 export interface Props {
   tasks: Task[]
@@ -34,6 +45,21 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
 
   function onEditTask() {
     dispatch(editTaskModalActions.selectTaskForEdit(task))
+  }
+
+  function onDeleteAnotation(idx: number) {
+    const annotations = clone(task.annotations, false) || []
+    annotations.splice(idx, 1)
+
+    dispatch(
+      taskActions.updateTask({
+        taskId: task.uuid,
+        update: {
+          annotations: annotations,
+        },
+      })
+    )
+    dispatch(commitTask(task.uuid))
   }
 
   function onStartTask() {
@@ -229,11 +255,16 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
         </div>
         <div className="medium-6 columns annotations_list">
           <ul className="annotation_list">
-            {task.annotations?.map((annotation) => {
+            {task.annotations?.map((annotation, idx) => {
               return (
                 <li key={annotation}>
                   <span className="annotation_tools">
-                    <a className="delete-annotation-link">&#215;</a>
+                    <a
+                      className="delete-annotation-link"
+                      onClick={() => onDeleteAnotation(idx)}
+                    >
+                      &#215;
+                    </a>
                   </span>
                   {annotation}
                 </li>
