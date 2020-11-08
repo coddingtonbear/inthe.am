@@ -9,6 +9,7 @@
     "@types/clone": "^2.1.0",
     "@types/history": "^4.7.8",
     "@types/luxon": "^1.25.0",
+    "@types/react-datepicker": "^3.1.1",
     "@types/react-router": "^5.1.8",
     "@types/react-router-dom": "^5.1.6",
     "autoprefixer": "^10.0.1",
@@ -29,6 +30,7 @@
     "motion-ui": "^2.0.3",
     "postcss": "^8.1.2",
     "react": "^16.14.0",
+    "react-datepicker": "^3.3.0",
     "react-dom": "^16.14.0",
     "react-foundation": "^0.9.6",
     "react-redux": "^7.2.1",
@@ -48,7 +50,9 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-foundation": "^0.9.6",
     "@types/react-redux": "^7.1.9",
-    "prettier": "^2.1.2"
+    "css-loader": "^5.0.1",
+    "prettier": "^2.1.2",
+    "style-loader": "^2.0.0"
   },
   "prettier": {
     "semi": false,
