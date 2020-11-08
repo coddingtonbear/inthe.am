@@ -39,11 +39,8 @@ const AnnotationModal: FunctionComponent = () => {
 
   React.useEffect(() => {
     setAnnotation('')
-  }, [selectedTask?.uuid])
-
-  React.useEffect(() => {
     document.getElementById('annotation')?.focus()
-  })
+  }, [selectedTask?.uuid])
 
   return (
     <>

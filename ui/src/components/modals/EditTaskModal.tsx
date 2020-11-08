@@ -39,11 +39,8 @@ const EditTaskModal: FunctionComponent = () => {
     if (selectedTask?.scheduled) {
       setScheduled(DateTime.fromISO(selectedTask.scheduled).toJSDate())
     }
-  }, [JSON.stringify(selectedTask)])
-
-  React.useEffect(() => {
     document.getElementById('edit-task-description')?.focus()
-  })
+  }, [selectedTask?.uuid])
 
   const dispatch = useAppDispatch()
 
