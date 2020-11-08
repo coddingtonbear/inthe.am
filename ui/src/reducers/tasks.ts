@@ -35,7 +35,7 @@ const updateTask = (
 
   const existingTask = tasks[existingTaskIndex]
 
-  const task = {
+  const task: Task = {
     ...existingTask,
     ...updatedTask,
   }
