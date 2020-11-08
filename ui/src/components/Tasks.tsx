@@ -15,8 +15,9 @@ interface Props extends RouteComponentProps<MatchParams> {}
 
 const Tasks: FunctionComponent<Props> = ({match, ...rest}) => {
   const tasks = useSelector((state: RootState) => state.tasks)
+  const selectedTaskId = match.params.taskId
   const task = match
-    ? tasks?.filter((task) => task.uuid === match.params.taskId)[0]
+    ? tasks?.filter((task) => task.uuid === selectedTaskId)[0]
     : null
   const dispatch = useAppDispatch()
   const stylesheet = useSelector((state: RootState) =>
@@ -50,7 +51,12 @@ const Tasks: FunctionComponent<Props> = ({match, ...rest}) => {
         <div id="list" className="task-list">
           {tasks &&
             tasks.map((task) => (
-              <TaskListItem tasks={tasks} task={task} key={task.id} />
+              <TaskListItem
+                tasks={tasks}
+                task={task}
+                key={task.id}
+                active={task.id === selectedTaskId}
+              />
             ))}
         </div>
         {task && tasks && <TaskDetails tasks={tasks} task={task} />}
