@@ -1,6 +1,8 @@
 import {createAsyncThunk} from '@reduxjs/toolkit'
 import {AppDispatch, RootState} from '../store'
 
+import {DateTime} from 'luxon'
+
 import * as client from '../clients/tasks'
 import {taskActions} from '../reducers'
 
@@ -23,6 +25,15 @@ export const stopTask = createAsyncThunk<
 >(
   'tasks/stopTask',
   async (taskId, thunkAPI): Promise<void> => {
+    thunkAPI.dispatch(
+      taskActions.updateTask({
+        taskId,
+        update: {
+          start: '',
+          end: DateTime.utc().toISO(),
+        },
+      })
+    )
     return await client.stopTask(taskId)
   }
 )
@@ -45,6 +56,14 @@ export const startTask = createAsyncThunk<
 >(
   'tasks/startTask',
   async (taskId, thunkAPI): Promise<void> => {
+    thunkAPI.dispatch(
+      taskActions.updateTask({
+        taskId,
+        update: {
+          start: DateTime.utc().toISO(),
+        },
+      })
+    )
     return await client.startTask(taskId)
   }
 )
@@ -56,6 +75,14 @@ export const completeTask = createAsyncThunk<
 >(
   'tasks/completeTask',
   async (taskId, thunkAPI): Promise<void> => {
+    thunkAPI.dispatch(
+      taskActions.updateTask({
+        taskId,
+        update: {
+          status: 'completed',
+        },
+      })
+    )
     return await client.completeTask(taskId)
   }
 )

@@ -8,6 +8,7 @@ import {taskIsEditable, getBlockedTasks, getBlockingTasks} from '../utils/task'
 import {stopTask, startTask, completeTask, deleteTask} from '../thunks/tasks'
 import {RootState, useAppDispatch} from '../store'
 import {annotationModalActions} from '../reducers'
+import {AnyAction} from 'redux'
 
 export interface Props {
   tasks: Task[]
