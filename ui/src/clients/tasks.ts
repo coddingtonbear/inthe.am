@@ -17,6 +17,7 @@ export interface Task {
   entry: DateTime
   modified: DateTime
   start?: DateTime
+  end?: DateTime
   wait?: DateTime
   until?: DateTime
   scheduled?: DateTime
