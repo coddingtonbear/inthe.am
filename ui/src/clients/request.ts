@@ -3,7 +3,6 @@ import axios, {AxiosRequestConfig} from 'axios'
 import {getApiUrl, getCSRFToken} from './utils'
 
 export interface RequestParams extends AxiosRequestConfig {
-  token?: string
   lookupApiUrl?: boolean
 }
 

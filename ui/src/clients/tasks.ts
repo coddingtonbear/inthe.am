@@ -30,12 +30,20 @@ export interface Task {
   }
 }
 
+export interface TaskUpdate extends Partial<Task> {}
+
 export async function getTasks(): Promise<Task[]> {
   return request<Task[]>('GET', 'tasks', {})
 }
 
 export async function getTask(uuid: UUID): Promise<Task> {
   return request<Task>('GET', `tasks/${uuid}`, {})
+}
+
+export async function updateTask(task: Task): Promise<void> {
+  return request<void>('PUT', `tasks/${task.uuid}`, {
+    data: task,
+  })
 }
 
 export async function completeTask(uuid: UUID): Promise<void> {

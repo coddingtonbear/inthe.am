@@ -5,6 +5,7 @@ import {ConnectedRouter} from 'connected-react-router/immutable'
 import {history, useAppDispatch} from '../store'
 import {refreshStatus} from '../reducers/status'
 
+import AnnotationModal from './modals/AnnotationModal'
 import AuthenticatedRoute from './AuthenticatedRoute'
 import About from './About'
 import GettingStarted from './GettingStarted'
@@ -27,27 +28,34 @@ const App: FunctionComponent = () => {
           when we really don't need to do so
       */}
       {loggedIn !== null && (
-        <ConnectedRouter history={history}>
-          <Switch>
-            <AuthenticatedRoute
-              exact
-              path="/getting-started"
-              component={GettingStarted}
-            />
-            <AuthenticatedRoute
-              exact
-              path="/configuration"
-              component={Configure}
-            />
-            <AuthenticatedRoute exact path="/tasks/:taskId" component={Tasks} />
-            <AuthenticatedRoute
-              exact
-              path="/tasks"
-              component={RedirectToFirstTask}
-            />
-            <Route path="/" component={About} />
-          </Switch>
-        </ConnectedRouter>
+        <>
+          <ConnectedRouter history={history}>
+            <Switch>
+              <AuthenticatedRoute
+                exact
+                path="/getting-started"
+                component={GettingStarted}
+              />
+              <AuthenticatedRoute
+                exact
+                path="/configuration"
+                component={Configure}
+              />
+              <AuthenticatedRoute
+                exact
+                path="/tasks/:taskId"
+                component={Tasks}
+              />
+              <AuthenticatedRoute
+                exact
+                path="/tasks"
+                component={RedirectToFirstTask}
+              />
+              <Route path="/" component={About} />
+            </Switch>
+          </ConnectedRouter>
+          <AnnotationModal />
+        </>
       )}
     </>
   )
