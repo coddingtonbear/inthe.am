@@ -4,6 +4,7 @@ import {Route, Switch} from 'react-router'
 import {ConnectedRouter} from 'connected-react-router/immutable'
 import {history, useAppDispatch} from '../store'
 import {refreshStatus} from '../reducers/status'
+import {ToastProvider} from 'react-toast-notifications'
 
 import AnnotationModal from './modals/AnnotationModal'
 import AuthenticatedRoute from './AuthenticatedRoute'
@@ -30,33 +31,35 @@ const App: FunctionComponent = () => {
       */}
       {loggedIn !== null && (
         <>
-          <ConnectedRouter history={history}>
-            <Switch>
-              <AuthenticatedRoute
-                exact
-                path="/getting-started"
-                component={GettingStarted}
-              />
-              <AuthenticatedRoute
-                exact
-                path="/configuration"
-                component={Configure}
-              />
-              <AuthenticatedRoute
-                exact
-                path="/tasks/:taskId"
-                component={Tasks}
-              />
-              <AuthenticatedRoute
-                exact
-                path="/tasks"
-                component={RedirectToFirstTask}
-              />
-              <Route path="/" component={About} />
-            </Switch>
-          </ConnectedRouter>
-          <AnnotationModal />
-          <EditTaskModal />
+          <ToastProvider placement={'top-center'} autoDismiss={true}>
+            <ConnectedRouter history={history}>
+              <Switch>
+                <AuthenticatedRoute
+                  exact
+                  path="/getting-started"
+                  component={GettingStarted}
+                />
+                <AuthenticatedRoute
+                  exact
+                  path="/configuration"
+                  component={Configure}
+                />
+                <AuthenticatedRoute
+                  exact
+                  path="/tasks/:taskId"
+                  component={Tasks}
+                />
+                <AuthenticatedRoute
+                  exact
+                  path="/tasks"
+                  component={RedirectToFirstTask}
+                />
+                <Route path="/" component={About} />
+              </Switch>
+            </ConnectedRouter>
+            <AnnotationModal />
+            <EditTaskModal />
+          </ToastProvider>
         </>
       )}
     </>
