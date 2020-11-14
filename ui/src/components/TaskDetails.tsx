@@ -241,14 +241,14 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 </td>
               </tr>
               {udas?.map((uda) => {
-                {
+                return (
                   task.udas[uda.field] && (
                     <tr key={uda.field + task.udas[uda.field]}>
                       <th>{uda.label}</th>
                       <td>{task.udas[uda.field]}</td>
                     </tr>
                   )
-                }
+                )
               })}
             </tbody>
           </table>
