@@ -128,6 +128,10 @@ body {
     );
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0e0e0', endColorstr='#e0e0e0', GradientType=1 );
   }
+
+  div#root {
+    height: 100%;
+  }
 }
 
 p.input-note {
@@ -333,7 +337,7 @@ div.row {
   letter-spacing: normal;
   word-spacing: normal;
   vertical-align: top;
-  height: 100vh;
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   float: left;
