@@ -11,6 +11,14 @@ const statusUpdated = (
   return action.payload
 }
 
+const headChanged = (state: Status, action: PayloadAction<string>): void => {
+  if (!state.logged_in) {
+    return
+  }
+
+  state.repository_head = action.payload
+}
+
 const initialState = {logged_in: null} as Status
 
 const statusSlice = createSlice({
@@ -18,6 +26,7 @@ const statusSlice = createSlice({
   initialState,
   reducers: {
     statusUpdated,
+    headChanged,
   },
 })
 

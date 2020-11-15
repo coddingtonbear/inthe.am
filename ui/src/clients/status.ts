@@ -34,6 +34,7 @@ export interface URLList {
   trello_reset_url: string
   deduplicate_tasks: string
   deduplication_config: string
+  status_feed: string
 }
 
 export interface UdaDefinition {
