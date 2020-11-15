@@ -1,26 +1,39 @@
 import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
-import {Route, Switch} from 'react-router'
-import {ConnectedRouter} from 'connected-react-router/immutable'
-import {history, useAppDispatch} from '../store'
+import {useAppDispatch} from '../store'
 import {refreshStatus} from '../reducers/status'
 import {ToastProvider} from 'react-toast-notifications'
 
 import AnnotationModal from './modals/AnnotationModal'
-import AuthenticatedRoute from './AuthenticatedRoute'
-import About from './About'
-import GettingStarted from './GettingStarted'
-import Configure from './Configure'
-import Tasks from './Tasks'
-import RedirectToFirstTask from './RedirectToFirstTask'
 import {RootState} from '../store'
 import EditTaskModal from './modals/EditTaskModal'
+import {createStream} from '../clients/stream'
+import {Stream} from '../contexts/stream'
+import AppRouter from './AppRouter'
 
 const App: FunctionComponent = () => {
   const loggedIn = useSelector((state: RootState) => state.status.logged_in)
+  const head = useSelector((state: RootState) =>
+    state.status.logged_in ? state.status.repository_head : null
+  )
+  const statusUrl = useSelector(
+    (state: RootState) => state.status.urls?.status_feed
+  )
   const dispatch = useAppDispatch()
+  const [stream, setStream] = React.useState<EventSource>()
 
   dispatch(refreshStatus)
+
+  React.useEffect(() => {
+    if (stream) {
+      stream.close()
+    }
+
+    if (statusUrl) {
+      const newStream = createStream(statusUrl, head)
+      setStream(newStream)
+    }
+  }, [statusUrl])
 
   return (
     <>
@@ -32,33 +45,11 @@ const App: FunctionComponent = () => {
       {loggedIn !== null && (
         <>
           <ToastProvider placement={'top-center'} autoDismiss={true}>
-            <ConnectedRouter history={history}>
-              <Switch>
-                <AuthenticatedRoute
-                  exact
-                  path="/getting-started"
-                  component={GettingStarted}
-                />
-                <AuthenticatedRoute
-                  exact
-                  path="/configuration"
-                  component={Configure}
-                />
-                <AuthenticatedRoute
-                  exact
-                  path="/tasks/:taskId"
-                  component={Tasks}
-                />
-                <AuthenticatedRoute
-                  exact
-                  path="/tasks"
-                  component={RedirectToFirstTask}
-                />
-                <Route path="/" component={About} />
-              </Switch>
-            </ConnectedRouter>
-            <AnnotationModal />
-            <EditTaskModal />
+            <Stream.Provider value={{stream}}>
+              <AppRouter />
+              <AnnotationModal />
+              <EditTaskModal />
+            </Stream.Provider>
           </ToastProvider>
         </>
       )}

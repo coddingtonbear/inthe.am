@@ -3,9 +3,11 @@ import {useSelector} from 'react-redux'
 import {RouteComponentProps} from 'react-router'
 
 import {RootState, useAppDispatch} from '../store'
-import {refreshTasks} from '../thunks/tasks'
+import {refreshTask, refreshTasks} from '../thunks/tasks'
 import TaskListItem from './TaskListItem'
 import TaskDetails from './TaskDetails'
+import {Stream} from '../contexts/stream'
+import {getMessage, StreamEventType} from '../clients/stream'
 
 interface MatchParams {
   taskId: string
@@ -23,6 +25,19 @@ const Tasks: FunctionComponent<Props> = ({match, ...rest}) => {
   const stylesheet = useSelector((state: RootState) =>
     state.status.logged_in === true ? state.status.colorscheme : null
   )
+  const streamState = React.useContext(Stream)
+
+  React.useEffect(() => {
+    if (streamState.stream) {
+      streamState.stream.addEventListener(
+        StreamEventType.TaskChanged,
+        (evt: Event) => {
+          const taskId = getMessage(StreamEventType.TaskChanged, evt)
+          dispatch(refreshTask(taskId))
+        }
+      )
+    }
+  }, [streamState.stream])
 
   React.useEffect(() => {
     const stylesheetId = 'colorscheme-stylesheet'

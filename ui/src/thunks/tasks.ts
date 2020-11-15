@@ -6,6 +6,23 @@ import * as client from '../clients/tasks'
 import {taskActions} from '../reducers'
 import {currentTimestamp} from '../utils/task'
 
+export const refreshTask = createAsyncThunk<
+  void,
+  string,
+  {state: RootState; dispatch: AppDispatch}
+>(
+  'tasks/refreshTask',
+  async (taskId: string, thunkAPI): Promise<void> => {
+    const task = await client.getTask(taskId)
+    thunkAPI.dispatch(
+      taskActions.overwriteTask({
+        taskId,
+        update: task,
+      })
+    )
+  }
+)
+
 export const refreshTasks = createAsyncThunk<
   void,
   undefined,

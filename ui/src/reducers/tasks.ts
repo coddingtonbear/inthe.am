@@ -1,4 +1,9 @@
-import {createSlice, PayloadAction, Slice} from '@reduxjs/toolkit'
+import {
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+  Slice,
+} from '@reduxjs/toolkit'
 
 import {Task, TaskUpdate, UUID} from '../clients/tasks'
 
@@ -21,6 +26,31 @@ const removeTask = (tasks: TaskState, action: PayloadAction<UUID>): void => {
 
 const addTask = (tasks: TaskState, action: PayloadAction<Task>): void => {
   tasks?.splice(0, 0, action.payload)
+}
+
+export interface OverwriteTaskRequest {
+  taskId: UUID
+  update: Task
+}
+
+const overwriteTask = (
+  tasks: TaskState,
+  action: PayloadAction<OverwriteTaskRequest>
+): void => {
+  if (!tasks) {
+    return
+  }
+
+  const updatedTask = action.payload.update
+  const existingTaskIndex = tasks.findIndex(
+    (task) => task.uuid === action.payload.taskId
+  )
+
+  if (existingTaskIndex === -1) {
+    throw Error(`Could not find matching task for ${action.payload.taskId}`)
+  }
+
+  tasks[existingTaskIndex] = updatedTask
 }
 
 export interface UpdateTaskRequest {
@@ -55,7 +85,7 @@ const updateTask = (
   tasks[existingTaskIndex] = task
 }
 
-const reducers = {tasksUpdated, updateTask, addTask, removeTask}
+const reducers = {tasksUpdated, updateTask, overwriteTask, addTask, removeTask}
 
 export type TaskSlice = Slice<TaskState, typeof reducers, 'tasks'>
 
