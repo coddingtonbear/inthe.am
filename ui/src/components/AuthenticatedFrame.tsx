@@ -8,7 +8,9 @@ import {TopBar, TopBarRight, TopBarLeft} from 'react-foundation'
 import {editTaskModalActions} from '../reducers'
 import {RootState, useAppDispatch} from '../store'
 import {useUrls} from '../reducers/status'
+import {Stream} from '../contexts/stream'
 import Icon from './Icon'
+import {refreshTasks} from '../thunks/tasks'
 
 interface Props extends RouteProps {
   component: FunctionComponent
@@ -26,6 +28,7 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
   const apiKey = useSelector((state: RootState) =>
     status.logged_in ? status.api_key : null
   )
+  const streamState = React.useContext(Stream)
   const urls = useUrls()
 
   function onShowHelp() {}
@@ -34,7 +37,9 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
     dispatch(editTaskModalActions.selectTaskForEdit({}))
   }
 
-  function onRefresh() {}
+  function onRefresh() {
+    dispatch(refreshTasks())
+  }
 
   const ReactComponent = component as FunctionComponent
   return (
@@ -99,11 +104,27 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
               </a>
             </li>
 
-            <li id="refresh-link" data-intro="alt+r">
-              <a onClick={onRefresh}>
-                <Icon name="refresh" />
-              </a>
-            </li>
+            {streamState.stream && (
+              <li id="refresh-link" data-intro="alt+r">
+                <a
+                  title="Connected; tasks will update automatically"
+                  className="connected"
+                >
+                  <Icon name="refresh" />
+                </a>
+              </li>
+            )}
+            {!streamState.stream && (
+              <li id="refresh-link" data-intro="alt+r">
+                <a
+                  onClick={onRefresh}
+                  className="disconnected"
+                  title="Not connected; click to refresh"
+                >
+                  <Icon name="refresh" />
+                </a>
+              </li>
+            )}
           </ul>
         </TopBarLeft>
         <TopBarRight>
