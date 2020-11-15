@@ -210,6 +210,11 @@ label[for] {
   ul {
     background-color: #333;
   }
+  li#refresh-link {
+    a.connected {
+      color: #777777;
+    }
+  }
 }
 
 #footer {
