@@ -8,6 +8,7 @@ import About from './About'
 import GettingStarted from './GettingStarted'
 import Configure from './Configure'
 import Tasks from './Tasks'
+import ActivityLog from './ActivityLog'
 import RedirectToFirstTask from './RedirectToFirstTask'
 import {history, useAppDispatch} from '../store'
 import {statusActions} from '../reducers'
@@ -75,6 +76,11 @@ const AppRouter: FunctionComponent = () => {
           exact
           path="/tasks"
           component={RedirectToFirstTask}
+        />
+        <AuthenticatedRoute
+          exact
+          path="/activity-log"
+          component={ActivityLog}
         />
         <Route path="/" component={About} />
       </Switch>
