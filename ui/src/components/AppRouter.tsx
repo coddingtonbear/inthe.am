@@ -1,15 +1,15 @@
 import React, {FunctionComponent} from 'react'
-import {Route, Switch} from 'react-router'
+import {Redirect, Route, Switch} from 'react-router'
 import {ConnectedRouter} from 'connected-react-router/immutable'
 import {useToasts} from 'react-toast-notifications'
 
 import AuthenticatedRoute from './AuthenticatedRoute'
 import About from './About'
 import GettingStarted from './GettingStarted'
-import Configure from './Configure'
 import Tasks from './Tasks'
 import ActivityLog from './ActivityLog'
 import RedirectToFirstTask from './RedirectToFirstTask'
+import Configure from './Configure'
 import {history, useAppDispatch} from '../store'
 import {statusActions} from '../reducers'
 import {StreamEventType, getMessage} from '../clients/stream'
@@ -70,7 +70,16 @@ const AppRouter: FunctionComponent = () => {
           path="/getting-started"
           component={GettingStarted}
         />
-        <AuthenticatedRoute exact path="/configuration" component={Configure} />
+        <Route
+          exact
+          path="/configure"
+          render={() => <Redirect to="/configure/synchronization" />}
+        />
+        <AuthenticatedRoute
+          exact
+          path="/configure/:page"
+          component={Configure}
+        />
         <AuthenticatedRoute exact path="/tasks/:taskId" component={Tasks} />
         <AuthenticatedRoute
           exact
