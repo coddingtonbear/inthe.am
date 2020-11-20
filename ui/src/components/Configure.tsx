@@ -7,13 +7,13 @@ import Synchronization from './configure_pages/Synchronization'
 import Trello from './configure_pages/Trello'
 import Deduplication from './configure_pages/Deduplication'
 import Zapier from './configure_pages/Zapier'
+import ColorScheme from './configure_pages/ColorScheme'
 
 enum Page {
   Synchronization = 'synchronization',
   Trello = 'trello',
   Deduplication = 'deduplication',
   Zapier = 'zapier',
-  UDAs = 'udas',
   ColorScheme = 'color-scheme',
   TaskRc = 'taskrc',
   API = 'api-keys',
@@ -42,8 +42,7 @@ const Configure: FunctionComponent<Props> = ({match}) => {
     [Page.Trello]: {name: 'Trello', component: Trello},
     [Page.Deduplication]: {name: 'Deduplication', component: Deduplication},
     [Page.Zapier]: {name: 'Zapier', class: 'beta', component: Zapier},
-    [Page.UDAs]: {name: 'UDAs', component: Synchronization},
-    [Page.ColorScheme]: {name: 'Color Scheme', component: Synchronization},
+    [Page.ColorScheme]: {name: 'Color Scheme', component: ColorScheme},
     [Page.TaskRc]: {name: 'TaskRC', component: Synchronization},
     [Page.API]: {name: 'API Keys', component: Synchronization},
     [Page.Feeds]: {name: 'iCal & RSS Feeds', component: Synchronization},

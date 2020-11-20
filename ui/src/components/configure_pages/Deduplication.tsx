@@ -1,10 +1,11 @@
 import React, {FormEvent, FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
 import {Button, Switch} from 'react-foundation'
+import {useToasts} from 'react-toast-notifications'
 
 import request from '../../clients/request'
-import {RootState} from '../../store'
-import {useToasts} from 'react-toast-notifications'
+import {RootState, useAppDispatch} from '../../store'
+import {refreshStatus} from '../../thunks/status'
 
 const Deduplication: FunctionComponent = () => {
   const stateIsEnabled = useSelector((state: RootState) =>
@@ -18,6 +19,7 @@ const Deduplication: FunctionComponent = () => {
   )
   const [enabled, setEnabled] = React.useState<boolean>(stateIsEnabled)
   const {addToast} = useToasts()
+  const dispatch = useAppDispatch()
 
   function deduplicateNow() {
     if (!deduplicationUrl) {
@@ -29,6 +31,7 @@ const Deduplication: FunctionComponent = () => {
       lookupApiUrl: false,
     }).then(() => {
       addToast('Task deduplication started', {appearance: 'success'})
+      dispatch(refreshStatus())
     })
   }
 
@@ -52,6 +55,7 @@ const Deduplication: FunctionComponent = () => {
         : 'Automatic deduplication disabled'
 
       addToast(message, {appearance: 'success'})
+      dispatch(refreshStatus())
     })
   }
 
