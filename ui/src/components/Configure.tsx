@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom'
 
 import Synchronization from './configure_pages/Synchronization'
 import Trello from './configure_pages/Trello'
+import Deduplication from './configure_pages/Deduplication'
 
 enum Page {
   Synchronization = 'synchronization',
@@ -38,7 +39,7 @@ const Configure: FunctionComponent<Props> = ({match}) => {
       component: Synchronization,
     },
     [Page.Trello]: {name: 'Trello', component: Trello},
-    [Page.Deduplication]: {name: 'Deduplication', component: Synchronization},
+    [Page.Deduplication]: {name: 'Deduplication', component: Deduplication},
     [Page.Zapier]: {name: 'Zapier', class: 'beta', component: Synchronization},
     [Page.UDAs]: {name: 'UDAs', component: Synchronization},
     [Page.ColorScheme]: {name: 'Color Scheme', component: Synchronization},
