@@ -34,7 +34,9 @@ const ColorScheme: FunctionComponent = () => {
   const {addToast} = useToasts()
   const dispatch = useAppDispatch()
 
-  function onChange(event: FormEvent) {
+  function onChange(event: FormEvent<HTMLSelectElement>) {
+    event.preventDefault()
+
     const newValue = (event.target as HTMLSelectElement).value
     setColorScheme(newValue)
 
