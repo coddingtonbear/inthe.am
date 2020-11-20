@@ -6,6 +6,12 @@ const Trello: FunctionComponent = () => {
   const trelloBoardUrl = useSelector((state: RootState) =>
     state.status.logged_in ? state.status.trello_board_url : null
   )
+  const trelloAuthUrl = useSelector((state: RootState) =>
+    state.status.logged_in ? state.status.urls?.trello_authorization_url : null
+  )
+  const apiKey = useSelector((state: RootState) =>
+    state.status.logged_in ? state.status.api_key : null
+  )
   const resetTrelloSettings = useSelector((state: RootState) =>
     state.status.logged_in ? state.status.urls?.trello_reset_url : null
   )
@@ -112,7 +118,7 @@ const Trello: FunctionComponent = () => {
               <>
                 <a
                   className="button radius"
-                  href="{{applicationController.urls.trello_authorization_url }}?api_key={{ applicationController.user.api_key }}"
+                  href={trelloAuthUrl + '?api_key=' + apiKey}
                 >
                   Click here to get started
                 </a>
