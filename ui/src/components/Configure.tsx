@@ -4,6 +4,7 @@ import {Tabs, TabItem, TabsContent, TabPanel} from 'react-foundation'
 import {Link} from 'react-router-dom'
 
 import Synchronization from './configure_pages/Synchronization'
+import Trello from './configure_pages/Trello'
 
 enum Page {
   Synchronization = 'synchronization',
@@ -36,7 +37,7 @@ const Configure: FunctionComponent<Props> = ({match}) => {
       name: 'Synchronization',
       component: Synchronization,
     },
-    [Page.Trello]: {name: 'Trello', component: Synchronization},
+    [Page.Trello]: {name: 'Trello', component: Trello},
     [Page.Deduplication]: {name: 'Deduplication', component: Synchronization},
     [Page.Zapier]: {name: 'Zapier', class: 'beta', component: Synchronization},
     [Page.UDAs]: {name: 'UDAs', component: Synchronization},

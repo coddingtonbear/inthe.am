@@ -29,30 +29,32 @@ const SyncInstructions: FunctionComponent = () => {
         <b>setup</b> command rather than following the below instructions.
       </p>
       <table className="pure-table pure-table-horizontal">
-        {myCertificate && (
-          <tr>
-            <th>Your Certificate</th>
-            <td>
-              <a href={myCertificate}>private.certificate.pem</a>
-            </td>
-          </tr>
-        )}
-        {myKey && (
-          <tr>
-            <th>Your Key</th>
-            <td>
-              <a href={myKey}>private.key.pem</a>
-            </td>
-          </tr>
-        )}
-        {caCertificate && (
-          <tr>
-            <th>Server Certificate</th>
-            <td>
-              <a href={caCertificate}>ca.cert.pem</a>
-            </td>
-          </tr>
-        )}
+        <tbody>
+          {myCertificate && (
+            <tr>
+              <th>Your Certificate</th>
+              <td>
+                <a href={myCertificate}>private.certificate.pem</a>
+              </td>
+            </tr>
+          )}
+          {myKey && (
+            <tr>
+              <th>Your Key</th>
+              <td>
+                <a href={myKey}>private.key.pem</a>
+              </td>
+            </tr>
+          )}
+          {caCertificate && (
+            <tr>
+              <th>Server Certificate</th>
+              <td>
+                <a href={caCertificate}>ca.cert.pem</a>
+              </td>
+            </tr>
+          )}
+        </tbody>
       </table>
 
       <p>
