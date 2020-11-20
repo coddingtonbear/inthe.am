@@ -7,6 +7,7 @@ const Synchronization: FunctionComponent = () => {
     <div id="custom_taskd" className="content">
       <div className="row">
         <div className="large-12 columns">
+          <h3>Synchronization</h3>
           <p>
             Inthe.AM provides a built-in taskserver for you to synchronize your
             tasks with; follow the instructions below for setting up your local

@@ -2,6 +2,8 @@ import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
 import {RootState} from '../../store'
 
+import {Callout, Colors} from 'react-foundation'
+
 const Trello: FunctionComponent = () => {
   const trelloBoardUrl = useSelector((state: RootState) =>
     state.status.logged_in ? state.status.trello_board_url : null
@@ -26,6 +28,7 @@ const Trello: FunctionComponent = () => {
       <div id="trello" className="content">
         <div className="row">
           <div className="large-12 columns">
+            <h3>Trello Integration</h3>
             <p>
               Inthe.AM provides Trello integration so you can manage your tasks
               on a Trello board, too.
@@ -58,48 +61,50 @@ const Trello: FunctionComponent = () => {
                 your Trello board will automatically be synchronized.
               </p>
             )}
-            <p>Protips:</p>
-            <ul>
-              <li>
-                Trello labels are mapped to slugified tag names on tasks. That
-                is to say that if you have a label in Trello named "My Project",
-                it will appear on relevant tasks as a tag named "my-project" and
-                vice-versa.
-              </li>
-              <li>
-                You can change the list a task is displayed on by changing the
-                value of the field{' '}
-                <span className="code">intheamtrellolistname</span>.
-              </li>
-              <li>
-                You can change the description of a task by changing he value of
-                the field <span className="code">intheamtrellodescription</span>
-                .
-              </li>
-            </ul>
-            <p>Please:</p>
-            <ul>
-              <li>
-                Do not delete your "To Do" list! Inthe.AM will add tasks to that
-                list when you create them!
-              </li>
-              <li>
-                Do not change the values of the following fields -- they may
-                cause Inthe.AM to have difficulty synchronizing with your Trello
-                account:
-                <ul>
-                  <li>
-                    <span className="code">intheamtrelloid</span>
-                  </li>
-                  <li>
-                    <span className="code">intheamtrelloboardid</span>
-                  </li>
-                  <li>
-                    <span className="code">intheamtrellourl</span>
-                  </li>
-                </ul>
-              </li>
-            </ul>
+            <Callout color={Colors.PRIMARY}>
+              <p>Protips:</p>
+              <ul>
+                <li>
+                  Trello labels are mapped to slugified tag names on tasks. That
+                  is to say that if you have a label in Trello named "My
+                  Project", it will appear on relevant tasks as a tag named
+                  "my-project" and vice-versa.
+                </li>
+                <li>
+                  You can change the list a task is displayed on by changing the
+                  value of the field{' '}
+                  <span className="code">intheamtrellolistname</span>.
+                </li>
+                <li>
+                  You can change the description of a task by changing he value
+                  of the field{' '}
+                  <span className="code">intheamtrellodescription</span>.
+                </li>
+              </ul>
+              <p>Please:</p>
+              <ul>
+                <li>
+                  Do not delete your "To Do" list! Inthe.AM will add tasks to
+                  that list when you create them!
+                </li>
+                <li>
+                  Do not change the values of the following fields -- they may
+                  cause Inthe.AM to have difficulty synchronizing with your
+                  Trello account:
+                  <ul>
+                    <li>
+                      <span className="code">intheamtrelloid</span>
+                    </li>
+                    <li>
+                      <span className="code">intheamtrelloboardid</span>
+                    </li>
+                    <li>
+                      <span className="code">intheamtrellourl</span>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </Callout>
           </div>
         </div>
         <div className="row">

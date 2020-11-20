@@ -60,6 +60,7 @@ const Deduplication: FunctionComponent = () => {
       <div id="deduplicate" className="content">
         <div className="row">
           <div className="large-12 columns">
+            <h3>Task Deduplication</h3>
             <p>
               <strong>BETA:</strong> Inthe.AM provides basic task de-duplication
               for recurring events that may have been created by multiple
@@ -85,8 +86,8 @@ const Deduplication: FunctionComponent = () => {
           <div className="large-12 columns">
             If you have tasks that are currently in need of deduplication, you
             can deduplicate your tasks by clicking the below button.
-            <Button onClick={deduplicateNow}>Deduplicate tasks now</Button>
           </div>
+          <Button onClick={deduplicateNow}>Deduplicate tasks now</Button>
         </div>
       </div>
     </>

@@ -2,6 +2,8 @@ import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
 import {RootState} from '../store'
 
+import {Callout, Colors} from 'react-foundation'
+
 const SyncInstructions: FunctionComponent = () => {
   const myCertificate = useSelector(
     (state: RootState) => state.status.urls?.my_certificate
@@ -19,15 +21,15 @@ const SyncInstructions: FunctionComponent = () => {
 
   return (
     <>
-      <p className="input-note">
-        Note: You can make the process of configuring Taskwarrior to synchronize
-        with Inthe.AM a little easier by installing and using the
+      <Callout color={Colors.PRIMARY}>
+        You can make the process of configuring Taskwarrior to synchronize with
+        Inthe.AM a little easier by installing and using the&nbsp;
         <a href="http://github.com/coddingtonbear/taskwarrior-inthe.am">
-          Taskwarrior Inthe.AM Utility
+          Taskwarrior Inthe.AM Utility's
         </a>
-        's
+        &nbsp;
         <b>setup</b> command rather than following the below instructions.
-      </p>
+      </Callout>
       <table className="pure-table pure-table-horizontal">
         <tbody>
           {myCertificate && (
