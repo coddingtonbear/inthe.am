@@ -1,6 +1,7 @@
 import React, {ChangeEvent, FunctionComponent} from 'react'
 import {Button} from 'react-foundation'
 import {useSelector} from 'react-redux'
+import {Callout, Colors} from 'react-foundation'
 import {useToasts} from 'react-toast-notifications'
 
 import request from '../../clients/request'
@@ -41,12 +42,11 @@ const TaskRc: FunctionComponent = () => {
       <div className="large-12 columns">
         <h3>TaskRc Extras</h3>
         <textarea onChange={onChangeTaskrc} value={taskRc} />
-        <p className="input-note">
+        <Callout color={Colors.PRIMARY}>
           Only configuration values relating to urgency or UDA definitions will
           have an effect, but entering your entire local{' '}
-          <span className="code">.taskrc</span>
-          is both safe and encouraged.
-        </p>
+          <span className="code">.taskrc</span> is both safe and encouraged.
+        </Callout>
         <Button onClick={onSaveTaskrc}>Save Taskrc</Button>
       </div>
     </div>
