@@ -8,6 +8,7 @@ import Trello from './configure_pages/Trello'
 import Deduplication from './configure_pages/Deduplication'
 import Zapier from './configure_pages/Zapier'
 import ColorScheme from './configure_pages/ColorScheme'
+import TaskRc from './configure_pages/TaskRc'
 
 enum Page {
   Synchronization = 'synchronization',
@@ -43,7 +44,7 @@ const Configure: FunctionComponent<Props> = ({match}) => {
     [Page.Deduplication]: {name: 'Deduplication', component: Deduplication},
     [Page.Zapier]: {name: 'Zapier', class: 'beta', component: Zapier},
     [Page.ColorScheme]: {name: 'Color Scheme', component: ColorScheme},
-    [Page.TaskRc]: {name: 'TaskRC', component: Synchronization},
+    [Page.TaskRc]: {name: 'TaskRc Extras', component: TaskRc},
     [Page.API]: {name: 'API Keys', component: Synchronization},
     [Page.Feeds]: {name: 'iCal & RSS Feeds', component: Synchronization},
     [Page.Email]: {name: 'E-mail-to-Task', component: Synchronization},
