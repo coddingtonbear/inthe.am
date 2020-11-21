@@ -9,6 +9,7 @@ import Deduplication from './configure_pages/Deduplication'
 import Zapier from './configure_pages/Zapier'
 import ColorScheme from './configure_pages/ColorScheme'
 import TaskRc from './configure_pages/TaskRc'
+import ApiKeys from './configure_pages/ApiKeys'
 
 enum Page {
   Synchronization = 'synchronization',
@@ -45,7 +46,7 @@ const Configure: FunctionComponent<Props> = ({match}) => {
     [Page.Zapier]: {name: 'Zapier', class: 'beta', component: Zapier},
     [Page.ColorScheme]: {name: 'Color Scheme', component: ColorScheme},
     [Page.TaskRc]: {name: 'TaskRc Extras', component: TaskRc},
-    [Page.API]: {name: 'API Keys', component: Synchronization},
+    [Page.API]: {name: 'API Keys', component: ApiKeys},
     [Page.Feeds]: {name: 'iCal & RSS Feeds', component: Synchronization},
     [Page.Email]: {name: 'E-mail-to-Task', component: Synchronization},
     [Page.SMS]: {name: 'SMS-to-Task', component: Synchronization},
