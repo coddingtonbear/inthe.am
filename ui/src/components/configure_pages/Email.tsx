@@ -103,44 +103,6 @@ const Email: FunctionComponent = () => {
                 Find local source for flux capacitor parts. project:time_machine
                 priority:h +delorean
               </blockquote>
-              <h4>Advanced Use</h4>
-              <p>
-                Although setting task attributes in the body of the email itself
-                will work just fine, you can also specify task attributes or
-                tags by adding suffixes to the email address itself.
-              </p>
-              <p>
-                For example, to automatically add the tag "alpha" to an incoming
-                task, you can send an email to <TaskEmailLink suffix="+alpha" />{' '}
-                or to set the project to "time_machine" you could send an email
-                to <TaskEmailLink suffix="__project=time_machine" />
-              </p>
-              <p>
-                Tags and task attributes can be assigned simultaneously for any
-                task attribute including any UDAs you might have specified, and
-                you may specify any number of them simultaneously (for example,
-                this one sets priority, project and adds two tags:{' '}
-                <TaskEmailLink suffix="+one__project=time_machine__priority=H+two" />
-                ) just be sure to follow the following format:
-              </p>
-              <table>
-                <tbody>
-                  <tr>
-                    <th>Tags</th>
-                    <td>
-                      <code>+&lt;TAG&gt;</code>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Attributes</th>
-                    <td>
-                      <code>__&lt;ATTRIBUTE&gt;=&lt;VALUE&gt;</code>
-                      (Note: the &lt;ATTRIBUTE&gt; is prefixed with{' '}
-                      <strong>two</strong> underscores.)
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
             </>
           )}
         </div>
@@ -159,6 +121,48 @@ const Email: FunctionComponent = () => {
           </Callout>
           <Button onClick={onSaveWhitelist}>Save Passlist</Button>
         </div>
+        {status.email_whitelist && (
+          <Callout color={Colors.PRIMARY}>
+            <h4>Advanced Use</h4>
+            <p>
+              Although setting task attributes in the body of the email itself
+              will work just fine, you can also specify task attributes or tags
+              by adding suffixes to the email address itself.
+            </p>
+            <p>
+              For example, to automatically add the tag "alpha" to an incoming
+              task, you can send an email to <TaskEmailLink suffix="+alpha" />{' '}
+              or to set the project to "time_machine" you could send an email to{' '}
+              <TaskEmailLink suffix="__project=time_machine" />
+            </p>
+            <p>
+              Tags and task attributes can be assigned simultaneously for any
+              task attribute including any UDAs you might have specified, and
+              you may specify any number of them simultaneously (for example,
+              this one sets priority, project and adds two tags:{' '}
+              <TaskEmailLink suffix="+one__project=time_machine__priority=H+two" />
+              ) just be sure to follow the following format:
+            </p>
+            <table>
+              <tbody>
+                <tr>
+                  <th>Tags</th>
+                  <td>
+                    <code>+&lt;TAG&gt;</code>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Attributes</th>
+                  <td>
+                    <code>__&lt;ATTRIBUTE&gt;=&lt;VALUE&gt;</code>
+                    (Note: the &lt;ATTRIBUTE&gt; is prefixed with{' '}
+                    <strong>two</strong> underscores.)
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </Callout>
+        )}
       </div>
     </>
   )
