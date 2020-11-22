@@ -1,6 +1,6 @@
 import React, {ChangeEvent, FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
-import {Button} from 'react-foundation'
+import {Button, Callout, Colors} from 'react-foundation'
 import {useToasts} from 'react-toast-notifications'
 
 import request from '../../clients/request'
@@ -89,49 +89,51 @@ const Sms: FunctionComponent = () => {
             Inthe.AM can receive and add items to your task list via SMS, but it
             requires a little bit of configuration on your part.
           </p>
-          <ol>
-            <li>
-              Sign up for a{' '}
-              <a href="https://www.twilio.com/try-twilio">Twilio account</a>.
-            </li>
-            <li>
-              Add funds to your Twilio account. Consult{' '}
-              <a href="https://www.twilio.com/sms/pricing">
-                Twilio's pricing structure for your country
-              </a>
-              ; you will need to have enough funds in your account to pay for
-              your phone number (usually about 1 USD/month), and to send and
-              receive text messages &mdash; generally between 0.0075 USD and
-              0.10 USD/message depending upon the country of both your phone's
-              phone number and the Twilio phone number you've purchased.
-            </li>
-            <li>
-              <a href="https://www.twilio.com/user/account/phone-numbers/available/local">
-                Buy a phone number
-              </a>
-              .
-            </li>
-            <li>
-              From your phone number's configuration screen, set the field
-              "Messaging Request URL" to your personal incoming SMS URL:{' '}
-              <code>https://inthe.am{status.sms_url}</code>.
-            </li>
-            <li>Press save.</li>
-          </ol>
-          <p>
-            After you have configured the above, you can send SMS messages to
-            your Twilio phone number. Currently, the only command implemented is
-            'add', but in the future additional commands may be added.
-          </p>
-          <p>
-            As an example, you could add a task to the project "birthday" with a
-            due date of tomorrow and high priority by sending an SMS message
-            with the following contents:
-          </p>
-          <pre>
-            add project:birthday due:tomorrow priority:h It's my birthday
-          </pre>
-          {!authToken && (
+          <Callout color={Colors.PRIMARY}>
+            <ol>
+              <li>
+                Sign up for a{' '}
+                <a href="https://www.twilio.com/try-twilio">Twilio account</a>.
+              </li>
+              <li>
+                Add funds to your Twilio account. Consult{' '}
+                <a href="https://www.twilio.com/sms/pricing">
+                  Twilio's pricing structure for your country
+                </a>
+                ; you will need to have enough funds in your account to pay for
+                your phone number (usually about 1 USD/month), and to send and
+                receive text messages &mdash; generally between 0.0075 USD and
+                0.10 USD/message depending upon the country of both your phone's
+                phone number and the Twilio phone number you've purchased.
+              </li>
+              <li>
+                <a href="https://www.twilio.com/user/account/phone-numbers/available/local">
+                  Buy a phone number
+                </a>
+                .
+              </li>
+              <li>
+                From your phone number's configuration screen, set the field
+                "Messaging Request URL" to your personal incoming SMS URL:{' '}
+                <code>https://inthe.am{status.sms_url}</code>.
+              </li>
+              <li>Press save.</li>
+            </ol>
+            <p>
+              After you have configured the above, you can send SMS messages to
+              your Twilio phone number. Currently, the only command implemented
+              is 'add', but in the future additional commands may be added.
+            </p>
+            <p>
+              As an example, you could add a task to the project "birthday" with
+              a due date of tomorrow and high priority by sending an SMS message
+              with the following contents:
+            </p>
+            <pre>
+              add project:birthday due:tomorrow priority:h It's my birthday
+            </pre>
+          </Callout>
+          {!status.twilio_auth_token && (
             <div className="block warning">
               <p>
                 For your security, the ability to send task messages via SMS is
@@ -145,7 +147,7 @@ const Sms: FunctionComponent = () => {
               <p>Enable SMS access by filling in the below information.</p>
             </div>
           )}
-          {authToken && (
+          {status.twilio_auth_token && (
             <table className="pure-table pure-table-horizontal">
               <tbody>
                 <tr>
