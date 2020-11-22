@@ -13,6 +13,7 @@ import ApiKeys from './configure_pages/ApiKeys'
 import Feeds from './configure_pages/Feeds'
 import Email from './configure_pages/Email'
 import Sms from './configure_pages/Sms'
+import DangerZone from './configure_pages/DangerZone'
 
 enum Page {
   Synchronization = 'synchronization',
@@ -56,7 +57,7 @@ const Configure: FunctionComponent<Props> = ({match}) => {
     [Page.DangerZone]: {
       name: 'Danger Zone',
       class: 'red',
-      component: Synchronization,
+      component: DangerZone,
     },
   }
 
