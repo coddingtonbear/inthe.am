@@ -1,6 +1,6 @@
-import React, {ChangeEvent, FormEvent, FunctionComponent} from 'react'
+import React, {ChangeEvent, FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
-import {Button, Callout, Colors} from 'react-foundation'
+import {Button} from 'react-foundation'
 import {useToasts} from 'react-toast-notifications'
 
 import request from '../../clients/request'
