@@ -44,6 +44,12 @@ export interface UdaDefinition {
   type: 'string' | 'numeric' | 'date' | 'duration'
 }
 
+export const enum SmsReply {
+  ALWAYS = 9,
+  ERROR = 5,
+  NEVER = 0,
+}
+
 export interface BaseStatus {
   logged_in: boolean | null
   urls?: URLList
@@ -64,7 +70,7 @@ export interface AuthenticatedStatus extends BaseStatus {
   twilio_auth_token: string
   sms_whitelist: string
   sms_arguments: string
-  sms_replies: number
+  sms_replies: SmsReply
   email_whitelist: string
   task_creation_email_address: string
   taskrc_extras: string
