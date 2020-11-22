@@ -12,6 +12,7 @@ import TaskRc from './configure_pages/TaskRc'
 import ApiKeys from './configure_pages/ApiKeys'
 import Feeds from './configure_pages/Feeds'
 import Email from './configure_pages/Email'
+import Sms from './configure_pages/Sms'
 
 enum Page {
   Synchronization = 'synchronization',
@@ -51,7 +52,7 @@ const Configure: FunctionComponent<Props> = ({match}) => {
     [Page.API]: {name: 'API Keys', component: ApiKeys},
     [Page.Feeds]: {name: 'iCal & RSS Feeds', component: Feeds},
     [Page.Email]: {name: 'E-mail-to-Task', component: Email},
-    [Page.SMS]: {name: 'SMS-to-Task', component: Synchronization},
+    [Page.SMS]: {name: 'SMS-to-Task', component: Sms},
     [Page.DangerZone]: {
       name: 'Danger Zone',
       class: 'red',
