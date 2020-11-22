@@ -90,6 +90,7 @@ const Sms: FunctionComponent = () => {
             requires a little bit of configuration on your part.
           </p>
           <Callout color={Colors.PRIMARY}>
+            <h4>Setup instructions</h4>
             <ol>
               <li>
                 Sign up for a{' '}
