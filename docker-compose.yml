@@ -136,6 +136,12 @@ services:
     volumes:
       - taskd-data:/var/taskd/orgs
       - ./docker/taskd/secrets:/var/taskd/pki
+  troubleshooting:
+    image: "python:3.8-slim"
+    volumes:
+      - taskd-data:/taskd_data
+      - task-data:/task_data
+      - db-data:/db_data
 volumes:
   db-data:
     external: true
