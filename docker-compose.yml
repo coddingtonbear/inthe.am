@@ -134,7 +134,7 @@ services:
     links:
       - redis:redis
     volumes:
-      - taskd-data:/var/taskd
+      - taskd-data:/var/taskd/orgs
       - ./docker/taskd/secrets:/var/taskd/pki
 volumes:
   db-data:
