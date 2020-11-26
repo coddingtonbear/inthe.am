@@ -2,7 +2,7 @@ FROM python:3.8-slim
 
 ENV TASKDDATA=/var/taskd CA_CERT=/var/taskd/pki/ca.cert.pem \
   CA_KEY=/var/taskd/pki/ca.key.pem CA_SIGNING_TEMPLATE=/var/taskd/cert.template \
-  REDIS_HOST=redis CERTIFICATE_DB=/var/taskd/certificates.sqlite3
+  REDIS_HOST=redis CERTIFICATE_DB=/var/taskd/orgs/certificates.sqlite3
 
 RUN apt-get update
 RUN apt-get install -y build-essential git supervisor uuid-dev cmake \
@@ -32,7 +32,8 @@ COPY taskd_services/http/requirements.txt /tmp/requirements.txt
 
 RUN pip install -r /tmp/requirements.txt
 
-VOLUME /var/taskd
+RUN mkdir -p /var/taskd/orgs
+VOLUME /var/taskd/orgs
 
 RUN mkdir -p /var/taskd/pki
 VOLUME /var/taskd/pki
