@@ -202,11 +202,11 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 <td>{task.due}</td>
               </tr>
               <tr>
-                <th>Entered</th>
+                <th>Entry</th>
                 <td>{task.entry}</td>
               </tr>
               <tr>
-                <th>Started</th>
+                <th>Start</th>
                 <td>{task.start}</td>
               </tr>
               <tr>
