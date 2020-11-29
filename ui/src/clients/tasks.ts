@@ -3,6 +3,9 @@ import request from './request'
 export type UUID = string
 export type DateTime = string
 
+// for options see class names here: https://github.com/GothenburgBitFactory/taskwarrior/blob/01696a307b6785be973e3e6428e6ade2a3872c1e/src/columns/ColUDA.h#L36
+export type TaskwarriorDataType = 'string' | 'numeric' | 'date' | 'duration'
+
 export interface Task {
   id: UUID
   uuid: UUID // Same as 'id'
@@ -28,6 +31,32 @@ export interface Task {
   udas: {
     [key: string]: any | undefined
   }
+}
+
+export const TaskFieldTypes: {[key: string]: TaskwarriorDataType} = {
+  id: 'string',
+  uuid: 'string',
+  short_id: 'string',
+  status: 'string',
+  urgency: 'numeric',
+  description: 'string',
+  project: 'string',
+  due: 'date',
+  entry: 'date',
+  modified: 'date',
+  start: 'date',
+  end: 'date',
+  wait: 'date',
+  until: 'date',
+  scheduled: 'date',
+}
+
+export const TaskArrayFieldTypes: {[key: string]: TaskwarriorDataType} = {
+  depends: 'string',
+  blocks: 'string',
+  annotations: 'string',
+  tags: 'string',
+  imask: 'string',
 }
 
 export interface TaskUpdate extends Partial<Task> {}
