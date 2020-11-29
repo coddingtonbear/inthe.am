@@ -167,6 +167,7 @@ label[for] {
 }
 
 .top-bar {
+  flex-wrap: nowrap;
   position: fixed;
   top: 0px;
   left: 0px;
@@ -174,6 +175,16 @@ label[for] {
   z-index: 100;
   height: 2.8rem;
   padding: 0;
+
+  .top-bar-left {
+    flex: 0 1 auto;
+    margin-right: auto;
+  }
+
+  .top-bar-right {
+    flex: 0 1 auto;
+    margin-left: auto;
+  }
 
   background-color: #333;
 
@@ -605,180 +616,6 @@ div.alert-box.error {
   border-color: #aa0000;
 }
 
-@media screen and (max-width: 1000px) {
-  div.details_table {
-    width: 100%;
-  }
-  div.annotations_list {
-    width: 100%;
-  }
-  #about_logo {
-    left: 25% !important;
-  }
-}
-
-@media screen and (max-width: 850px) {
-  // Hide text content of buttons
-  html,
-  body {
-    overflow: hidden;
-
-    > .ember-view {
-      background: #fff !important;
-    }
-  }
-  #about_logo {
-    display: block;
-    margin: 0 auto;
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-  }
-  .row .row {
-    width: 100%;
-    margin-left: 0px;
-    margin-right: 0px;
-  }
-  .column,
-  .columns {
-    padding-right: 0px;
-    padding-left: 0px;
-  }
-  #mobile-list {
-    .task {
-      .task-item {
-        position: relative;
-
-        div.task-list-icon {
-          position: absolute;
-          top: 14.4px;
-          left: 16px;
-        }
-        div.task-list-item {
-          width: auto;
-          margin-left: 50px;
-        }
-      }
-    }
-  }
-  // Make buttons a little less padding-filled
-  button {
-    padding: 10px;
-  }
-  input[type='text'],
-  input[type='password'],
-  input[type='date'],
-  input[type='datetime'],
-  input[type='datetime-local'],
-  input[type='month'],
-  input[type='week'],
-  input[type='email'],
-  input[type='number'],
-  input[type='search'],
-  input[type='tel'],
-  input[type='time'],
-  input[type='url'],
-  textarea {
-    margin: 0 0 0.25rem 0;
-  }
-  div.row.standalone {
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    padding: 0px 1px 50px 1px;
-
-    div.standalone-content {
-      padding-left: 0px;
-      padding-right: 0px;
-    }
-  }
-
-  // Hide task list by default
-  #list {
-    display: none;
-  }
-  #task-details {
-    margin-left: 0px;
-    padding-left: 0px;
-
-    & > div {
-      padding-left: 0px;
-      padding-right: 0px;
-    }
-  }
-  td {
-    word-break: break-all;
-  }
-  pre {
-    white-space: pre-line;
-    word-break: break-all;
-  }
-  .reveal-modal {
-    width: 100%;
-    left: 0px;
-    top: 50px;
-    margin: 0px;
-    padding: 5px;
-  }
-  nav {
-    .chardinjs-show-element {
-      color: #ffffff;
-    }
-    .top-bar-section {
-      li.desktop-only {
-        display: none;
-      }
-      li.mobile-only {
-        display: list-item;
-      }
-    }
-    button#show-task-list {
-      display: inline-block;
-    }
-  }
-}
-
-@media screen and (max-width: 700px) {
-  nav,
-  #task-details {
-    i.fi {
-      font-size: 0px;
-      &::before {
-        font-size: 15px;
-      }
-    }
-    i.fi.fa-tag {
-      font-size: 15px;
-      &::before {
-        font-size: 15px;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 550px) {
-  nav {
-    .top-bar-section {
-      /*a {
-        padding: 0px 5px !important;
-      }*/
-    }
-  }
-}
-
-@media screen and (max-width: 400px) {
-  .top-bar .name h1 {
-    font-size: 0.7rem;
-  }
-  nav {
-    .top-bar-section {
-      li.non-essential {
-        display: none;
-      }
-    }
-  }
-}
-
 input#filter-string {
   margin-bottom: 0px;
   height: 2em;
@@ -1089,4 +926,165 @@ input#filter-string {
   width: 90%;
   border-radius: 0.5rem;
   opacity: 100;
+}
+
+.labeled-tag {
+  font-style: italic;
+}
+
+.labeled-icon-container {
+  margin-right: 0.5rem;
+}
+
+@media screen and (max-width: 1000px) {
+  div.details_table {
+    width: 100%;
+  }
+  div.annotations_list {
+    width: 100%;
+  }
+  #about_logo {
+    left: 25% !important;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  // Hide text content of buttons
+  html,
+  body {
+    overflow: hidden;
+
+    > .ember-view {
+      background: #fff !important;
+    }
+  }
+  #about_logo {
+    display: block;
+    margin: 0 auto;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+  }
+  .row .row {
+    width: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .column,
+  .columns {
+    padding-right: 0px;
+    padding-left: 0px;
+  }
+  #mobile-list {
+    .task {
+      .task-item {
+        position: relative;
+
+        div.task-list-icon {
+          position: absolute;
+          top: 14.4px;
+          left: 16px;
+        }
+        div.task-list-item {
+          width: auto;
+          margin-left: 50px;
+        }
+      }
+    }
+  }
+  // Make buttons a little less padding-filled
+  button {
+    padding: 10px;
+  }
+  input[type='text'],
+  input[type='password'],
+  input[type='date'],
+  input[type='datetime'],
+  input[type='datetime-local'],
+  input[type='month'],
+  input[type='week'],
+  input[type='email'],
+  input[type='number'],
+  input[type='search'],
+  input[type='tel'],
+  input[type='time'],
+  input[type='url'],
+  textarea {
+    margin: 0 0 0.25rem 0;
+  }
+  div.row.standalone {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    padding: 0px 1px 50px 1px;
+
+    div.standalone-content {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+  // Hide task list by default
+  #list {
+    display: none;
+  }
+  #task-details {
+    margin-left: 0px;
+    padding-left: 0px;
+
+    & > div {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+  td {
+    word-break: break-all;
+  }
+  pre {
+    white-space: pre-line;
+    word-break: break-all;
+  }
+  .reveal-modal {
+    width: 100%;
+    left: 0px;
+    top: 50px;
+    margin: 0px;
+    padding: 5px;
+  }
+  .top-bar {
+    li.desktop-only {
+      display: none;
+    }
+    li.mobile-only {
+      display: list-item;
+    }
+    button#show-task-list {
+      display: inline-block;
+    }
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .top-bar,
+  #task-details {
+    .labeled-icon-container {
+      .labeled-icon-label {
+        display: none;
+      }
+      i.fi::before {
+        font-size: 15px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .top-bar .name h1 {
+    font-size: 0.7rem;
+  }
+  .top-bar {
+    li.non-essential {
+      display: none;
+    }
+  }
 }

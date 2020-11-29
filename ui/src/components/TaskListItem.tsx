@@ -8,6 +8,7 @@ import {Task} from '../clients/tasks'
 
 import Icon from './Icon'
 import LabeledIcon from './LabeledIcon'
+import Tag from './Tag'
 
 export type TaskClass =
   | 'active'
@@ -88,11 +89,7 @@ const TaskListItem: FunctionComponent<Props> = ({tasks, task, active}) => {
               {task.annotations && <Icon name="comment" />}
               {task.tags &&
                 task.tags.map((tag) => {
-                  return (
-                    <React.Fragment key={tag}>
-                      <LabeledIcon icon="price-tag" label={tag} />
-                    </React.Fragment>
-                  )
+                  return <Tag key={tag} name={tag} />
                 })}
             </p>
             <p className="duedatetime">
