@@ -783,6 +783,17 @@ input#filter-string {
   margin-bottom: 0px;
   height: 2em;
   border-radius: 15px;
+  width: 100%;
+
+  &.error {
+    background-color: #ffcccc;
+  }
+}
+
+.filter-error {
+  color: #ff0000;
+  font-weight: bold;
+  padding: 5px;
 }
 
 /* LOADING SPINNER */
