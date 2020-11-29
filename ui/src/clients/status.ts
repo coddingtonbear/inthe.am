@@ -89,7 +89,7 @@ export interface AuthenticatedStatus extends BaseStatus {
   ical_enabled: boolean
   auto_deduplicate: boolean
   trello_board_url: string | null
-  system_udas: string
+  system_udas: UdaDefinition[]
   udas: UdaDefinition[]
 }
 
