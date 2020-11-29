@@ -267,6 +267,7 @@ const FilterableTaskList: FunctionComponent<Props> = ({
         onChange={onChangeFilter}
         value={filterString}
         className={classnames({error: filterError.length > 0})}
+        placeholder="+tag project:my_project description"
       />
       {filterError && <div className="filter-error">{filterError}</div>}
       {tasks &&
