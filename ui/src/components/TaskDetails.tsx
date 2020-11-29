@@ -19,6 +19,7 @@ import {
   editTaskModalActions,
   taskActions,
 } from '../reducers'
+import Tag from './Tag'
 
 export interface Props {
   tasks: Task[]
@@ -97,7 +98,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
             )}
 
             {task.tags?.map((tag) => {
-              return <LabeledIcon key={tag} icon="price-tag" label={tag} />
+              return <Tag name={tag} key={tag} />
             })}
           </div>
         </div>
@@ -188,7 +189,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 <th>Tags</th>
                 <td>
                   {task.tags?.map((tag) => (
-                    <LabeledIcon key={tag} icon="price-tag" label={tag} />
+                    <Tag key={tag} name={tag} />
                   ))}
                 </td>
               </tr>
