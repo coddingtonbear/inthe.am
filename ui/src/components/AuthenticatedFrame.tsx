@@ -66,11 +66,6 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
                 </a>
               </li>
             )}
-            <li className="mobile-only" data-intro="alt+n">
-              <Link to={'/create-task'}>
-                <LabeledIcon icon="pencil" label="New" />
-              </Link>
-            </li>
 
             <li className="desktop-only" data-intro="alt+t">
               <Link to={'/tasks'}>
@@ -92,7 +87,7 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
                 </a>
               )}
             </li>
-            <li className="desktop-only" data-intro="alt+n">
+            <li data-intro="alt+n">
               <a onClick={onCreateTask}>
                 <LabeledIcon icon="pencil" label="New" />
               </a>
