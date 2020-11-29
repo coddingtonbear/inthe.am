@@ -248,7 +248,12 @@ const FilterableTaskList: FunctionComponent<Props> = ({
 
     try {
       const processedFilters = tokenizeFilters(filterString, allUdas)
-      setFilteredTasks(applyFilters(processedFilters, tasks ?? [], allUdas))
+      setFilteredTasks(
+        applyFilters(processedFilters, tasks ?? [], allUdas).sort(
+          // Order in reverse by urgency
+          (a, b) => b.urgency - a.urgency
+        )
+      )
     } catch (e) {
       setFilterError(e.message)
       setFilteredTasks([])
