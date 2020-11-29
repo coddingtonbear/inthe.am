@@ -7,6 +7,7 @@ import {taskIsBlocked, taskIsBlocking} from '../utils/task'
 import {Task} from '../clients/tasks'
 
 import Icon from './Icon'
+import LabeledIcon from './LabeledIcon'
 
 export type TaskClass =
   | 'active'
@@ -89,8 +90,7 @@ const TaskListItem: FunctionComponent<Props> = ({tasks, task, active}) => {
                 task.tags.map((tag) => {
                   return (
                     <React.Fragment key={tag}>
-                      <Icon name="price-tag" />
-                      {tag}
+                      <LabeledIcon icon="price-tag" label={tag} />
                     </React.Fragment>
                   )
                 })}
@@ -98,8 +98,10 @@ const TaskListItem: FunctionComponent<Props> = ({tasks, task, active}) => {
             <p className="duedatetime">
               {task.due && (
                 <>
-                  <Icon name="clock" />
-                  {DateTime.fromISO(task.due).toRelative()}
+                  <LabeledIcon
+                    icon="clock"
+                    label={DateTime.fromISO(task.due).toRelative() ?? ''}
+                  />
                 </>
               )}
             </p>

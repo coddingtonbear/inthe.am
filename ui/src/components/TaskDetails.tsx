@@ -4,7 +4,7 @@ import {DateTime} from 'luxon'
 import clone from 'clone'
 
 import {Task} from '../clients/tasks'
-import Icon from './Icon'
+import LabeledIcon from './LabeledIcon'
 import {taskIsEditable, getBlockedTasks, getBlockingTasks} from '../utils/task'
 import {
   stopTask,
@@ -90,19 +90,14 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
           )}
           <div className="tags">
             {task.due && (
-              <>
-                <Icon name="clock" />
-                {DateTime.fromISO(task.due).toRelative()}
-              </>
+              <LabeledIcon
+                icon="clock"
+                label={DateTime.fromISO(task.due).toRelative() ?? ''}
+              />
             )}
 
             {task.tags?.map((tag) => {
-              return (
-                <React.Fragment key={tag}>
-                  <Icon name="price-tag" />
-                  {tag}
-                </React.Fragment>
-              )
+              return <LabeledIcon key={tag} icon="price-tag" label={tag} />
             })}
           </div>
         </div>
@@ -113,31 +108,25 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
             <ul id="task-actions" className="inline-list">
               {task.start && (
                 <li onClick={onStopTask}>
-                  <Icon name="stop" />
-                  Stop
+                  <LabeledIcon icon="stop" label="Stop" />
                 </li>
               )}
               {!task.start && (
                 <li onClick={onStartTask}>
-                  <Icon name="play" />
-                  Start
+                  <LabeledIcon icon="play" label="Start" />
                 </li>
               )}
               <li onClick={onAddAnnotation}>
-                <Icon name="comment" />
-                Add Annotation
+                <LabeledIcon icon="comment" label="Add Annotation" />
               </li>
               <li onClick={onEditTask}>
-                <Icon name="pencil" />
-                Edit
+                <LabeledIcon icon="pencil" label="Edit" />
               </li>
               <li onClick={onCompleteTask}>
-                <Icon name="check" />
-                Mark Completed
+                <LabeledIcon icon="check" label="Mark Completed" />
               </li>
               <li onClick={onDeleteTask}>
-                <Icon name="x" />
-                Delete
+                <LabeledIcon icon="x" label="Delete" />
               </li>
             </ul>
           )}
@@ -199,10 +188,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                 <th>Tags</th>
                 <td>
                   {task.tags?.map((tag) => (
-                    <React.Fragment key={tag}>
-                      <Icon name="price-tag" />
-                      {tag}
-                    </React.Fragment>
+                    <LabeledIcon key={tag} icon="price-tag" label={tag} />
                   ))}
                 </td>
               </tr>
