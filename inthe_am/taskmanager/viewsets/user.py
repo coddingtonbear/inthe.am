@@ -101,7 +101,7 @@ def get_published_properties(user, store, meta):
         "trello_board_url": (
             store.trello_board.meta["url"] if store.trello_board else None
         ),
-        "system_udas": get_system_udas_as_config(),
+        "system_udas": get_system_udas_as_uda_list(),
         "urls": URLS,
     }
 
@@ -120,17 +120,19 @@ def get_published_properties(user, store, meta):
     return data
 
 
-def get_system_udas_as_config():
+def get_system_udas_as_uda_list():
     overrides = []
     config_overrides = settings.TASKWARRIOR_CONFIG_OVERRIDES["uda"]
     for uda_name, uda_properties in config_overrides.items():
-        overrides.extend(
-            [
-                f"uda.{uda_name}.type={uda_properties.get('type')}",
-                f"uda.{uda_name}.label={uda_properties.get('label')}",
-            ]
+        overrides.append(
+            {
+                "field": uda_name,
+                "label": uda_properties.get("label", ""),
+                "type": uda_properties.get("type", ""),
+            }
         )
-    return "\n".join(overrides)
+
+    return overrides
 
 
 class UserViewSet(viewsets.ViewSet):
