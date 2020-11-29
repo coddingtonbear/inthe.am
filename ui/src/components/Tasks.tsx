@@ -10,7 +10,7 @@ import {getMessage, StreamEventType} from '../clients/stream'
 import FilterableTaskList from './FilterableTaskList'
 
 interface MatchParams {
-  taskId: string
+  taskId: string | undefined
 }
 
 interface Props extends RouteComponentProps<MatchParams> {}
