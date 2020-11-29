@@ -88,10 +88,10 @@ function filterNumberCompare(filter: any, field: any): boolean {
 }
 
 function filterStringCompare(filter: any, field: any): boolean {
-  const targetValue = (filter as string).toLowerCase()
-  const fieldValue = (field ? field.toString() : '').toLowerCase()
+  const targetValue: string = (filter as string).toLowerCase()
+  const fieldValue: string = (field ? field.toString() : '').toLowerCase()
 
-  return targetValue === fieldValue
+  return fieldValue.indexOf(targetValue) > -1
 }
 
 function filterDateCompare(filter: any, field: any): boolean {
@@ -166,7 +166,7 @@ function applyFilters(
     // Array field comparisons
     if (include) {
       for (const filterField in filters.arrayFields) {
-        const filterValue = filters.fields[filterField]
+        const filterValue = filters.arrayFields[filterField]
         const filterType = TaskArrayFieldTypes[filterField]
         const handler = handlers[filterType]
 
@@ -177,9 +177,8 @@ function applyFilters(
         }
 
         let anyMatches = false
-        for (const arrayInstanceValue of task[
-          filterField as keyof Task
-        ] as Array<any>) {
+        const taskField = (task[filterField as keyof Task] ?? []) as Array<any>
+        for (const arrayInstanceValue of taskField) {
           if (handler(filterValue, arrayInstanceValue)) {
             anyMatches = true
             break
