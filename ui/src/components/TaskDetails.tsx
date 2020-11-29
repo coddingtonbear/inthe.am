@@ -20,6 +20,7 @@ import {
   taskActions,
 } from '../reducers'
 import Tag from './Tag'
+import Footer from './Footer'
 
 export interface Props {
   tasks: Task[]
@@ -260,6 +261,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
           </ul>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }
