@@ -1,5 +1,7 @@
 import request from './request'
 
+import {TaskwarriorDataType} from './tasks'
+
 export interface URLList {
   login: string
   logout: string
@@ -40,8 +42,7 @@ export interface URLList {
 export interface UdaDefinition {
   field: string
   label: string
-  // type: for options see class names here: https://github.com/GothenburgBitFactory/taskwarrior/blob/01696a307b6785be973e3e6428e6ade2a3872c1e/src/columns/ColUDA.h#L36
-  type: 'string' | 'numeric' | 'date' | 'duration'
+  type: TaskwarriorDataType
 }
 
 export const enum SmsReply {
