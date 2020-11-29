@@ -223,11 +223,13 @@ function applyFilters(
 export interface Props {
   tasks: Task[] | null
   selectedTask: Task | null
+  mode?: 'mobile' | 'desktop'
 }
 
 const FilterableTaskList: FunctionComponent<Props> = ({
   tasks = [],
   selectedTask,
+  mode = 'desktop',
 }) => {
   const user_udas = useSelector((state: RootState) =>
     state.status.logged_in ? state.status.udas : []
@@ -238,6 +240,8 @@ const FilterableTaskList: FunctionComponent<Props> = ({
   const [filterString, setFilterString] = React.useState<string>('')
   const [filteredTasks, setFilteredTasks] = React.useState<Task[]>(tasks ?? [])
   const [filterError, setFilterError] = React.useState<string>('')
+
+  const modeClass = mode === 'desktop' ? 'list' : 'mobile-list'
 
   React.useEffect(() => {
     const allUdas = system_udas.concat(user_udas)
@@ -257,7 +261,7 @@ const FilterableTaskList: FunctionComponent<Props> = ({
   }
 
   return (
-    <div id="list" className="task-list">
+    <div id={modeClass} className="task-list">
       <input
         id="filter-string"
         onChange={onChangeFilter}
