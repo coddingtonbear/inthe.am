@@ -251,6 +251,7 @@ const FilterableTaskList: FunctionComponent<Props> = ({
       setFilteredTasks(applyFilters(processedFilters, tasks ?? [], allUdas))
     } catch (e) {
       setFilterError(e.message)
+      setFilteredTasks([])
       return
     }
     setFilterError('')
