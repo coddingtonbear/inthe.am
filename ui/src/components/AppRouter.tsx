@@ -2,6 +2,7 @@ import React, {FunctionComponent} from 'react'
 import {Redirect, Route, Switch} from 'react-router'
 import {ConnectedRouter} from 'connected-react-router/immutable'
 import {useToasts} from 'react-toast-notifications'
+import {useSelector} from 'react-redux'
 
 import AuthenticatedRoute from './AuthenticatedRoute'
 import About from './About'
@@ -10,15 +11,36 @@ import Tasks from './Tasks'
 import ActivityLog from './ActivityLog'
 import RedirectToFirstTask from './RedirectToFirstTask'
 import Configure from './Configure'
-import {history, useAppDispatch} from '../store'
+import {RootState, history, useAppDispatch} from '../store'
 import {statusActions} from '../reducers'
 import {StreamEventType, getMessage} from '../clients/stream'
 import {Stream} from '../contexts/stream'
+import {refreshTask, refreshTasks} from '../thunks/tasks'
 
 const AppRouter: FunctionComponent = () => {
   const dispatch = useAppDispatch()
   const streamState = React.useContext(Stream)
   const {addToast} = useToasts()
+  const stylesheet = useSelector((state: RootState) =>
+    state.status.logged_in === true ? state.status.colorscheme : null
+  )
+
+  React.useEffect(() => {
+    const stylesheetId = 'colorscheme-stylesheet'
+
+    if (stylesheet) {
+      const existing = document.getElementById(stylesheetId)
+      if (existing) {
+        existing.remove()
+      }
+
+      const sheet = document.createElement('link')
+      sheet.rel = 'stylesheet'
+      sheet.href = `/assets/colorschemes/${stylesheet}.css`
+      sheet.id = stylesheetId
+      document.head.appendChild(sheet)
+    }
+  }, [stylesheet])
 
   React.useEffect(() => {
     if (streamState.stream) {
@@ -59,8 +81,19 @@ const AppRouter: FunctionComponent = () => {
           )
         }
       )
+      streamState.stream.addEventListener(
+        StreamEventType.TaskChanged,
+        (evt: Event) => {
+          const taskId = getMessage(StreamEventType.TaskChanged, evt)
+          dispatch(refreshTask(taskId))
+        }
+      )
     }
   }, [streamState.stream])
+
+  React.useEffect(() => {
+    dispatch(refreshTasks())
+  }, [])
 
   return (
     <ConnectedRouter history={history}>
