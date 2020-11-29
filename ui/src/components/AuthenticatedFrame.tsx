@@ -55,9 +55,9 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
               </a>
             </li>
             <li className="mobile-only" data-intro="alt+t">
-              <a href="/mobile-tasks/">
+              <Link to={'/task-list'}>
                 <LabeledIcon icon="results" label="Tasks" />
-              </a>
+              </Link>
             </li>
             {trelloBoardUrl && (
               <li className="mobile-only" data-intro="alt+k">

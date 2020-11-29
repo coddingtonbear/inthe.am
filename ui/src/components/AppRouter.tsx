@@ -8,6 +8,7 @@ import AuthenticatedRoute from './AuthenticatedRoute'
 import About from './About'
 import GettingStarted from './GettingStarted'
 import Tasks from './Tasks'
+import MobileTasks from './MobileTasks'
 import ActivityLog from './ActivityLog'
 import RedirectToFirstTask from './RedirectToFirstTask'
 import Configure from './Configure'
@@ -113,6 +114,7 @@ const AppRouter: FunctionComponent = () => {
           path="/configure/:page"
           component={Configure}
         />
+        <AuthenticatedRoute exact path="/task-list" component={MobileTasks} />
         <AuthenticatedRoute exact path="/tasks/:taskId" component={Tasks} />
         <AuthenticatedRoute
           exact
