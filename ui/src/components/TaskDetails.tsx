@@ -21,6 +21,7 @@ import {
 } from '../reducers'
 import Tag from './Tag'
 import Footer from './Footer'
+import {HotKeys, HotKeysProps} from 'react-hotkeys'
 
 export interface Props {
   tasks: Task[]
@@ -35,6 +36,20 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
 
   const [blocking, setBlocking] = React.useState<Task[]>([])
   const [blocked, setBlocked] = React.useState<Task[]>([])
+
+  const keyMapHandlers: HotKeysProps['handlers'] = {
+    TASK_STOP_START: () => {
+      if (task.start) {
+        onStopTask()
+      } else {
+        onStartTask()
+      }
+    },
+    TASK_EDIT: onEditTask,
+    TASK_ADD_ANNOTATION: onAddAnnotation,
+    TASK_COMPLETE: onCompleteTask,
+    TASK_DELETE: onDeleteTask,
+  }
 
   React.useEffect(() => {
     setBlocking(getBlockingTasks(tasks, task))
@@ -81,7 +96,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
   }
 
   return (
-    <div id="task-details">
+    <HotKeys handlers={keyMapHandlers} allowChanges={true} id="task-details">
       <div className="row" id="task-header">
         <div className="medium-12">
           <h1 className="title">{task.description}</h1>
@@ -262,7 +277,7 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
         </div>
       </div>
       <Footer />
-    </div>
+    </HotKeys>
   )
 }
 

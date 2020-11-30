@@ -1,5 +1,5 @@
 import React, {ChangeEvent, FunctionComponent} from 'react'
-import {Button, Switch} from 'react-foundation'
+import {Switch} from 'react-foundation'
 import {useSelector} from 'react-redux'
 import {Callout, Colors} from 'react-foundation'
 import {useToasts} from 'react-toast-notifications'
