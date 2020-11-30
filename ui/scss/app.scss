@@ -76,6 +76,10 @@ body {
   height: 100%;
   //overflow: hidden;
 
+  .hotkey-listener {
+    height: 100%;
+  }
+
   > .ember-view {
     height: 100%;
     > .ember-view {

@@ -34,6 +34,7 @@
     "react-datepicker": "^3.3.0",
     "react-dom": "^16.14.0",
     "react-foundation": "^0.9.6",
+    "react-hotkeys": "^2.0.0",
     "react-redux": "^7.2.1",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",

@@ -3,6 +3,7 @@ import {useSelector} from 'react-redux'
 import {useAppDispatch} from '../store'
 import {refreshStatus} from '../reducers/status'
 import {ToastProvider} from 'react-toast-notifications'
+import {HotKeys, HotKeysProps} from 'react-hotkeys'
 
 import AnnotationModal from './modals/AnnotationModal'
 import {RootState} from '../store'
@@ -21,6 +22,24 @@ const App: FunctionComponent = () => {
   )
   const dispatch = useAppDispatch()
   const [stream, setStream] = React.useState<EventSource>()
+
+  const keyMap: HotKeysProps['keyMap'] = {
+    NAV_TASK_LIST: 'alt+t',
+    NAV_TRELLO: 'alt+k',
+    NAV_DOCS: 'alt+h',
+    NAV_ACTIVITY_LOG: 'alt+l',
+    NAV_CONFIGURE: 'alt+/',
+
+    LOG_OUT: 'alt+x',
+    CREATE_TASK: 'alt+n',
+    REFERSH_TASKS: 'alt+r',
+
+    TASK_STOP_START: 'alt+s',
+    TASK_ADD_ANNOTATION: 'alt+a',
+    TASK_EDIT: 'alt+e',
+    TASK_COMPLETE: 'alt+c',
+    TASK_DELETE: 'alt+d',
+  }
 
   dispatch(refreshStatus)
 
@@ -46,9 +65,11 @@ const App: FunctionComponent = () => {
         <>
           <ToastProvider placement={'top-center'} autoDismiss={true}>
             <Stream.Provider value={{stream}}>
-              <AppRouter />
-              <AnnotationModal />
-              <EditTaskModal />
+              <HotKeys keyMap={keyMap} className="hotkey-listener">
+                <AppRouter />
+                <AnnotationModal />
+                <EditTaskModal />
+              </HotKeys>
             </Stream.Provider>
           </ToastProvider>
         </>
