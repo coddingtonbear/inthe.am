@@ -245,7 +245,6 @@ div.row {
 
   p {
     font-size: 0.95rem;
-    line-height: 1.25rem;
   }
   li {
     font-size: 0.95rem;
@@ -362,6 +361,10 @@ div.row {
   overflow-x: hidden;
   float: left;
 
+  .labeled-tag {
+    background-color: #505050;
+  }
+
   a {
     color: inherit;
   }
@@ -384,6 +387,7 @@ div.row {
 
     p.tags {
       font-size: 0.8rem;
+      margin: 5px 0px;
     }
 
     p.duedatetime {
@@ -942,6 +946,11 @@ input#filter-string {
 
 .labeled-tag {
   font-style: italic;
+  border-radius: 5px;
+  background-color: #d7ecfa;
+  padding: 5px 0px 5px 10px;
+  border: 1px solid rgba(10, 10, 10, 0.25);
+  margin: 3px;
 }
 
 .labeled-icon-container {
