@@ -1,6 +1,7 @@
 import React, {FunctionComponent} from 'react'
 
 import {getLogs, Log} from '../clients/logs'
+import Footer from './Footer'
 
 const ActivityLog: FunctionComponent = () => {
   const [logs, setLogs] = React.useState<Log[]>([])
@@ -43,6 +44,7 @@ const ActivityLog: FunctionComponent = () => {
               </tbody>
             </table>
           </div>
+          <Footer />
         </div>
       </div>
     </>
