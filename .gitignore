@@ -45,7 +45,6 @@ docs/_build
 pip-selfcheck.json
 tags
 messages/*
-.vscode/*
 local/*
 share/*
 docker/data/
