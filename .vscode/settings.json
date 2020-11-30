@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "local/bin/python",
+    "restructuredtext.sphinxBuildPath": "${workspaceFolder}/local/bin/sphinx-build",
+    "restructuredtext.confPath": "${workspaceFolder}/docs"
+}
