@@ -20,7 +20,7 @@ function sass() {
 }
 
 function copyAssets() {
-  return gulp.src('./**/*').pipe(gulp.dest('dist'))
+  return gulp.src('assets/**/*').pipe(gulp.dest('dist'))
 }
 
 function watch() {
