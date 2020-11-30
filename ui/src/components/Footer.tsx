@@ -1,4 +1,5 @@
 import React, {FunctionComponent} from 'react'
+import {Link} from 'react-router-dom'
 
 export const Footer: FunctionComponent = () => {
   return (
@@ -6,8 +7,8 @@ export const Footer: FunctionComponent = () => {
       <hr />
       Lovingly crafted by{' '}
       <a href="http://github.com/coddingtonbear">Adam Coddington</a> and others.
-      See our <a href="/privacy-policy">Privacy Policy</a> and{' '}
-      <a href="/terms-of-service">Terms of Service</a>.
+      See our <Link to="/privacy-policy">Privacy Policy</Link> and{' '}
+      <Link to="/terms-of-service">Terms of Service</Link>.
       <br />
       Questions? Ask on{' '}
       <a href="https://gitter.im/coddingtonbear/inthe.am">Gitter</a>.
