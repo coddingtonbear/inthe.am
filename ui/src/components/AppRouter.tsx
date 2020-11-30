@@ -17,6 +17,9 @@ import {statusActions} from '../reducers'
 import {StreamEventType, getMessage} from '../clients/stream'
 import {Stream} from '../contexts/stream'
 import {refreshTask, refreshTasks} from '../thunks/tasks'
+import PrivacyPolicy from './PrivacyPolicy'
+import TermsOfService from './TermsOfService'
+import AuthenticatedFrame from './AuthenticatedFrame'
 
 const AppRouter: FunctionComponent = () => {
   const dispatch = useAppDispatch()
@@ -125,6 +128,16 @@ const AppRouter: FunctionComponent = () => {
           exact
           path="/activity-log"
           component={ActivityLog}
+        />
+        <Route
+          exact
+          path="/privacy-policy"
+          render={() => <AuthenticatedFrame component={PrivacyPolicy} />}
+        />
+        <Route
+          exact
+          path="/terms-of-service"
+          render={() => <AuthenticatedFrame component={TermsOfService} />}
         />
         <Route path="/" component={About} />
       </Switch>
