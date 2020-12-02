@@ -85,7 +85,7 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
               <li className="home">
                 <a href="/">
                   <img src="/assets/logo.png" />
-                  Inthe.AM
+                  <span className="site-name">Inthe.AM</span>
                 </a>
               </li>
               {canAccessFuntions && (

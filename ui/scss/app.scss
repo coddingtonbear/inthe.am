@@ -829,15 +829,21 @@ input#filter-string {
       }
     }
   }
+  .top-bar {
+    .dropdown.menu {
+      & > li > a {
+        padding: 0rem 0.5rem;
+      }
+    }
+  }
 }
 
-@media screen and (max-width: 400px) {
-  .top-bar .name h1 {
-    font-size: 0.7rem;
-  }
+@media screen and (max-width: 500px) {
   .top-bar {
-    li.non-essential {
-      display: none;
+    li.home {
+      span.site-name {
+        display: none;
+      }
     }
   }
 }
