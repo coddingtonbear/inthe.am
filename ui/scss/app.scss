@@ -827,6 +827,14 @@ input#filter-string {
         padding: 0rem 0.5rem;
       }
     }
+    .labeled-icon-container {
+      .labeled-icon-label {
+        display: none;
+      }
+      i.fi::before {
+        font-size: 15px;
+      }
+    }
   }
 }
 
