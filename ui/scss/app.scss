@@ -789,6 +789,14 @@ input#filter-string {
       padding-left: 0px;
       padding-right: 0px;
     }
+    .labeled-icon-container {
+      .labeled-icon-label {
+        display: none;
+      }
+      i.fi::before {
+        font-size: 15px;
+      }
+    }
   }
   td {
     word-break: break-all;
@@ -814,22 +822,6 @@ input#filter-string {
     button#show-task-list {
       display: inline-block;
     }
-  }
-}
-
-@media screen and (max-width: 700px) {
-  .top-bar,
-  #task-details {
-    .labeled-icon-container {
-      .labeled-icon-label {
-        display: none;
-      }
-      i.fi::before {
-        font-size: 15px;
-      }
-    }
-  }
-  .top-bar {
     .dropdown.menu {
       & > li > a {
         padding: 0rem 0.5rem;
