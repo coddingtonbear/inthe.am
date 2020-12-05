@@ -12,6 +12,19 @@ what sorts of information can be found on the event bus.
 Web
 ---
 
+`__general__`
+~~~~~~~~~~~~~
+
+Emitted to send out general public announcements.
+
+.. code-block:: ts
+
+   interface Message {
+      title: string  // Toast message title
+      message: string  // Toast message body
+      system: boolean
+   }
+
 `personal.<USERNAME>`
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -38,8 +51,8 @@ and the Taskd server has completed.
    interface Message {
      username: string
      debounce_id: string  // Used for debouncing sync requests
-     start: start  // Git SHA
-     head: start  // Git SHA
+     start: str  // Git SHA
+     head: str  // Git SHA
    }
 
 `changed_task.<USERNAME>`

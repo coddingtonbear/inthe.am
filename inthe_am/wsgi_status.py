@@ -2,6 +2,7 @@
 WSGI config for Inthe.AM's status server.
 """
 
+from collections import abc
 import datetime
 import json
 import logging
@@ -10,24 +11,43 @@ import pickle
 from queue import Queue
 import time
 import urllib.parse as urlparse
+from typing import Optional, Union, Mapping
+from typing_extensions import TypedDict
+
+from redis.client import PubSub
 from wsgiref import util as wsgiref_utils
+
+from inthe_am.taskmanager.models.taskstore import TaskStore
+from inthe_am.taskmanager.types import announcements
 
 import django
 
-django.setup()  # noqa
+django.setup()
 
-from django.conf import settings  # noqa
+from django.conf import settings  # noqa: E402
 
-from gevent import sleep  # noqa
+from gevent import sleep  # noqa: E402
 
-from inthe_am.taskmanager.lock import get_lock_redis  # noqa
+from inthe_am.taskmanager.lock import get_lock_redis  # noqa: E402
 
 
 logger = logging.getLogger("inthe_am.wsgi_status")
 logging.config.dictConfig(settings.LOGGING)
 
 
-def get_announcements_subscription(store, username, channels):
+class PubSubMessage(TypedDict):
+    type: str
+    pattern: Optional[bytes]
+    channel: Optional[bytes]
+    data: bytes
+
+
+class QueuedMessage(TypedDict):
+    name: str
+    data: str
+
+
+def get_announcements_subscription(store, username, channels) -> PubSub:
     client = get_lock_redis()
     subscription = client.pubsub(ignore_subscribe_messages=True)
 
@@ -53,48 +73,60 @@ class Application:
         ("Content-Type", "text/event-stream"),
     ]
     ERROR_RETRY_DELAY = 60 * 1000
+    queue: Queue[QueuedMessage]
+    head: str
+    last_heartbeat: datetime.datetime
+    initialized: bool
+    store: TaskStore
+    username: str
 
-    def add_message(self, name, data=None):
+    def add_message(self, name: str, data: Optional[Union[str, Mapping]] = None):
+        encoded = ""
+
         if data is None:
-            data = ""
+            pass
+        elif isinstance(data, abc.Mapping):
+            encoded = json.dumps(data)
+        else:
+            encoded = data
 
-        logger.debug("Adding message %s: %s", name, data)
+        logger.debug("Adding message %s: %s", name, encoded)
 
-        self.queue.put(
-            {"name": name, "data": data,}
-        )
+        self.queue.put({"name": name, "data": encoded})
 
-    def handle_local_sync(self, message):
-        new_head = json.loads(message["data"])["head"]
+    def handle_local_sync(self, message: PubSubMessage):
+        local_sync: announcements.LocalSync = json.loads(message["data"])
+        new_head: str = local_sync["head"]
 
-        self.add_message("local_sync", message["data"])
+        self.add_message("local_sync", local_sync)
 
         if new_head != self.head:
             self.head = new_head
             self.add_message("head_changed", self.head)
 
-    def handle_changed_task(self, message):
-        self.add_message("task_changed", json.loads(message["data"])["task_id"])
+    def handle_changed_task(self, message: PubSubMessage):
+        changed_task: announcements.ChangedTask = json.loads(message["data"])
+        task_id = changed_task["task_id"]
 
-    def handle_log_message(self, message):
-        announcement = json.loads(message["data"])
-        if announcement["error"] and not announcement["silent"]:
-            self.add_message("error_logged", announcement["message"])
+        self.add_message("task_changed", task_id)
 
-    def handle_personal_announcement(self, message):
-        self.add_message("personal_announcement", message["data"])
+    def handle_log_message(self, message: PubSubMessage):
+        log_msg: announcements.LogMessage = json.loads(message["data"])
 
-    def handle_public_announcement(self, message):
-        message_data = json.loads(message["data"])
+        if log_msg["error"] and not log_msg["silent"]:
+            self.add_message("error_logged", log_msg["message"])
 
-        # Open the envelope, see if it's a system announcement or not.
-        if not message_data.get("system", False):
-            self.add_message("public_announcement", message["data"])
-        else:
-            self.add_message(message_data["type"], json.dumps(message_data["data"]))
+    def handle_personal_announcement(self, message: PubSubMessage):
+        announcement: announcements.PrivateAnnouncement = json.loads(message["data"])
 
-    def handle_message(self, message):
-        channel = message["channel"].decode("utf-8")
+        self.add_message("personal_announcement", announcement)
+
+    def handle_message(self, message: PubSubMessage) -> bool:
+        channel_info = message["channel"]
+        if not channel_info:
+            return False
+
+        channel = channel_info.decode("utf-8")
         if channel.startswith("local_sync."):
             self.handle_local_sync(message)
             return True
