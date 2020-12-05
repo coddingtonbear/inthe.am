@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import time
 import uuid
+from typing import Set
 
 from django.db import models
 from django.conf import settings
@@ -357,7 +358,7 @@ class TaskStore(models.Model):
 
     #  Git-related methods
 
-    def get_changed_task_ids(self, head, start=None):
+    def get_changed_task_ids(self, head, start=None) -> Set[str]:
         uuid_matcher = re.compile(r'uuid:"([0-9a-zA-Z-]+)"')
         if not start:
             start = self.repository.head().decode("utf-8")
