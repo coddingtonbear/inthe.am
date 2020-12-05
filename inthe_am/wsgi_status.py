@@ -84,7 +84,7 @@ class Application:
         ("Content-Type", "text/event-stream"),
     ]
     ERROR_RETRY_DELAY = 60 * 1000
-    queue: Queue[QueuedMessage]
+    queue: "Queue[QueuedMessage]"
     head: str
     last_heartbeat: datetime.datetime
     initialized: bool
