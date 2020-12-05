@@ -11,13 +11,13 @@ import pickle
 from queue import Queue
 import time
 import urllib.parse as urlparse
-from typing import Optional, Union, Mapping
-from typing_extensions import TypedDict
+from typing import Optional, Union, Mapping, Set
+from typing_extensions import TypedDict, Protocol
 
+from dulwich.repo import Repo
 from redis.client import PubSub
 from wsgiref import util as wsgiref_utils
 
-from inthe_am.taskmanager.models.taskstore import TaskStore
 from inthe_am.taskmanager.types import announcements
 
 import django
@@ -33,6 +33,17 @@ from inthe_am.taskmanager.lock import get_lock_redis  # noqa: E402
 
 logger = logging.getLogger("inthe_am.wsgi_status")
 logging.config.dictConfig(settings.LOGGING)
+
+
+class SerializedTaskStore(Protocol):
+    pk: str
+    repository: Repo
+
+    def sync(self, *args, **kwargs):
+        ...
+
+    def get_changed_task_ids(self, head: str) -> Set[str]:
+        ...
 
 
 class PubSubMessage(TypedDict):
@@ -77,7 +88,7 @@ class Application:
     head: str
     last_heartbeat: datetime.datetime
     initialized: bool
-    store: TaskStore
+    store: SerializedTaskStore
     username: str
 
     def add_message(self, name: str, data: Optional[Union[str, Mapping]] = None):
