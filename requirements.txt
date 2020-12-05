@@ -33,7 +33,7 @@ sphinx>=1.2.3
 django-storages==1.7.2
 boto==2.34.0
 x256==0.0.3
-requests==2.2.0
+requests==2.25.0
 -e git+https://github.com/coddingtonbear/trello-py.git@f24eea1df98cecbc6bb4f8265e1fb598a69dcf62#egg=trello
 oauthlib==0.7.2
 jsonfield==1.0.3
@@ -42,7 +42,7 @@ jira==0.47
 newrelic==2.54.0.41
 backports.statistics==0.1.0
 django-cors-headers==3.1.0
-uwsgi==2.0.12
+uwsgi==2.0.19.1
 psycogreen==1.0
 progressbar2==3.20.0
 typing-extensions==3.7.4.2
