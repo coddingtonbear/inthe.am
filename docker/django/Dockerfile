@@ -11,8 +11,8 @@ RUN apt-get install -y postgresql-client git taskwarrior \
   libpcre3 libpcre3-dev gnutls-bin supervisor cron
 
 RUN pip install --upgrade pip
-COPY requirements-frozen.txt /tmp
-RUN pip install -r /tmp/requirements-frozen.txt
+COPY requirements.txt /tmp
+RUN pip install -r /tmp/requirements.txt
 COPY ./docker/django/gitconfig /root/.gitconfig
 
 ARG CRONTAB=./docker/django/empty.crontab
