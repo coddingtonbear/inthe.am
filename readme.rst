@@ -1,8 +1,7 @@
 Inthe.AM
 ========
 
-.. image:: https://api.travis-ci.org/coddingtonbear/inthe.am.png?branch=development
-   :target: https://travis-ci.org/coddingtonbear/inthe.am
+`Inthe.AM is looking for maintainers -- would you like to help? <https://github.com/coddingtonbear/inthe.am/wiki/Call-for-Maintainers!>`_
 
 - Documentation for Inthe.AM is available on
   `ReadTheDocs <http://intheam.readthedocs.org/>`_.
