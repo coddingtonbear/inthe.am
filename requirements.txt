@@ -38,9 +38,6 @@ requests==2.25.0
 oauthlib==0.7.2
 jsonfield==1.0.3
 icalendar==3.9.0
-jira==0.47
-newrelic==2.54.0.41
-backports.statistics==0.1.0
 django-cors-headers==3.1.0
 uwsgi==2.0.19.1
 psycogreen==1.0
