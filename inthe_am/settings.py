@@ -332,7 +332,6 @@ LOGGING = {
             "level": "INFO",
         },
         "django": {"handlers": ["null"], "propagate": True, "level": "INFO",},
-        "gunicorn": {"handlers": ["null"], "level": "INFO", "propagate": True},
         "selenium": {"handlers": ["null"], "level": "INFO", "propagate": True},
     },
 }
@@ -348,12 +347,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "social_django",
-    "gunicorn",
     "inthe_am.taskmanager.apps.TaskmanagerConfig",
     "django_mailbox",
     "rest_framework",
     "rest_framework.authtoken",
-    "django_extensions",
     "django_behave",
     "storages",
 ]
