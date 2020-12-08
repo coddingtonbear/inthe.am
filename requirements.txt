@@ -6,36 +6,31 @@ djangorestframework==3.10.3
 markdown==3.3.3
 django-filter==0.13.0
 mimeparse==0.1.3
-pytz>=2013.9
-gunicorn>=18.0.
+pytz>=2019.3
 django-mailbox>=4.8.0
 python-memcached==1.59
 webcolors==1.4
-django-twilio==0.4
-dulwich==0.9.4
-raven>=6.10.0
-mock>=1.0.1
--e git+https://github.com/niwinz/django-sse.git@1351b1387250c412e1adfc33aef0bc9d888d5bbf#egg=django-sse
-sse>=1.2
-psycopg2>=2.7.7
-django-extensions>=1.3.3
-gevent>=1.4.0
-Celery>=3.1.25,<4
-redis>=3.3.8
+django-twilio==0.9.0
+dulwich==0.20.14
+raven==6.10.0
+psycopg2-binary==2.8.6
+gevent==20.9.0
+Celery==4.3.0
+redis>=3.5.3,<4
 behave==1.2.5
 selenium==3.4.3
 splinter==0.7.6
 lxml==4.4.1
 -e git+https://github.com/coddingtonbear/django-behave.git@79028d59f89c7a12255120d266f5c844656a6805#egg=django_behave
 ipdb==0.8
-python-dateutil>=2.2
-sphinx>=1.2.3
+python-dateutil==2.8.1
+sphinx==3.3.1
 django-storages==1.7.2
 boto==2.34.0
 x256==0.0.3
 requests==2.25.0
 -e git+https://github.com/coddingtonbear/trello-py.git@f24eea1df98cecbc6bb4f8265e1fb598a69dcf62#egg=trello
-oauthlib==0.7.2
+oauthlib==2.1.0
 jsonfield==1.0.3
 icalendar==3.9.0
 django-cors-headers==3.1.0
