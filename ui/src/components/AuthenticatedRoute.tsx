@@ -7,6 +7,7 @@ import {push} from 'connected-react-router'
 
 import {RootState, useAppDispatch} from '../store'
 import AuthenticatedFrame from './AuthenticatedFrame'
+import {isOfficialServer} from '../utils/official'
 
 const AuthenticatedRoute: FunctionComponent<RouteProps> = ({
   component,
