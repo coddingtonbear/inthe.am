@@ -14,6 +14,7 @@ import LabeledIcon from './LabeledIcon'
 import Icon from './Icon'
 import {refreshTasks} from '../thunks/tasks'
 import {HotKeys, HotKeysProps} from 'react-hotkeys'
+import {isOfficialServer} from '../utils/official'
 
 interface Props extends RouteProps {
   component: FunctionComponent
@@ -84,8 +85,14 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
             <ul className="dropdown menu">
               <li className="home">
                 <a href="/">
-                  <img src="/assets/logo.png" />
-                  <span className="site-name">Inthe.AM</span>
+                  {isOfficialServer() ? (
+                    <>
+                      <img src="/assets/logo.png" />
+                      <span className="site-name">Inthe.AM</span>
+                    </>
+                  ) : (
+                    <span className="site-name">Inthe.AM (Unofficial)</span>
+                  )}
                 </a>
               </li>
               {canAccessFuntions && (
