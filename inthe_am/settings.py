@@ -25,7 +25,7 @@ TESTING = ("test" in sys.argv) or TRAVIS
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ.get("DEBUG", False))
+DEBUG = bool(int(os.environ.get("DJANGO_DEBUG", False)))
 
 RUN_LOCALLY = {
     "python_path": "python3",
@@ -256,7 +256,7 @@ TRELLO_UPDATE_MARGIN_SECONDS = 15
 ANNOUNCEMENTS_CHANNEL = "__general__"
 
 # Streaming ticket updates enabled?
-STREAMING_UPDATES_ENABLED = True
+STREAMING_UPDATES_ENABLED = not DEBUG
 
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True

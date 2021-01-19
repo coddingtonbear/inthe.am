@@ -39,3 +39,4 @@ psycogreen==1.0
 progressbar2==3.20.0
 typing-extensions==3.7.4.2
 aiosmtpd>=1.2,<2.0
+ptvsd>=4.3.2,<5

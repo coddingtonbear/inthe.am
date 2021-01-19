@@ -1,0 +1,19 @@
+# make sure to `git submodule update --init` before building images
+version: "3"
+services:
+  web:
+    ports:
+      - "3000:3000"
+    environment:
+      DJANGO_DEBUG: "1"
+    volumes:
+      - static-assets:/data/static/
+  nginx:
+    environment:
+      DJANGO_DEBUG: "1"
+  troubleshooting:
+    image: "python:3.8-slim"
+    volumes:
+      - taskd-data:/taskd_data
+      - task-data:/task_data
+      - db-data:/db_data
