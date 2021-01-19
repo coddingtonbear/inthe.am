@@ -6,6 +6,7 @@ services:
       - "3000:3000"
     environment:
       DJANGO_DEBUG: "1"
+      TRELLO_BOARD_DEFAULT_NAME: "Inthe.AM Tasks (Development)"
     volumes:
       - static-assets:/data/static/
   nginx:

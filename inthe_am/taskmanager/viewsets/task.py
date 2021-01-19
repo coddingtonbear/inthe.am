@@ -4,6 +4,7 @@ import logging
 import re
 from typing import Any, Dict
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import (
     HttpResponse,
@@ -294,7 +295,7 @@ class TaskViewSet(viewsets.ViewSet):
             board = models.TrelloObject.create(
                 store=store,
                 type=models.TrelloObject.BOARD,
-                name="Inthe.AM Tasks",
+                name=settings.TRELLO_BOARD_DEFAULT_NAME,
                 desc="Tasks listed on your Inthe.AM account",
             )
             for list_data in board.client.get_list(board.id):
