@@ -20,6 +20,9 @@ const App: FunctionComponent = () => {
   const statusUrl = useSelector(
     (state: RootState) => state.status.urls?.status_feed
   )
+  const statusStreamEnabled = useSelector(
+    (state: RootState) => state.status.logged_in ? state.status.streaming_enabled : false
+  )
   const dispatch = useAppDispatch()
   const [stream, setStream] = React.useState<EventSource>()
 
@@ -48,11 +51,11 @@ const App: FunctionComponent = () => {
       stream.close()
     }
 
-    if (statusUrl) {
+    if (statusUrl && statusStreamEnabled) {
       const newStream = createStream(statusUrl, head)
       setStream(newStream)
     }
-  }, [statusUrl])
+  }, [statusUrl, statusStreamEnabled])
 
   return (
     <>

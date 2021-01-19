@@ -18,7 +18,7 @@
       }
     },
     {
-      "name": "Remote Django App",
+      "name": "Connect to Django",
       "type": "python",
       "request": "attach",
       "pathMappings": [
