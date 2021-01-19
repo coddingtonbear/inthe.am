@@ -288,6 +288,9 @@ EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
 
 TRELLO_API_KEY = os.environ.get("TRELLO_API_KEY", "")
 TRELLO_API_SECRET = os.environ.get("TRELLO_API_SECRET", "")
+TRELLO_BOARD_DEFAULT_NAME = os.environ.get(
+    "TRELLO_BOARD_DEFAULT_NAME", "Inthe.AM Tasks"
+)
 
 LOG_DIR = os.environ.get("LOG_DIR", os.path.join(BASE_DIR, "logs"))
 

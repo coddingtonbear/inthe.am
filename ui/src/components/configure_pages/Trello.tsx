@@ -1,10 +1,16 @@
 import React, {FunctionComponent} from 'react'
 import {useSelector} from 'react-redux'
-import {RootState} from '../../store'
+import {useToasts} from 'react-toast-notifications'
+import {Button, Callout, Colors} from 'react-foundation'
 
-import {Callout, Colors} from 'react-foundation'
+import request from '../../clients/request'
+import {refreshStatus} from '../../thunks/status'
+import {RootState, useAppDispatch} from '../../store'
 
 const Trello: FunctionComponent = () => {
+  const {addToast} = useToasts()
+  const dispatch = useAppDispatch()
+
   const trelloBoardUrl = useSelector((state: RootState) =>
     state.status.logged_in ? state.status.trello_board_url : null
   )
@@ -22,6 +28,27 @@ const Trello: FunctionComponent = () => {
       ? state.status.urls?.trello_resynchronization_url
       : null
   )
+
+  function onResyncTrello(): void {
+    if (!resyncTrello) {
+      throw Error('No URL provided!')
+    }
+
+    request('POST', resyncTrello, {lookupApiUrl: false}).then(() => {
+      addToast("Resynchronizing trello now; this may take a few minutes.", {appearance: 'success'})
+    })
+  }
+
+  function onResetTrelloSettings(): void {
+    if (!resetTrelloSettings) {
+      throw Error('No URL provided!')
+    }
+
+    request('POST', resetTrelloSettings, {lookupApiUrl: false}).then(() => {
+      addToast("Trello settings reset.", {appearance: 'success'})
+      dispatch(refreshStatus())
+    })
+  }
 
   return (
     <>
@@ -111,12 +138,14 @@ const Trello: FunctionComponent = () => {
           <div className="large-12 columns">
             {trelloBoardUrl && resetTrelloSettings && resyncTrello && (
               <>
-                <a href={resetTrelloSettings} className="button radius alert">
+                <Button
+                  color={Colors.ALERT}
+                  onClick={onResetTrelloSettings}>
                   Reset Trello settings
-                </a>
-                <a href={resyncTrello} className="button radius">
+                </Button>
+                <Button onClick={onResyncTrello} color={Colors.PRIMARY}>
                   Force Resynchronization
-                </a>
+                </Button>
               </>
             )}
             {!trelloBoardUrl && (
