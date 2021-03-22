@@ -75,7 +75,7 @@ const SyncInstructions: FunctionComponent = () => {
         <br />
         taskd.credentials={taskdCredentials}
         <br />
-        taskd.trust=ignore hostname
+        taskd.trust=strict
         <br />
       </code>
 
