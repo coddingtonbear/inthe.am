@@ -25,15 +25,26 @@ export async function request<T>(
     })
     .catch((error) => {
       if (error.response) {
-        console.log(error.response.data)
-        console.log(error.response.status)
-        console.log(error.response.headers)
+        console.error(
+          "An error response was received: ",
+          error.response.status,
+          error.response.data,
+          error.response.headers,
+          error.config,
+        )
       } else if (error.request) {
-        console.log(error.request)
+        console.error(
+          "An error occurred while creating a request: ",
+          error.request,
+          error.config,
+        )
       } else {
-        console.log(error.message)
+        console.error(
+          "An error occurred while dispatching a request: ",
+          error.request,
+          error.config,
+        )
       }
-      console.log(error.config)
 
       throw error
     })
