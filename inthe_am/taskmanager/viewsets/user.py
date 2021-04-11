@@ -1,10 +1,10 @@
 import os
 import textwrap
 
+from django import http
 from django.conf import settings
 from django.core.signing import Signer
 from django.urls import reverse
-from django.http.response import HttpResponse
 from django.utils.timezone import now
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -151,7 +151,7 @@ class UserViewSet(viewsets.ViewSet):
             raise NotFound()
 
         with open(filepath, "r") as outfile:
-            response = HttpResponse(outfile.read(), content_type=content_type)
+            response = http.HttpResponse(outfile.read(), content_type=content_type)
             response[
                 "Content-Disposition"
             ] = f'attachment; filename="{os.path.basename(filepath)}"'
@@ -217,8 +217,9 @@ class UserViewSet(viewsets.ViewSet):
         permission_classes=[IsAuthenticated],
         url_path="generate-new-certificate",
     )
-    def generate_new_certificate(self, request, store=None):
-        store = models.TaskStore.get_for_user(request.user)
+    def generate_new_certificate(
+        self, request: http.HttpRequest, store: models.TaskStore
+    ):
         store.generate_new_certificate()
         return Response()
 
