@@ -33,7 +33,10 @@ const DangerZone: FunctionComponent = () => {
     }).catch((error) => {
       if (error.response) {
         addToast(
-          `An error occurred while handling your request! HTTP ${error.response.status}`,
+          <>
+            An error occurred while handling your request!<br /><br/>
+            HTTP {error.response.status}
+          </>,
           {appearance: 'error'}
         )
       } else {
