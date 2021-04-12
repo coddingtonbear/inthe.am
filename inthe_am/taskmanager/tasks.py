@@ -45,7 +45,7 @@ def sync_repository(self, store_id, debounce_id=None, **kwargs):
             kwargs={"debounce_id": debounce_id},
         )
     except Exception as e:
-        store.log_error(
+        store.log_silent_error(
             "An error was encountered when attempting to sync Inthe.AM's "
             "UI with the Taskserver: %s.",
             str(e),
