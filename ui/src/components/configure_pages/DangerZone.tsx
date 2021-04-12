@@ -89,8 +89,7 @@ const DangerZone: FunctionComponent = () => {
             also delete your account forever.
           </p>
           <p>
-            Logging-in again after running this will re-generate
-            a new account for you if you change your mind later&hellip;probably.
+            If you log-in again, a new account may be generated for you.
           </p>
         </div>
         <Button
