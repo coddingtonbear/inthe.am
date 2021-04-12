@@ -58,114 +58,27 @@ const DangerZone: FunctionComponent = () => {
             stored in your task list on Inthe.AM, as well as clear any
             information stored in your Inthe.AM taskserver account.
           </p>
-        </div>
-      </div>
-      <Button
-        color={Colors.ALERT}
-        onClick={() =>
-          runDangerZoneTask(status.urls?.clear_task_data, 'Task data cleared.')
-        }
-      >
-        Clear Task Data
-      </Button>
-      <div className="row">
-        <div className="large-12 columns">
-          <h3>Revert task list to earlier version</h3>
           <p>
-            In rare situations, the local task list that Inthe.AM uses for
-            interacting with your tasks may become corrupted. You can use this
-            button to reset your task list to the state it was in right before
-            the most recent change.
+            You might want to use this function when you would like to
+            reset the task information shown on Inthe.AM and your
+            Taskserver account.
           </p>
           <p>
-            This operation is not dangerous to use on task lists that are
-            properly synchronized, but there are slight dangers that information
-            might be lost. Please use this button only if you're absolutely sure
-            it's necessary.
+            Although executing this operation will not require you to
+            re-configure clients synchronizing with Inthe.AM's taskserver,
+            you will need to at least clear any synchronizing clients'&nbsp;
+            <code>backlog.data</code> for them to be able to synchronize again.
           </p>
         </div>
+        <Button
+          color={Colors.ALERT}
+          onClick={() =>
+            runDangerZoneTask(status.urls?.clear_task_data, 'Task data cleared.')
+          }
+        >
+          Clear Task Data
+        </Button>
       </div>
-      <Button
-        color={Colors.ALERT}
-        onClick={() =>
-          runDangerZoneTask(
-            status.urls?.revert_to_last_commit,
-            'Task store reverted to previous commit.'
-          )
-        }
-      >
-        Revert task list to earlier commit
-      </Button>
-      <div className="row">
-        <div className="large-12 columns">
-          <h3>Manually unlock task list</h3>
-          <p>
-            Pressing this button will unlock your task list. To prevent multiple
-            actions from altering your taskwarrior task list simultaneously, a
-            lock is used. Deleting this lock while an action is taking place is
-            dangerous! Although locks do time out on their own, this button
-            provides you an avenue for unlocking your repository manually.
-          </p>
-        </div>
-      </div>
-      <Button
-        color={Colors.ALERT}
-        onClick={() =>
-          runDangerZoneTask(status.urls?.clear_lock, 'Task list unlocked.')
-        }
-      >
-        Manually unlock task list
-      </Button>
-      <div className="row">
-        <div className="large-12 columns">
-          <h3>Reset Taskserver Synchronization Settings</h3>
-          <p>
-            Strictly speaking, this isn't all that dangerous. Pressing this
-            button will clear your Inthe.AM Taskserver account's information and
-            reset your synchronization settings such that Inthe.AM will sync
-            with the built-in Taskserver.
-          </p>
-          <p>
-            If you are currently synchronizing your tasks with Inthe.AM from
-            somewhere and receive a message "500 Client sync key not found"
-            after pressing this button, you need to delete the "backlog.data"
-            file from your tasks folder.
-          </p>
-        </div>
-      </div>
-      <Button
-        color={Colors.ALERT}
-        onClick={() =>
-          runDangerZoneTask(
-            status.urls?.taskd_reset,
-            'Taskserver settings have been reset.'
-          )
-        }
-      >
-        Reset taskserver settings
-      </Button>
-      <div className="row">
-        <div className="large-12 columns">
-          <h3>Regenerate Taskserver Certificates</h3>
-          <p>
-            This button will simply re-generate your Taskserver certificates. It
-            is strongly recommended that you walk through the setup instructions
-            described above in 'Synchronization Settings' after pressing this
-            button.
-          </p>
-        </div>
-      </div>
-      <Button
-        color={Colors.ALERT}
-        onClick={() =>
-          runDangerZoneTask(
-            status.urls?.generate_new_certificate,
-            'Taskserver certificates have been regenereated.'
-          )
-        }
-      >
-        Reset taskserver certificates
-      </Button>
     </>
   )
 }
