@@ -218,7 +218,7 @@ def process_email_message(self, message_id):
         log_args = (
             f"Unable to process e-mail {message.pk} "
             f"from {message.from_address[0]}; "
-            f"unknown subject '{message.subject}'"
+            f"unknown subject '{message.subject}': {message.text}"
         )
         logger.info(*log_args)
         store.log_message(*log_args)
