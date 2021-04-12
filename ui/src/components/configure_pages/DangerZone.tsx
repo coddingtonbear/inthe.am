@@ -16,15 +16,15 @@ const DangerZone: FunctionComponent = () => {
     return <></>
   }
 
-  function runDangerZoneTask(
+  async function runDangerZoneTask(
     url: string | undefined,
     successMessage: string
-  ): void {
+  ): Promise<void> {
     if (!url) {
       throw Error('No URL provided!')
     }
 
-    request('POST', url, {
+    return request('POST', url, {
       data: '',
       lookupApiUrl: false,
     }).then(() => {
@@ -52,7 +52,7 @@ const DangerZone: FunctionComponent = () => {
     <>
       <div className="row">
         <div className="large-12 columns">
-          <h3>Delete your account information</h3>
+          <h3>Delete your account's task data</h3>
           <p>
             Pressing this button will delete both any task information currently
             stored in your task list on Inthe.AM, as well as clear any
@@ -63,7 +63,7 @@ const DangerZone: FunctionComponent = () => {
       <Button
         color={Colors.ALERT}
         onClick={() =>
-          runDangerZoneTask(status.urls?.clear_task_data, 'Task data cleared')
+          runDangerZoneTask(status.urls?.clear_task_data, 'Task data cleared.')
         }
       >
         Clear Task Data
@@ -90,7 +90,7 @@ const DangerZone: FunctionComponent = () => {
         onClick={() =>
           runDangerZoneTask(
             status.urls?.revert_to_last_commit,
-            'Task data reverted to last commit'
+            'Task store reverted to previous commit.'
           )
         }
       >
@@ -111,7 +111,7 @@ const DangerZone: FunctionComponent = () => {
       <Button
         color={Colors.ALERT}
         onClick={() =>
-          runDangerZoneTask(status.urls?.clear_lock, 'Task list unlocked')
+          runDangerZoneTask(status.urls?.clear_lock, 'Task list unlocked.')
         }
       >
         Manually unlock task list
@@ -138,7 +138,7 @@ const DangerZone: FunctionComponent = () => {
         onClick={() =>
           runDangerZoneTask(
             status.urls?.taskd_reset,
-            'Taskserver settings reset'
+            'Taskserver settings have been reset.'
           )
         }
       >
@@ -160,7 +160,7 @@ const DangerZone: FunctionComponent = () => {
         onClick={() =>
           runDangerZoneTask(
             status.urls?.generate_new_certificate,
-            'Re-generate taskserver certificates'
+            'Taskserver certificates have been regenereated.'
           )
         }
       >
