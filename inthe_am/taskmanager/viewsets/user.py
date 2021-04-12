@@ -33,6 +33,7 @@ URLS = {
     "tos_accept": "/api/v2/user/tos-accept/",
     "privacy_policy_accept": "/api/v2/user/privacy-policy-accept/",
     "clear_task_data": "/api/v2/user/clear-task-data/",
+    "delete_account": "/api/v2/user/delete-account/",
     "set_colorscheme": "/api/v2/user/colorscheme/",
     "enable_sync": "/api/v2/user/enable-sync/",
     "mirakel_configuration": "/api/v2/user/mirakel-configuration/",
@@ -355,6 +356,18 @@ class UserViewSet(viewsets.ViewSet):
         ts = models.TaskStore.get_for_user(request.user)
         ts.clear_taskserver_data()
         ts.clear_local_task_list()
+
+        return Response()
+
+    @action(
+        detail=False,
+        methods=["post"],
+        permission_classes=[IsAuthenticated],
+        url_path="delete-account",
+    )
+    def delete_account(self, request):
+        ts = models.TaskStore.get_for_user(request.user)
+        ts.delete(raise_for_failure=True)
 
         return Response()
 

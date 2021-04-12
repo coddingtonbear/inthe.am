@@ -331,18 +331,25 @@ class TaskStore(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        raise_for_failure = kwargs.pop("raise_for_failure", False)
+
         try:
             self.clear_local_task_list()
         except Exception as e:
             logger.exception(
                 "Error encountered while deleting local task list: %s", e,
             )
+            if raise_for_failure:
+                raise
+
         try:
             self.clear_taskserver_data()
         except Exception as e:
             logger.exception(
                 "Error encountered while deleting taskserver task list: %s", e,
             )
+            if raise_for_failure:
+                raise
 
         try:
             self.taskd_account.delete()
@@ -350,6 +357,8 @@ class TaskStore(models.Model):
             logger.exception(
                 "Error encountered while deleting taskserver account: %s", e,
             )
+            if raise_for_failure:
+                raise
 
         super().delete(*args, **kwargs)
 

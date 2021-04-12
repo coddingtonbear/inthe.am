@@ -37,6 +37,7 @@ export interface URLList {
   deduplicate_tasks: string
   deduplication_config: string
   status_feed: string
+  delete_account: string
 }
 
 export interface UdaDefinition {

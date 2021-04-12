@@ -79,6 +79,34 @@ const DangerZone: FunctionComponent = () => {
           Clear Task Data
         </Button>
       </div>
+      <div className="row">
+        <div className="large-12 columns">
+          <h3>Delete your account</h3>
+          <p>
+            Pressing this button will delete both any task information currently
+            stored in your task list on Inthe.AM, as well as clear any
+            information stored in your Inthe.AM taskserver account, and will
+            also delete your account forever.
+          </p>
+          <p>
+            Logging-in again after running this will re-generate
+            a new account for you if you change your mind later&hellip;probably.
+          </p>
+        </div>
+        <Button
+          color={Colors.ALERT}
+          onClick={() =>
+            runDangerZoneTask(status.urls?.delete_account, 'Account deleted.').then(() => {
+              window.setTimeout(
+                () => window.location.href = '/',
+                5000,
+              )
+            })
+          }
+        >
+          Delete My Account
+        </Button>
+      </div>
     </>
   )
 }
