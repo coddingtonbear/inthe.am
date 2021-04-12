@@ -31,7 +31,7 @@ def project_setup_logging(loglevel, logfile, format, colorize, **kwargs):
 
 
 @shared_task(
-    bind=True, time_limit=120, default_retry_delay=120, max_retries=10,
+    bind=True, time_limit=120, default_retry_delay=120, max_retries=5,
 )
 def sync_repository(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore
@@ -45,6 +45,11 @@ def sync_repository(self, store_id, debounce_id=None, **kwargs):
             kwargs={"debounce_id": debounce_id},
         )
     except Exception as e:
+        store.log_error(
+            "An error was encountered when attempting to sync Inthe.AM's "
+            "UI with the Taskserver: %s.",
+            str(e),
+        )
         raise self.retry(exc=e)
 
 
