@@ -76,7 +76,10 @@ def sse_offload(env, start_response):
     app = Application(env, start_response)
 
     for row in app.generator():
-        yield row.encode("utf-8")
+        try:
+            yield row.encode("utf-8")
+        except OSError:
+            return
 
 
 class Application:
