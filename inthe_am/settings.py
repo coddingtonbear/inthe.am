@@ -36,8 +36,6 @@ RUN_LOCALLY = {
 
 CA_CERT_PATH = "/tmp/ca.crt"
 
-TEMPLATE_DEBUG = True
-
 DOMAIN_NAME = os.environ.get("DOMAIN_NAME", "localhost")
 
 # Nginx is the only route to reach this, and it will be
@@ -72,6 +70,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
             ],
+            'debug': True,
         },
     },
 ]
