@@ -6,6 +6,7 @@ if [ ! -d $TASKDDATA ]; then
     exit 1
 fi
 if [ ! -f ${TASKDDATA}/pki/generated ]; then
+    echo "Generating taskdata configuration..."
     cd $TASKDDATA
     taskd init
     taskd add org inthe_am
@@ -29,5 +30,7 @@ if [ ! -f ${TASKDDATA}/pki/generated ]; then
     # Configure database settings for looking up account information
     taskd config --force intheam.min_tos 1
     taskd config --force intheam.min_privacy 1
+else
+    echo "Taskdata configuration already generated, skipping"
 fi
 /usr/bin/taskd server --log=-
