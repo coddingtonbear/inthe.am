@@ -16,9 +16,9 @@ from .viewsets.user import UserViewSet
 
 
 router = routers.SimpleRouter()
-router.register("tasks", TaskViewSet, base_name="task")
-router.register("user", UserViewSet, base_name="user")
-router.register("activity-logs", ActivityLogViewSet, base_name="activity_log")
+router.register("tasks", TaskViewSet, basename="task")
+router.register("user", UserViewSet, basename="user")
+router.register("activity-logs", ActivityLogViewSet, basename="activity_log")
 
 
 def unmatched(request):
