@@ -4,8 +4,8 @@ from django.db import models
 
 
 class UserMetadata(models.Model):
-    user = models.ForeignKey(
-        User, related_name="metadata", unique=True, on_delete=models.CASCADE
+    user = models.OneToOneField(
+        User, related_name="metadata", on_delete=models.CASCADE
     )
     tos_version = models.IntegerField(default=0)
     tos_accepted = models.DateTimeField(default=None, null=True,)
