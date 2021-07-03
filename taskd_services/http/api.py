@@ -95,6 +95,13 @@ class Credential(db.Model):  # type: ignore
             raise TaskdError(f'command: {command}, output: {del_proc_output}')
 
         self.deleted = datetime.utcnow()
+
+        db.session.delete(db.session.query(Credential).filter_by(
+            user_key=self.user_key).first())
+
+        db.session.delete(db.session.query(Certificate).filter_by(
+            user_key=self.user_key).first())
+
         db.session.commit()
 
     def suspend(self):

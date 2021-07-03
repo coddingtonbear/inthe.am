@@ -360,6 +360,8 @@ class TaskStore(models.Model):
             if raise_for_failure:
                 raise
 
+        self.user.delete()
+
         super().delete(*args, **kwargs)
 
     def __str__(self):
