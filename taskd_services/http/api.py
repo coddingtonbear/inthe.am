@@ -44,7 +44,6 @@ class Credential(db.Model):  # type: ignore
     org_name = db.Column(db.String(255), nullable=False)
     user_name = db.Column(db.String(255), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    deleted = db.Column(db.DateTime, nullable=True)
 
     @classmethod
     def create_new(cls, org_name, user_name, **params):
@@ -93,13 +92,11 @@ class Credential(db.Model):  # type: ignore
         if result != 0:
             raise TaskdError(f'command: {command}, output: {del_proc_output}')
 
-        self.deleted = datetime.utcnow()
-
         db.session.delete(db.session.query(Credential).filter_by(
             user_key=self.user_key).first())
 
-        db.session.delete(db.session.query(Certificate).filter_by(
-            user_key=self.user_key).first())
+        for cert in db.session.query(Certificate).filter_by(user_key=self.user_key):
+            db.session.delete(cert)
 
         db.session.commit()
 
@@ -135,7 +132,6 @@ class Credential(db.Model):  # type: ignore
         return {
             "credentials": f"{self.org_name}/{self.user_name}/{self.user_key}",
             "created": self.created,
-            "deleted": self.deleted,
             "is_suspended": self.is_suspended,
         }
 
