@@ -16,7 +16,7 @@ CA_CERT = os.environ["CA_CERT"]
 CA_KEY = os.environ["CA_KEY"]
 CA_SIGNING_TEMPLATE = os.environ["CA_SIGNING_TEMPLATE"]
 CERT_DB_PATH = os.environ.get(
-    "CERT_DB_PATH", os.path.join(TASKD_DATA, "certificates.sqlite3")
+    "CERT_DB_PATH", os.path.join(TASKD_DATA, "orgs", "certificates.sqlite3")
 )
 
 
@@ -90,7 +90,6 @@ class Credential(db.Model):  # type: ignore
 
         del_proc_output = delete_proc.communicate()[
             0].decode("utf-8").split("\n")
-        result = delete_proc.wait()
         if result != 0:
             raise TaskdError(f'command: {command}, output: {del_proc_output}')
 
