@@ -33,7 +33,7 @@ class TaskdJsonEncoder(json.JSONEncoder):
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + CERT_DB_PATH
 app.config["RESTFUL_JSON"] = {"cls": TaskdJsonEncoder}
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 api = Api(app)
 
 db = SQLAlchemy(app)
