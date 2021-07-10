@@ -131,8 +131,6 @@ services:
       context: ./
     ports:
       - "53589:53589"
-    env_file:
-      - .env
     networks:
       - backend
     links:
