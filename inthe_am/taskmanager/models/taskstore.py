@@ -351,8 +351,7 @@ class TaskStore(models.Model):
             if raise_for_failure:
                 raise
 
-        # Delete social auth linkages for this username
-        self.user.social_auth.all().delete()
+        self.user.delete()
 
         try:
             self.taskd_account.delete()
