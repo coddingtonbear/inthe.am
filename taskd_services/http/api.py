@@ -90,7 +90,10 @@ class Credential(db.Model):  # type: ignore
         for cert in db.session.query(Certificate).filter_by(user_key=self.user_key):
             db.session.delete(cert)
 
-        self.deleted = datetime.utcnow()
+        db.session.delete(
+            db.session.query(Credential).filter_by(user_key=self.user_key).first()
+        )
+
         db.session.commit()
 
     def suspend(self):
