@@ -16,7 +16,7 @@ CA_CERT = os.environ["CA_CERT"]
 CA_KEY = os.environ["CA_KEY"]
 CA_SIGNING_TEMPLATE = os.environ["CA_SIGNING_TEMPLATE"]
 CERT_DB_PATH = os.environ.get(
-    "CERT_DB_PATH", os.path.join(TASKD_DATA, "orgs", "certificates.sqlite3")
+    "CERTIFICATE_DB", os.path.join(TASKD_DATA, "orgs", "certificates.sqlite3")
 )
 
 
@@ -58,13 +58,10 @@ class Credential(db.Model):  # type: ignore
         taskd_user_key = key_proc_output[0].split(":")[1].strip()
         result = key_proc.wait()
         if result != 0:
-            raise TaskdError(f'command: {command}, output: {key_proc_output}')
+            raise TaskdError(f"command: {command}, output: {key_proc_output}")
 
         params.update(
-            {
-                "user_key": taskd_user_key,
-                "org_name": org_name, "user_name": user_name,
-            }
+            {"user_key": taskd_user_key, "org_name": org_name, "user_name": user_name,}
         )
         cred = Credential(**params)
         db.session.add(cred)
@@ -80,32 +77,27 @@ class Credential(db.Model):  # type: ignore
     def delete(self):
         env = os.environ.copy()
         env["TASKDDATA"] = TASKD_DATA
-        command = [TASKD_BINARY, "remove",
-                   "user", self.org_name, self.user_key]
+        command = [TASKD_BINARY, "remove", "user", self.org_name, self.user_key]
         delete_proc = subprocess.Popen(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env,
         )
         result = delete_proc.wait()
 
-        del_proc_output = delete_proc.communicate()[
-            0].decode("utf-8").split("\n")
+        del_proc_output = delete_proc.communicate()[0].decode("utf-8").split("\n")
         if result != 0:
-            raise TaskdError(f'command: {command}, output: {del_proc_output}')
-
-        db.session.delete(db.session.query(Credential).filter_by(
-            user_key=self.user_key).first())
+            raise TaskdError(f"command: {command}, output: {del_proc_output}")
 
         for cert in db.session.query(Certificate).filter_by(user_key=self.user_key):
             db.session.delete(cert)
 
+        self.deleted = datetime.utcnow()
         db.session.commit()
 
     def suspend(self):
         env = os.environ.copy()
         env["TASKDDATA"] = TASKD_DATA
 
-        command = [TASKD_BINARY, "suspend",
-                   "user", self.org_name, self.user_key]
+        command = [TASKD_BINARY, "suspend", "user", self.org_name, self.user_key]
         key_proc = subprocess.Popen(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env,
         )
@@ -115,10 +107,7 @@ class Credential(db.Model):  # type: ignore
         env = os.environ.copy()
         env["TASKDDATA"] = TASKD_DATA
 
-        command = [
-            TASKD_BINARY,
-            "resume", "user", self.org_name, self.user_key
-        ]
+        command = [TASKD_BINARY, "resume", "user", self.org_name, self.user_key]
         key_proc = subprocess.Popen(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env,
         )
@@ -195,8 +184,7 @@ class Certificate(db.Model):  # type: ignore
             )
             fp = fp_proc.communicate()[0].decode("utf-8").strip()
 
-        cert_record = Certificate(
-            fingerprint=fp, user_key=cred.user_key, label=label,)
+        cert_record = Certificate(fingerprint=fp, user_key=cred.user_key, label=label,)
         cert_record.certificate = cert
         db.session.add(cert_record)
         db.session.commit()
@@ -255,8 +243,7 @@ class TaskdAccount(Resource):
             ).first()
 
             if not cred:
-                cred = Credential.create_new(
-                    user_name=user_name, org_name=org_name)
+                cred = Credential.create_new(user_name=user_name, org_name=org_name)
 
         if is_suspended is True:
             cred.suspend()
@@ -385,8 +372,9 @@ class TaskdData(Resource):
 api.add_resource(ServerConfig, "/")
 api.add_resource(TaskdAccount, "/<org_name>/<user_name>/")
 api.add_resource(TaskdCertificates, "/<org_name>/<user_name>/certificates/")
-api.add_resource(TaskdCertificateDetails,
-                 "/<org_name>/<user_name>/certificates/<fingerprint>/")
+api.add_resource(
+    TaskdCertificateDetails, "/<org_name>/<user_name>/certificates/<fingerprint>/"
+)
 api.add_resource(TaskdData, "/<org_name>/<user_name>/data/")
 
 
