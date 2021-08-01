@@ -29,7 +29,7 @@
     "history": "^4.10.1",
     "luxon": "^1.25.0",
     "motion-ui": "^2.0.3",
-    "postcss": "^8.1.2",
+    "postcss": "^8.2.10",
     "react": "^16.14.0",
     "react-datepicker": "^3.3.0",
     "react-dom": "^16.14.0",
