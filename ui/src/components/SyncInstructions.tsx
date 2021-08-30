@@ -52,7 +52,7 @@ const SyncInstructions: FunctionComponent = () => {
             <tr>
               <th>Server Certificate</th>
               <td>
-                <a href={caCertificate}>ca.cert.pem</a>
+                <a href={caCertificate}>ca.crt</a>
               </td>
             </tr>
           )}
@@ -69,7 +69,7 @@ const SyncInstructions: FunctionComponent = () => {
         <br />
         taskd.key=/path/to/private.key.pem
         <br />
-        taskd.ca=/path/to/ca.cert.pem
+        taskd.ca=/path/to/ca.crt
         <br />
         taskd.server={taskdServer}
         <br />
