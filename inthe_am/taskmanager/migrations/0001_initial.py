@@ -331,6 +331,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterUniqueTogether(
-            name="taskstoreactivitylog", unique_together={("store", "md5hash")},
+            name="taskstoreactivitylog",
+            unique_together={("store", "md5hash")},
         ),
     ]

@@ -4,7 +4,7 @@ repos:
   # Sort imports prior to black reformatting, to
   # ensure black always takes prescedence
   - repo: https://github.com/ambv/black
-    rev: 19.10b0
+    rev: 21.11b1
     hooks:
       - id: black
   - repo: https://github.com/pre-commit/pre-commit-hooks

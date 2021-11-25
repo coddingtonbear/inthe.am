@@ -28,11 +28,19 @@ def logout_and_redirect(request):
 def status_offload(request):
     if not uwsgi or not settings.STATUS_OFFLOAD_SOCKET:
         return JsonResponse(
-            {"error": "Status unavailable in this environment.",}, status=404,
+            {
+                "error": "Status unavailable in this environment.",
+            },
+            status=404,
         )
 
     if not request.user.is_authenticated():
-        return JsonResponse({"error": "Unauthenticated",}, status=401)
+        return JsonResponse(
+            {
+                "error": "Unauthenticated",
+            },
+            status=401,
+        )
 
     redis = get_lock_redis()
 

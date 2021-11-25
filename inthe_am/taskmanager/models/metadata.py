@@ -12,7 +12,10 @@ class Metadata:
     def _init(self):
         self.config = {
             "files": {},
-            "taskrc": os.path.join(self.store.local_path, ".taskrc",),
+            "taskrc": os.path.join(
+                self.store.local_path,
+                ".taskrc",
+            ),
         }
         self._write()
         return self.config

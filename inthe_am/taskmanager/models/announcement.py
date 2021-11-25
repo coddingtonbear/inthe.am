@@ -12,9 +12,18 @@ class Announcement(models.Model):
     CATEGORY_INFO = "notice"
     CATEGORY_WARNING = "warning"
     CATEGORIES = (
-        (CATEGORY_ERROR, "Error",),
-        (CATEGORY_INFO, "Info",),
-        (CATEGORY_WARNING, "Warning",),
+        (
+            CATEGORY_ERROR,
+            "Error",
+        ),
+        (
+            CATEGORY_INFO,
+            "Info",
+        ),
+        (
+            CATEGORY_WARNING,
+            "Warning",
+        ),
     )
 
     title = models.CharField(max_length=200)

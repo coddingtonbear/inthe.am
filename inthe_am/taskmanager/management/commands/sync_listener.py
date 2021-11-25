@@ -82,7 +82,8 @@ class Command(BaseCommand):
                     if self.operation_requires_sync(operation):
                         repo = self.get_taskstore_for_operation(operation)
                         logger.info(
-                            "Queueing sync for %s", repo,
+                            "Queueing sync for %s",
+                            repo,
                         )
                         repo.sync()
                 except InterfaceError:

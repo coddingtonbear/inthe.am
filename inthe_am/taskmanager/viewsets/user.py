@@ -84,14 +84,32 @@ def get_published_properties(user, store, meta):
         "api_key": store.api_key.key,
         "tos_up_to_date": meta.tos_up_to_date,
         "privacy_policy_up_to_date": meta.privacy_policy_up_to_date,
-        "feed_url": reverse("feed", kwargs={"uuid": store.secret_id,}),
+        "feed_url": reverse(
+            "feed",
+            kwargs={
+                "uuid": store.secret_id,
+            },
+        ),
         "ical_waiting_url": reverse(
-            "ical_feed", kwargs={"variant": "waiting", "secret_id": store.secret_id,}
+            "ical_feed",
+            kwargs={
+                "variant": "waiting",
+                "secret_id": store.secret_id,
+            },
         ),
         "ical_due_url": reverse(
-            "ical_feed", kwargs={"variant": "due", "secret_id": store.secret_id,}
+            "ical_feed",
+            kwargs={
+                "variant": "due",
+                "secret_id": store.secret_id,
+            },
         ),
-        "sms_url": reverse("incoming_sms", kwargs={"username": user.username,}),
+        "sms_url": reverse(
+            "incoming_sms",
+            kwargs={
+                "username": user.username,
+            },
+        ),
         "colorscheme": meta.colorscheme,
         "repository_head": store.repository.head().decode("utf-8"),
         "sync_enabled": store.sync_enabled,
@@ -233,7 +251,8 @@ class UserViewSet(viewsets.ViewSet):
     def my_certificate(self, request):
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
-            ts.taskrc.get("taskd.certificate"), content_type="application/x-pem-file",
+            ts.taskrc.get("taskd.certificate"),
+            content_type="application/x-pem-file",
         )
 
     @action(
@@ -245,7 +264,8 @@ class UserViewSet(viewsets.ViewSet):
     def my_key(self, request):
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
-            ts.taskrc.get("taskd.key"), content_type="application/x-pem-file",
+            ts.taskrc.get("taskd.key"),
+            content_type="application/x-pem-file",
         )
 
     @action(
@@ -257,11 +277,19 @@ class UserViewSet(viewsets.ViewSet):
     def ca_certificate(self, request):
         ts = models.TaskStore.get_for_user(request.user)
         return self._send_file(
-            ts.taskrc.get("taskd.ca"), content_type="application/x-pem-file",
+            ts.taskrc.get("taskd.ca"),
+            content_type="application/x-pem-file",
         )
 
     @git_managed("Update custom taskrc configuration", gc=False)
-    @action(detail=False, methods=["get", "put",], permission_classes=[IsAuthenticated])
+    @action(
+        detail=False,
+        methods=[
+            "get",
+            "put",
+        ],
+        permission_classes=[IsAuthenticated],
+    )
     def taskrc(self, request, store=None):
         if request.method == "GET":
             store = models.TaskStore.get_for_user(request.user)
@@ -372,7 +400,9 @@ class UserViewSet(viewsets.ViewSet):
         return Response()
 
     @action(
-        detail=False, methods=["put", "get"], permission_classes=[IsAuthenticated],
+        detail=False,
+        methods=["put", "get"],
+        permission_classes=[IsAuthenticated],
     )
     def colorscheme(self, request):
         meta = models.UserMetadata.get_for_user(request.user)
@@ -382,7 +412,10 @@ class UserViewSet(viewsets.ViewSet):
 
             return Response()
         elif request.method == "GET":
-            return Response(meta, content_type="text/plain",)
+            return Response(
+                meta,
+                content_type="text/plain",
+            )
 
     @requires_task_store
     @action(

@@ -57,7 +57,10 @@ urlpatterns = [
         name="incoming_trello",
     ),
     url("^api/v[1-2]/task/feed/(?P<uuid>[^/]+)/", TaskFeed(), name="feed"),
-    url("^api/.*", unmatched,),
+    url(
+        "^api/.*",
+        unmatched,
+    ),
     url("^", serve_ui, name="serve_ui"),
 ]
 
@@ -65,5 +68,6 @@ if settings.DEBUG:
     # Only enabled for local development as a way to
     # get around using google's authentication
     urlpatterns.insert(
-        0, url("^debug-login/?", debug_login, name="debug_login"),
+        0,
+        url("^debug-login/?", debug_login, name="debug_login"),
     )

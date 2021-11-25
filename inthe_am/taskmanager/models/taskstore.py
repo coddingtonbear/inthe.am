@@ -50,9 +50,18 @@ class TaskStore(models.Model):
     REPLY_ERROR = 5
     REPLY_NEVER = 0
     REPLY_CHOICES = (
-        (REPLY_ALL, "Reply to all messages",),
-        (REPLY_ERROR, "Reply only to error messages",),
-        (REPLY_NEVER, "Do not reply to any incoming text messages",),
+        (
+            REPLY_ALL,
+            "Reply to all messages",
+        ),
+        (
+            REPLY_ERROR,
+            "Reply only to error messages",
+        ),
+        (
+            REPLY_NEVER,
+            "Do not reply to any incoming text messages",
+        ),
     )
 
     DEFAULT_FILENAMES = {
@@ -68,7 +77,10 @@ class TaskStore(models.Model):
         blank=True,
         on_delete=models.CASCADE,
     )
-    local_path = models.CharField(max_length=255, blank=True,)
+    local_path = models.CharField(
+        max_length=255,
+        blank=True,
+    )
 
     configured = models.BooleanField(default=False)
     secret_id = models.CharField(blank=True, max_length=36)
@@ -132,7 +144,8 @@ class TaskStore(models.Model):
     def taskd_account(self) -> TaskdAccountManager:
         if not getattr(self, "_taskd_account", None):
             self._taskd_account = TaskdAccountManager(
-                settings.TASKD_ORG, self.username,
+                settings.TASKD_ORG,
+                self.username,
             )
 
         return self._taskd_account
@@ -168,7 +181,9 @@ class TaskStore(models.Model):
 
     @classmethod
     def get_for_user(cls, user):
-        store, created = TaskStore.objects.get_or_create(user=user,)
+        store, created = TaskStore.objects.get_or_create(
+            user=user,
+        )
         if created:
             logger.info(f"Created new taskstore for {user}")
         upgrade_taskstore(store)
@@ -192,7 +207,10 @@ class TaskStore(models.Model):
             self._blocks = self.client.filter_tasks(
                 {
                     "depends.not": "",
-                    "or": [("status", "pending"), ("status", "waiting"),],
+                    "or": [
+                        ("status", "pending"),
+                        ("status", "waiting"),
+                    ],
                 }
             )
 
@@ -219,7 +237,8 @@ class TaskStore(models.Model):
                     )
         else:
             logger.error(
-                "Unknown client message type %s", name,
+                "Unknown client message type %s",
+                name,
             )
 
     @property
@@ -233,7 +252,9 @@ class TaskStore(models.Model):
 
         try:
             return TrelloObject.objects.get(
-                store=self, type=TrelloObject.BOARD, deleted=False,
+                store=self,
+                type=TrelloObject.BOARD,
+                deleted=False,
             )
         except TrelloObject.DoesNotExist:
             return None
@@ -272,7 +293,10 @@ class TaskStore(models.Model):
         return False, f"Setting '{key}' could not be applied."
 
     def apply_extras(self):
-        default_extras_path = os.path.join(self.local_path, ".taskrc_extras",)
+        default_extras_path = os.path.join(
+            self.local_path,
+            ".taskrc_extras",
+        )
         extras_path = self.metadata.get("taskrc_extras", default_extras_path)
         self.metadata["taskrc_extras"] = default_extras_path
 
@@ -311,7 +335,10 @@ class TaskStore(models.Model):
     def save(self, *args, **kwargs):
         # Create the user directory
         if not self.repository_is_valid():
-            user_tasks = os.path.join(settings.TASK_STORAGE_PATH, self.username,)
+            user_tasks = os.path.join(
+                settings.TASK_STORAGE_PATH,
+                self.username,
+            )
             if not os.path.isdir(user_tasks):
                 os.mkdir(user_tasks)
             self.local_path = os.path.join(user_tasks, str(uuid.uuid4()))
@@ -337,7 +364,8 @@ class TaskStore(models.Model):
             self.clear_local_task_list()
         except Exception as e:
             logger.exception(
-                "Error encountered while deleting local task list: %s", e,
+                "Error encountered while deleting local task list: %s",
+                e,
             )
             if raise_for_failure:
                 raise
@@ -346,7 +374,8 @@ class TaskStore(models.Model):
             self.clear_taskserver_data()
         except Exception as e:
             logger.exception(
-                "Error encountered while deleting taskserver task list: %s", e,
+                "Error encountered while deleting taskserver task list: %s",
+                e,
             )
             if raise_for_failure:
                 raise
@@ -357,7 +386,8 @@ class TaskStore(models.Model):
             self.taskd_account.delete()
         except Exception as e:
             logger.exception(
-                "Error encountered while deleting taskserver account: %s", e,
+                "Error encountered while deleting taskserver account: %s",
+                e,
             )
             if raise_for_failure:
                 raise
@@ -439,7 +469,10 @@ class TaskStore(models.Model):
                 "rollback": rollback,
                 "checkpoint_id": checkpoint_id,
                 "data": json.dumps(
-                    data, indent=4, sort_keys=True, cls=OneWaySafeJSONEncoder,
+                    data,
+                    indent=4,
+                    sort_keys=True,
+                    cls=OneWaySafeJSONEncoder,
                 ),
             },
         )
@@ -515,7 +548,9 @@ class TaskStore(models.Model):
 
         deduplicate_tasks.apply_async(
             args=(self.pk,),
-            kwargs={"debounce_id": defined_debounce_id,},
+            kwargs={
+                "debounce_id": defined_debounce_id,
+            },
             countdown=10,  # To group multiple events together
         )
 
@@ -601,7 +636,10 @@ class TaskStore(models.Model):
         lock_name = get_lock_name_for_store(self)
 
         with redis_lock(
-            lock_name, message="Squash", lock_timeout=60 * 60, wait_timeout=60,
+            lock_name,
+            message="Squash",
+            lock_timeout=60 * 60,
+            wait_timeout=60,
         ):
             if self.trello_local_head:
                 try:
@@ -621,11 +659,17 @@ class TaskStore(models.Model):
                     raise ValueError("Trello head out-of-date; aborting!")
 
             head_commit, _ = self._git_command(
-                "rev-list", "--max-parents=0", "HEAD",
+                "rev-list",
+                "--max-parents=0",
+                "HEAD",
             ).communicate()
             head_commit = head_commit.decode("utf-8").strip()
 
-            self._git_command("reset", "--soft", head_commit,).communicate()
+            self._git_command(
+                "reset",
+                "--soft",
+                head_commit,
+            ).communicate()
 
             self.create_git_checkpoint("Repository squashed.")
 
@@ -759,7 +803,12 @@ class TaskStore(models.Model):
         self.generate_new_certificate()
         self.clear_taskserver_data()
         try:
-            os.unlink(os.path.join(self.local_path, "backlog.data",))
+            os.unlink(
+                os.path.join(
+                    self.local_path,
+                    "backlog.data",
+                )
+            )
         except OSError:
             pass
         self.sync_permitted = True
@@ -780,7 +829,8 @@ class TaskStore(models.Model):
             self.configured = True
 
             logger.warning(
-                "%s just autoconfigured an account!", self.username,
+                "%s just autoconfigured an account!",
+                self.username,
             )
 
             # Remove any cached taskrc/taskw clients
@@ -795,13 +845,17 @@ class TaskStore(models.Model):
 
             # Create and write a new private key
             private_key_proc = subprocess.Popen(
-                ["certtool", "--generate-privkey",],
+                [
+                    "certtool",
+                    "--generate-privkey",
+                ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
             private_key = private_key_proc.communicate()[0].decode("utf-8")
             private_key_filename = os.path.join(
-                self.local_path, self.DEFAULT_FILENAMES["key"],
+                self.local_path,
+                self.DEFAULT_FILENAMES["key"],
             )
             with open(private_key_filename, "w") as out:
                 out.write(private_key)
@@ -812,7 +866,10 @@ class TaskStore(models.Model):
             cert_data = self.generate_new_certificate()
             cert_filename = self.taskrc.get(
                 "taskd.certificate",
-                os.path.join(self.local_path, self.DEFAULT_FILENAMES["certificate"],),
+                os.path.join(
+                    self.local_path,
+                    self.DEFAULT_FILENAMES["certificate"],
+                ),
             )
 
             with open(cert_filename, "w") as out:
@@ -837,7 +894,8 @@ class TaskStore(models.Model):
 
     def generate_new_certificate(self) -> str:
         private_key_filename = os.path.join(
-            self.local_path, self.DEFAULT_FILENAMES["key"],
+            self.local_path,
+            self.DEFAULT_FILENAMES["key"],
         )
         with tempfile.NamedTemporaryFile("w+") as signing_template:
             signing_template.write(self.taskd_account.get_signing_template())

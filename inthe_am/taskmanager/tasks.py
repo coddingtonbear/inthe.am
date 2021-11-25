@@ -31,7 +31,10 @@ def project_setup_logging(loglevel, logfile, format, colorize, **kwargs):
 
 
 @shared_task(
-    bind=True, time_limit=120, default_retry_delay=120, max_retries=5,
+    bind=True,
+    time_limit=120,
+    default_retry_delay=120,
+    max_retries=5,
 )
 def sync_repository(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore
@@ -53,7 +56,9 @@ def sync_repository(self, store_id, debounce_id=None, **kwargs):
         raise self.retry(exc=e)
 
 
-@shared_task(bind=True,)
+@shared_task(
+    bind=True,
+)
 def process_email_message(self, message_id):
     from .models import TaskAttachment, TaskStore
 
@@ -194,7 +199,8 @@ def process_email_message(self, message_id):
                     size=attachment.file.size,
                 )
                 document.document.save(
-                    record.get_filename(), attachment.file,
+                    record.get_filename(),
+                    attachment.file,
                 )
                 attachment_urls.append(document.document.url)
                 store.client.task_annotate(
@@ -229,7 +235,9 @@ def process_email_message(self, message_id):
 
 
 @shared_task(
-    bind=True, default_retry_delay=60, max_retries=1,
+    bind=True,
+    default_retry_delay=60,
+    max_retries=1,
 )
 def reset_trello(self, store_id, **kwargs):
     from .models import TaskStore, TrelloObject
@@ -247,7 +255,10 @@ def reset_trello(self, store_id, **kwargs):
         for task in store.client.filter_tasks(
             {
                 "intheamtrelloid.any": None,
-                "or": [("status", "pending"), ("status", "waiting"),],
+                "or": [
+                    ("status", "pending"),
+                    ("status", "waiting"),
+                ],
             }
         ):
             task["intheamtrelloid"] = ""
@@ -261,7 +272,9 @@ def reset_trello(self, store_id, **kwargs):
 
 
 @shared_task(
-    bind=True, default_retry_delay=60, max_retries=10,
+    bind=True,
+    default_retry_delay=60,
+    max_retries=10,
 )
 def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore, TrelloObject
@@ -294,7 +307,9 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
         logger.warning(
             "'sync_trello_tasks' task received, but no Trello auth token "
             "is available!",
-            extra={"stack": True,},
+            extra={
+                "stack": True,
+            },
         )
         return
 
@@ -316,7 +331,10 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
             }
         ):
             try:
-                tob = TrelloObject.objects.get(id=task["intheamtrelloid"], store=store,)
+                tob = TrelloObject.objects.get(
+                    id=task["intheamtrelloid"],
+                    store=store,
+                )
                 tob.delete()
             except TrelloObject.DoesNotExist:
                 pass
@@ -324,7 +342,8 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
     open_trello_cards = {
         c["id"]: c
         for c in store.trello_board.client.get_card_filter(
-            "open", store.trello_board.id,
+            "open",
+            store.trello_board.id,
         )
     }
     to_reconcile = []
@@ -362,7 +381,8 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
 
                 try:
                     tob = TrelloObject.objects.get(
-                        id=task["intheamtrelloid"], store=store,
+                        id=task["intheamtrelloid"],
+                        store=store,
                     )
                     tob.meta = res
                     tob.save()
@@ -374,20 +394,27 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
                     )
 
     with git_checkpoint(
-        store, "Reconcile all known trello tasks.", sync=False,
+        store,
+        "Reconcile all known trello tasks.",
+        sync=False,
     ):
         for task in to_reconcile:
             task.reconcile()
 
     with git_checkpoint(
-        store, "Add local tasks to match tasks created in Trello", sync=False,
+        store,
+        "Add local tasks to match tasks created in Trello",
+        sync=False,
     ):
         for task in open_trello_cards.values():
             name = task.get("name")
             id = task.get("id")
 
             tob = TrelloObject.objects.create(
-                id=id, store=store, type=TrelloObject.CARD, meta=task,
+                id=id,
+                store=store,
+                type=TrelloObject.CARD,
+                meta=task,
             )
             tob.subscribe()
             data = {
@@ -410,7 +437,9 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
 
 
 @shared_task(
-    bind=True, default_retry_delay=30, max_retries=10,
+    bind=True,
+    default_retry_delay=30,
+    max_retries=10,
 )
 def process_trello_action(self, store_id, data, **kwargs):
     from .models import TaskStore, TrelloObject, TrelloObjectAction
@@ -428,7 +457,9 @@ def process_trello_action(self, store_id, data, **kwargs):
 
 
 @shared_task(
-    bind=True, default_retry_delay=30, max_retries=10,
+    bind=True,
+    default_retry_delay=30,
+    max_retries=10,
 )
 def update_trello_task(self, object_id, **kwargs):
     from inthe_am.taskmanager.models import TrelloObject
@@ -456,7 +487,9 @@ def update_trello_task(self, object_id, **kwargs):
 
 
 @shared_task(
-    bind=True, default_retry_delay=30, max_retries=10,
+    bind=True,
+    default_retry_delay=30,
+    max_retries=10,
 )
 def update_trello(self, store_id, debounce_id=None, current_head=None, **kwargs):
     from .models import TaskStore, TrelloObject
@@ -488,13 +521,19 @@ def update_trello(self, store_id, debounce_id=None, current_head=None, **kwargs)
     starting_head = store.trello_local_head
     changed_ids = store.get_changed_task_ids(ending_head, start=starting_head)
     with git_checkpoint(
-        store, "Create trello records for changed tasks.", data=changed_ids,
+        store,
+        "Create trello records for changed tasks.",
+        data=changed_ids,
     ):
         todo_column = store.trello_board.get_list_by_type(TrelloObject.TO_DO)
 
         for task_id in changed_ids:
             try:
-                task = store.client.filter_tasks({"uuid": task_id,})[0]
+                task = store.client.filter_tasks(
+                    {
+                        "uuid": task_id,
+                    }
+                )[0]
             except IndexError:
                 logger.exception(
                     "Attempted to update task object for {trello_id}, "
@@ -517,7 +556,9 @@ def update_trello(self, store_id, debounce_id=None, current_head=None, **kwargs)
                         " %s is not tracked.  This should not happen.",
                         task.get("uuid"),
                         task.get("intheamtrelloid"),
-                        extra={"stack": True,},
+                        extra={
+                            "stack": True,
+                        },
                     )
                     continue
 
@@ -533,13 +574,19 @@ def update_trello(self, store_id, debounce_id=None, current_head=None, **kwargs)
                     idList=todo_column.id,
                 )
                 result = obj.client_request(
-                    "PUT", f"/1/cards/{obj.id}/pos", data={"value": "top"},
+                    "PUT",
+                    f"/1/cards/{obj.id}/pos",
+                    data={"value": "top"},
                 )
                 if not (200 <= result.status_code < 300):
                     logger.warning(
                         "Unable to set card position: %s",
                         result.content,
-                        extra={"data": {"result": result.json(),}},
+                        extra={
+                            "data": {
+                                "result": result.json(),
+                            }
+                        },
                     )
                 task["intheamtrelloid"] = obj.pk
                 task["intheamtrelloboardid"] = store.trello_board.pk
@@ -573,7 +620,9 @@ def update_trello(self, store_id, debounce_id=None, current_head=None, **kwargs)
 
 
 @shared_task(
-    bind=True, default_retry_delay=30, max_retries=10,
+    bind=True,
+    default_retry_delay=30,
+    max_retries=10,
 )
 def deduplicate_tasks(self, store_id, debounce_id=None, **kwargs):
     from .models import TaskStore
@@ -620,7 +669,9 @@ def deduplicate_tasks(self, store_id, debounce_id=None, **kwargs):
 
 
 @shared_task(
-    bind=True, default_retry_delay=15, max_retries=10,
+    bind=True,
+    default_retry_delay=15,
+    max_retries=10,
 )
 def send_rest_hook_message(self, rest_hook_id, task_id, **kwargs):
     from . import models
@@ -633,7 +684,9 @@ def send_rest_hook_message(self, rest_hook_id, task_id, **kwargs):
         data=JSONRenderer().render(
             TaskSerializer(task_data, store=rest_hook.task_store).data
         ),
-        headers={"Content-type": "application/json",},
+        headers={
+            "Content-type": "application/json",
+        },
     )
     if result.status_code == 410:
         rest_hook.delete()

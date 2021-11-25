@@ -45,8 +45,13 @@ def get_browser(engine, time_zone):
         engine_kwargs.update(
             {
                 "build": os.environ.get("TRAVIS_BUILD_NUMBER", "dev"),
-                "tags": ["CI",],
-                "tunnelIdentifier": os.environ.get("TRAVIS_JOB_NUMBER", "0.0",),
+                "tags": [
+                    "CI",
+                ],
+                "tunnelIdentifier": os.environ.get(
+                    "TRAVIS_JOB_NUMBER",
+                    "0.0",
+                ),
                 "browser": "chrome",
                 "platform": "Windows 10",
                 "version": "60.0",

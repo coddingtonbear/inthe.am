@@ -139,7 +139,8 @@ def logged_in_and_viewing_task(context, field, value):
         And a task with the {field} "{value}" exists
         And the user goes to the task's URL
     """.format(
-            field=field, value=value,
+            field=field,
+            value=value,
         )
     )
 
@@ -297,7 +298,9 @@ def task_whatever_is_marked_as_whatnot(context, name, fieldname, value):
     assert (
         task[fieldname] == value
     ), "Task {} '{}' does not match expectation '{}'".format(
-        fieldname, task[fieldname], value,
+        fieldname,
+        task[fieldname],
+        value,
     )
 
 

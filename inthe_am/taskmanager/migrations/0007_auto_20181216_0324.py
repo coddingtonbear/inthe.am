@@ -8,8 +8,18 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="bugwarriorconfig", name="store",),
-        migrations.RemoveField(model_name="bugwarriorconfigrunlog", name="config",),
-        migrations.DeleteModel(name="BugwarriorConfig",),
-        migrations.DeleteModel(name="BugwarriorConfigRunLog",),
+        migrations.RemoveField(
+            model_name="bugwarriorconfig",
+            name="store",
+        ),
+        migrations.RemoveField(
+            model_name="bugwarriorconfigrunlog",
+            name="config",
+        ),
+        migrations.DeleteModel(
+            name="BugwarriorConfig",
+        ),
+        migrations.DeleteModel(
+            name="BugwarriorConfigRunLog",
+        ),
     ]

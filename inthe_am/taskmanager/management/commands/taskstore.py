@@ -74,10 +74,14 @@ class Command(BaseCommand):
         )
         parser.add_argument("username", nargs="?", type=str)
         parser.add_argument(
-            "--minutes", type=int, default=5,
+            "--minutes",
+            type=int,
+            default=5,
         )
         parser.add_argument(
-            "--force", action="store_true", default=False,
+            "--force",
+            action="store_true",
+            default=False,
         )
         parser.add_argument("--repack-size", type=int, default=int(1e7))
         parser.add_argument("--squash-size", type=int, default=int(5e7))
@@ -149,7 +153,12 @@ class Command(BaseCommand):
                         user_key = store.taskrc["taskd.credentials"].split("/")[2]
 
                         store.taskd_account.make_user_request(
-                            "PUT", data=json.dumps({"user_key": user_key,})
+                            "PUT",
+                            data=json.dumps(
+                                {
+                                    "user_key": user_key,
+                                }
+                            ),
                         )
                         print("> ACCOUNT CREATION OK")
                     except Exception:

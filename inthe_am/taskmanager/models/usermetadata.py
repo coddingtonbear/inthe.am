@@ -4,14 +4,21 @@ from django.db import models
 
 
 class UserMetadata(models.Model):
-    user = models.OneToOneField(
-        User, related_name="metadata", on_delete=models.CASCADE
-    )
+    user = models.OneToOneField(User, related_name="metadata", on_delete=models.CASCADE)
     tos_version = models.IntegerField(default=0)
-    tos_accepted = models.DateTimeField(default=None, null=True,)
+    tos_accepted = models.DateTimeField(
+        default=None,
+        null=True,
+    )
     privacy_policy_version = models.IntegerField(default=0)
-    privacy_policy_accepted = models.DateTimeField(default=None, null=True,)
-    colorscheme = models.CharField(default="dark-yellow-green.theme", max_length=255,)
+    privacy_policy_accepted = models.DateTimeField(
+        default=None,
+        null=True,
+    )
+    colorscheme = models.CharField(
+        default="dark-yellow-green.theme",
+        max_length=255,
+    )
 
     @property
     def tos_up_to_date(self):

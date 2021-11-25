@@ -55,7 +55,9 @@ def get_authorize_url(request, api_key, user):
 
     client = get_lock_redis()
     client.setex(
-        f"{user.username}.trello_auth", 600, json.dumps(request_token),
+        f"{user.username}.trello_auth",
+        600,
+        json.dumps(request_token),
     )
 
     params = {
@@ -95,7 +97,11 @@ def subscribe_to_updates(object_id, user_token, callback_url):
 
     url = "{}?{}".format(
         SUBSCRIPTION_URL.format(user_token=user_token),
-        urlencode({"key": settings.TRELLO_API_KEY,}),
+        urlencode(
+            {
+                "key": settings.TRELLO_API_KEY,
+            }
+        ),
     )
     data = {
         "description": f"Send task updates for {object_id} to Inthe.AM",

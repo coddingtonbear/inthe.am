@@ -33,7 +33,20 @@ class TrelloObject(models.Model):
     BOARD = "board"
     LIST = "list"
 
-    TYPE_CHOICES = ((CARD, "Card",), (BOARD, "Board",), (LIST, "List",))
+    TYPE_CHOICES = (
+        (
+            CARD,
+            "Card",
+        ),
+        (
+            BOARD,
+            "Board",
+        ),
+        (
+            LIST,
+            "List",
+        ),
+    )
 
     DOING = "Doing"
     TO_DO = "To Do"
@@ -42,7 +55,9 @@ class TrelloObject(models.Model):
 
     id = models.CharField(primary_key=True, max_length=100)
     store = models.ForeignKey(
-        TaskStore, related_name="trello_objects", on_delete=models.CASCADE,
+        TaskStore,
+        related_name="trello_objects",
+        on_delete=models.CASCADE,
     )
     parent = models.ForeignKey(
         "self",
@@ -63,7 +78,10 @@ class TrelloObject(models.Model):
     @classmethod
     def get_client_for_type(cls, type_name, store):
         cls = getattr(trello, type_name.title() + "s")
-        return cls(settings.TRELLO_API_KEY, store.trello_auth_token,)
+        return cls(
+            settings.TRELLO_API_KEY,
+            store.trello_auth_token,
+        )
 
     def client_request(self, method, url, data=None):
         client = self.client
@@ -159,7 +177,8 @@ class TrelloObject(models.Model):
         # In case a recurring task was stored, clear that out
         if task["status"] == "recurring":
             self.add_log_data(
-                "Matching task is recurring; aborting task reconciliation.", data=task,
+                "Matching task is recurring; aborting task reconciliation.",
+                data=task,
             )
             return
 
@@ -249,7 +268,11 @@ class TrelloObject(models.Model):
         }
         if task.get("intheamtrellodescription"):
             kwargs["desc"] = task["intheamtrellodescription"]
-        if task["status"] in ("waiting", "completed", "deleted",):
+        if task["status"] in (
+            "waiting",
+            "completed",
+            "deleted",
+        ):
             return self.delete()
 
         # Set list if differs from current list
@@ -297,7 +320,8 @@ class TrelloObject(models.Model):
             label_map = {
                 slugify(label_data["name"]): label_data["id"]
                 for label_data in board.client_request(
-                    "GET", f"/1/boards/{board.pk}/labels",
+                    "GET",
+                    f"/1/boards/{board.pk}/labels",
                 ).json()
                 if label_data["name"]
             }
@@ -329,11 +353,18 @@ class TrelloObject(models.Model):
         meta = client.new(**kwargs)
 
         instance = cls.objects.create(
-            id=meta["id"], store=store, parent=parent, type=type, meta=meta,
+            id=meta["id"],
+            store=store,
+            parent=parent,
+            type=type,
+            meta=meta,
         )
         instance.add_log_data(
             "Instance created",
-            data={"meta": meta, "head": store.repository.head().decode("utf-8"),},
+            data={
+                "meta": meta,
+                "head": store.repository.head().decode("utf-8"),
+            },
         )
         instance.subscribe()
         return instance
@@ -341,7 +372,10 @@ class TrelloObject(models.Model):
     @property
     def client(self):
         if not hasattr(self, "_client"):
-            self._client = self.get_client_for_type(self.type, self.store,)
+            self._client = self.get_client_for_type(
+                self.type,
+                self.store,
+            )
 
         return self._client
 
@@ -350,7 +384,12 @@ class TrelloObject(models.Model):
             subscribe_to_updates(
                 self.id,
                 self.store.trello_auth_token,
-                reverse("incoming_trello", kwargs={"secret_id": self.store.secret_id,}),
+                reverse(
+                    "incoming_trello",
+                    kwargs={
+                        "secret_id": self.store.secret_id,
+                    },
+                ),
             )
             self.add_log_data("Subscribing to updates.")
         except RuntimeError as e:

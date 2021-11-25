@@ -36,7 +36,13 @@ def get_announcements_subscription(store, **kwargs):
 
 
 def get_debounce_name_for_store(store, subtype=None):
-    return ".".join([store.username, subtype if subtype else "sync", "debounce",])
+    return ".".join(
+        [
+            store.username,
+            subtype if subtype else "sync",
+            "debounce",
+        ]
+    )
 
 
 def get_lock_name_for_store(store):
@@ -74,7 +80,8 @@ def redis_lock(
             if lock_expiry > time.time():
                 client.delete(name)
                 logger.debug(
-                    "Lock %s released", name,
+                    "Lock %s released",
+                    name,
                 )
             else:
                 logger.warning(
@@ -97,7 +104,8 @@ def redis_lock(
         getset_timestamp = client.getset(name, str(lock_expiry))
         if getset_timestamp == original_timestamp:
             logger.debug(
-                "Lock %s successfully stolen.", name,
+                "Lock %s successfully stolen.",
+                name,
             )
             try:
                 yield
@@ -110,7 +118,8 @@ def redis_lock(
             if lock_expiry > time.time():
                 client.delete(name)
                 logger.debug(
-                    "Lock %s (stolen) released", name,
+                    "Lock %s (stolen) released",
+                    name,
                 )
             else:
                 logger.warning(
@@ -124,7 +133,8 @@ def redis_lock(
             # Somebody else got it first, let's wait a second
             # and try again.
             logger.debug(
-                "Lock %s was not successfully stolen.", name,
+                "Lock %s was not successfully stolen.",
+                name,
             )
             time.sleep(lock_check_interval)
             continue
@@ -134,7 +144,9 @@ def redis_lock(
         name,
         message,
         time.time() - started,
-        extra={"stack": True,},
+        extra={
+            "stack": True,
+        },
         exc_info=True,
     )
     raise LockTimeout(f"Unable to acquire lock {name}")

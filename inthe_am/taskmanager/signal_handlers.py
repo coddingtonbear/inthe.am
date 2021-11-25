@@ -47,13 +47,16 @@ def handle_incoming_forwardable_message(sender, message, **kwargs):
                     headers={"IntheAM-Message-Id": message.pk},
                 )
                 email.attach_alternative(
-                    message.html, "text/html",
+                    message.html,
+                    "text/html",
                 )
                 for attachment in message.attachments.all():
                     email.attach(
                         attachment.get_filename(),
                         attachment.document.read(),
-                        mimetypes.guess_type(attachment.get_filename(),)[0],
+                        mimetypes.guess_type(
+                            attachment.get_filename(),
+                        )[0],
                     )
                 email.send()
             except Exception:

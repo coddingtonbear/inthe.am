@@ -128,7 +128,8 @@ class TaskViewSet(viewsets.ViewSet):
         task = serializer.create(store, serializer.validated_data)
         serializer = TaskSerializer(task, store=store)
         store.log_message(
-            "New task created: %s.", serializer.data,
+            "New task created: %s.",
+            serializer.data,
         )
         return Response(serializer.data)
 
@@ -155,7 +156,9 @@ class TaskViewSet(viewsets.ViewSet):
 
         task, changes = serializer.update(store, pk, serializer.validated_data)
         store.log_message(
-            "Task %s updated: %s.", pk, changes,
+            "Task %s updated: %s.",
+            pk,
+            changes,
         )
 
         serializer = TaskSerializer(task, store=store)
@@ -167,7 +170,8 @@ class TaskViewSet(viewsets.ViewSet):
         try:
             store.client.task_done(uuid=pk)
             store.log_message(
-                "Task %s completed.", pk,
+                "Task %s completed.",
+                pk,
             )
         except ValueError:
             raise NotFound()
@@ -230,7 +234,12 @@ class TaskViewSet(viewsets.ViewSet):
             new_head,
         )
 
-        return Response({"old_head": old_head, "new_head": new_head,})
+        return Response(
+            {
+                "old_head": old_head,
+                "new_head": new_head,
+            }
+        )
 
     @requires_task_store
     @action(detail=False, methods=["post"])
@@ -254,7 +263,9 @@ class TaskViewSet(viewsets.ViewSet):
         return Response()
 
     @action(
-        detail=False, methods=["get"], permission_classes=[AllowAny],
+        detail=False,
+        methods=["get"],
+        permission_classes=[AllowAny],
     )
     def trello(self, request, store=None):
         api_key = request.GET.get("api_key", "")
@@ -280,7 +291,9 @@ class TaskViewSet(viewsets.ViewSet):
         store = models.TaskStore.get_for_user(token.user)
 
         client = get_lock_redis()
-        raw_value = client.get(f"{token.user.username}.trello_auth",)
+        raw_value = client.get(
+            f"{token.user.username}.trello_auth",
+        )
         if not raw_value:
             raise PermissionDenied(
                 "Arrived at Trello authorization URL without having "
@@ -389,7 +402,10 @@ def ical_feed(request, variant, secret_id):
 
         calendar.add_component(event)
 
-    return HttpResponse(calendar.to_ical(), content_type="text/calendar",)
+    return HttpResponse(
+        calendar.to_ical(),
+        content_type="text/calendar",
+    )
 
 
 @csrf_exempt
@@ -405,7 +421,12 @@ def incoming_trello(request, secret_id):
         )
 
     return HttpResponse(
-        json.dumps({"message": "OK",}), content_type="application/json",
+        json.dumps(
+            {
+                "message": "OK",
+            }
+        ),
+        content_type="application/json",
     )
 
 

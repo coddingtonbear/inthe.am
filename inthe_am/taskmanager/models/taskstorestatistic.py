@@ -4,10 +4,17 @@ from django.db import models
 class TaskStoreStatistic(models.Model):
     MEASURE_SIZE = "size"
 
-    MEASURE_CHOICES = ((MEASURE_SIZE, "Repository Size",),)
+    MEASURE_CHOICES = (
+        (
+            MEASURE_SIZE,
+            "Repository Size",
+        ),
+    )
 
     store = models.ForeignKey(
-        "TaskStore", related_name="statistics", on_delete=models.CASCADE,
+        "TaskStore",
+        related_name="statistics",
+        on_delete=models.CASCADE,
     )
 
     measure = models.CharField(choices=MEASURE_CHOICES, max_length=50)

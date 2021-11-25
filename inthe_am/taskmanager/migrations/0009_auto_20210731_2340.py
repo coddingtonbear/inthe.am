@@ -12,7 +12,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="taskstoreactivity", name="store",),
+        migrations.RemoveField(
+            model_name="taskstoreactivity",
+            name="store",
+        ),
         migrations.AlterField(
             model_name="usermetadata",
             name="user",
@@ -22,5 +25,7 @@ class Migration(migrations.Migration):
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
-        migrations.DeleteModel(name="TaskStoreActivity",),
+        migrations.DeleteModel(
+            name="TaskStoreActivity",
+        ),
     ]

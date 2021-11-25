@@ -108,7 +108,7 @@ class TaskwarriorClient(TaskWarriorShellout):
             pass
 
     def _execute(self, *args, **kwargs):
-        """ Execute a given taskwarrior command with arguments
+        """Execute a given taskwarrior command with arguments
 
         Returns a 2-tuple of stdout and stderr (respectively).
 
@@ -123,7 +123,10 @@ class TaskwarriorClient(TaskWarriorShellout):
         logger = self._get_logger(args)
 
         command = (
-            ["task", f"rc:{self.config_filename}",]
+            [
+                "task",
+                f"rc:{self.config_filename}",
+            ]
             + config_overrides
             + [str(arg) for arg in args]
         )
@@ -136,7 +139,9 @@ class TaskwarriorClient(TaskWarriorShellout):
         started = datetime.datetime.now()
 
         proc = subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
 
         _stdout, _stderr = proc.communicate()
@@ -184,7 +189,8 @@ class TaskwarriorClient(TaskWarriorShellout):
             jsonout.flush()
 
             self._execute(
-                "import", jsonout.name,
+                "import",
+                jsonout.name,
             )
 
             _, task = self.get_task(uuid=value["uuid"])
@@ -215,7 +221,8 @@ class TaskwarriorClient(TaskWarriorShellout):
                     "An error was encountered while parsing task "
                     "{uuid}; it was omitted from results as a result: "
                     "{message}.".format(
-                        uuid=str(obj.get("uuid", "??")), message=str(e),
+                        uuid=str(obj.get("uuid", "??")),
+                        message=str(e),
                     )
                 )
 

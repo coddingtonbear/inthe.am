@@ -17,9 +17,15 @@ class TaskSerializer(serializers.Serializer):
     wait = serializers.DateTimeField(required=False)
     until = serializers.DateTimeField(required=False)
     scheduled = serializers.DateTimeField(required=False)
-    depends = serializers.ListField(child=serializers.UUIDField(), required=False,)
+    depends = serializers.ListField(
+        child=serializers.UUIDField(),
+        required=False,
+    )
     blocks = serializers.SerializerMethodField()
-    annotations = serializers.ListField(child=serializers.CharField(), required=False,)
+    annotations = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+    )
     tags = serializers.ListField(child=serializers.CharField(), required=False)
     imask = serializers.CharField(read_only=True)
     udas = serializers.SerializerMethodField()

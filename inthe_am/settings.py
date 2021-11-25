@@ -70,7 +70,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
             ],
-            'debug': True,
+            "debug": True,
         },
     },
 ]
@@ -179,25 +179,42 @@ MAIL_FORWARDING = json.loads(os.environ.get("MAIL_FORWARDING", json.dumps({})))
 
 TASKWARRIOR_CONFIG_OVERRIDES = {
     "gc": "off",
-    "recurrence": {"confirmation": "no",},
+    "recurrence": {
+        "confirmation": "no",
+    },
     "uda": {
-        "intheamattachments": {"type": "string", "label": "Inthe.AM Attachments",},
+        "intheamattachments": {
+            "type": "string",
+            "label": "Inthe.AM Attachments",
+        },
         "intheamoriginalemailsubject": {
             "type": "string",
             "label": "Inthe.AM E-mail Subject",
         },
-        "intheamoriginalemailid": {"type": "numeric", "label": "Inthe.AM E-mail ID",},
-        "intheamtrelloid": {"type": "string", "label": "Inthe.AM Trello Object ID",},
+        "intheamoriginalemailid": {
+            "type": "numeric",
+            "label": "Inthe.AM E-mail ID",
+        },
+        "intheamtrelloid": {
+            "type": "string",
+            "label": "Inthe.AM Trello Object ID",
+        },
         "intheamtrelloboardid": {
             "type": "string",
             "label": "Inthe.AM Trello Board ID",
         },
-        "intheamtrellolistid": {"type": "string", "label": "Inthe.AM Trello List ID",},
+        "intheamtrellolistid": {
+            "type": "string",
+            "label": "Inthe.AM Trello List ID",
+        },
         "intheamtrellolistname": {
             "type": "string",
             "label": "Inthe.AM Trello List Name",
         },
-        "intheamtrellourl": {"type": "string", "label": "Inthe.AM Trello URL",},
+        "intheamtrellourl": {
+            "type": "string",
+            "label": "Inthe.AM Trello URL",
+        },
         "intheamtrellodescription": {
             "type": "string",
             "label": "Inthe.AM Trello Description",
@@ -306,7 +323,10 @@ LOGGING = {
         "simple": {"format": "%(levelname)s %(message)s"},
     },
     "handlers": {
-        "null": {"level": "DEBUG", "class": "logging.NullHandler",},
+        "null": {
+            "level": "DEBUG",
+            "class": "logging.NullHandler",
+        },
         "console": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
@@ -333,7 +353,11 @@ LOGGING = {
             "propagate": True,
             "level": "INFO",
         },
-        "django": {"handlers": ["null"], "propagate": True, "level": "INFO",},
+        "django": {
+            "handlers": ["null"],
+            "propagate": True,
+            "level": "INFO",
+        },
         "selenium": {"handlers": ["null"], "level": "INFO", "propagate": True},
     },
 }
@@ -378,7 +402,9 @@ RAVEN_CONFIG = {
 }
 
 if RAVEN_DSN:
-    INSTALLED_APPS.append("raven.contrib.django.raven_compat",)
+    INSTALLED_APPS.append(
+        "raven.contrib.django.raven_compat",
+    )
 
 DATABASES = {
     "default": {

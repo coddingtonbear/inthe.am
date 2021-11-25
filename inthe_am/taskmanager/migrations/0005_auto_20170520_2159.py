@@ -19,6 +19,8 @@ class Migration(migrations.Migration):
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name="taskstorestatistic", name="value", field=models.FloatField(),
+            model_name="taskstorestatistic",
+            name="value",
+            field=models.FloatField(),
         ),
     ]

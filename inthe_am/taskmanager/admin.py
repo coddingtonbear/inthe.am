@@ -91,8 +91,14 @@ class TrelloEnabledFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ("1", "Yes",),
-            ("0", "No",),
+            (
+                "1",
+                "Yes",
+            ),
+            (
+                "0",
+                "No",
+            ),
         )
 
     def queryset(self, request, queryset):
@@ -113,8 +119,14 @@ class TwilioEnabledFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ("1", "Yes",),
-            ("0", "No",),
+            (
+                "1",
+                "Yes",
+            ),
+            (
+                "0",
+                "No",
+            ),
         )
 
     def queryset(self, request, queryset):
@@ -362,7 +374,12 @@ class TaskStoreActivityStatusListFilter(admin.SimpleListFilter):
     parameter_name = "failed_incomplete"
 
     def lookups(self, request, model_admin):
-        return (("no", "Exclude Failed/Incomplete",),)
+        return (
+            (
+                "no",
+                "Exclude Failed/Incomplete",
+            ),
+        )
 
     def queryset(self, request, queryset):
         if self.value() == "no":

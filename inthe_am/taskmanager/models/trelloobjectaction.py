@@ -57,7 +57,8 @@ class TrelloObjectAction(models.Model):
 
         try:
             to = TrelloObject.objects.get(
-                id=card_data.get("id"), store=self.model.store,
+                id=card_data.get("id"),
+                store=self.model.store,
             )
             task = to.get_task()
 
@@ -85,7 +86,8 @@ class TrelloObjectAction(models.Model):
 
         try:
             to = TrelloObject.objects.get(
-                id=card_data.get("id"), store=self.model.store,
+                id=card_data.get("id"),
+                store=self.model.store,
             )
             task = to.get_task()
 
@@ -121,7 +123,8 @@ class TrelloObjectAction(models.Model):
 
         try:
             to = TrelloObject.objects.get(
-                id=card_data.get("id"), store=self.model.store,
+                id=card_data.get("id"),
+                store=self.model.store,
             )
             to.update_data()
             to.reconcile()
@@ -148,7 +151,10 @@ class TrelloObjectAction(models.Model):
         new_card_id = self.meta["action"]["data"]["card"]["id"]
 
         try:
-            to = TrelloObject.objects.get(id=new_card_id, store=self.model.store,)
+            to = TrelloObject.objects.get(
+                id=new_card_id,
+                store=self.model.store,
+            )
         except TrelloObject.DoesNotExist:
             to = TrelloObject.objects.create(
                 id=new_card_id,

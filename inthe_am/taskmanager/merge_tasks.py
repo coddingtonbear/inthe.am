@@ -52,7 +52,19 @@ def merge_task_data(alpha, beta):
 
 def find_all_duplicate_tasks(store):
     tasks = store.client.filter_tasks(
-        {"or": [("status", "pending",), ("status", "waiting",),], "parent.not": "",}
+        {
+            "or": [
+                (
+                    "status",
+                    "pending",
+                ),
+                (
+                    "status",
+                    "waiting",
+                ),
+            ],
+            "parent.not": "",
+        }
     )
 
     all_tasks_by_imask = {}
@@ -115,7 +127,16 @@ def merge_all_duplicate_tasks(store, duplicates=None):
 def find_duplicate_tasks(store, task):
     tasks = store.client.filter_tasks(
         {
-            "or": [("status", "pending",), ("status", "waiting",),],
+            "or": [
+                (
+                    "status",
+                    "pending",
+                ),
+                (
+                    "status",
+                    "waiting",
+                ),
+            ],
             "parent": task["parent"],
             "imask": task["imask"],
             "uuid.not": task["uuid"],

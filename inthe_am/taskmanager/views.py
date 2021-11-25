@@ -83,7 +83,8 @@ def debug_login(request):
 
     try:
         cookies = artificial_login(
-            username=request.GET["username"], password=request.GET["password"],
+            username=request.GET["username"],
+            password=request.GET["password"],
         )
     except AttributeError:
         return HttpResponseBadRequest()
@@ -104,7 +105,10 @@ def rest_exception_handler(e, context):
         store = TaskStore.get_for_user(request.user)
         message = f"({e.code}) {e.stderr}"
         store.log_silent_error(f"Taskwarrior Error: {message}")
-        return Response({"error_message": message}, status=400,)
+        return Response(
+            {"error_message": message},
+            status=400,
+        )
     elif isinstance(e, LockTimeout):
         message = "Your task list is currently in use; please try again later."
         store = TaskStore.get_for_user(request.user)
@@ -148,10 +152,17 @@ class RestHookHandler(View):
 
         store = TaskStore.get_for_user(request.user)
         instance = RestHook.objects.create(
-            task_store=store, event_type=data["event"], target_url=data["target_url"],
+            task_store=store,
+            event_type=data["event"],
+            target_url=data["target_url"],
         )
 
-        return JsonResponse({"id": instance.id,}, status=201)
+        return JsonResponse(
+            {
+                "id": instance.id,
+            },
+            status=201,
+        )
 
     def delete(self, request, hook_id, *args, **kwargs):
         store = TaskStore.get_for_user(request.user)
