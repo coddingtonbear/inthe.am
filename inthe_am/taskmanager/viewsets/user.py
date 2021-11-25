@@ -165,7 +165,12 @@ class UserViewSet(viewsets.ViewSet):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
-    def _send_file(self, filepath, content_type="application/octet-stream"):
+    def _send_file(
+        self,
+        filepath,
+        content_type: str = "application/octet-stream",
+        filename: str = None,
+    ):
         if filepath is None or not os.path.isfile(filepath):
             raise NotFound()
 
@@ -173,7 +178,7 @@ class UserViewSet(viewsets.ViewSet):
             response = http.HttpResponse(outfile.read(), content_type=content_type)
             response[
                 "Content-Disposition"
-            ] = f'attachment; filename="{os.path.basename(filepath)}"'
+            ] = f'attachment; filename="{filename or os.path.basename(filepath)}"'
             return response
 
     @action(detail=False, methods=["get"])
@@ -279,6 +284,7 @@ class UserViewSet(viewsets.ViewSet):
         return self._send_file(
             ts.taskrc.get("taskd.ca"),
             content_type="application/x-pem-file",
+            filename="ca.cert.pem",
         )
 
     @git_managed("Update custom taskrc configuration", gc=False)
