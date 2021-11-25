@@ -17,7 +17,7 @@ RUN git clone https://github.com/hmartiro/redox &&\
 # & install the taskserver itself
 RUN git clone https://github.com/coddingtonbear/taskserver &&\
   cd taskserver &&\
-  git checkout inthe_am_dockerized &&\
+  git checkout intheam__1.2.0 &&\
   cmake \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DREDOX_INCLUDE_DIR=../redox/include &&\
