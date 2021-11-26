@@ -277,8 +277,14 @@ def handle_export(**options):
             ),
             "created": store.created.isoformat() if store.created else None,
             "updated": store.updated.isoformat() if store.updated else None,
-            "valid": store.repository_is_valid(),
+            "errors": [],
         }
+
+        try:
+            valid = store.repository_is_valid()
+            data["valid"] = valid
+        except Exception as e:
+            data["errors"].append(str(e))
 
         try:
             account_data = store.taskd_account.get()
@@ -291,8 +297,8 @@ def handle_export(**options):
                     }
                 }
             )
-        except Exception:
-            pass
+        except Exception as e:
+            data["errors"].append(str(e))
 
         try:
             usermeta = UserMetadata.objects.get(user=store.user)
@@ -310,8 +316,8 @@ def handle_export(**options):
                     }
                 }
             )
-        except UserMetadata.DoesNotExist:
-            pass
+        except UserMetadata.DoesNotExist as e:
+            data["errors"].append(str(e))
 
         print(json.dumps(data))
 
