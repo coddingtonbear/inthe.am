@@ -5,6 +5,7 @@ import os
 import traceback
 import uuid
 from typing import cast, Dict, Protocol
+from inthe_am.taskmanager.models.usermetadata import UserMetadata
 
 import progressbar
 
@@ -256,6 +257,65 @@ def handle_list_old_accounts(**options):
         )
 
 
+def handle_export(**options):
+    username = options["username"] or ""
+
+    for store in (
+        TaskStore.objects.select_related("user")
+        .filter(user__username__contains=username)
+        .all()
+    ):
+        data = {
+            "id": store.pk,
+            "user": {"id": store.user.pk},
+            "user__username": store.user.username,
+            "configured": store.configured,
+            "sync_enabled": store.sync_enabled,
+            "sync_permitted": store.sync_permitted,
+            "last_synced": (
+                store.last_synced.isoformat() if store.last_synced else None
+            ),
+            "created": store.created.isoformat() if store.created else None,
+            "updated": store.updated.isoformat() if store.updated else None,
+            "valid": store.repository_is_valid(),
+        }
+
+        try:
+            account_data = store.taskd_account.get()
+            data.update(
+                {
+                    "account": {
+                        "exists": store.taskd_account.exists(),
+                        "created": account_data.get("created"),
+                        "is_suspended": account_data.get("is_suspended"),
+                    }
+                }
+            )
+        except Exception:
+            pass
+
+        try:
+            usermeta = UserMetadata.objects.get(user=store.user)
+            data.update(
+                {
+                    "usermeta": {
+                        "tos_version": usermeta.tos_version,
+                        "tos_accepted": usermeta.tos_accepted.isoformat()
+                        if usermeta.tos_accepted
+                        else None,
+                        "privacy_policy_version": usermeta.privacy_policy_version,
+                        "privacy_policy_accepted": usermeta.privacy_policy_accepted.isoformat()
+                        if usermeta.privacy_policy_accepted
+                        else None,
+                    }
+                }
+            )
+        except UserMetadata.DoesNotExist:
+            pass
+
+        print(json.dumps(data))
+
+
 class Command(BaseCommand):
     SUBCOMMANDS: Dict[str, Subcommand] = {
         "lock": handle_lock,
@@ -268,6 +328,7 @@ class Command(BaseCommand):
         "squash": handle_squash,
         "delete_old_accounts": handle_delete_old_accounts,
         "list_old_accounts": handle_list_old_accounts,
+        "export": handle_export,
     }
 
     def add_arguments(self, parser):

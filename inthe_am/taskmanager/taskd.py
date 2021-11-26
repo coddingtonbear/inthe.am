@@ -1,5 +1,5 @@
 import json
-from typing import Any
+from typing import Any, Dict, Optional
 from typing_extensions import Literal
 
 import requests
@@ -79,6 +79,15 @@ class TaskdAccountManager:
 
     def create(self, **request_kwargs: Any) -> None:
         self.make_user_request("put", data=json.dumps({}), **request_kwargs)
+
+    def get(self, **request_kwargs) -> Dict[str, Any]:
+        result = self.make_user_request("get", **request_kwargs)
+        result.raise_for_status()
+
+        return result.json()
+
+    def is_suspended(self, **request_kwargs: Any) -> Optional[bool]:
+        return self.get(**request_kwargs).get("is_suspended")
 
     def suspend(self, **request_kwargs: Any) -> None:
         self.make_user_request(
