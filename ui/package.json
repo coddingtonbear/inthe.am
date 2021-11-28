@@ -14,7 +14,7 @@
     "@types/react-router-dom": "^5.1.6",
     "@types/react-toast-notifications": "^2.4.0",
     "autoprefixer": "^10.0.1",
-    "axios": "^0.21.0",
+    "axios": "^0.21.2",
     "browser-sync": "^2.26.13",
     "classnames": "^2.2.6",
     "clone": "^2.1.2",
