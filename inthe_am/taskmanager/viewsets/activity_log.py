@@ -1,11 +1,13 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .. import models
 from ..serializers.activity_log import ActivityLogSerializer
 
 
-class ActivityLogViewSet(viewsets.ModelViewSet):
+class ActivityLogViewSet(
+    mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ActivityLogSerializer
 
