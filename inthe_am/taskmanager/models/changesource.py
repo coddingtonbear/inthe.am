@@ -1,3 +1,6 @@
+import datetime
+import uuid
+
 from django.db import models
 
 
@@ -30,6 +33,7 @@ class ChangeSource(models.Model):
         (SOURCETYPE_TRELLO_RESET, "Trello (Reset)"),
     )
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sourcetype = models.PositiveSmallIntegerField(
         choices=SOURCETYPE_CHOICES,
     )
@@ -45,8 +49,14 @@ class ChangeSource(models.Model):
     created = models.DateTimeField(auto_now=True)
     finished = models.DateTimeField(null=True, blank=True)
 
+    def mark_finished(self):
+        self.finished = datetime.datetime.now()
+
     def __str__(self):
         return "{type} ({id})".format(
             type=self.get_sourcetype_display(),
             id=self.foreign_id,
         )
+
+    class Meta:
+        ordering = ["-created"]

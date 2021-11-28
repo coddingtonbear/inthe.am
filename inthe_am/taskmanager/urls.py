@@ -17,11 +17,13 @@ from .viewsets.task import (
 from .viewsets.user import UserViewSet
 
 
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 router.register("tasks", TaskViewSet, basename="task")
+router.register(
+    r"tasks/(?P<task_id>[^/]+)/changes", ChangeViewSet, basename="task_change"
+)
 router.register("user", UserViewSet, basename="user")
 router.register("activity-logs", ActivityLogViewSet, basename="activity_log")
-router.register("changes", ChangeViewSet, basename="change")
 
 
 def unmatched(request):

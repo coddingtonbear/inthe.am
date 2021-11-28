@@ -150,6 +150,9 @@ def git_checkpoint(
 
             if recurring_task_found:
                 store.deduplicate_tasks()
+
+            source.mark_finished()
+            source.save()
         except InvalidTaskwarriorConfiguration:
             # A checkpoint will be created during account initialization;
             # if so, the taskwarrior client may not yet be configured.

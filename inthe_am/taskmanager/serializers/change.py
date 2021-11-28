@@ -3,17 +3,28 @@ from rest_framework import serializers
 from .. import models
 
 
+class ChangeSourceSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(source="get_sourcetype_display")
+
+    class Meta:
+        model = models.ChangeSource
+        fields = (
+            "id",
+            "type",
+            "created",
+            "finished",
+            "foreign_id",
+        )
+
+
 class ChangeSerializer(serializers.ModelSerializer):
-    source_id = serializers.IntegerField(source="source.pk")
-    sourcetype = serializers.CharField(source="source.get_sourcetype_display")
-    foreign_id = serializers.CharField(source="source.foreign_id")
+    source = ChangeSourceSerializer()
 
     class Meta:
         model = models.Change
         fields = (
-            "source_id",
-            "sourcetype",
-            "foreign_id",
+            "id",
+            "source",
             "task_id",
             "field",
             "data_from",

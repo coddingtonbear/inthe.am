@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from typing import Any
+import uuid
 
 from django.db import models
 
@@ -9,6 +10,7 @@ from .changesource import ChangeSource
 
 
 class Change(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     source = models.ForeignKey(
         ChangeSource,
         related_name="changes",
@@ -43,3 +45,6 @@ class Change(models.Model):
             data_from=self.data_from,
             data_to=self.data_to,
         )
+
+    class Meta:
+        ordering = ["-changed"]

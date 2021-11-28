@@ -15,6 +15,10 @@ class ChangeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if not self.request.user.is_authenticated():
             return models.Change.objects.none()
-        return models.Change.objects.filter(
-            source__store__user=self.request.user
-        ).order_by("-changed")
+        return (
+            models.Change.objects.select_related("source")
+            .filter(
+                source__store__user=self.request.user, task_id=self.kwargs["task_id"]
+            )
+            .order_by("-changed")
+        )
