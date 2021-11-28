@@ -689,6 +689,10 @@ input#filter-string {
   margin-right: 0.5rem;
 }
 
+div.details_table > table.details > tbody > tr > th {
+  width: 100px;
+}
+
 @media screen and (max-width: 1000px) {
   div.details_table {
     width: 100%;

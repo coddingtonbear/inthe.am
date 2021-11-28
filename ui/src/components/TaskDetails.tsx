@@ -4,6 +4,7 @@ import {DateTime} from 'luxon'
 import clone from 'clone'
 
 import {Task} from '../clients/tasks'
+import {Change, getTaskChanges} from '../clients/changes'
 import LabeledIcon from './LabeledIcon'
 import {taskIsEditable, getBlockedTasks, getBlockingTasks} from '../utils/task'
 import {
@@ -22,6 +23,7 @@ import {
 import Tag from './Tag'
 import Footer from './Footer'
 import {HotKeys, HotKeysProps} from 'react-hotkeys'
+import Icon from './Icon'
 
 export interface Props {
   tasks: Task[]
@@ -36,6 +38,9 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
 
   const [blocking, setBlocking] = React.useState<Task[]>([])
   const [blocked, setBlocked] = React.useState<Task[]>([])
+
+  const [changesShown, setChangesShown] = React.useState<boolean>(false)
+  const [changes, setChanges] = React.useState<Change[]>([])
 
   const keyMapHandlers: HotKeysProps['handlers'] = {
     TASK_STOP_START: () => {
@@ -56,11 +61,19 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
     setBlocked(getBlockedTasks(tasks, task))
   }, [JSON.stringify(tasks), task.uuid])
 
+  React.useEffect(() => {
+    if (changesShown) {
+      // This fires before the actual request is completed; this is
+      // kind of a cludge, but it'll at least make recent changes appear.
+      setTimeout(onRefreshChanges, 5000)
+    }
+  }, [JSON.stringify(task), changesShown])
+
   function onAddAnnotation() {
     dispatch(annotationModalActions.selectTaskForNewAnnotation(task))
   }
 
-  function onEditTask() {
+  async function onEditTask() {
     dispatch(editTaskModalActions.selectTaskForEdit(task))
   }
 
@@ -93,6 +106,14 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
 
   function onDeleteTask() {
     dispatch(deleteTask(task.uuid))
+  }
+
+  function onRefreshChanges() {
+    setChanges([])
+    getTaskChanges(task.uuid).then((changes) => {
+      setChanges(changes)
+      setChangesShown(true)
+    })
   }
 
   return (
@@ -253,6 +274,54 @@ const TaskDetails: FunctionComponent<Props> = ({tasks, task}) => {
                   )
                 )
               })}
+              <tr>
+                <th>Changes</th>
+                <td>
+                  <div className="medium-6 columns change_list">
+                    {changesShown ? (
+                      <>
+                        {changes.length > 0 && (
+                          <>
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Date</th>
+                                  <th>Field</th>
+                                  <th>From</th>
+                                  <th>To</th>
+                                  <th>Source Type</th>
+                                  <th>Source ID</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {changes.map((change) => {
+                                  return (
+                                    <tr key={change.id}>
+                                      <td>{change.changed}</td>
+                                      <td>{change.field}</td>
+                                      <td>{change.data_from}</td>
+                                      <td>{change.data_to}</td>
+                                      <td>{change.source.sourcetype_name}</td>
+                                      <td>{change.source.id}</td>
+                                    </tr>
+                                  )
+                                })}
+                              </tbody>
+                            </table>
+                          </>
+                        )}
+                        <a onClick={() => onRefreshChanges()}>
+                          <Icon name="refresh" />
+                        </a>
+                      </>
+                    ) : (
+                      <>
+                        <a onClick={() => onRefreshChanges()}>Show changes</a>
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
