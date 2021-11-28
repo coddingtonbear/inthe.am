@@ -2,6 +2,8 @@ from functools import wraps
 
 from django.core.exceptions import PermissionDenied
 
+from inthe_am.taskmanager.models.changesource import ChangeSource
+
 from . import models
 from .context_managers import git_checkpoint
 
@@ -35,7 +37,13 @@ def requires_task_store(f):
     return wrapper
 
 
-def git_managed(message, sync=False, gc=True):
+def git_managed(
+    message,
+    sync=False,
+    gc=True,
+    sourcetype: int = ChangeSource.SOURCETYPE_DIRECT,
+    foreign_id=None,
+):
     def git_sync(f):
         @wraps(f)
         def wrapper(self, *args, **kwargs):
@@ -51,7 +59,15 @@ def git_managed(message, sync=False, gc=True):
             store = models.TaskStore.get_for_user(user)
             kwargs["store"] = store
             with git_checkpoint(
-                store, message, f.__name__, args[1:], kwargs, sync=sync, gc=gc
+                store,
+                sourcetype,
+                message,
+                function=f.__name__,
+                args=args[1:],
+                kwargs=kwargs,
+                sync=sync,
+                gc=gc,
+                foreign_id=foreign_id,
             ):
                 result = f(self, *args, **kwargs)
             return result

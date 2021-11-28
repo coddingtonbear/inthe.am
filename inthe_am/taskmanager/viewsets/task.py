@@ -27,6 +27,8 @@ from rest_framework.response import Response
 from twilio.request_validator import RequestValidator
 from twilio.twiml.messaging_response import MessagingResponse as TwilioResponse
 
+from inthe_am.taskmanager.models.changesource import ChangeSource
+
 from .. import models
 from ..context_managers import git_checkpoint
 from ..decorators import git_managed, requires_task_store
@@ -220,11 +222,16 @@ class TaskViewSet(viewsets.ViewSet):
 
     @requires_task_store
     @action(detail=False, methods=["post"])
-    def revert(self, request, store=None):
+    def revert(self, request, store):
         old_head = store.repository.head().decode("utf-8")
         new_head = store.repository.get_object(old_head).parents[0].decode("utf-8")
 
-        with git_checkpoint(store, "Reverting to previous commit", sync=True):
+        with git_checkpoint(
+            store,
+            ChangeSource.SOURCETYPE_REVERT,
+            "Reverting to previous commit",
+            sync=True,
+        ):
             store.git_reset(new_head.encode("utf-8"))
 
         store.log_message(
@@ -497,7 +504,7 @@ def incoming_sms(request, username):
         store.log_error(*log_args)
         return HttpResponseForbidden()
 
-    with git_checkpoint(store, "Incoming SMS", sync=True):
+    with git_checkpoint(store, ChangeSource.SOURCETYPE_SMS, "Incoming SMS", sync=True):
         from_ = request.POST["From"]
         body = request.POST["Body"]
         task_info = body[4:]

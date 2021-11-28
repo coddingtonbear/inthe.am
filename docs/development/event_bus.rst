@@ -71,6 +71,9 @@ one message of this type is emitted for every changed task.
      task_data: {
        [key: string]: any
      }
+     changes: {
+       [key: string]: str[]
+     }
    }
 
 `log_message.<USERNAME>`

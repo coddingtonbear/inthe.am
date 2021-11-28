@@ -379,6 +379,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_behave",
     "storages",
+    "django_filters",
 ]
 
 

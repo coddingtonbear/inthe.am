@@ -8,6 +8,8 @@ from .trelloobject import TrelloObject
 from .trelloobjectaction import TrelloObjectAction
 from .usermetadata import UserMetadata
 from .rest_hook import RestHook
+from .change import Change
+from .changesource import ChangeSource
 
 
 # This *must* be at the bottom of *this* file for complicated reasons

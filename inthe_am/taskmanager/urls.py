@@ -4,8 +4,10 @@ from django.template.response import TemplateResponse
 from django.http import HttpResponseNotFound
 from rest_framework import routers
 
+
 from .views import debug_login, TaskFeed, RestHookHandler
 from .viewsets.activity_log import ActivityLogViewSet
+from .viewsets.change import ChangeViewSet
 from .viewsets.task import (
     TaskViewSet,
     ical_feed,
@@ -19,6 +21,7 @@ router = routers.SimpleRouter()
 router.register("tasks", TaskViewSet, basename="task")
 router.register("user", UserViewSet, basename="user")
 router.register("activity-logs", ActivityLogViewSet, basename="activity_log")
+router.register("changes", ChangeViewSet, basename="change")
 
 
 def unmatched(request):

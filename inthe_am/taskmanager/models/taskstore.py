@@ -1,3 +1,4 @@
+from dataclasses import dataclass, field
 import datetime
 import hashlib
 import json
@@ -8,7 +9,7 @@ import subprocess
 import tempfile
 import time
 import uuid
-from typing import Set
+from typing import Any, Dict, Set, Tuple
 
 from django.db import models
 from django.conf import settings
@@ -19,6 +20,7 @@ from django.utils.timezone import now
 from dulwich.client import NotGitRepository
 from dulwich.repo import Repo
 from rest_framework.authtoken.models import Token
+from taskw.utils import decode_task
 
 from ..context_managers import git_checkpoint
 from ..lock import (
@@ -36,6 +38,7 @@ from ..exceptions import InvalidTaskwarriorConfiguration
 from .taskrc import TaskRc
 from .metadata import Metadata
 from .taskstoreactivitylog import TaskStoreActivityLog
+from .changesource import ChangeSource
 
 
 logger = logging.getLogger(__name__)
@@ -399,22 +402,73 @@ class TaskStore(models.Model):
 
     #  Git-related methods
 
-    def get_changed_task_ids(self, head, start=None) -> Set[str]:
+    def get_changed_tasks(
+        self, head, start=None
+    ) -> Dict[str, Dict[str, Tuple[Any, Any]]]:
+        @dataclass
+        class TaskOriginalFinal:
+            original: Dict = field(default_factory=dict)
+            final: Dict = field(default_factory=dict)
+
+        # For temporarily collecting data from changed tasks
+        found_matches: Dict[str, TaskOriginalFinal] = {}
+
         uuid_matcher = re.compile(r'uuid:"([0-9a-zA-Z-]+)"')
         if not start:
             start = self.repository.head().decode("utf-8")
-        proc = self._git_command("diff", head, start)
+        proc = self._git_command("diff", start, head)
         stdout, stderr = proc.communicate()
-        changed_tickets = set()
         for raw_line in stdout.decode("utf-8", "ignore").split("\n"):
             line = raw_line.strip()
             if not line or line[0] not in ("+", "-"):
                 continue
             matched = uuid_matcher.search(line)
             if matched:
-                changed_tickets.add(matched.group(1))
+                task_id = matched.group(1)
+                decoded = decode_task(line[1:])
 
-        return changed_tickets
+                if line[0] == "-":
+                    found_matches.setdefault(
+                        task_id, TaskOriginalFinal()
+                    ).original = decoded
+                elif line[0] == "+":
+                    found_matches.setdefault(
+                        task_id, TaskOriginalFinal()
+                    ).final = decoded
+
+        # For the final object showing what exactly changed
+        changes: Dict[str, Dict[str, Tuple[Any, Any]]] = {}
+        for task_id, data in found_matches.items():
+            change_record: Dict[str, Tuple[Any, Any]] = {}
+
+            if data.original is None and data.final is None:
+                logger.error(
+                    "Missing original or final versions for task change on store"
+                    " %s task %s for %s...%s.",
+                    self,
+                    task_id,
+                    start,
+                    head,
+                )
+                continue
+
+            for field_name in list(data.final.keys()):
+                original_value = data.original.pop(field_name, None)
+                final_value = data.final.pop(field_name, None)
+
+                if original_value != final_value:
+                    change_record[field_name] = (original_value, final_value)
+
+            # If any fields remain, they were present only in the original
+            for field_name, value in data.original.items():
+                change_record[field_name] = (value, None)
+
+            changes[task_id] = change_record
+
+        return changes
+
+    def get_changed_task_ids(self, head, start=None) -> Set[str]:
+        return set(self.get_changed_tasks(head, start).keys())
 
     def create_git_repository(self):
         self._simple_git_command("init")
@@ -599,6 +653,7 @@ class TaskStore(models.Model):
     def gc(self):
         with git_checkpoint(
             self,
+            ChangeSource.SOURCETYPE_GARBAGE_COLLECTION,
             "Garbage Collection",
             notify_rollback=False,
             lock_timeout=60 * 120,  # 2h of lock timeout; just in case!
@@ -740,6 +795,7 @@ class TaskStore(models.Model):
             start = self.repository.head().decode("utf-8")
             with git_checkpoint(
                 self,
+                ChangeSource.SOURCETYPE_SYNC,
                 checkpoint_msg,
                 function=function,
                 args=args,
@@ -825,7 +881,9 @@ class TaskStore(models.Model):
                 os.unlink(os.path.join(self.local_path, path))
 
     def autoconfigure_taskd(self):
-        with git_checkpoint(self, "Autoconfiguration"):
+        with git_checkpoint(
+            self, ChangeSource.SOURCETYPE_AUTOCONFIGURATION, "Autoconfiguration"
+        ):
             self.configured = True
 
             logger.warning(
@@ -862,7 +920,11 @@ class TaskStore(models.Model):
 
         self.taskd_account.create()
         credentials = self.taskd_account.get_credentials()
-        with git_checkpoint(self, "Save initial taskrc credentials"):
+        with git_checkpoint(
+            self,
+            ChangeSource.SOURCETYPE_AUTOCONFIGURATION,
+            "Save initial taskrc credentials",
+        ):
             cert_data = self.generate_new_certificate()
             cert_filename = self.taskrc.get(
                 "taskd.certificate",
@@ -888,7 +950,9 @@ class TaskStore(models.Model):
             )
             self.metadata["generated_taskd_credentials"] = credentials
 
-        with git_checkpoint(self, "Initial Synchronization"):
+        with git_checkpoint(
+            self, ChangeSource.SOURCETYPE_SYNC, "Initial Synchronization"
+        ):
             self.save()
             self.client.sync(init=True)
 

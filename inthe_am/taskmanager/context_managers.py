@@ -14,10 +14,20 @@ from .lock import get_lock_name_for_store, redis_lock
 logger = logging.getLogger(__name__)
 
 
+SYSTEM_CONTROLLED_FIELDS = [
+    "entry",
+    "modified",
+    "status",
+    "uuid",
+]
+
+
 @contextmanager
 def git_checkpoint(
     store,
-    message,
+    sourcetype: int,
+    message: str,
+    foreign_id: str = None,
     function=None,
     args=None,
     kwargs=None,
@@ -29,6 +39,8 @@ def git_checkpoint(
     wait_timeout=settings.LOCKFILE_WAIT_TIMEOUT,
     lock_timeout=settings.LOCKFILE_TIMEOUT_SECONDS,
 ):
+    from .models import Change, ChangeSource
+
     lock_name = get_lock_name_for_store(store)
     try:
         pre_work_sha = store.repository.head().decode("utf-8")
@@ -103,7 +115,22 @@ def git_checkpoint(
 
             end_head = store.repository.head().decode("utf-8")
             recurring_task_found = False
-            for task_id in store.get_changed_task_ids(end_head, start=start_head):
+
+            source = ChangeSource.objects.create(
+                sourcetype=sourcetype,
+                store=store,
+                foreign_id=foreign_id,
+            )
+
+            for task_id, changes in store.get_changed_tasks(
+                end_head, start=start_head
+            ).items():
+                for field, values in changes.items():
+                    if field in SYSTEM_CONTROLLED_FIELDS:
+                        continue
+
+                    Change.record_changes(source, task_id, field, values[0], values[1])
+
                 task = store.client.get_task(uuid=task_id)[1]
                 store.send_rest_hook_messages(task_id)
                 if emit_announcements:
@@ -115,6 +142,7 @@ def git_checkpoint(
                             "head": end_head,
                             "task_id": task_id,
                             "task_data": dict(task),
+                            "changes": changes,
                         },
                     )
                 if store.auto_deduplicate and task.get("recur"):

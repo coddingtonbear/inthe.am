@@ -12,6 +12,8 @@ from django_mailbox.models import Message
 import requests
 from rest_framework.renderers import JSONRenderer
 
+from inthe_am.taskmanager.models.changesource import ChangeSource
+
 from .exceptions import TrelloObjectRecentlyModified
 from .context_managers import git_checkpoint
 from .lock import get_debounce_name_for_store, get_lock_redis, LockTimeout
@@ -149,7 +151,12 @@ def process_email_message(self, message_id):
         return
 
     if not message.subject or message.subject.lower() in ["add", "create", "new"]:
-        with git_checkpoint(store, "Incoming E-mail"):
+        with git_checkpoint(
+            store,
+            ChangeSource.SOURCETYPE_MAIL,
+            "Incoming E-mail",
+            foreign_id=message_id,
+        ):
             task_args = (
                 [
                     "add",
@@ -251,7 +258,11 @@ def reset_trello(self, store_id, **kwargs):
     store.trello_local_head = ""
     store.save()
 
-    with git_checkpoint(store, "Reset trello IDs for pending/waiting tasks."):
+    with git_checkpoint(
+        store,
+        ChangeSource.SOURCETYPE_TRELLO_RESET,
+        "Reset trello IDs for pending/waiting tasks.",
+    ):
         for task in store.client.filter_tasks(
             {
                 "intheamtrelloid.any": None,
@@ -313,13 +324,23 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
         )
         return
 
-    with git_checkpoint(store, "Reconciling trello board", sync=False):
+    with git_checkpoint(
+        store,
+        ChangeSource.SOURCETYPE_TRELLO_RECONCILIATION,
+        "Reconciling trello board",
+        sync=False,
+    ):
         store.trello_board.reconcile()
 
     open_local_tasks = {
         t["uuid"]: t for t in store.client.filter_tasks({"status": "pending"})
     }
-    with git_checkpoint(store, "Deleting non-pending tasks from trello", sync=False):
+    with git_checkpoint(
+        store,
+        ChangeSource.SOURCETYPE_TRELLO_RECONCILIATION,
+        "Deleting non-pending tasks from trello",
+        sync=False,
+    ):
         for task in store.client.filter_tasks(
             {
                 "intheamtrelloid.any": None,
@@ -349,6 +370,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
     to_reconcile = []
     with git_checkpoint(
         store,
+        ChangeSource.SOURCETYPE_TRELLO_RECONCILIATION,
         "Adding pending tasks to Trello & deleting tasks remotely deleted",
         sync=False,
     ):
@@ -395,6 +417,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
 
     with git_checkpoint(
         store,
+        ChangeSource.SOURCETYPE_TRELLO_RECONCILIATION,
         "Reconcile all known trello tasks.",
         sync=False,
     ):
@@ -403,6 +426,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
 
     with git_checkpoint(
         store,
+        ChangeSource.SOURCETYPE_TRELLO_RECONCILIATION,
         "Add local tasks to match tasks created in Trello",
         sync=False,
     ):
@@ -447,7 +471,12 @@ def process_trello_action(self, store_id, data, **kwargs):
     store = TaskStore.objects.get(pk=store_id)
 
     try:
-        with git_checkpoint(store, "Processing Trello Action", data=data):
+        with git_checkpoint(
+            store,
+            ChangeSource.SOURCETYPE_TRELLO_INCOMING,
+            "Processing Trello Action",
+            data=data,
+        ):
             try:
                 TrelloObjectAction.create_from_request(data)
             except TrelloObject.DoesNotExist:
@@ -466,7 +495,9 @@ def update_trello_task(self, object_id, **kwargs):
 
     obj = TrelloObject.objects.get(pk=object_id)
 
-    with git_checkpoint(obj.store, "Updating trello task"):
+    with git_checkpoint(
+        obj.store, ChangeSource.SOURCETYPE_TRELLO_OUTGOING, "Updating trello task"
+    ):
         try:
             obj.update_trello()
         except TrelloObjectRecentlyModified as e:
@@ -522,6 +553,7 @@ def update_trello(self, store_id, debounce_id=None, current_head=None, **kwargs)
     changed_ids = store.get_changed_task_ids(ending_head, start=starting_head)
     with git_checkpoint(
         store,
+        ChangeSource.SOURCETYPE_TRELLO_OUTGOING,
         "Create trello records for changed tasks.",
         data=changed_ids,
     ):
@@ -650,7 +682,9 @@ def deduplicate_tasks(self, store_id, debounce_id=None, **kwargs):
         )
         return
 
-    with git_checkpoint(store, "Deduplicate tasks"):
+    with git_checkpoint(
+        store, ChangeSource.SOURCETYPE_DEDUPLICATE, "Deduplicate tasks"
+    ):
         results = merge_all_duplicate_tasks(store)
 
         for alpha, betas in results.items():
