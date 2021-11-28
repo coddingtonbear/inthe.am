@@ -4,13 +4,14 @@ from .. import models
 
 
 class ChangeSourceSerializer(serializers.ModelSerializer):
-    type = serializers.CharField(source="get_sourcetype_display")
+    sourcetype_name = serializers.CharField(source="get_sourcetype_display")
 
     class Meta:
         model = models.ChangeSource
         fields = (
             "id",
-            "type",
+            "sourcetype",
+            "sourcetype_name",
             "created",
             "finished",
             "foreign_id",

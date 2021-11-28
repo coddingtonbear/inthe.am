@@ -17,7 +17,7 @@ from .viewsets.task import (
 from .viewsets.user import UserViewSet
 
 
-router = routers.DefaultRouter()
+router = routers.SimpleRouter()
 router.register("tasks", TaskViewSet, basename="task")
 router.register(
     r"tasks/(?P<task_id>[^/]+)/changes", ChangeViewSet, basename="task_change"

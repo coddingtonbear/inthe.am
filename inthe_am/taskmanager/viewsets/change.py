@@ -12,7 +12,14 @@ class ChangeViewSet(
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ChangeSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["task_id", "field", "data_from", "data_to"]
+    filterset_fields = [
+        "source__id",
+        "source__foreign_id",
+        "source__sourcetype",
+        "field",
+        "data_from",
+        "data_to",
+    ]
 
     def get_queryset(self):
         if not self.request.user.is_authenticated():
