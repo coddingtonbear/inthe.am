@@ -5,7 +5,6 @@ import os
 import traceback
 import uuid
 from typing import cast, Dict, Protocol
-from inthe_am.taskmanager.models.usermetadata import UserMetadata
 
 import progressbar
 
@@ -14,7 +13,12 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils.timezone import now
 
-from inthe_am.taskmanager.models import TaskStore, TaskStoreStatistic
+from inthe_am.taskmanager.models import (
+    TaskStore,
+    TaskStoreStatistic,
+    ChangeSource,
+    UserMetadata,
+)
 from inthe_am.taskmanager.lock import get_lock_redis
 
 
@@ -205,6 +209,12 @@ def handle_gc_large_repos(**options):
                 traceback.print_exc()
 
 
+def handle_delete_old_changes(**options):
+    ChangeSource.objects.filter(
+        created__lt=datetime.datetime.now() - datetime.timedelta(days=180)
+    ).delete()
+
+
 def handle_squash(**options):
     username = options["username"]
 
@@ -333,6 +343,7 @@ class Command(BaseCommand):
         "gc_large_repos": handle_gc_large_repos,
         "squash": handle_squash,
         "delete_old_accounts": handle_delete_old_accounts,
+        "delete_old_changes": handle_delete_old_changes,
         "list_old_accounts": handle_list_old_accounts,
         "export": handle_export,
     }

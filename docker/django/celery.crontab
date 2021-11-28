@@ -1,3 +1,4 @@
 30 6 * * * cd /data/web && python /data/web/manage.py taskstore update_statistics > /tmp/update_stats.log 2>&1
 30 7 * * * cd /data/web && python /data/web/manage.py taskstore gc_large_repos > /tmp/gc_large_repos.log 2>&1
 30 12 * * * cd /data/web && python /data/web/manage.py taskstore delete_old_accounts > /tmp/delete_old_accounts.log 2>&1
+30 13 * * * cd /data/web && python /data/web/manage.py taskstore delete_old_changes > /tmp/delete_old_changes.log 2>&1
