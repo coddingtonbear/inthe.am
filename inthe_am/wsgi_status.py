@@ -217,6 +217,8 @@ class Application:
                     f"changed_task.{self.username}",
                     f"log_message.{self.username}",
                     f"personal.{self.username}",
+                    f"incoming_mail.{self.username}",
+                    f"incoming_trello_change.{self.username}",
                     settings.ANNOUNCEMENTS_CHANNEL,
                 ],
             )
