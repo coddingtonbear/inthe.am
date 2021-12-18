@@ -23,6 +23,7 @@ class ChangeSource(models.Model):
         (SOURCETYPE_DIRECT, "Direct/API"),
         (SOURCETYPE_SYNC, "Sync"),
         (SOURCETYPE_REVERT, "Revert"),
+        (SOURCETYPE_DEDUPLICATE, "Deduplication"),
         (SOURCETYPE_GARBAGE_COLLECTION, "Garbage Collection"),
         (SOURCETYPE_AUTOCONFIGURATION, "Autoconfiguration"),
         (SOURCETYPE_MAIL, "Incoming E-mail"),
