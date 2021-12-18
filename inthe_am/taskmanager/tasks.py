@@ -465,10 +465,14 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
     default_retry_delay=30,
     max_retries=10,
 )
-def process_trello_action(self, store_id, data, **kwargs):
+def process_trello_action(self, store_id, data: Dict[str, Any], **kwargs):
     from .models import TaskStore, TrelloObject, TrelloObjectAction
 
     store = TaskStore.objects.get(pk=store_id)
+    store.publish_announcement(
+        "incoming_trello_change",
+        data,
+    )
 
     try:
         with git_checkpoint(

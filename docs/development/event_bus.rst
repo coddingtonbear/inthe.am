@@ -109,6 +109,30 @@ to a user's taskstore logs.
      task_id?: string  // UUID
    }
 
+`incoming_trello_change.<USERNAME>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Emitted when incoming data is received from Trello;
+usually indicating that a change occurred in Trello
+that we should update the relevant task list for.
+
+.. code-block:: ts
+
+   interface Message {
+     action: {
+       id: string
+       type: string
+     },
+     model: {
+       id: string
+     }
+   }
+
+Note that the above interface is extremely incomplete.
+Please consult https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/
+for more information about what might be possible
+in this type of message.
+
 
 Taskd
 -----

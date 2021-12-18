@@ -11,7 +11,7 @@ import pickle
 from queue import Queue
 import time
 import urllib.parse as urlparse
-from typing import Optional, Union, Mapping, Set
+from typing import Callable, Dict, Optional, Union, Mapping, Set
 from typing_extensions import TypedDict, Protocol
 
 from dulwich.repo import Repo
@@ -135,25 +135,38 @@ class Application:
 
         self.add_message("personal_announcement", announcement)
 
+    def handle_generic(self, message: PubSubMessage):
+        data: Dict = json.loads(message["data"])
+        channel_info = message["channel"]
+        if not channel_info:
+            return
+
+        channel = channel_info.decode("utf-8")
+        message_parts = channel.split(".")
+        message_type = message_parts[0]
+
+        self.add_message(message_type, data)
+
     def handle_message(self, message: PubSubMessage) -> bool:
         channel_info = message["channel"]
         if not channel_info:
             return False
 
         channel = channel_info.decode("utf-8")
-        if channel.startswith("local_sync."):
-            self.handle_local_sync(message)
-            return True
-        elif channel.startswith("changed_task."):
-            self.handle_changed_task(message)
-            return True
-        elif channel.startswith("log_message."):
-            self.handle_log_message(message)
-            return True
-        elif channel.startswith("personal."):
-            self.handle_personal_announcement(message)
-            return True
-        elif channel == settings.ANNOUNCEMENTS_CHANNEL:
+        message_parts = channel.split(".")
+        message_type = message_parts[0]
+
+        handlers: Dict[str, Callable[[PubSubMessage], None]] = {
+            "local_sync": self.handle_local_sync,
+            "changed_task": self.handle_changed_task,
+            "log_message": self.handle_log_message,
+            "personal": self.handle_personal_announcement,
+            "incoming_mail": self.handle_generic,
+            "incoming_trello_change": self.handle_generic,
+        }
+
+        if message_type in handlers:
+            handlers[message_type](message)
             return True
 
         return False
