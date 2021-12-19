@@ -329,7 +329,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
     hooks = store.trello_board.client_request(
         "GET",
         f"/1/tokens/{store.trello_board.client._token}/webhooks",
-    )
+    ).json()
     for hook in hooks:
         hook_id = hook["id"]
         store.trello_board.client_request("DELETE", f"/1/webhooks/{hook_id}")
