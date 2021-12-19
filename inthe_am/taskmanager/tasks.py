@@ -13,6 +13,10 @@ import requests
 from rest_framework.renderers import JSONRenderer
 
 from inthe_am.taskmanager.models.changesource import ChangeSource
+from inthe_am.taskmanager.trello_utils import (
+    delete_webhook_by_id,
+    get_all_client_webhooks,
+)
 
 from .exceptions import TrelloObjectRecentlyModified
 from .context_managers import git_checkpoint
@@ -326,13 +330,8 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
 
     # Delete any existing webhooks -- we will re-subscribe the item
     # we care about afterward.
-    hooks = store.trello_board.client_request(
-        "GET",
-        f"/1/tokens/{store.trello_board.client._token}/webhooks",
-    ).json()
-    for hook in hooks:
-        hook_id = hook["id"]
-        store.trello_board.client_request("DELETE", f"/1/webhooks/{hook_id}")
+    for hook in get_all_client_webhooks(store):
+        delete_webhook_by_id(store, hook["id"])
 
     with git_checkpoint(
         store,

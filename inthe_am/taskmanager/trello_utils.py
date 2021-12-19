@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 import json
 import logging
+from typing import Optional, List, TYPE_CHECKING
+from typing_extensions import TypedDict
 
 import oauthlib.oauth1
 import requests
@@ -9,6 +13,9 @@ from django.conf import settings
 from django.urls import reverse
 
 from .lock import get_lock_redis
+
+if TYPE_CHECKING:
+    from inthe_am.taskmanager.models.taskstore import TaskStore
 
 
 logger = logging.getLogger(__name__)
@@ -114,3 +121,24 @@ def subscribe_to_updates(object_id, user_token, callback_url):
         raise RuntimeError(result.content)
 
     return True
+
+
+class WebhookDefinition(TypedDict):
+    id: str
+    description: str
+    idModel: str
+    callbackURL: str
+    active: bool
+    consecutiveFailures: int
+    firstConsecutiveFailDate: Optional[str]
+
+
+def get_all_client_webhooks(store: TaskStore) -> List[WebhookDefinition]:
+    return store.trello_board.client_request(
+        "GET",
+        f"/1/tokens/{store.trello_board.client._token}/webhooks",
+    ).json()
+
+
+def delete_webhook_by_id(store: TaskStore, hook_id: str) -> bool:
+    return store.trello_board.client_request("DELETE", f"/1/webhooks/{hook_id}").ok
