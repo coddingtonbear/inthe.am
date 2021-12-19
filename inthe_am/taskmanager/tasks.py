@@ -324,6 +324,16 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
         )
         return
 
+    # Delete any existing webhooks -- we will re-subscribe the item
+    # we care about afterward.
+    hooks = store.trello_board.client_request(
+        "GET",
+        f"/1/tokens/{store.trello_board.client._token}/webhooks",
+    )
+    for hook in hooks:
+        hook_id = hook["id"]
+        store.trello_board.client_request("DELETE", f"/1/webhooks/{hook_id}")
+
     with git_checkpoint(
         store,
         ChangeSource.SOURCETYPE_TRELLO_RECONCILIATION,
@@ -331,6 +341,7 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
         sync=False,
     ):
         store.trello_board.reconcile()
+        store.trello_board.subscribe()
 
     open_local_tasks = {
         t["uuid"]: t for t in store.client.filter_tasks({"status": "pending"})
@@ -434,13 +445,12 @@ def sync_trello_tasks(self, store_id, debounce_id=None, **kwargs):
             name = task.get("name")
             id = task.get("id")
 
-            tob = TrelloObject.objects.create(
+            TrelloObject.objects.create(
                 id=id,
                 store=store,
                 type=TrelloObject.CARD,
                 meta=task,
             )
-            tob.subscribe()
             data = {
                 "description": name,
                 "intheamtrelloid": id,

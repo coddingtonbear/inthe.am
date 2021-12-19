@@ -160,7 +160,6 @@ class TrelloObject(models.Model):
                     meta=list_data,
                 )
                 self.add_log_data(f"Created list {list_data.get('id')}")
-                obj.subscribe()
 
         for deleted_list in known_lists.values():
             deleted_list.delete()
@@ -366,7 +365,8 @@ class TrelloObject(models.Model):
                 "head": store.repository.head().decode("utf-8"),
             },
         )
-        instance.subscribe()
+        if type == cls.BOARD:
+            instance.subscribe()
         return instance
 
     @property

@@ -319,14 +319,13 @@ class TaskViewSet(viewsets.ViewSet):
                 desc="Tasks listed on your Inthe.AM account",
             )
             for list_data in board.client.get_list(board.id):
-                obj = models.TrelloObject.objects.create(
+                models.TrelloObject.objects.create(
                     id=list_data.get("id"),
                     store=store,
                     type=models.TrelloObject.LIST,
                     parent=board,
                     meta=list_data,
                 )
-                obj.subscribe()
 
         store.save()
         store.sync_trello()

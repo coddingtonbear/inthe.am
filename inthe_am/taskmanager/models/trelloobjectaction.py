@@ -112,10 +112,6 @@ class TrelloObjectAction(models.Model):
             return
 
     def reconcile_updateCard(self):
-        # Run only for board events!
-        if not self.model.type == TrelloObject.BOARD:
-            return
-
         card_data = self.meta.get("action", {}).get("data", {}).get("card", {})
 
         if not card_data.get("closed", False):
@@ -144,9 +140,6 @@ class TrelloObjectAction(models.Model):
             return
 
     def reconcile_createCard(self):
-        # Run only for board events!
-        if not self.model.type == TrelloObject.BOARD:
-            return
 
         new_card_id = self.meta["action"]["data"]["card"]["id"]
 
@@ -162,7 +155,6 @@ class TrelloObjectAction(models.Model):
                 type=TrelloObject.CARD,
                 meta=self.meta["action"]["data"]["card"],
             )
-            to.subscribe()
             self.model.store.client.task_add(
                 description=to.meta["name"],
                 intheamtrelloid=new_card_id,
@@ -182,7 +174,14 @@ class TrelloObjectAction(models.Model):
             "Trello card %s added; adding task %s", to.pk, task.get("uuid", "?")
         )
 
+    def reconcile_copyCard(self):
+        return self.reconcile_createCard()
+
     def reconcile_action(self):
+        # Run only for board events!
+        if not self.model.type == TrelloObject.BOARD:
+            return
+
         if not self.model.store.has_active_checkpoint():
             raise CheckpointNeeded()
 
