@@ -508,26 +508,38 @@ def update_trello_task(self, object_id, **kwargs):
 
     obj = TrelloObject.objects.get(pk=object_id)
 
+    can_update_now = True
+    exc: Optional[Exception] = None
     with git_checkpoint(
         obj.store, ChangeSource.SOURCETYPE_TRELLO_OUTGOING, "Updating trello task"
     ):
         try:
             obj.update_trello()
         except TrelloObjectRecentlyModified as e:
-            self.retry(exc=e, countdown=settings.TRELLO_UPDATE_MARGIN_SECONDS)
+            # Do not retry here as that'll cause a transaction rollback;
+            # we don't need one, really -- we just want to delay our
+            # handling of this update.
+            can_update_now = False
+            exc = e
         except Exception as e:
             logger.exception("Error encountered while updating task: %s", str(e))
             raise
 
-        task = obj.get_task()
+        if can_update_now:
+            task = obj.get_task()
 
-        # Clear trello ID if we've just marked the task as closed;
-        # this will cause us to re-create the record if it ever
-        # enters the "pending" status.
-        if task["status"] in ("waiting", "closed", "deleted"):
-            task["intheamtrelloid"] = ""
+            # Clear trello ID if we've just marked the task as closed;
+            # this will cause us to re-create the record if it ever
+            # enters the "pending" status.
+            if task["status"] in ("waiting", "closed", "deleted"):
+                task["intheamtrelloid"] = ""
 
-        obj.store.client.task_update(task)
+            obj.store.client.task_update(task)
+
+    if not can_update_now:
+        # We ran into a problem earlier that prevented us from handling
+        # this update immediately -- we need to try this later.
+        self.retry(exc=exc, countdown=settings.TRELLO_UPDATE_MARGIN_SECONDS)
 
 
 @shared_task(
