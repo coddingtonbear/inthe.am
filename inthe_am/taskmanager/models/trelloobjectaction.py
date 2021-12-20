@@ -11,7 +11,7 @@ from .trelloobject import TrelloObject, TrelloTaskDoesNotExist
 
 class TrelloObjectAction(models.Model):
     type = models.CharField(max_length=100)
-    action_id = models.CharField(max_length=100)
+    action_id = models.CharField(max_length=100, db_index=True)
     model = models.ForeignKey(
         TrelloObject,
         related_name="actions",
