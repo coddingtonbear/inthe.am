@@ -207,6 +207,10 @@ TASKWARRIOR_CONFIG_OVERRIDES = {
             "type": "string",
             "label": "Inthe.AM Trello List ID",
         },
+        "intheamtrellolistposition": {
+            "type": "numeric",
+            "label": "Inthe.AM Trello Card Position in List",
+        },
         "intheamtrellolistname": {
             "type": "string",
             "label": "Inthe.AM Trello List Name",

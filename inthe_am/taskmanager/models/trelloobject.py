@@ -185,6 +185,7 @@ class TrelloObject(models.Model):
         task["intheamtrellodescription"] = self.meta["desc"]
         task["intheamtrellourl"] = self.meta["url"]
         task["intheamtrellolastupdated"] = self.meta["dateLastActivity"]
+        task["intheamtrellolistposition"] = self.meta.get("pos", 0)
         if self.meta["badges"]["due"]:
             task["due"] = parse(self.meta["badges"]["due"])
 
