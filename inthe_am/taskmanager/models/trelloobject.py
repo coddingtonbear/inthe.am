@@ -188,18 +188,17 @@ class TrelloObject(models.Model):
         if self.meta["badges"]["due"]:
             task["due"] = parse(self.meta["badges"]["due"])
 
-        try:
-            list_data = TrelloObject.objects.get(id=self.meta["idList"])
-            task["intheamtrellolistname"] = list_data.meta["name"]
-            task["intheamtrellolistid"] = list_data.id
-        except self.DoesNotExist:
-            task["intheamtrellolistname"] = ""
-            task["intheamtrellolistid"] = ""
-            logger.warning(
-                "Unable to find list id %s when updating " "card id %s",
-                self.meta["idList"],
-                self.id,
-            )
+        list_, created = TrelloObject.objects.get_or_create(
+            id=self.meta["idList"],
+            type=self.LIST,
+            store=self.store,
+            parent=self.store.trello_board,
+        )
+        if created:
+            list_.update_data()
+            list_.save()
+        task["intheamtrellolistname"] = list_.meta["name"]
+        task["intheamtrellolistid"] = list_.id
 
         self.store.log_message(
             "Trello card %s updated; updating task %s: %s",
