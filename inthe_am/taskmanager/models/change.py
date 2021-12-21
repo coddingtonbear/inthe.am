@@ -18,13 +18,13 @@ class Change(models.Model):
         blank=False,
         on_delete=models.CASCADE,
     )
-    task_id = models.UUIDField()
+    task_id = models.UUIDField(db_index=True)
 
     field = models.CharField(max_length=255)
     data_from = models.TextField()
     data_to = models.TextField()
 
-    changed = models.DateTimeField(auto_now=True)
+    changed = models.DateTimeField(auto_now=True, db_index=True)
 
     @classmethod
     def record_changes(

@@ -48,8 +48,8 @@ class ChangeSource(models.Model):
     foreign_id = models.CharField(max_length=255, blank=True, null=True, db_index=True)
     commit_hash = models.CharField(max_length=255, blank=True, null=True, db_index=True)
 
-    created = models.DateTimeField(auto_now=True)
-    finished = models.DateTimeField(null=True, blank=True)
+    created = models.DateTimeField(auto_now=True, db_index=True)
+    finished = models.DateTimeField(null=True, blank=True, db_index=True)
 
     def mark_finished(self):
         self.finished = datetime.datetime.now()
