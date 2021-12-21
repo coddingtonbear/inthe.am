@@ -120,6 +120,7 @@ def git_checkpoint(
                 sourcetype=sourcetype,
                 store=store,
                 foreign_id=foreign_id,
+                commit_hash=end_head,
             )
 
             for task_id, changes in store.get_changed_tasks(

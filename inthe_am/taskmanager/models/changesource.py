@@ -46,6 +46,7 @@ class ChangeSource(models.Model):
         on_delete=models.CASCADE,
     )
     foreign_id = models.CharField(max_length=255, blank=True, null=True)
+    commit_hash = models.CharField(max_length=255, blank=True, null=True)
 
     created = models.DateTimeField(auto_now=True)
     finished = models.DateTimeField(null=True, blank=True)

@@ -15,6 +15,7 @@ class ChangeViewSet(
     filterset_fields = [
         "source__id",
         "source__foreign_id",
+        "source__commit_hash",
         "source__sourcetype",
         "field",
         "data_from",

@@ -8,6 +8,7 @@ export interface Change {
   id: UUID
   source: {
     id: UUID
+    commit_hash: string
     sourcetype: number
     sourcetype_name: string
     created: DateTime

@@ -10,6 +10,7 @@ class ChangeSourceSerializer(serializers.ModelSerializer):
         model = models.ChangeSource
         fields = (
             "id",
+            "commit_hash",
             "sourcetype",
             "sourcetype_name",
             "created",
