@@ -14,14 +14,6 @@ from .lock import get_lock_name_for_store, redis_lock
 logger = logging.getLogger(__name__)
 
 
-SYSTEM_CONTROLLED_FIELDS = [
-    "entry",
-    "modified",
-    "status",
-    "uuid",
-]
-
-
 @contextmanager
 def git_checkpoint(
     store,
@@ -127,9 +119,6 @@ def git_checkpoint(
                 end_head, start=start_head
             ).items():
                 for field, values in changes.items():
-                    if field in SYSTEM_CONTROLLED_FIELDS:
-                        continue
-
                     Change.record_changes(source, task_id, field, values[0], values[1])
 
                 task = store.client.get_task(uuid=task_id)[1]
