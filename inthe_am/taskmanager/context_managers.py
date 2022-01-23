@@ -39,7 +39,7 @@ def git_checkpoint(
     wait_timeout=settings.LOCKFILE_WAIT_TIMEOUT,
     lock_timeout=settings.LOCKFILE_TIMEOUT_SECONDS,
 ):
-    from .models import Change, ChangeSource
+    from .models import Change, ChangeSource, Task
 
     lock_name = get_lock_name_for_store(store)
     try:
@@ -80,6 +80,12 @@ def git_checkpoint(
                     "Error encountered while cleaning-up git index lock at %s",
                     git_index_lock_path,
                 )
+
+        if not ChangeSource.objects.filter(
+            store=store,
+            sourcetype=ChangeSource.SOURCETYPE_BACKFILL,
+        ).exists():
+            Task.backfill_task_records(store)
 
         store.create_git_repository()
         try:
@@ -133,6 +139,13 @@ def git_checkpoint(
                     Change.record_changes(source, task_id, field, values[0], values[1])
 
                 task = store.client.get_task(uuid=task_id)[1]
+
+                Task.record_change(
+                    store,
+                    source,
+                    task.serialized(),
+                )
+
                 store.send_rest_hook_messages(task_id)
                 if emit_announcements:
                     store.publish_announcement(

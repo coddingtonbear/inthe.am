@@ -10,7 +10,8 @@ from .usermetadata import UserMetadata
 from .rest_hook import RestHook
 from .change import Change
 from .changesource import ChangeSource
-
+from .task import Task
+from .taskdata import TaskData
 
 # This *must* be at the bottom of *this* file for complicated reasons
 from .. import signal_handlers

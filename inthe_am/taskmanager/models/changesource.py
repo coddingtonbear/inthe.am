@@ -11,6 +11,7 @@ class ChangeSource(models.Model):
     SOURCETYPE_DEDUPLICATE = 4
     SOURCETYPE_GARBAGE_COLLECTION = 5
     SOURCETYPE_AUTOCONFIGURATION = 6
+    SOURCETYPE_BACKFILL = 7
 
     SOURCETYPE_MAIL = 20
     SOURCETYPE_TRELLO_OUTGOING = 21
@@ -26,6 +27,7 @@ class ChangeSource(models.Model):
         (SOURCETYPE_DEDUPLICATE, "Deduplication"),
         (SOURCETYPE_GARBAGE_COLLECTION, "Garbage Collection"),
         (SOURCETYPE_AUTOCONFIGURATION, "Autoconfiguration"),
+        (SOURCETYPE_BACKFILL, "Backfill"),
         (SOURCETYPE_MAIL, "Incoming E-mail"),
         (SOURCETYPE_SMS, "Incoming SMS"),
         (SOURCETYPE_TRELLO_OUTGOING, "Trello (Outgoing)"),
