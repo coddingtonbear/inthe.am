@@ -3,6 +3,7 @@ import datetime
 import json
 import logging
 import pipes
+import re
 import subprocess
 import tempfile
 import uuid
@@ -204,11 +205,14 @@ class TaskwarriorClient(TaskWarriorShellout):
         return [r for r in results if r is not None]
 
     def _get_task_object(self, obj):
+        dependency_finder = re.compile(
+            "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+        )
+
         try:
             # Bandaid over malformatted depends field
             if obj.get("depends", "").startswith("["):
-                parsed = json.loads(obj["depends"])
-                obj["depends"] = ",".join(parsed)
+                obj["depends"] = dependency_finder.findall(obj["depends"])
 
             return super()._get_task_object(obj)
         except ValueError as e:
