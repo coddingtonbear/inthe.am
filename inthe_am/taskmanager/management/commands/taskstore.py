@@ -211,7 +211,9 @@ def handle_gc_large_repos(**options):
 
 
 def handle_backfill_task_records(**options):
-    for store in TaskStore.objects.order_by("-last_synced"):
+    for store in TaskStore.objects.filter(last_synced__isnull=False).order_by(
+        "-last_synced"
+    ):
         if not ChangeSource.objects.filter(
             store=store,
             sourcetype=ChangeSource.SOURCETYPE_BACKFILL,
