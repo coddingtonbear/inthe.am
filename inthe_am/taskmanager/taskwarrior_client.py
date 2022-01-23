@@ -205,6 +205,11 @@ class TaskwarriorClient(TaskWarriorShellout):
 
     def _get_task_object(self, obj):
         try:
+            # Bandaid over malformatted depends field
+            if obj.get("depends", "").startswith("["):
+                parsed = json.loads(obj["depends"])
+                obj["depends"] = ",".join(parsed)
+
             return super()._get_task_object(obj)
         except ValueError as e:
             logger.warning(
