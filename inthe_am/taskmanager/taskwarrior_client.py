@@ -11,6 +11,7 @@ import weakref
 
 import taskw.utils
 from taskw import TaskWarriorShellout, utils
+from taskw.fields import CommaSeparatedUUIDField
 from taskw.task import Task as TaskwTask
 
 from inthe_am.taskmanager.utils import OneWaySafeJSONEncoder
@@ -205,13 +206,15 @@ class TaskwarriorClient(TaskWarriorShellout):
         return [r for r in results if r is not None]
 
     def _get_task_object(self, obj):
-        dependency_finder = re.compile(
-            "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-        )
-
         try:
             # Bandaid over malformatted depends field
-            if obj.get("depends", "").startswith("["):
+            dependency_finder = re.compile(
+                "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+            )
+            dependency_parser = CommaSeparatedUUIDField()
+            try:
+                dependency_parser.deserialize(obj.get("depends", ""))
+            except ValueError:
                 obj["depends"] = dependency_finder.findall(obj["depends"])
 
             return super()._get_task_object(obj)
