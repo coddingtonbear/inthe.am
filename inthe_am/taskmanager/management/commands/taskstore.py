@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.utils.timezone import now
 
 from inthe_am.taskmanager.models import (
+    Task,
     TaskStore,
     TaskStoreStatistic,
     ChangeSource,
@@ -209,6 +210,18 @@ def handle_gc_large_repos(**options):
                 traceback.print_exc()
 
 
+def handle_backfill_task_records(**options):
+    for store in TaskStore.objects.order_by("-last_synced"):
+        if not ChangeSource.objects.filter(
+            store=store,
+            sourcetype=ChangeSource.SOURCETYPE_BACKFILL,
+        ).exists():
+            print(f"> Backfilling {store}...")
+            Task.backfill_task_records(store)
+            count = Task.objects.filter(store=store).count()
+            print(f">> {count} task records created")
+
+
 def handle_delete_old_changes(**options):
     ChangeSource.objects.filter(
         created__lt=datetime.datetime.now() - datetime.timedelta(days=180)
@@ -346,6 +359,7 @@ class Command(BaseCommand):
         "delete_old_changes": handle_delete_old_changes,
         "list_old_accounts": handle_list_old_accounts,
         "export": handle_export,
+        "backfill_task_records": handle_backfill_task_records,
     }
 
     def add_arguments(self, parser):
