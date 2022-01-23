@@ -226,12 +226,6 @@ def handle_backfill_task_records(**options):
                 traceback.print_exc()
 
 
-def handle_delete_old_changes(**options):
-    ChangeSource.objects.filter(
-        created__lt=datetime.datetime.now() - datetime.timedelta(days=180)
-    ).delete()
-
-
 def handle_squash(**options):
     username = options["username"]
 
@@ -251,7 +245,7 @@ def handle_delete_old_accounts(**options):
 
     min_action_recency = now() - datetime.timedelta(days=min_use_recency_days)
     for store in TaskStore.objects.filter(
-        last_synced__lt=min_action_recency,
+        Q(last_synced__lt=min_action_recency) | Q(last_synced__isnull=True),
         user__last_login__lt=min_action_recency,
     ).order_by("-last_synced"):
         print(f"> Deleting {store.local_path}")
@@ -360,7 +354,6 @@ class Command(BaseCommand):
         "gc_large_repos": handle_gc_large_repos,
         "squash": handle_squash,
         "delete_old_accounts": handle_delete_old_accounts,
-        "delete_old_changes": handle_delete_old_changes,
         "list_old_accounts": handle_list_old_accounts,
         "export": handle_export,
         "backfill_task_records": handle_backfill_task_records,
