@@ -216,10 +216,14 @@ def handle_backfill_task_records(**options):
             store=store,
             sourcetype=ChangeSource.SOURCETYPE_BACKFILL,
         ).exists():
-            print(f"> Backfilling {store}...")
-            Task.backfill_task_records(store)
-            count = Task.objects.filter(store=store).count()
-            print(f">> {count} task records created")
+            try:
+                print(f"> Backfilling {store}...")
+                Task.backfill_task_records(store)
+                count = Task.objects.filter(store=store).count()
+                print(f">> {count} task records created")
+            except Exception as e:
+                print(f">> FAILED: {e}")
+                traceback.print_exc()
 
 
 def handle_delete_old_changes(**options):
