@@ -6,6 +6,7 @@ import traceback
 import uuid
 from typing import cast, Dict, Protocol
 
+from cryptography.x509 import load_pem_x509_certificate
 import progressbar
 
 from django.contrib.auth.models import User
@@ -228,6 +229,30 @@ def handle_backfill_task_records(**options):
                 traceback.print_exc()
 
 
+def handle_refresh_certificates(**options):
+    for store in TaskStore.objects.filter(last_synced__isnull=False).order_by(
+        "-last_synced"
+    ):
+        store = cast(TaskStore, store)
+
+        cert_path = os.path.join(
+            store.local_path, store.DEFAULT_FILENAMES["certificate"]
+        )
+        with open(cert_path, "r") as inf:
+            cert = load_pem_x509_certificate(inf.read())
+
+        if (
+            datetime.datetime.now() + datetime.timedelta(days=7)
+        ) < cert.not_valid_after:
+            continue
+
+        with fast_git_checkpoint(store, "Refreshing certificate"):
+            print(f"> Refreshing cert for {store}...")
+            new_cert = store.generate_new_certificate(label="__inthe.am__")
+            with open(cert_path, "w") as outf:
+                outf.write(new_cert)
+
+
 def handle_squash(**options):
     username = options["username"]
 
@@ -359,6 +384,7 @@ class Command(BaseCommand):
         "list_old_accounts": handle_list_old_accounts,
         "export": handle_export,
         "backfill_task_records": handle_backfill_task_records,
+        "refresh_certificates": handle_refresh_certificates,
     }
 
     def add_arguments(self, parser):
