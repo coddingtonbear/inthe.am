@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from typing_extensions import TypedDict, Literal
 
 
@@ -80,3 +80,12 @@ class CertificateUse(TypedDict):
     fingerprint: str
     certificate_recognized: bool
     certificate_accepted: bool
+
+
+class PubsubEnvelope(TypedDict):
+    type: Literal[
+        "subscribe", "unsubscribe", "psubscribe", "punsubscribe", "message", "pmessage"
+    ]
+    pattern: Optional[str]
+    channel: bytes
+    data: str

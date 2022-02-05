@@ -77,6 +77,20 @@ class TaskdAccountManager:
             data=json.dumps({"csr": csr, "label": label}, **request_kwargs),
         ).json()["certificate"]
 
+    def register_certificate(
+        self, fingerprint: str, label: str = "", **request_kwargs: Any
+    ) -> None:
+        self.make_user_request(
+            "put",
+            f"certificates/{fingerprint}",
+            data=json.dumps(
+                {
+                    "label": label,
+                }
+            ),
+            **request_kwargs,
+        )
+
     def create(self, **request_kwargs: Any) -> None:
         self.make_user_request("put", data=json.dumps({}), **request_kwargs)
 
