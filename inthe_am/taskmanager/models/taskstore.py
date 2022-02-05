@@ -956,7 +956,7 @@ class TaskStore(models.Model):
             self.save()
             self.client.sync(init=True)
 
-    def generate_new_certificate(self) -> str:
+    def generate_new_certificate(self, label: str = "") -> str:
         private_key_filename = os.path.join(
             self.local_path,
             self.DEFAULT_FILENAMES["key"],
@@ -980,7 +980,7 @@ class TaskStore(models.Model):
             )
             csr = csr_proc.communicate()[0].decode("utf-8")
 
-        return self.taskd_account.get_new_certificate(csr)
+        return self.taskd_account.get_new_certificate(csr, label=label)
 
     def _log_entry(self, message, error=False, params=None, silent=False):
         if params is None:

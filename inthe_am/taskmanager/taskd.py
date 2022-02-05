@@ -1,10 +1,11 @@
 import json
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List
 from typing_extensions import Literal
 
+from django.conf import settings
 import requests
 
-from django.conf import settings
+from .types.taskd import Certificate
 
 
 HttpMethod = Literal["get", "post", "delete", "put", "patch"]
@@ -68,6 +69,9 @@ class TaskdAccountManager:
             **request_kwargs,
         )
 
+    def get_certificates(self, **request_kwargs: Any) -> List[Certificate]:
+        return self.make_user_request("get", "certificates", **request_kwargs).json()
+
     def get_new_certificate(
         self, csr: str, label: str = "", **request_kwargs: Any
     ) -> str:
@@ -77,10 +81,17 @@ class TaskdAccountManager:
             data=json.dumps({"csr": csr, "label": label}, **request_kwargs),
         ).json()["certificate"]
 
+    def revoke_certificate(self, fingerprint: str, **request_kwargs: Any) -> bool:
+        return self.make_user_request(
+            "delete",
+            f"certificates/{fingerprint}",
+            **request_kwargs,
+        ).ok
+
     def register_certificate(
         self, fingerprint: str, label: str = "", **request_kwargs: Any
-    ) -> None:
-        self.make_user_request(
+    ) -> bool:
+        return self.make_user_request(
             "put",
             f"certificates/{fingerprint}",
             data=json.dumps(
@@ -89,10 +100,10 @@ class TaskdAccountManager:
                 }
             ),
             **request_kwargs,
-        )
+        ).ok
 
-    def create(self, **request_kwargs: Any) -> None:
-        self.make_user_request("put", data=json.dumps({}), **request_kwargs)
+    def create(self, **request_kwargs: Any) -> bool:
+        return self.make_user_request("put", data=json.dumps({}), **request_kwargs).ok
 
     def get(self, **request_kwargs) -> Dict[str, Any]:
         result = self.make_user_request("get", **request_kwargs)
@@ -100,21 +111,21 @@ class TaskdAccountManager:
 
         return result.json()
 
-    def is_suspended(self, **request_kwargs: Any) -> Optional[bool]:
-        return self.get(**request_kwargs).get("is_suspended")
+    def is_suspended(self, **request_kwargs: Any) -> bool:
+        return self.get(**request_kwargs).get("is_suspended") or False
 
-    def suspend(self, **request_kwargs: Any) -> None:
-        self.make_user_request(
+    def suspend(self, **request_kwargs: Any) -> bool:
+        return self.make_user_request(
             "put", data=json.dumps({"is_suspended": True}), **request_kwargs
-        )
+        ).ok
 
-    def resume(self, **request_kwargs: Any) -> None:
-        self.make_user_request(
+    def resume(self, **request_kwargs: Any) -> bool:
+        return self.make_user_request(
             "put", data=json.dumps({"is_suspended": False}), **request_kwargs
-        )
+        ).ok
 
-    def delete(self, **request_kwargs: Any) -> None:
-        self.make_user_request("delete", **request_kwargs)
+    def delete(self, **request_kwargs: Any) -> bool:
+        return self.make_user_request("delete", **request_kwargs).ok
 
     def exists(self, **request_kwargs: Any) -> bool:
         return (
@@ -128,8 +139,8 @@ class TaskdAccountManager:
         response = self.make_user_request("get", "data", **request_kwargs)
         return response.content
 
-    def delete_data(self, **request_kwargs: Any) -> None:
+    def delete_data(self, **request_kwargs: Any) -> bool:
         try:
-            self.make_user_request("delete", "data", **request_kwargs)
+            return self.make_user_request("delete", "data", **request_kwargs).ok
         except TaskdAccountManagementError:
-            pass
+            return False
