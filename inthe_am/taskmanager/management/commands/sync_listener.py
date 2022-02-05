@@ -100,7 +100,7 @@ class Command(BaseCommand):
                     logger.error(
                         "No synchronizations have been queued during the last "
                         "%s minutes;  it is likely that something has gone "
-                        "awry; Suiciding; will be restarted automatically.",
+                        "awry; terminating; will be restarted automatically.",
                         round((now() - last_sync_queued).seconds / 60.0),
                     )
                     sys.exit(11)
