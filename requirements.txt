@@ -44,3 +44,6 @@ cryptography==36.0.1
 # Resolution solutions
 urllib3==1.26.7
 twilio==6.63.2
+atpublic==2.3
+attrs==21.2.0
+traitlets==5.1.1
