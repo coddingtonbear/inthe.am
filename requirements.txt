@@ -41,3 +41,6 @@ typing-extensions==3.7.4.2
 aiosmtpd>=1.2,<2.0
 ptvsd>=4.3.2,<5
 cryptography==36.0.1
+# Resolution solutions
+urllib3==1.26.7
+twilio==6.63.2
