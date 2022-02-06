@@ -238,7 +238,7 @@ def handle_refresh_certificates(**options):
         cert_path = os.path.join(
             store.local_path, store.DEFAULT_FILENAMES["certificate"]
         )
-        with open(cert_path, "r") as inf:
+        with open(cert_path, "rb") as inf:
             cert = load_pem_x509_certificate(inf.read())
 
         if (
