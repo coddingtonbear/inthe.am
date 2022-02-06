@@ -11,7 +11,7 @@ import weakref
 
 import taskw.utils
 from taskw import TaskWarriorShellout, utils
-from taskw.fields import CommaSeparatedUUIDField
+from taskw.fields import DependsField
 from taskw.task import Task as TaskwTask
 
 from inthe_am.taskmanager.utils import OneWaySafeJSONEncoder
@@ -211,7 +211,7 @@ class TaskwarriorClient(TaskWarriorShellout):
             dependency_finder = re.compile(
                 "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
             )
-            dependency_parser = CommaSeparatedUUIDField()
+            dependency_parser = DependsField()
             try:
                 dependency_parser.deserialize(obj.get("depends", ""))
             except ValueError:
