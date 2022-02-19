@@ -1,6 +1,7 @@
 {
-    "python.pythonPath": "env/bin/python",
-    "restructuredtext.sphinxBuildPath": "${workspaceFolder}/local/bin/sphinx-build",
-    "restructuredtext.confPath": "${workspaceFolder}/docs",
-    "editor.formatOnSave": true
+  "python.pythonPath": "env/bin/python",
+  "restructuredtext.sphinxBuildPath": "${workspaceFolder}/local/bin/sphinx-build",
+  "restructuredtext.confPath": "${workspaceFolder}/docs",
+  "editor.formatOnSave": true,
+  "restructuredtext.languageServer.disabled": true
 }
