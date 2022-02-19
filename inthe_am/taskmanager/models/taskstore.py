@@ -735,16 +735,6 @@ class TaskStore(models.Model):
     def sync(self, function=None, args=None, kwargs=None, asynchronous=True, msg=None):
         if not self.sync_enabled or not self.sync_permitted:
             return False
-        if not self.sync_uses_default_server:
-            self.log_message(
-                "Synchronization with other taskd servers is no longer "
-                "supported.  Your account has been automatically reconfigured "
-                "to synchronize with Inthe.AM's built-in task server."
-                "You may need to re-configure your local taskwarrior "
-                "instances."
-            )
-            self.reset_taskd_configuration()
-            return True
 
         client = get_lock_redis()
         debounce_id = kwargs.get("debounce_id") if kwargs else None
