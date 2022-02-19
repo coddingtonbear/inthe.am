@@ -175,7 +175,6 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
         "ical_enabled",
         "twilio_enabled",
         "trello_enabled",
-        "local_sync",
     )
     list_filter = (
         ActivityStatusListFilter,
@@ -225,15 +224,6 @@ class TaskStoreAdmin(DefaultFilterMixIn, admin.ModelAdmin):
         return True if store.trello_auth_token else False
 
     trello_enabled.boolean = True  # type: ignore
-
-    def local_sync(self, store):
-        try:
-            return store.sync_uses_default_server
-        except Exception as e:
-            logger.exception(e)
-            return None
-
-    local_sync.boolean = True  # type: ignore
 
 
 admin.site.register(TaskStore, TaskStoreAdmin)

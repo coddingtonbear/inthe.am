@@ -566,10 +566,6 @@ class TaskStore(models.Model):
                 self._local_taskd = False
         return self._local_taskd
 
-    @property
-    def sync_uses_default_server(self):
-        return self.taskrc.get("taskd.server") == settings.TASKD_SERVER
-
     def _get_queue_name(self, prefix="local_sync", suffix=None):
         base = f"{prefix}.{self.user.username}"
         if suffix is not None:

@@ -65,7 +65,6 @@ export interface AuthenticatedStatus extends BaseStatus {
   configured: boolean
   taskd_credentials: string
   taskd_server: string
-  taskd_server_is_default: boolean
   streaming_enabled: boolean
   streaming_key: string
   taskd_files: boolean
