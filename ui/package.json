@@ -15,7 +15,7 @@
     "@types/react-toast-notifications": "^2.4.0",
     "autoprefixer": "^10.0.1",
     "axios": "^0.21.0",
-    "browser-sync": "^2.26.13",
+    "browser-sync": "^2.27.10",
     "classnames": "^2.2.6",
     "clone": "^2.1.2",
     "connected-react-router": "^6.8.0",
