@@ -22,6 +22,12 @@ After that, you can bring up your development environment::
 
     docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
+You may need to create a `.private.env` file in the root project directory first::
+
+    touch .private.env
+
+Review the troubleshooting section below to review how to start this file.
+
 .. note::
 
    Specifying the dockerfiles as shown above

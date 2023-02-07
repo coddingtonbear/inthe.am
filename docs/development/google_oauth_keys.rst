@@ -10,9 +10,8 @@ functionally essential for doing much of anything with Inthe.AM.
 1. Go to `Google's developer console <https://console.developers.google.com/project>`_.
 2. Create a new project.
 3. From within your project, create a new "Client ID" by going to
-   "APIs & Auth" > "Credentials" and clicking on the "Create New Client ID"
-   button.
-4. Select "Web Application"
+   "APIs & Services" > "Credentials."
+4. Click "Create Credentials" at the top of the screen and select "Web Application."
 5. Enter the following for 'Authorized Javascript Origins'::
 
     http://127.0.0.1
