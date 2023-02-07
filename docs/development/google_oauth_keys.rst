@@ -11,7 +11,7 @@ functionally essential for doing much of anything with Inthe.AM.
 2. Create a new project.
 3. From within your project, create a new "Client ID" by going to
    "APIs & Services" > "Credentials."
-4. Click "Create Credentials" at the top of the screen and select "Web Application."
+4. Click "Create Credentials" at the top of the screen and select "Create oAuth Client ID." For the "Application Type" on the next screen select "Web Application."
 5. Enter the following for 'Authorized Javascript Origins'::
 
     http://127.0.0.1
