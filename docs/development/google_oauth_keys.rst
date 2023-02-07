@@ -32,3 +32,10 @@ functionally essential for doing much of anything with Inthe.AM.
     environment with the environment variables you've set, and start the
     ``runserver`` once again.
 
+Docker Development Environment Usage
+-------------------------------------
+
+If using a Docker environment for development (see :ref:`development_environment_setup`), the key and secret should be provided in a `.private.env` file in the root project directory as::
+
+    SOCIAL_AUTH_GOOGLE_OAUTH2_KEY="key"
+    SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET="key"
