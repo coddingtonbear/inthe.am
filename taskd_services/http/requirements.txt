@@ -1,3 +1,4 @@
 Flask==2.0.3
 flask-restful==0.3.9
+sqlalchemy<2.0
 flask-sqlalchemy==2.5.1
