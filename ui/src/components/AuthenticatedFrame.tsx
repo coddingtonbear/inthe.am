@@ -163,6 +163,16 @@ const AuthenticatedFrame: FunctionComponent<Props> = ({
           </TopBarLeft>
           <TopBarRight>
             <ul className="dropdown menu">
+              <li className="desktop-only">
+                <a
+                  style={{color: 'red'}}
+                  target="_blank"
+                  title="Inthe.AM will shutdown on January 1, 2024"
+                  href="https://github.com/coddingtonbear/inthe.am/discussions/427"
+                >
+                  <LabeledIcon icon="skull" label="Shutdown Soon" />
+                </a>
+              </li>
               {canAccessFuntions && (
                 <>
                   <li className="desktop-only" data-intro="alt+h">
