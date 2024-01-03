@@ -1,9 +1,7 @@
 Inthe.AM
 ========
 
-**Note:**: Inthe.AM will be shutting down on January 1st, 2024.  See https://github.com/coddingtonbear/inthe.am/discussions/427 for more informaion.
-
-`Inthe.AM is looking for maintainers -- would you like to help? <https://github.com/coddingtonbear/inthe.am/wiki/Call-for-Maintainers!>`_
+**Note:**: Inthe.AM was shut down on January 3rd, 2024 at 11:22 UTC. See https://github.com/coddingtonbear/inthe.am/discussions/427 for more informaion.
 
 - Documentation for Inthe.AM is available on
   `ReadTheDocs <http://intheam.readthedocs.org/>`_.
