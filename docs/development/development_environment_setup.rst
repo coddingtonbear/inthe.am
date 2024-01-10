@@ -18,9 +18,21 @@ run the following commands::
     cd docker/nginx/secrets
     openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 365 -nodes
 
+Next you will need to create volumes for the development environment::
+
+    docker volume create db-data
+    docker volume create task-data
+    docker volume create taskd-data
+
 After that, you can bring up your development environment::
 
     docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+You may need to create a `.private.env` file in the root project directory first::
+
+    touch .private.env
+
+Review the troubleshooting section below to review how to start this file.
 
 .. note::
 
@@ -57,3 +69,9 @@ Troubleshooting your Development Environment
 
   * ``SOCIAL_AUTH_GOOGLE_OAUTH2_KEY``
   * ``SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET``
+
+* You may also need to set up the following directories in the root project directory
+
+  * /db-data
+  * /task-data
+  * /
