@@ -15,7 +15,7 @@ dulwich==0.20.14
 raven==6.10.0
 psycopg2-binary==2.8.6
 gevent==20.9.0
-Celery==4.3.0
+Celery==5.2.2
 redis>=3.5.3,<4
 behave==1.2.5
 selenium==3.4.3
